@@ -53,16 +53,16 @@ Grading focuses on implementation, relevant retrieval, supported answers, tracea
 
 | Decision | Choice | Rationale |
 | --- | --- | --- |
-| Language model | `meta-llama/Llama-3.2-3B-Instruct` via Hugging Face Inference (Featherless) | Instruct checkpoint corresponding to the brief’s `llama3.2:3b`; non-reasoning model suitable for short grounded answers |
-| Local Ollama | Not used | Replaced by the Hugging Face hosted endpoint |
-| Gemini | Not used | Optional alternative in the brief; out of scope for this design |
-| build.nvidia | Not used | Catalog checked 7 Oct 2026 did not list `llama3.2:3b`; hosted text models there are mostly reasoning or multimodal |
+| Language model | `gemini-3.5-flash-lite` via Google Gemini API (`ChatGoogleGenerativeAI`) | Brief allows Gemini as an alternative to Ollama; Flash-Lite fits short grounded answers, temperature 0, and low-latency eval runs |
+| Local Ollama | Not used | Replaced by the Gemini Developer API |
+| Hugging Face chat LLM | Not used for generation | Embeddings still use `sentence-transformers` / `langchain-huggingface`; chat does not call Featherless or Llama |
+| Google Antigravity | Not used | Agentic IDE / managed agent platform; wrong API shape for retriever → grounded prompt → answer |
+| build.nvidia | Not used | Not required; Gemini covers the optional cloud LLM path from the brief |
 | Embedding model | `sentence-transformers/all-MiniLM-L6-v2` | Explicit graded requirement (checkpoint 2.1.1); also used for answer and retrieval similarity |
 | Vector store | Persistent Chroma, collection name `logistics_rag` | Explicit graded requirement |
 | Chunk size / overlap | 800 characters / 120 characters | Explicit graded requirement |
 | Retrieval depth | `k = 4` | Explicit graded requirement |
-| Generation temperature | Equivalent of temperature 0 (`do_sample=False`, and `temperature=0` when accepted) | Explicit graded requirement |
-| Base Llama weights | `meta-llama/Llama-3.2-3B` not used | Base checkpoint is not instruction-tuned for Q&A |
+| Generation temperature | `temperature=0` | Explicit graded requirement; minimise or disable thinking if the client exposes it |
 | Python environment | Project-local virtual environment `.venv` | Isolates assignment packages; do not commit the directory |
 | Implementation notebook | Modify [`../results/Logistics_Operations_RAG_Assistant_Starter.ipynb`](../results/Logistics_Operations_RAG_Assistant_Starter.ipynb) in place | Starter already present; fill its cells; retain section structure |
 
@@ -95,7 +95,7 @@ Grading focuses on implementation, relevant retrieval, supported answers, tracea
                                                     │ top-4 retrieve
                                                     ▼
 ┌──────────────────────────────────────────────────────────────────────────┐
-│  Context formatter → grounded prompt → ChatHuggingFace (Llama 3.2 3B)    │
+│  Context formatter → grounded prompt → ChatGoogleGenerativeAI (Flash-Lite) │
 └───────────────────────────────┬──────────────────────────────────────────┘
                                 │
                                 ▼
@@ -113,9 +113,9 @@ Grading focuses on implementation, relevant retrieval, supported answers, tracea
 | Cleaning | Custom whitespace normalisation | Collapse runs of whitespace; preserve headings, tables, numbers, and document IDs |
 | EDA | `pandas`, NLTK stop words, `sklearn` TF-IDF + cosine | See Section 6 |
 | Chunking | `RecursiveCharacterTextSplitter` or equivalent character splitter | Size 800, overlap 120 |
-| Embeddings | `HuggingFaceEmbeddings` / sentence-transformers | `all-MiniLM-L6-v2` |
+| Embeddings | `HuggingFaceEmbeddings` / sentence-transformers | `all-MiniLM-L6-v2` (local; not Gemini embeddings) |
 | Vector DB | `langchain-chroma` / Chroma | Collection `logistics_rag`; persistent directory |
-| LLM | `langchain-huggingface` | `HuggingFaceEndpoint` + `ChatHuggingFace` |
+| LLM | `langchain-google-genai` | `ChatGoogleGenerativeAI(model="gemini-3.5-flash-lite")` |
 | Evaluation | Same MiniLM encoder | Cosine similarity for answer and retrieval scores |
 
 ---
@@ -192,6 +192,7 @@ python -m pip install --upgrade pip
 pip install pandas matplotlib tqdm pypdf nltk scikit-learn \
   langchain langchain-core langchain-community \
   langchain-text-splitters langchain-huggingface langchain-chroma \
+  langchain-google-genai \
   sentence-transformers ipykernel
 python -m ipykernel install --user --name=upgrad-capstone-venv --display-name="Python (.venv upgrad-capstone)"
 ```
@@ -205,12 +206,13 @@ Rules:
 
 ### 5.2 Required packages
 
-Install into `.venv` (commented install cells in the starter notebook are acceptable if they use that environment). The starter’s “Loading libraries” cell currently comments `# !pip install -U -q langchain-ollama`. **Edit that cell:** remove the Ollama line and ensure installs match the list below (Hugging Face chat uses `langchain-huggingface`, which is already listed for embeddings).
+Install into `.venv` (commented install cells in the starter notebook are acceptable if they use that environment). The starter’s “Loading libraries” cell currently comments `# !pip install -U -q langchain-ollama`. **Edit that cell:** remove the Ollama line and add `langchain-google-genai`. Keep `langchain-huggingface` for MiniLM embeddings only.
 
 ```text
 pandas matplotlib tqdm pypdf nltk scikit-learn
 langchain langchain-core langchain-community
 langchain-text-splitters langchain-huggingface langchain-chroma
+langchain-google-genai
 sentence-transformers
 ipykernel
 ```
@@ -218,50 +220,51 @@ ipykernel
 Do **not** install:
 
 - `langchain-ollama` (present as a commented line in the starter — delete it)
-- `langchain-google-genai`
 - `langchain-nvidia-ai-endpoints`
 
 Optional: `matplotlib` is listed in the starter for charts (for example a length bar chart). Visualisation is helpful but not a separate mark; length/frequency/TF-IDF tables satisfy the graded asks.
 
-### 5.3 Hugging Face access
+### 5.3 Google Gemini access
 
 | Item | Value |
 | --- | --- |
-| Model repo | `meta-llama/Llama-3.2-3B-Instruct` |
-| License | Llama 3.2 Community License (gated: manual accept on the model page) |
-| Token env var | `HUGGINGFACEHUB_API_TOKEN` |
-| Inference provider | `featherless-ai` (only live provider mapping as of 7 Oct 2026) |
-| Provider task | `conversational` |
+| Chat model | `gemini-3.5-flash-lite` |
+| Backend | Gemini Developer API (API key; not Vertex unless the team explicitly configures it) |
+| Package | `langchain-google-genai` |
+| Class | `ChatGoogleGenerativeAI` |
+| API key env var | `GOOGLE_API_KEY` (preferred) or `GEMINI_API_KEY` |
 
 Setup steps before a graded run:
 
-1. Create a Hugging Face account.
-2. Open `https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct` and accept the license.
-3. Create an access token with permission to call Inference Providers.
-4. Export `HUGGINGFACEHUB_API_TOKEN` in the environment, or prompt once with `getpass` in a local session.
-5. Never hard-code the token in the notebook or commit it to git.
+1. Create a Google AI Studio / Gemini API account and generate an API key.
+2. Export `GOOGLE_API_KEY` (or `GEMINI_API_KEY`) in the environment, or prompt once with `getpass` in a local session.
+3. Never hard-code the key in the notebook or commit it to git.
+4. Do not use the Google Antigravity IDE, Antigravity CLI, or the Gemini API Antigravity agent endpoint (`antigravity-preview-*`) for this notebook. Those surfaces are agent platforms, not the graded RAG chat path.
+
+Model selection notes (catalog as of Oct 2026):
+
+- Prefer `gemini-3.5-flash-lite` for this assignment (fast, cost-efficient text Q&A).
+- `gemini-3.8-flash` is acceptable but heavier; do not switch silently during a graded run.
+- Avoid `gemini-2.5-*` for new projects (access restricted) and do not use shut-down `gemini-2.0-*` IDs.
+- Live, TTS, image, Omni, Deep Research, and Antigravity agent models are out of scope.
 
 ### 5.4 LLM construction (design contract)
 
 ```python
-from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
+from langchain_google_genai import ChatGoogleGenerativeAI
 
-endpoint = HuggingFaceEndpoint(
-    repo_id="meta-llama/Llama-3.2-3B-Instruct",
-    task="text-generation",
-    provider="featherless-ai",
-    max_new_tokens=512,
-    do_sample=False,
+llm = ChatGoogleGenerativeAI(
+    model="gemini-3.5-flash-lite",
     temperature=0,
 )
-llm = ChatHuggingFace(llm=endpoint)
 ```
 
 Rules:
 
-- Pin `provider="featherless-ai"`. Do not use `provider="auto"`.
-- On 401, 403, empty body, or provider downtime, stop the generation cells and record the failure in the notebook outputs. Do not silently switch to Ollama, Gemini, build.nvidia, or another Llama checkpoint.
-- Cap `max_new_tokens` (512 recommended) so answers stay short enough to compare with reference text.
+- Lock `model="gemini-3.5-flash-lite"`. Do not silently fall back to Ollama, Hugging Face chat, build.nvidia, Antigravity agent, or another Gemini ID.
+- Keep `temperature=0`. If the installed `langchain-google-genai` / model exposes thinking controls (`thinking_budget`, `thinking_level`, or equivalent), disable or minimise thinking so answers stay short and comparable to reference text.
+- Cap output length when the client supports it (for example `max_tokens` / `max_output_tokens` around 512) so answers stay short enough to compare with reference text.
+- On 401, 403, quota errors, empty body, or API downtime, stop the generation cells and record the failure in the notebook outputs.
 
 ### 5.5 Embedding construction (design contract)
 
@@ -271,11 +274,11 @@ from langchain_huggingface import HuggingFaceEmbeddings
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 ```
 
-The same embedding function is reused for indexing, query embedding, answer similarity, and retrieval similarity.
+The same embedding function is reused for indexing, query embedding, answer similarity, and retrieval similarity. Do **not** replace MiniLM with Gemini embedding models for the graded checkpoints.
 
 ### 5.6 Pre-download / warm-up (outside timed exercise)
 
-Before a timed session, warm the MiniLM download and NLTK English stop words so offline steps do not block the exercise. The Hugging Face LLM call remains network-dependent.
+Before a timed session, warm the MiniLM download and NLTK English stop words so offline steps do not block the exercise. Gemini chat calls remain network-dependent.
 
 ---
 
@@ -490,7 +493,7 @@ Interpretation narrative must cover:
 
 - Average answer and retrieval similarity.
 - At least one representative success and one weakness (for example, RGM Markdown/PDF duplicates consuming retrieval slots, or cross-document conflicts).
-- Honest statement of model/runtime assumptions (Hugging Face Featherless, MiniLM, temperature 0).
+- Honest statement of model/runtime assumptions (Gemini `gemini-3.5-flash-lite`, MiniLM, temperature 0).
 
 ---
 
@@ -536,8 +539,8 @@ The starter already contains Objective, Business Value, and section markdown. Pr
 | **1.** Data Loading, Preparation and Analysis **[40]** | Parent section | Section 6.1 |
 | **1.1** Data Understanding | Eight folders; Markdown + PDF; LangChain docs with source metadata | Section 4; loader metadata keys in §6.1 / 1.2.1 |
 | **1.2** Load and Preprocess **[12]** | Parent section | 1.2.1 + 1.2.2 |
-| Loading libraries / pip comments | Install useful packages | §5.1–5.2: use `.venv`; remove `langchain-ollama`; keep Hugging Face stack |
-| `# Import essential libraries` | Imports | Import pandas, pathlib, nltk, sklearn, langchain loaders/splitters, HuggingFace embeddings/endpoint/chat, Chroma, etc. |
+| Loading libraries / pip comments | Install useful packages | §5.1–5.2: use `.venv`; remove `langchain-ollama`; add `langchain-google-genai`; keep `langchain-huggingface` for MiniLM only |
+| `# Import essential libraries` | Imports | Import pandas, pathlib, nltk, sklearn, langchain loaders/splitters, HuggingFace embeddings, `ChatGoogleGenerativeAI`, Chroma, etc. |
 | **1.2.1** Load Logistics Documents **[7]** | Load all `.md` and `.pdf`; metadata: file name, business category, file type, source path | §6.1 / 1.2.1 — three cells: discover/load, attach metadata, inspect first document |
 | **1.2.2** Clean and Normalise **[5]** | Remove unnecessary whitespace; preserve meaning and metadata | §6.1 / 1.2.2 |
 | **1.3** Exploratory Data Analysis **[16]** | Parent section | 1.3.1–1.3.3 |
@@ -551,7 +554,7 @@ The starter already contains Objective, Business Value, and section markdown. Pr
 | **2.1.1** Initialise Embedding Model **[5]** | Embedding function for chunks | §6.2 / 2.1.1 — `all-MiniLM-L6-v2` |
 | **2.1.2** Create and Populate Vector Database **[11]** | Load chunk embeddings into Chroma | §6.2 / 2.1.2 — collection `logistics_rag`; delete-and-recreate; function to add chunks; count vectors |
 | **2.2** Create the RAG Chain **[19]** | Parent section | 2.2.1 + 2.2.2 |
-| **2.2.1** Build the RAG Pipeline **[12]** | Connect retriever, prompt, and language model | §6.2 / 2.2.1 — cells: format context, create chain, initialise chain; LLM = Llama 3.2 3B Instruct via Featherless (§5.4), not Ollama |
+| **2.2.1** Build the RAG Pipeline **[12]** | Connect retriever, prompt, and language model | §6.2 / 2.2.1 — cells: format context, create chain, initialise chain; LLM = `gemini-3.5-flash-lite` via `ChatGoogleGenerativeAI` (§5.4), not Ollama / Antigravity |
 | **2.2.2** Generate Answers and Display Sources **[7]** | QA function; answer + source documents | §6.2 / 2.2.2 — `ask()`; test with Valve-B / 2,800 psi smoke question; show filenames |
 | **3.** RAG Evaluation **[20]** | Parent section | Section 6.3 |
 | **3.1** Evaluation and Inference **[20]** | Parent section | 3.1.1–3.1.3 |
@@ -582,7 +585,7 @@ After a full run of the starter notebook, these outputs must be visible in the c
 ### 7.4 What not to submit / commit
 
 - Full dataset embedded in cells.
-- Hugging Face tokens or any private credentials.
+- Google API keys, Hugging Face tokens, or any private credentials.
 - The `.venv/` virtual environment directory.
 - Chroma persist directories committed to git.
 - Altered reference answers chosen only to raise similarity scores.
@@ -595,11 +598,11 @@ Record near the RAG setup or conclusion cells:
 - Runtime: packages installed in project `.venv`; notebook kernel bound to that environment.
 - Implementation file: this starter notebook under `practice-capstone-project/results/`.
 - Embedding model: `sentence-transformers/all-MiniLM-L6-v2`.
-- Language model: `meta-llama/Llama-3.2-3B-Instruct` via Hugging Face Inference Provider `featherless-ai` (not Ollama / Gemini / build.nvidia).
-- Temperature / sampling: `do_sample=False`, temperature 0.
+- Language model: `gemini-3.5-flash-lite` via `langchain-google-genai` / Gemini Developer API (not Ollama, Hugging Face chat, build.nvidia, or Antigravity).
+- Temperature: `0` (thinking disabled or minimised if exposed).
 - Dataset path: `../dataset` relative to the notebook.
 - Chroma collection name `logistics_rag` and that the collection is deleted and recreated before indexing.
-- Network requirement for LLM calls; local availability of MiniLM and NLTK data.
+- Network requirement for Gemini calls; local availability of MiniLM and NLTK data.
 
 ---
 
@@ -609,7 +612,7 @@ Work **inside** [`Logistics_Operations_RAG_Assistant_Starter.ipynb`](../results/
 
 | Phase | Focus | Starter checkpoints to fill |
 | --- | --- | --- |
-| 0 | Activate `.venv`, fix pip cell (drop Ollama), set kernel, confirm `../dataset` | Loading libraries / imports |
+| 0 | Activate `.venv`, fix pip cell (drop Ollama, add `langchain-google-genai`), set kernel, confirm `../dataset` and `GOOGLE_API_KEY` | Loading libraries / imports |
 | A | Load, inspect, clean | 1.2.1, 1.2.2 |
 | B | Lengths, frequencies, TF-IDF | 1.3.1–1.3.3 |
 | C | Chunks, embeddings, Chroma | 1.4.1, 2.1.1, 2.1.2 |
@@ -624,7 +627,7 @@ Work **inside** [`Logistics_Operations_RAG_Assistant_Starter.ipynb`](../results/
 - [ ] Work was done by modifying `practice-capstone-project/results/Logistics_Operations_RAG_Assistant_Starter.ipynb` (starter structure retained)
 - [ ] Group name and assignment title at the top of the notebook
 - [ ] Starter Objective / Business Value / 1.1 markdown retained
-- [ ] Pip cell no longer installs `langchain-ollama`
+- [ ] Pip cell no longer installs `langchain-ollama`; installs `langchain-google-genai`
 - [ ] Exactly 10 documents loaded with `file_name`, `category`, `file_type`, `source_path`
 - [ ] Whitespace cleaned; meaning preserved
 - [ ] Min / max / average document lengths reported (characters primary)
@@ -633,7 +636,7 @@ Work **inside** [`Logistics_Operations_RAG_Assistant_Starter.ipynb`](../results/
 - [ ] Chunks: size 800, overlap 120, metadata preserved; count + sample shown
 - [ ] Embeddings: `all-MiniLM-L6-v2`
 - [ ] Chroma collection `logistics_rag` populated after delete-and-recreate; vector count shown
-- [ ] Retriever `k=4`; grounded prompt; Llama 3.2 3B Instruct via Featherless; temperature 0
+- [ ] Retriever `k=4`; grounded prompt; `gemini-3.5-flash-lite` via `ChatGoogleGenerativeAI`; temperature 0
 - [ ] QA function returns answer and displays retrieved filenames (smoke test run)
 - [ ] Five evaluation pairs unchanged in substance; evaluation function run; averages reported
 - [ ] Unsupported AVL-BUD-2026 question refuses to invent figures
@@ -646,10 +649,12 @@ Work **inside** [`Logistics_Operations_RAG_Assistant_Starter.ipynb`](../results/
 ## 10. Out of scope
 
 - Live system integrations (GIR, procurement systems, email, hotlines).
-- Fine-tuning or changing the embedding model.
+- Fine-tuning or changing the embedding model (including Gemini embedding models in place of MiniLM).
 - Rerankers, multi-query retrieval, or agent tool calling (optional future work only).
 - Resolving FIN-AUTH-101 vs RGM-2026 conflicts inside the generator by inventing policy.
-- Using build.nvidia, Ollama, or Gemini in the graded notebook.
+- Using build.nvidia, Ollama, or a Hugging Face chat LLM in the graded notebook.
+- Google Antigravity IDE, Antigravity CLI, Antigravity SDK, or the Gemini API Antigravity agent (`antigravity-preview-*`) as the notebook’s language-model path.
+- Gemini Live, TTS, image, Omni, Deep Research, or other non-text-chat modalities.
 
 ---
 
@@ -658,6 +663,7 @@ Work **inside** [`Logistics_Operations_RAG_Assistant_Starter.ipynb`](../results/
 1. Assignment brief: `dumps/practice-capstone-project/RAG Assignment-Logistics Operations Assistant.pdf`
 2. Starter notebook to modify in place: `practice-capstone-project/results/Logistics_Operations_RAG_Assistant_Starter.ipynb`
 3. Dataset: `practice-capstone-project/dataset/`
-4. Hugging Face model card: `https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct`
-5. LangChain Hugging Face chat integration: `langchain-huggingface` (`HuggingFaceEndpoint`, `ChatHuggingFace`)
+4. Gemini models: `https://ai.google.dev/gemini-api/docs/models`
+5. LangChain Google Generative AI: `langchain-google-genai` (`ChatGoogleGenerativeAI`)
 6. Embedding model: `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2`
+7. Antigravity (out of scope for this notebook): `https://antigravity.google/` and Gemini API Antigravity agent docs
