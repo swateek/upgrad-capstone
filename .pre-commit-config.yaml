@@ -41,3 +41,10 @@ repos:
         exclude: ^dumps/
       - id: ruff-format
         exclude: ^dumps/
+
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.9.1
+    hooks:
+      - id: nbstripout
+        # One line: YAML `|` would put a newline in the regex, breaking `^` on `tmp`.
+        exclude: ^dumps/
