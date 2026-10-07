@@ -46,5 +46,4 @@ repos:
     rev: 0.9.1
     hooks:
       - id: nbstripout
-        # One line: YAML `|` would put a newline in the regex, breaking `^` on `tmp`.
-        exclude: ^dumps/
+        exclude: '(^dumps/|(^|/)results/)'
