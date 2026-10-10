@@ -70,3 +70,7 @@ Groups are randomly formed (communicated **5 Oct 2026**). Group changes are not 
 - [ ] Work consistently with your team between sessions
 - [ ] Submit Capstone by **13 Nov**
 - [ ] Prepare for evaluation within 1–2 weeks of submission
+
+## Documents
+
+- [Git Workflow Guide](docs/GITFLOW.md)
