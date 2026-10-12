@@ -1,75 +1,85 @@
 # upGrad Capstone Project
 
-Team-based, structured practical project for the programme.
+Team-based, structured practical project for the programme. This repository is for Capstone group **DLlamas**.
 
 ## Overview
 
 | | |
 |---|---|
+| Group | **DLlamas** |
 | Weightage | **20%** of the overall programme grade |
 | Team size | **6–7** learners per group |
-| Duration | **5 weeks**, including **4** weekly mentorship sessions |
+| Schedule | Mentorship from **30 Oct 2026**; final submission **27 Nov 2026**; presentation **5 Dec 2026** |
 | Graduation | Required — not participating fails the programme and blocks certification |
 
-Groups are randomly formed (communicated **5 Oct 2026**). Group changes are not allowed. All members receive the same grade.
+Groups are randomly formed (communicated **5 Oct 2026**). This team's group is **DLlamas**. Group changes are not allowed. All members receive the same grade.
 
 ## Journey
 
-1. **Briefing** — Understand structure and key dates
-2. **Practice assignment** — Meet the team and the problem (optional, non-gradable; strongly recommended)
-3. **Track selection** — Choose from the provided tracks and options
-4. **Build + mentorship** — Work as a team; attend 4 mentor sessions
-5. **Submission** — Deliver by **13 Nov 2026**; evaluation within about 1–2 weeks
+1. **Practice assignment** — Meet the team and the problem (optional, non-gradable; strongly recommended). Deadline **12 Oct 2026**
+2. **Track selection** — Review the Capstone document, then the nominated representative submits the team's collective choice on the LMS form by **17 Oct 2026**
+3. **Build + mentorship** — Work begins **30 Oct 2026**. One dedicated mentor; four weekly sessions. Recordings are on the LMS
+4. **Submission** — Deliver by **27 Nov 2026**. No extensions
+5. **Presentation** — **5 Dec 2026**
 
 ## Key dates (2026)
+
+Revised calendar, approved to leave more time for project work alongside programme activities and proctored examinations.
 
 | Date | Milestone |
 |------|-----------|
 | **5 Oct** | Group info + practice assignment live |
-| **9 Oct** | Problem statement + track selection live (two tracks) |
-| **10 Oct** | Learner Capstone briefing |
-| **11 Oct** | Practice assignment deadline; mentorship slots communicated |
-| **11–13 Oct** | Window to raise concerns |
-| **13 Oct** | Track selection deadline |
-| **14 Oct – 12 Nov** | Mentorship calls — 4 sessions (1/week), 45 minutes each, fixed slot |
-| **13 Nov** | Final submission — **no extensions** |
-| **Within 1–2 weeks of submission** | Presentation / final evaluation & showcase |
+| **9 Oct** | Problem statement and track selection form live on the LMS |
+| **12 Oct** | Practice assignment deadline |
+| **17 Oct** | Track selection form deadline |
+| **23–25 Oct** | Mentorship slots communicated |
+| **30 Oct** | Capstone and mentorship begin |
+| **27 Nov** | Final submission — **no extensions** |
+| **5 Dec** | Capstone project presentation |
 
 ### Practice assignment
 
-- Opens: **5 Oct** · Deadline: **11 Oct** · Duration: ~1 week
+- Opens: **5 Oct** · Deadline: **12 Oct**
 - Optional and non-gradable; use it to collaborate before graded work begins
+
+### Track selection
+
+- The form is on the LMS. Review the Capstone document before completing it
+- Only the officially nominated team representative can submit
+- The representative consults every member and submits the team's collective decision
+- Submissions by other members are not considered
+- Representative details will be shared separately. Deadline: **17 Oct**
 
 ### Mentorship
 
-- One dedicated mentor per group; fixed weekly slot (no learner-side booking)
-- Slot shared with learners on **11 Oct**
-- Missed session → recording on the LMS (Live Learning tab); full-team attendance recommended
-- No extra sessions; if nobody attends, that week’s slot expires
+- One dedicated mentor per group, for four weekly sessions, starting **30 Oct**
+- Slots are communicated **23–25 Oct**
+- Session recordings are available on the LMS
+- Session length, how slots are booked, the grading rubric, and the submission format will be shared separately
 
 ## Working rules
 
-- Communicate regularly, divide work clearly, keep moving even if a member is inactive
+- Connect early. Communicate regularly, divide work clearly, and keep moving even if a member is inactive
 - Come to mentor sessions prepared; act on feedback
 - External tools and datasets are allowed
-- Mentors share the grading rubric; the team owns execution and the final submission
+- The team owns execution and the final submission
 - Capstone issues → programme coordinator
 
 ## Checklist
 
 **Before you start**
 
-- [X] Know your assigned group
-- [ ] Complete the practice assignment if possible
-- [ ] Check and save your fixed mentorship slot
-- [ ] Submit track selection by **13 Oct**
+- [X] Know your assigned group: **DLlamas**
+- [ ] Complete the practice assignment if possible (deadline **12 Oct**)
+- [ ] Nominated representative submits the track selection form by **17 Oct**, after the team agrees
+- [ ] Note the mentorship slot when it is communicated (**23–25 Oct**)
 
 **Throughout**
 
-- [ ] Attend or catch up on each of the four weekly sessions
-- [ ] Work consistently with your team between sessions
-- [ ] Submit Capstone by **13 Nov**
-- [ ] Prepare for evaluation within 1–2 weeks of submission
+- [ ] Attend or catch up on each of the four weekly sessions (recordings on the LMS)
+- [ ] Work consistently with the team between sessions, from **30 Oct**
+- [ ] Submit the Capstone by **27 Nov** — no extensions
+- [ ] Present on **5 Dec**
 
 ## Documents
 
