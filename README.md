@@ -157,4 +157,5 @@ Revised calendar, approved to leave more time for project work alongside program
 
 ## Documents
 
+- [Development Guide](docs/DEVELOPMENT.md)
 - [Git Workflow Guide](docs/GITFLOW.md)
