@@ -1,0 +1,25 @@
+name: procurement
+display_name: Procurement & vendor-review assistant
+ui_modes: [policy, vendor, bid]
+
+corpus:
+  manifest: corpus/manifest.yaml
+  exclusions: corpus/exclusions.yaml
+  parser: pdf_by_heading
+  chunkers: [by_rule, fixed_512, recursive_800]
+  default_chunker: by_rule # replace with the winner of the chunking experiment
+  metadata_fields: [doc_id, rule_id, instrument, edition_date, synthetic]
+  target_docs: [500, 1200]
+
+retrieval:
+  embedding_model: Qwen/Qwen3-Embedding-0.6B
+  reranker_model: BAAI/bge-reranker-v2-m3
+  top_k_fused: 20
+  top_k_final: 5
+
+tools:
+  core: [search_docs]
+  aliases: {search_docs: search_policy}
+  module: tools.py
+
+state_fields: [active_vendor, active_case_id, last_tool_payload]

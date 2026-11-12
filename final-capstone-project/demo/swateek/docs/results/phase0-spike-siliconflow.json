@@ -1,0 +1,152 @@
+{
+  "run_at": "2026-11-12T17:42:03+00:00",
+  "provider": "siliconflow",
+  "base_url": "https://api.siliconflow.com/v1",
+  "model": "Qwen/Qwen3-8B",
+  "checks": {
+    "1_plain_thinking_off": {
+      "ok": true,
+      "latency_s": 3.67,
+      "content": "The GeM (Government e-Marketplace) portal is an e-procurement platform launched by the Government of India to facilitate transparent and efficient procurement of goods and services by central and state government departments.",
+      "reasoning_chars": 0,
+      "content_has_think_tag": false,
+      "usage": {
+        "completion_tokens": 41,
+        "prompt_tokens": 43,
+        "total_tokens": 84,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 43
+      },
+      "local_prompt_estimate": 39,
+      "estimate_minus_actual": -4
+    },
+    "2_plain_thinking_default": {
+      "ok": true,
+      "latency_s": 22.24,
+      "thinking_on_by_default": true,
+      "reasoning_chars": 2777,
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 612,
+        "prompt_tokens": 19,
+        "total_tokens": 631,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 568,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 19
+      }
+    },
+    "3_tool_round_trip": {
+      "latency_s": 1.88,
+      "tool_calls": 1,
+      "finish_reason": "tool_calls",
+      "content_if_no_call": null,
+      "usage": {
+        "completion_tokens": 22,
+        "prompt_tokens": 212,
+        "total_tokens": 234,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 212
+      },
+      "local_prompt_estimate_with_tools": 128,
+      "tool_name": "screen_vendor",
+      "raw_arguments": "{\"name\": \"DNS OVERSEAS\"}",
+      "args_schema_valid": true,
+      "tool_role_accepted": true,
+      "final_answer": "Yes, the firm 'DNS OVERSEAS' is present on the GeM delisted sellers screening list under GFR Rule 144(xi), as per the dated snapshot from 2024-09-03.",
+      "final_latency_s": 2.74,
+      "final_usage": {
+        "completion_tokens": 49,
+        "prompt_tokens": 290,
+        "total_tokens": 339,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 290
+      },
+      "ok": true
+    },
+    "4_json_object": {
+      "ok": true,
+      "accepted": true,
+      "latency_s": 2.83,
+      "schema_valid": true,
+      "error": null,
+      "content": "{\"answer\": \"Yes, this office must buy laptops through GeM if laptops are available on GeM.\", \"citations\": [\"gfr_2017:R149\"]}"
+    },
+    "5_json_schema_strict": {
+      "ok": true,
+      "accepted": true,
+      "latency_s": 3.29,
+      "schema_valid": true,
+      "error": null,
+      "content": "{\"answer\": \"Yes, this office must buy laptops through GeM if laptops are available on GeM.\", \"citations\": [\"gfr_2017:R149\"]}"
+    },
+    "6_twelve_message_history": {
+      "ok": true,
+      "messages_sent": 12,
+      "accepted": true,
+      "latency_s": 1.44,
+      "content": "21"
+    },
+    "7_streaming": {
+      "ok": true,
+      "chunks": 94,
+      "time_to_first_token_s": 1.18,
+      "total_s": 4.64,
+      "content": "Three well-known Indian procurement manuals are:\n\n1. **Procurement Manual for Goods and Services (PMGS)**\n2. **Procurement Manual for Construction Works (PMCW)**\n3. **Procurement Manual for Central Government (PMC)**\n\nThese manuals provide guidelines and procedures for conducting procurement activities in various sectors and government departments in India. They are issued by the Government of India to ensure transparency, efficiency, and compliance with legal and financial standards in public procurement."
+    }
+  }
+}

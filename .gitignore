@@ -4,3 +4,7 @@
 !.dockerignore
 chroma
 *.sqlite3
+__pycache__/
+node_modules/
+*.part
+final-capstone-project/demo/swateek/data/

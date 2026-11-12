@@ -1,0 +1,37 @@
+[project]
+name = "copilot"
+version = "0.1.0"
+description = "Track B procurement and vendor-review copilot (Deep Agents harness, domain packs)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "deepagents>=0.7.36",
+    "httpx>=0.28.1",
+    "langchain-openai>=1.7.4",
+    "openai>=3.49.0",
+    "pydantic>=2.14.3",
+    "pydantic-settings>=2.16.2",
+    "pypdf>=7.0.1",
+    "pyyaml>=6.0.3",
+    "tokenizers>=0.23.3",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/copilot"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "ruff>=0.17.4",
+]

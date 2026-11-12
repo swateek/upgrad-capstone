@@ -126,7 +126,7 @@ final-capstone-project/demo/swateek/
 Repo hygiene this layout needs:
 
 - The root `.gitignore` ignores every dotfile (`.*`), so `.env` stays out of git. `.dockerignore` is whitelisted (done). Still to add: `final-capstone-project/demo/swateek/data/`, `node_modules/`, and `.next/`.
-- The 500 KB pre-commit size limit has been removed. The **manifest** (URL, edition date, sha256) is committed either way. Whether the source PDFs are also committed, or only downloaded and checked by `ingest`, is open (§16).
+- The 500 KB pre-commit size limit has been removed, but **source PDFs are not committed** (decided). `manifest.yaml` (URLs, editions) and `manifest.lock.yaml` (sha256, sizes) are committed. `copilot.ingest.download` fetches and verifies the files into `data/raw/<domain>/`.
 - The env template is called `env.sample`, not `.env.example`, because of the dotfile rule. The practice project uses the same name.
 
 ---
@@ -290,10 +290,20 @@ A small model may skip calling the critic, so the critic is enforced in code. A 
 
 The default deep-agent prompt and built-in tools are written for large models. For Qwen3-8B:
 
-- Drop the filesystem middleware and the general-purpose subagent, which this use case doesn't need. Keep todos, subagents, and summarization. That leaves exactly three roles, no extra agents.
-- Replace the default system prompts with short domain prompts from `domains/<name>/prompts/`.
-- Keep tool descriptions to one or two lines with tight Pydantic schemas.
-- Measure prompt tokens per role in the Phase 0 spike and record them in `docs/small-model-log.md`.
+Measured in Phase 0 (`docs/results/phase0-deepagents-prompt-size.json`, `docs/small-model-log.md` #5):
+
+| Build | Planner's first call |
+|---|---|
+| `create_deep_agent` defaults | 2,889 tokens (filesystem tool schemas alone: 2,830) |
+| Without filesystem | 1,790 |
+| `create_agent` + `TodoListMiddleware` + `SubAgentMiddleware`, short prompts and descriptions | **471** |
+
+So the harness is built from the **third configuration**:
+- `create_agent` (LangChain, which Deep Agents is built on) with Deep Agents' `SubAgentMiddleware` and LangChain's `TodoListMiddleware`.
+- No filesystem middleware and no general-purpose subagent. That leaves exactly three roles, no extra agents.
+- Short system prompts, todo prompt, and `task`/`write_todos` descriptions from `domains/<name>/prompts/`. The `task` description must keep `{available_agents}`.
+- Tool descriptions of one or two lines, with tight Pydantic schemas.
+- An explicit `recursion_limit` in the run config. `create_deep_agent` defaults it to 9,999, and the step-cap middleware still enforces the 10-step limit.
 
 ### 7.3 Reliability controls
 
@@ -523,9 +533,12 @@ Today is Thu 12 Nov. The capstone began 30 Oct, so the Week-1 gate (eval set + b
 2. **Using SiliconFlow for development:** worth a one-line check with the mentor, since Track B frames the course endpoint as the given model.
 3. **SiliconFlow base URL:** `api.siliconflow.com` vs `api.siliconflow.cn` depends on the account region.
 4. **Langfuse Cloud region** (EU/US) and who owns the project and keys.
-5. **Corpus files to confirm on download day:** the GFR edition to freeze, and the consultancy and works manual URLs (from the brief's open items).
+5. ~~Corpus files to confirm on download day~~ **Resolved 12 Nov:** GFR consolidated to 31 Jan 2026, consultancy Second Edition 2025, works Second Edition 2025. See `domains/procurement/corpus/editions.md`.
 6. **Role assignment:** which teammate owns each workstream in §14.
-7. **Source PDFs in git:** now that the size limit is gone, commit the downloaded PDFs (reproducible offline builds, larger repo) or keep them out and let `ingest` download them from the manifest?
+**Decided:**
+- Source PDFs stay out of git. Only the manifest and its lock are committed.
+- Screening answers cite the list's own latest date (GeM delist: 03-Sep-2024), not the download date.
+- Citation format is `<doc_id>:<rule or para>`, e.g. `gfr_2017:R149`.
 
 **Decided:** retrieval labels. The ~25 policy questions from the frozen eval set plus about 15 extra retrieval-only policy questions, labelled with gold rule ids in `retrieval_labels.jsonl` and kept outside the frozen set, give ~40 for recall@k. The eval set stays at about 60–70.
 

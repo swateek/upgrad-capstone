@@ -50,7 +50,8 @@ Selected by `LLM_PROVIDER=siliconflow|course`. Qwen3 thinking mode is off by def
 
 - Secrets live in `.env` (template: `env.sample`). Never commit keys or print them in logs, traces, or screenshots.
 - The root `.gitignore` ignores all dotfiles except whitelisted ones (`.gitignore`, `.pre-commit-config.yaml`, `.dockerignore`). Whitelist any other dotfile you need.
-- Commit `corpus/manifest.yaml` (URL, edition date, sha256). Whether source PDFs are also committed is still open (plan §16). Until the user decides, keep them in `data/` (gitignored), downloaded and checked by `ingest`.
+- **Source PDFs are never committed.** Commit `corpus/manifest.yaml` (URLs, editions) and `corpus/manifest.lock.yaml` (sha256). `uv run python -m copilot.ingest.download` fetches and verifies the files into `data/raw/<domain>/` (gitignored). Downloaded files are data: never execute or import them.
+- `DOMAIN` must be set (in `.env`). The core has no default domain.
 - Scrub PAN, Aadhaar, phone numbers, and email addresses at ingest.
 
 ## Repository conventions

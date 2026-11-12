@@ -1,0 +1,135 @@
+# Source manifest for the procurement domain pack.
+#
+# Hand-edited. Lists every external file the domain uses, where it came from, and which
+# edition it is. Hashes are NOT kept here: `python -m copilot.ingest.download --freeze`
+# writes them to manifest.lock.yaml next to this file. Both files are committed; the
+# downloaded files themselves stay in the gitignored data/ folder.
+#
+# Fields
+#   id            stable id, used as doc_id prefix in citations
+#   store         policy | screening | model_tender
+#                 (model_tender is indexed only if the by-rule policy split is under 500 docs)
+#   instrument    short instrument key, used by search_policy(query, instrument)
+#   url           the exact file downloaded
+#   source_page   the official page the url was taken from (checked 12 Nov 2026)
+#   edition       edition as printed / listed
+#   edition_date  ISO date of the edition (see editions.md for how each was chosen)
+#   index_scope   what part of the file is indexed (default: all)
+#   language      en only; ingest refuses anything else
+
+domain: procurement
+checked_on: 2026-11-12
+
+sources:
+  - id: goods_manual_2024
+    store: policy
+    instrument: goods_manual
+    title: Manual for Procurement of Goods, Second Edition, 2024
+    url: https://doe.gov.in/files/circulars_document/Manual_Goods_2024.pdf
+    source_page: https://doe.gov.in/circulars/manual-procurement-goods-second-edition-2024
+    alt_urls:
+      - https://doe.gov.in/files/manuals_documents/Goods.pdf # DoE manuals list, row 4
+    edition: Second Edition, 2024
+    edition_date: 2024-08-16 # DoE circular date; foreword dated 2024-07-22
+    language: en
+
+  - id: ncs_manual_2025
+    store: policy
+    instrument: ncs_manual
+    title: Manual for Procurement of Non-Consultancy Services, 2025
+    url: https://doe.gov.in/files/manuals_documents/MfPoNCS2025.pdf
+    source_page: https://doe.gov.in/manuals
+    edition: "2025"
+    edition_date: 2025-08-18 # date on DoE manuals list; file tracks GFR/DoE clarifications to April 2025
+    language: en
+
+  - id: consultancy_manual_2025
+    store: policy
+    instrument: consultancy_manual
+    title: Manual for Procurement of Consultancy Services, Second Edition, 2025
+    url: https://doe.gov.in/files/manuals_documents/CS2025.pdf
+    source_page: https://doe.gov.in/manuals
+    edition: Second Edition, 2025
+    edition_date: 2025-08-18 # date on DoE manuals list
+    language: en
+
+  - id: works_manual_2025
+    store: policy
+    instrument: works_manual
+    title: Manual for Procurement of Works, Second Edition, 2025
+    url: https://doe.gov.in/files/manuals_documents/Works_Manual_SE_2025.pdf
+    source_page: https://doe.gov.in/manuals
+    edition: Second Edition, 2025
+    edition_date: 2026-01-05 # date on DoE manuals list; DGMA lists the file as 23 Dec 2025
+    language: en
+
+  - id: gfr_2017
+    store: policy
+    instrument: gfr
+    title: General Financial Rules, 2017 (updated up to 31 January 2026)
+    url: https://doe.gov.in/files/circulars_document/GFRupdatedupto31012026.pdf
+    source_page: https://doe.gov.in/general-financial-rules
+    edition: Consolidated, updated up to 31 January 2026
+    edition_date: 2026-01-31
+    index_scope: Chapter 6 (Procurement of Goods and Services) and any amended rule the eval set asks about
+    language: en
+
+  - id: dfpr_2024
+    store: policy
+    instrument: dfpr
+    title: Delegation of Financial Powers Rules, 2024 (booklet)
+    url: https://doe.gov.in/files/circulars_document/Delegation_of_Financial_Powers_Rules_2024_Booklet.pdf
+    source_page: https://doe.gov.in/orders-circulars/28
+    edition: "2024"
+    edition_date: 2024-04-01 # in force from
+    language: en
+
+  - id: gem_gtc_4_0
+    store: policy
+    instrument: gem_gtc
+    title: GeM General Terms and Conditions 4.0
+    url: https://assets-bg.gem.gov.in/resources/upload/shared_doc/gtc/GeM-GTC-40-1764595497.pdf
+    source_page: https://gem.gov.in/
+    edition: "4.0, Version 1.27" # verified: page 1 reads "GTC on GeM 4.0 (Version 1.27) dt 1st December, 2025"
+    edition_date: 2025-12-01
+    language: en
+
+  - id: gem_incident_management_policy
+    store: policy
+    instrument: gem_im_policy
+    title: GeM Incident Management Policy
+    url: https://assets-bg.gem.gov.in/resources/upload/shared_doc/im-policy_1785130926.pdf
+    source_page: https://gem.gov.in/
+    edition: GeM/Transition/IM/V14.10 # document number on page 2
+    edition_date: 2026-06-09 # "Applicable w.e.f. 09.06.2026" on page 1
+    language: en
+
+  - id: ppp_mii_order_2024
+    store: policy
+    instrument: ppp_mii
+    title: Public Procurement (Preference to Make in India) Order, revised 19 July 2024
+    url: https://www.dpiit.gov.in/static/uploads/2025/07/458478309ccf301ceb58f63d02646f42.pdf
+    source_page: https://www.dpiit.gov.in/
+    edition: P-45021/2/2017-PP (BE-II)-Part(4) Vol.II
+    edition_date: 2024-07-19
+    language: en
+
+  - id: model_tender_consultancy_2023
+    store: model_tender
+    instrument: model_tender_consultancy
+    title: Model Tender Document for Procurement of Consultancy Services (No.F.13/1/2022-PPD)
+    url: https://doe.gov.in/files/circulars_document/Model_Tender_Document_for_Procurement_of_Consultancy_Services_2.pdf
+    source_page: https://doe.gov.in/circulars/model-tender-document-procurement-consultancy-services
+    edition: No.F.13/1/2022-PPD
+    edition_date: 2023-06-08
+    language: en
+
+  - id: gem_delisted_sellers
+    store: screening
+    instrument: null
+    title: GeM list of sellers, brands and catalogues removed for non-compliance with GFR Rule 144(xi)
+    url: https://assets-bg.gem.gov.in/resources/upload/shared_doc/sellers-brands-and-catalogues-delisted-from-gem-du_1781592087.pdf
+    source_page: https://gem.gov.in/
+    edition: Five "As on" sections (31-Jan-2024, 11-Mar-2024, 08-May-2024, 22-May-2024, 03-Sep-2024)
+    edition_date: 2024-09-03 # latest "As on" date in the file; ~659 rows; GeM disclaimer on page 1
+    language: en
