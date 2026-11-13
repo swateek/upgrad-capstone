@@ -48,6 +48,14 @@ class Settings(BaseSettings):
     retry_delays_s: tuple[float, ...] = (2.0, 4.0, 8.0)
     request_timeout_s: float = 120.0
 
+    # --- retrieval ------------------------------------------------------------------
+    # Unset: embedded Qdrant under data/qdrant (dev/eval). Docker sets http://qdrant:6333.
+    qdrant_url: str | None = None
+    # --- API -------------------------------------------------------------------------
+    allowed_origins: list[str] = ["http://localhost:3400"]
+
+    chunker: str = "by_rule"  # which chunk set is served; the Phase 3 experiment picks the winner
+
     # --- domain-independent ingest -------------------------------------------------
     max_corpus_docs: int = Field(default=2000, description="Track B hard cap on indexed documents")
 

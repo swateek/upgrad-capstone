@@ -24,6 +24,13 @@ Source: `results/phase1-baseline.json` and `.md`. The 25 policy questions (23 fa
 | 11 | 12 Nov | **Refusals fail once context is given.** With context, neither refusal case refused. For P-024 (June 2022 manual) it answered from the 2024 manual as if it were the 2022 one. For P-025 (debar a firm) it explained how to debar instead of declining. Closed-book declined one of the two. | P-024, P-025 | Refusal rules are checked in code before generation (intent check plus the domain's `refusals.yaml`), not left to the prompt. |
 | 12 | 12 Nov | **Self-contradicting phrasing**: "Yes, the Make in India order does not apply…" (P-014). | P-014 bm25 | Structured answer schema (verdict field + cited sentences), tested in the Phase 3 prompt comparison. |
 
+## Phase 2: demo floor (13 Nov)
+
+| # | Date | Finding | Evidence | Compensation |
+|---|---|---|---|---|
+| 13 | 13 Nov | **Hybrid retrieval beats either retriever alone.** On the 38 labelled questions, recall@5 is 0.92 for hybrid vs 0.79 for BM25 and 0.87 for dense, and recall@1 is 0.60 vs 0.40 (BM25) and 0.53 (dense). | `results/retrieval-by_rule.md` | BM25 + Qwen3-Embedding-0.6B, RRF over the top-20 of each. The reranker comes in Phase 3. |
+| 14 | 13 Nov | **Opaque source handles work.** In the first live `/answer` call, the model "cited" `[15]` and `[16]`. Those were footnote markers copied from GFR text, not sources. With raw citation ids they would have passed through as corrupt citations. With handles, code knew only [1]–[5] were real, dropped the two, and the answer kept two valid citations (`goods_manual_2024:4.12`, `gfr_2017:R154`). | API smoke test, `invalid_handles` field | The model cites [n] only; `copilot.answer.resolve_handles` maps handles to citations and reports invalid handles and uncited sentences, which the UI surfaces. |
+
 ## Ingest notes (12 Nov)
 
 - The GFR PDF has no heading for **Rule 194**; it only appears in a cross-reference. It isn't in the index and the eval set doesn't ask about it.

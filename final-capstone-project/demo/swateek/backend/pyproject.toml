@@ -5,6 +5,7 @@ description = "Track B procurement and vendor-review copilot (Deep Agents harnes
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "deepagents>=0.7.36",
+    "fastapi>=0.162.5",
     "httpx>=0.28.1",
     "langchain-openai>=1.7.4",
     "openai>=3.49.0",
@@ -13,9 +14,11 @@ dependencies = [
     "pymupdf>=2.1",
     "pypdf>=7.0.1",
     "pyyaml>=6.0.3",
+    "qdrant-client>=1.20.0",
     "rank-bm25>=0.2.2",
     "rapidfuzz>=3.14.6",
     "tokenizers>=0.23.3",
+    "uvicorn[standard]>=0.54.0",
 ]
 
 [build-system]

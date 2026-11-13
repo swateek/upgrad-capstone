@@ -546,6 +546,12 @@ Today is Thu 12 Nov. The capstone began 30 Oct, so the Week-1 gate (eval set + b
 - **Bid cases:** all 10 synthetic cases were built in Phase 1, so the bid part of the eval set could be frozen with gold. case_001 is the demo case.
 - **Retrieval labels:** about 40 = the 23 factual policy questions in the eval set + 15 retrieval-only questions.
 - **Gold citations:** a policy answer may cite the primary rule or a verified restatement of the same rule for the same scope (`also_accept`).
+- **Phase 2 (13 Nov):**
+  - Grounded answers use opaque source handles ([1]..[n]) mapped to citations in code, so the model never types a citation id.
+  - The embedding query instruction lives in the domain pack.
+  - API routes as built: `/health`, `/domain`, `/listings/{name}`, `/tools/{name}`, `/answer`. `/chat` and `/threads` arrive with the harness in Phase 3.
+  - Redis joins in Phase 4, with the cache and rate limit it serves.
+  - Host ports are configurable (`WEB_PORT`, `API_PORT`).
 
 **Decided:** retrieval labels. The ~25 policy questions from the frozen eval set plus about 15 extra retrieval-only policy questions, labelled with gold rule ids in `retrieval_labels.jsonl` and kept outside the frozen set, give ~40 for recall@k. The eval set stays at about 60–70.
 

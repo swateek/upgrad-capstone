@@ -1,0 +1,122 @@
+"""Dense vectors in Qdrant: embedded (local path) for dev/eval, server (QDRANT_URL) in Docker.
+
+One collection per domain x chunker, e.g. "<domain>__by_rule". Every point's payload carries
+the embedding model and corpus hash; `check()` refuses to serve an index built from a different
+corpus or model.
+"""
+
+from __future__ import annotations
+
+import uuid
+from collections.abc import Sequence
+from dataclasses import dataclass
+from pathlib import Path
+
+from qdrant_client import QdrantClient, models
+
+from copilot.config import Settings
+
+
+class StaleIndex(RuntimeError):
+    pass
+
+
+@dataclass(frozen=True)
+class DenseHit:
+    chunk_id: str
+    citation: str
+    score: float
+
+
+def collection_name(domain: str, chunker: str) -> str:
+    return f"{domain}__{chunker}"
+
+
+def make_client(settings: Settings) -> QdrantClient:
+    if settings.qdrant_url:
+        return QdrantClient(url=settings.qdrant_url)
+    path: Path = settings.data_dir / "qdrant"
+    path.mkdir(parents=True, exist_ok=True)
+    return QdrantClient(path=str(path))
+
+
+def point_id(chunk_id: str) -> str:
+    return str(uuid.uuid5(uuid.NAMESPACE_URL, chunk_id))
+
+
+class DenseStore:
+    def __init__(self, client: QdrantClient, collection: str) -> None:
+        self.client = client
+        self.collection = collection
+
+    def recreate(self, dim: int) -> None:
+        if self.client.collection_exists(self.collection):
+            self.client.delete_collection(self.collection)
+        self.client.create_collection(
+            self.collection,
+            vectors_config=models.VectorParams(size=dim, distance=models.Distance.COSINE),
+        )
+        if not getattr(self.client, "_client", None).__class__.__name__.startswith("QdrantLocal"):
+            # payload indexes only matter on the server; embedded mode filters by scanning
+            self.client.create_payload_index(
+                self.collection, field_name="doc_id", field_schema=models.PayloadSchemaType.KEYWORD
+            )
+
+    def upsert(
+        self,
+        chunks: Sequence[dict],
+        vectors: Sequence[Sequence[float]],
+        embedding_model: str,
+        corpus_hash: str,
+    ) -> None:
+        points = [
+            models.PointStruct(
+                id=point_id(c["chunk_id"]),
+                vector=list(v),
+                payload={
+                    "chunk_id": c["chunk_id"],
+                    "citation": c["citation"],
+                    "doc_id": c["doc_id"],
+                    "embedding_model": embedding_model,
+                    "corpus_hash": corpus_hash,
+                },
+            )
+            for c, v in zip(chunks, vectors, strict=True)
+        ]
+        for i in range(0, len(points), 256):
+            self.client.upsert(self.collection, points=points[i : i + 256])
+
+    def check(self, embedding_model: str, corpus_hash: str) -> int:
+        """Raise StaleIndex unless the collection matches; return its point count."""
+        if not self.client.collection_exists(self.collection):
+            raise StaleIndex(f"collection {self.collection} does not exist; run the indexer")
+        sample, _ = self.client.scroll(self.collection, limit=1, with_payload=True)
+        if not sample:
+            raise StaleIndex(f"collection {self.collection} is empty")
+        p = sample[0].payload or {}
+        if p.get("embedding_model") != embedding_model or p.get("corpus_hash") != corpus_hash:
+            raise StaleIndex(
+                f"{self.collection} was built with {p.get('embedding_model')} / corpus "
+                f"{str(p.get('corpus_hash'))[:12]}; expected {embedding_model} / {corpus_hash[:12]}"
+            )
+        return self.client.count(self.collection).count
+
+    def search(
+        self, vector: Sequence[float], k: int, doc_ids: set[str] | None = None
+    ) -> list[DenseHit]:
+        flt = (
+            models.Filter(
+                must=[
+                    models.FieldCondition(key="doc_id", match=models.MatchAny(any=sorted(doc_ids)))
+                ]
+            )
+            if doc_ids
+            else None
+        )
+        res = self.client.query_points(
+            self.collection, query=list(vector), limit=k, query_filter=flt, with_payload=True
+        )
+        return [
+            DenseHit(p.payload["chunk_id"], p.payload["citation"], float(p.score))
+            for p in res.points
+        ]

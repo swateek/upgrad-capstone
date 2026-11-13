@@ -76,3 +76,38 @@ uv run pytest -q
 | Synthetic bid cases (10) | `domains/procurement/data/bid_cases/` |
 | Screening snapshot | `domains/procurement/data/screening/` |
 | Baseline results | [`docs/results/phase1-baseline.md`](docs/results/phase1-baseline.md) |
+
+## Phase 2: demo floor (hybrid retrieval, tools, API, web, Docker)
+
+### With Docker
+
+```bash
+cp env.sample .env      # fill SILICONFLOW_API_KEY (ports default to 3400 web, 3401 api, 3402 qdrant)
+docker compose --profile ingest run --rm ingest   # once: verify sources, chunk, embed into Qdrant (~1 min)
+docker compose up -d --build                      # qdrant + api + web
+open http://localhost:3400
+```
+
+The ingest job downloads the source PDFs into the `copilot-data` volume and checks each one against `manifest.lock.yaml`. Rerunning it is cheap: an up-to-date index isn't re-embedded.
+
+### Without Docker (development)
+
+```bash
+cd backend
+uv run python -m copilot.ingest.index                         # embed by_rule chunks into data/qdrant (embedded Qdrant)
+uv run python -m eval.retrieval                               # recall@1/5/10 for bm25, dense, hybrid
+uv run uvicorn copilot.api.app:app --reload --port 3401
+cd ../web && pnpm install && pnpm dev                         # http://localhost:3400 (API_URL defaults to :3401)
+```
+
+### API
+
+| Route | What it does |
+|---|---|
+| `GET /health` | Index status (points, staleness) and provider |
+| `GET /domain` | Display name, UI modes, tools with input schemas, instruments |
+| `GET /listings/bid-cases` | Preloaded cases for the bid picker |
+| `POST /tools/{name}` | Calls one domain tool directly (`search_policy`, `screen_vendor`, `score_bids`). Returns a draft. |
+| `POST /answer` | Hybrid retrieval plus one grounded model call. Citations are mapped from source handles in code. |
+
+No route awards, orders, debars or approves. The web proxy forwards only these routes.

@@ -15,6 +15,7 @@ corpus:
 
 retrieval:
   embedding_model: Qwen/Qwen3-Embedding-0.6B
+  query_instruction: Given a question about procurement rules, retrieve the rule text that answers it
   reranker_model: BAAI/bge-reranker-v2-m3
   top_k_fused: 20
   top_k_final: 5
@@ -25,6 +26,9 @@ tools:
   module: tools.py
 
 state_fields: [active_vendor, active_case_id, last_tool_payload]
+
+prompts:
+  answer: prompts/answer.md
 
 eval:
   queries: eval/queries.jsonl

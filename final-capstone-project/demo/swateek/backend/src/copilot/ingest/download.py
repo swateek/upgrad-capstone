@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import sys
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -35,6 +36,22 @@ USER_AGENT = "Mozilla/5.0"
 
 class DownloadError(RuntimeError):
     pass
+
+
+RETRY_DELAYS_S = (2.0, 5.0, 10.0)  # government hosts drop TLS connections now and then
+
+
+def fetch_with_retry(client: httpx.Client, url: str, dest: Path) -> tuple[str, int]:
+    """Network errors are retried; a bad status or a non-PDF body is not."""
+    for attempt, delay in enumerate((*RETRY_DELAYS_S, None), start=1):
+        try:
+            return fetch(client, url, dest)
+        except httpx.TransportError as err:
+            if delay is None:
+                raise
+            print(f"     retry {attempt}/{len(RETRY_DELAYS_S)} after {delay:.0f}s: {url} ({err})")
+            time.sleep(delay)
+    raise AssertionError("unreachable")
 
 
 def fetch(client: httpx.Client, url: str, dest: Path) -> tuple[str, int]:
@@ -90,7 +107,7 @@ def run(freeze: bool) -> int:
                 continue
             dest = raw_dir / f"{src.id}.pdf"
             try:
-                sha, size = fetch(client, src.url, dest)
+                sha, size = fetch_with_retry(client, src.url, dest)
             except (DownloadError, httpx.HTTPError) as err:
                 failures.append(f"{src.id}: {err}")
                 continue
@@ -99,7 +116,7 @@ def run(freeze: bool) -> int:
             for i, alt in enumerate(src.alt_urls):
                 alt_dest = raw_dir / "_alt" / f"{src.id}.{i}.pdf"
                 try:
-                    alt_sha, _ = fetch(client, alt, alt_dest)
+                    alt_sha, _ = fetch_with_retry(client, alt, alt_dest)
                     alt_same[alt] = alt_sha == sha
                 except (DownloadError, httpx.HTTPError) as err:
                     failures.append(f"{src.id}: alt {alt}: {err}")

@@ -26,6 +26,7 @@ class RetrievalConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     embedding_model: str
+    query_instruction: str | None = None  # task line for instruction-aware query embeddings
     reranker_model: str
     top_k_fused: int = 20
     top_k_final: int = 5
@@ -60,6 +61,7 @@ class DomainConfig(BaseModel):
     tools: ToolsConfig
     state_fields: list[str]
     eval: EvalConfig = EvalConfig()
+    prompts: dict[str, str] = {}  # name -> path in the pack, e.g. answer: prompts/answer.md
 
     root: Path | None = None
 

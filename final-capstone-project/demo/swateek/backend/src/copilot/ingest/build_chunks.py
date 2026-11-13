@@ -196,6 +196,7 @@ def build(include_model_tender: bool | None) -> int:
         (target_min, target_max),
     )
     rpath = PROJECT_ROOT / "docs" / "results" / f"phase1-corpus-{CHUNKER}.md"
+    rpath.parent.mkdir(parents=True, exist_ok=True)
     rpath.write_text(report, encoding="utf-8")
     print(report)
     print(f"wrote {out}\nwrote {rpath}")

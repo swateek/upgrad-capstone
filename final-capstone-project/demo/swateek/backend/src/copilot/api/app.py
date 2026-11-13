@@ -1,0 +1,139 @@
+"""FastAPI app. Demo floor: direct tool routes and a grounded answer route, no planner yet.
+
+    uv run uvicorn copilot.api.app:app --reload --port 3401
+
+Nothing here can award, order, debar or approve. Every tool result is returned as a draft.
+"""
+
+from __future__ import annotations
+
+import logging
+from contextlib import asynccontextmanager
+from typing import Any
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+
+from copilot.answer import Answerer
+from copilot.config import get_settings
+from copilot.domains.loader import load_domain
+from copilot.retrieval.dense import StaleIndex
+from copilot.tools.registry import Toolbox
+
+log = logging.getLogger("copilot.api")
+STATE: dict[str, Any] = {}
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    settings = get_settings()
+    domain = load_domain(settings.domain_dir)
+    toolbox = Toolbox(settings, domain)
+    STATE.update(settings=settings, domain=domain, toolbox=toolbox, index_error=None)
+    try:
+        _ = toolbox.retriever  # fail fast on a missing or stale index, but keep serving tools
+    except (StaleIndex, OSError, RuntimeError) as err:
+        STATE["index_error"] = str(err)
+        log.error("retrieval unavailable: %s", err)
+    prompt_path = domain.prompts.get("answer")
+    STATE["answerer"] = (
+        Answerer(settings, domain.path(prompt_path).read_text(encoding="utf-8"))
+        if prompt_path
+        else None
+    )
+    yield
+    if not STATE["index_error"]:
+        toolbox.retriever.dense.client.close()
+    STATE.clear()
+
+
+app = FastAPI(title="Track B copilot", version="0.2.0", lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=get_settings().allowed_origins,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
+
+
+def toolbox() -> Toolbox:
+    return STATE["toolbox"]
+
+
+@app.get("/health")
+def health() -> dict[str, Any]:
+    tb = toolbox()
+    ok = STATE["index_error"] is None
+    return {
+        "status": "ok" if ok else "degraded",
+        "domain": tb.domain.name,
+        "chunker": tb.settings.chunker,
+        "index": (
+            {"points": tb.retriever.dense.client.count(tb.retriever.dense.collection).count}
+            if ok
+            else {"error": STATE["index_error"]}
+        ),
+        "llm_provider": tb.settings.llm_provider,
+    }
+
+
+@app.get("/domain")
+def domain_info() -> dict[str, Any]:
+    tb = toolbox()
+    d = tb.domain
+    return {
+        "name": d.name,
+        "display_name": d.display_name,
+        "ui_modes": d.ui_modes,
+        "tools": [
+            {
+                "name": t.name,
+                "description": t.description,
+                "ui_mode": t.ui_mode,
+                "input_schema": t.input_model.model_json_schema(),
+            }
+            for t in tb.tools.values()
+        ],
+        "instruments": sorted(tb.instruments) if STATE["index_error"] is None else [],
+        "draft_notice": "All output is a draft for a human decision-maker. "
+        "This system does not award, place orders, or debar.",
+    }
+
+
+@app.get("/listings/{name}")
+def listing(name: str) -> Any:
+    data = toolbox().listing(name)
+    if data is None:
+        raise HTTPException(404, f"no listing '{name}' in this domain")
+    return data
+
+
+@app.post("/tools/{name}")
+def call_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
+    tb = toolbox()
+    spec = tb.tools.get(name)
+    if spec is None:
+        raise HTTPException(404, f"no tool '{name}' in this domain")
+    if spec.fn == tb.search_docs and STATE["index_error"]:
+        raise HTTPException(503, f"retrieval unavailable: {STATE['index_error']}")
+    return {"tool": name, "is_draft": True, "result": spec.call(args)}
+
+
+class AnswerRequest(BaseModel):
+    question: str = Field(min_length=3, max_length=1000)
+    instrument: str | None = None
+
+
+@app.post("/answer")
+def answer(req: AnswerRequest) -> dict[str, Any]:
+    tb = toolbox()
+    if STATE["index_error"]:
+        raise HTTPException(503, f"retrieval unavailable: {STATE['index_error']}")
+    if STATE["answerer"] is None:
+        raise HTTPException(501, "this domain has no answer prompt")
+    found = tb.search_docs(req.question, req.instrument)
+    if "error" in found:
+        raise HTTPException(422, found["error"])
+    result = STATE["answerer"].answer(req.question, found["hits"])
+    return {"question": req.question, "is_draft": True, "hits": found["hits"], **result}
