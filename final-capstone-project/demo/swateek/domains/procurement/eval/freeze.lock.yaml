@@ -1,15 +1,15 @@
-# Frozen eval set, version 2 (v1 + P-015 also_accept; see docs/results/eval-freeze.md). Generated at freeze time; do not hand-edit.
+# Frozen eval set, version 3 (v1 + P-015 also_accept in v2 + P-011/P-012 also_accept in v3; see docs/results/eval-freeze.md). Generated at freeze time; do not hand-edit.
 # backend/tests/test_eval_freeze.py fails if any listed file changes.
 # To change a gold answer: bump version, regenerate this file in the same commit, and write
 # the reason in docs/results/eval-freeze.md. No git tag or branch is used for the eval set.
-version: 2
-commit: 0e3d764 + v2 change (P-015 also_accept) # v1 commit; v2 lands in the next commit
+version: 3
+commit: 0e3d764 + v2 (P-015) + v3 (P-011, P-012) also_accept changes # v1 commit; v3 lands in the next commit
 frozen_on: '2026-11-13'
 queries: 60
 by_job: {policy: 25, screening: 20, bid: 15}
 refusals: 8
 files:
-  eval/queries.jsonl: 31c47e5fb0325a4b75001ea20dd4ecf8c003e06ded6665772a0dd7e6d87131a7
+  eval/queries.jsonl: 4c9c833f441dd3045ef42037ed5b18baa0c9ac403077874f5fe36b95eeaa0528
   eval/retrieval_labels.jsonl: 93431cab52097681c81ff090bae0f5a55c2a22e63aa9752ca2cbacfd087335ec
   eval/dev.jsonl: 8f80cbf67dbddbbf3d9f24923e6617f1f8d7aa82031accae34ea038999c31751
   refusals.yaml: f57f3db7b6989aa87e41812f74790a8bd2e37526c116413b5f47dcc4e4b69e42

@@ -142,6 +142,32 @@ class PlannerContext(AgentMiddleware):
         return handler(request)
 
 
+class ExecutorContext(AgentMiddleware):
+    """Gives the executor the user's own question and the session memory on every call.
+
+    The executor otherwise sees only the planner's task description. After a critic rejection
+    the planner re-delegates with the critic's problems, often without the case id or the
+    question itself; the 8B executor then guessed an id (it copied the prompt's example
+    "case_001", later invented "case_123") and answered the feedback instead of the user
+    (small-model-log #38)."""
+
+    def wrap_model_call(
+        self, request: ModelRequest, handler: Callable[[ModelRequest], ModelResponse]
+    ) -> ModelResponse:
+        ctx = require()
+        notes = []
+        if ctx.question:
+            notes.append(f"The user's question (answer this, with the tools): {ctx.question}")
+        if ctx.session:
+            notes.append("Session memory (from earlier turns): " + json.dumps(ctx.session))
+        if notes:
+            base = request.system_message.content if request.system_message else ""
+            request = _override(
+                request, system_message=SystemMessage(content=f"{base}\n\n" + "\n".join(notes))
+            )
+        return handler(request)
+
+
 class CriticGate(AgentMiddleware):
     """The critic gate on the planner. Two entry points, one rule: nothing leaves unreviewed.
 

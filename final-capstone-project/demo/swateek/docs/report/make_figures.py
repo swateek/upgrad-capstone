@@ -30,7 +30,7 @@ INK = "#0b0b0b"
 INK_2 = "#52514e"
 MUTED = "#8a8985"
 GRID = "#e6e5e1"
-SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100"]
+SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4"]
 TINT = {"blue": "#e8f0fb", "orange": "#fdeee7", "aqua": "#e5f6ef", "gray": "#f3f2ef"}
 
 plt.rcParams.update(
@@ -330,9 +330,11 @@ def slice_scores(rows: list[dict]) -> dict[str, float]:
 
 def fig_e2e() -> None:
     runs = [
-        ("Run 1 (v1)", "e2e-v1-run1"),
-        ("Run 2 (v2 re-score)", "e2e-v2-run2-rescored"),
-        ("Run 3 (v2)", "e2e-v2-run3"),
+        ("Run 1", "e2e-v3-run1-rescored"),
+        ("Run 2", "e2e-v3-run2-rescored"),
+        ("Run 3", "e2e-v3-run3-rescored"),
+        ("Run 4", "e2e-v3-run4-rescored"),
+        ("Run 5", "e2e-v3-run5-rescored"),
     ]
     slices = [
         ("policy", "Policy (23)"),
@@ -343,14 +345,21 @@ def fig_e2e() -> None:
     ]
     scores = [slice_scores(load(f)["rows"]) for _, f in runs]
     values = [[s[k] for k, _ in slices] for s in scores]
-    fig, ax = plt.subplots(figsize=(8.6, 3.0))
+    fig, ax = plt.subplots(figsize=(8.6, 2.6))
     grouped_bars(
-        ax, [label for _, label in slices], [r for r, _ in runs], values, lambda v: f"{v:.0%}"
+        ax,
+        [label for _, label in slices],
+        [r for r, _ in runs],
+        values,
+        lambda v: f"{v:.0%}",
+        width=0.16,
+        gap=0.02,
+        label_size=5.6,
     )
     style_axes(ax, "share correct")
     ax.set_ylim(0, 1.12)
     ax.yaxis.set_major_formatter(matplotlib.ticker.PercentFormatter(1.0))
-    ax.legend(frameon=False, loc="upper left", ncols=3, fontsize=8, bbox_to_anchor=(0, 1.13))
+    ax.legend(frameon=False, loc="upper left", ncols=5, fontsize=8, bbox_to_anchor=(0, 1.13))
     fig.tight_layout()
     fig.savefig(OUT / "fig3-e2e-accuracy.png", bbox_inches="tight")
     plt.close(fig)
@@ -361,14 +370,15 @@ def fig_e2e() -> None:
 
 def fig_failures() -> None:
     runs = [
-        ("Run 1 (v1)", "e2e-v1-run1"),
-        ("Run 2 (v1)", "e2e-v1-run2"),
-        ("Run 2 (v2 re-score)", "e2e-v2-run2-rescored"),
-        ("Run 3 (v2)", "e2e-v2-run3"),
+        ("Run 1", "e2e-v3-run1-rescored"),
+        ("Run 2", "e2e-v3-run2-rescored"),
+        ("Run 3", "e2e-v3-run3-rescored"),
+        ("Run 4", "e2e-v3-run4-rescored"),
+        ("Run 5", "e2e-v3-run5-rescored"),
     ]
     labels = ["retrieval miss", "tool-call error", "hallucination", "reasoning error"]
     counts = [Counter(r["failure"] for r in load(f)["rows"] if not r["correct"]) for _, f in runs]
-    fig, ax = plt.subplots(figsize=(8.6, 2.6))
+    fig, ax = plt.subplots(figsize=(8.6, 2.5))
     y = list(range(len(runs)))[::-1]
     left = [0] * len(runs)
     for i, lab in enumerate(labels):

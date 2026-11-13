@@ -33,7 +33,13 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 
 from copilot.agent.context import BudgetExceeded, RunContext, activate, deactivate
 from copilot.agent.critic import Critic
-from copilot.agent.middleware import BudgetMiddleware, CriticGate, PlannerContext, ToolArgGuard
+from copilot.agent.middleware import (
+    BudgetMiddleware,
+    CriticGate,
+    ExecutorContext,
+    PlannerContext,
+    ToolArgGuard,
+)
 from copilot.agent.refusals import RefusalPolicy
 from copilot.agent.tools import build_tools
 from copilot.config import Settings
@@ -142,7 +148,8 @@ class Harness:
             "system_prompt": self.prompts["executor"],
             "tools": self.tools,
             "model": self.llm,
-            "middleware": [self._budget("executor"), ToolArgGuard()],
+            # ExecutorContext before the budget, so the added question is counted (log #38)
+            "middleware": [ExecutorContext(), self._budget("executor"), ToolArgGuard()],
         }
         return create_agent(
             self.llm,

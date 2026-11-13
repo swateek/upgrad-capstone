@@ -38,3 +38,13 @@ Don't edit a frozen file in place. If a gold answer is found to be wrong:
 | Not changed | Every other question, gold answer, bid case and screening file. |
 | `eval/queries.jsonl` sha256 | `31c47e5fb0325a4b…` (full hash in `freeze.lock.yaml`) |
 | Reporting | Runs 1–2 were scored on v1. Run 2 is also re-scored on v2 from its saved answers (no new API calls), so v1 and v2 numbers sit side by side. Later runs use v2. |
+
+### Version 3: 13 November 2026
+
+| | |
+|---|---|
+| Changed | **P-011**: `gold.also_accept` = `goods_manual_2024:6.1.1`, `ncs_manual_2025:6.1.1`, `consultancy_manual_2025:6.1.1` (it had none). **P-012**: `gold.also_accept` += `goods_manual_2024:6.1.2`. |
+| Why | Each section is headed "Bid Security (Rule 170 of GFR 2017)" or "Performance Security (Rule 171 of GFR 2017)" and restates the gold rule. The P-011 sections give the exemption for MSEs and DPIIT-recognised startups word for word. goods_manual_2024:6.1.2 gives "three (3) to five (5) per cent" for goods. v1 already accepted goods_manual_2024:4.4.1 for P-012, which only cross-refers to 6.1.2. In run 5, both questions were answered correctly with these citations and scored wrong. A heading scan ("(Rule N of GFR …)") then checked every gold GFR rule. The other candidates found were not added: the consultancy and non-consultancy 6.1.2 sections cover services contracts, and P-012 asks about goods; no candidate states P-010's 2–5% figure. |
+| Not changed | Every other question, gold answer, bid case and screening file. |
+| `eval/queries.jsonl` sha256 | `4c9c833f441dd304…` (full hash in `freeze.lock.yaml`) |
+| Reporting | Runs 3–5 are re-scored on v3 from their saved answers (no new API calls) and reported next to their v2 scores. Versions are never mixed in one comparison. |
