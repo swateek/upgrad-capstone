@@ -147,16 +147,35 @@ The agent (`backend/src/copilot/agent/`):
 
 ```bash
 cd backend
-uv run python -m eval.e2e --label run3     # 60 frozen questions through the full agent (~30 min, ~$0.04)
-uv run python -m eval.e2e --rescore ../docs/results/e2e-v1-run2.json   # re-score a saved run's policy answers on the current gold, no API calls
+uv run python -m eval.e2e --label run5     # 60 frozen questions through the full agent (~30 min, ~$0.04)
+uv run python -m eval.e2e --rescore e2e-v1-run2.json   # re-score a saved run (in docs/results/) on the current gold, no API calls
+uv run python -m eval.judge e2e-v3-run5-rescored.json # content check of policy answers by a larger judge model (~90K tokens)
 uv run python -m eval.safety               # 7 injection / refusal / PII probes
 ```
 
 - **Results:** [`docs/results/eval-report.md`](docs/results/eval-report.md)
-  - run 3 on eval v2: 56/60 overall, 21/23 factual policy, 100% task completion, 0 retrieval misses;
+  - final, run 5 on eval v3: 57/60 overall, 22/23 factual policy, 0 retrieval misses, 0 tool-call errors;
+  - with the content check on policy answers: 55/60 overall, 20/23 policy (review in `docs/results/judge-v3-run5-review.md`, pending team confirmation);
   - safety probes 7/7.
 - **Tracing:** Langfuse Cloud, one trace per agent turn, PII-masked. It's on when `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` are in `.env`.
 - **Docker:** Redis now holds the retrieval cache and the rate-limit counters:
   - 60 requests/min per client;
   - 10 agent turns/min per conversation;
   - 429 with `Retry-After` when exceeded.
+
+## Phase 5: report, content check, demo
+
+```bash
+cd backend
+uv run python -m eval.judge e2e-v3-run5-rescored.json   # content check of policy answers (larger judge model)
+uv run --with matplotlib python ../docs/report/make_figures.py   # report figures from docs/results/*.json
+uv run python -m eval.demo_preflight                    # run the scripted demo against the live API (stack must be up)
+```
+
+- **Report:** [`docs/report/report.md`](docs/report/report.md), with HTML and PDF beside it (build steps in [`docs/report/README.md`](docs/report/README.md)).
+- **Content check:** review sheets `docs/results/judge-*-review.md` (final: [`judge-v3-run5-review.md`](docs/results/judge-v3-run5-review.md)). The judge finds the problems, and a person confirms the verdicts.
+- **Demo:**
+  - talk track in [`docs/demo/demo-script.md`](docs/demo/demo-script.md);
+  - questions and checks in `domains/procurement/demo.yaml`;
+  - latest preflight in `docs/results/demo-preflight.md`.
+- **Trace dashboard:** what to capture from Langfuse, in [`docs/demo/trace-dashboard.md`](docs/demo/trace-dashboard.md).

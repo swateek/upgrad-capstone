@@ -207,3 +207,38 @@ def test_two_revisions_then_pass(make):
     r = h.run("Draft the score sheet for case_001.", "t8")
     assert r["revisions"] == 2 and r["critic_passed"] and r["answer"] == GOOD_BID
     assert [c["passed"] for c in r["critic"]] == [False, False, True]
+
+
+def test_wrong_case_is_sent_back_before_the_tool_runs(make):
+    """small-model-log #38: the executor scored case_001 when case_002 was asked."""
+    good_002 = (
+        "Draft for the evaluation committee, not an award: B1 scores 75, B2 90 and B3 65. "
+        "B2 is withheld: it is present on the GeM delisted sellers list as of 2024-09-03. "
+        "The draft ranking of eligible bidders is B1, B3."
+    )
+    h, model = make(
+        [
+            plan_and_delegate("p1"),
+            score("e1", "case_001"),
+            score("e2", "case_002"),
+            AIMessage(content=good_002),
+        ]
+    )
+    r = h.run("Score case_002.", "t9")
+    mismatch = [e for e in r["events"] if e["type"] == "tool_arg_mismatch"]
+    assert len(mismatch) == 1 and "case_002" in mismatch[0]["error"]
+    sent_back = [m for m in model.calls[2] if getattr(m, "type", "") == "tool"][-1]
+    assert "case_002" in sent_back.content and '"retryable": true' in sent_back.content
+    assert [p["args"]["case_id"] for p in r["tool_payloads"]] == ["case_002"]  # case_001 never ran
+    assert r["session"]["active_case_id"] == "case_002"
+    assert r["critic_passed"] and r["answer"] == good_002
+
+
+def test_executor_always_sees_the_users_question(make):
+    """small-model-log #38: on a revision the planner's task often dropped the case id."""
+    h, model = make([plan_and_delegate("p1"), score("e1"), AIMessage(content=GOOD_BID)])
+    h.run("Draft the score sheet for case_001.", "t10")
+    executor_call = model.calls[1]  # planner, then the executor's first call
+    system = next(m for m in executor_call if getattr(m, "type", "") == "system")
+    assert "The user's question" in system.content
+    assert "Draft the score sheet for case_001." in system.content

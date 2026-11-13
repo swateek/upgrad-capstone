@@ -579,6 +579,16 @@ Today is Thu 12 Nov. The capstone began 30 Oct, so the Week-1 gate (eval set + b
   - **Critic revisions:** up to 2 per query (`AGENT_MAX_REVISIONS`), raised from 1 after run 2 (small-model-log #34).
   - **Eval v2:** P-015 accepts two more citations, with the reason recorded in `results/eval-freeze.md`.
   - **Results** (`results/eval-report.md`): run 1 45/60, run 2 53/60 (v1), **run 3 56/60 on v2**. Run 3 scored policy 21/23, screening 17/18, bid 10/11 and refusals 8/8, with 100% task completion and 0 retrieval misses. Safety probes passed 7/7.
+- **Phase 5 (13 Nov):**
+  - **Policy content check (§11.2 judge method):** an LLM judge (DeepSeek-V3.2, a different and larger family than the system's model) runs two passes, and every error it reports needs a verified source quote. A person then reviews the judge's failures. The reviews await team confirmation.
+  - **Executor fixes (small-model-log #38):**
+    - no example case id in the prompt or schema;
+    - a domain `check` hook (`TOOLS[...]["check"]`) refuses args that contradict the question;
+    - `ExecutorContext` gives the executor the user's question and the session memory.
+  - **Eval v3:** P-011 and P-012 accept the manual sections that restate GFR 170 and 171. Every run is re-scored on v3.
+  - **Final results: run 5** — 57/60 citation-graded, 55/60 with the content check; policy 22/23 (20/23 content); screening 18/18; bid 9/11; refusals 8/8; 0 retrieval misses and 0 tool-call errors.
+  - **Demo:** `domains/procurement/demo.yaml`, `eval.demo_preflight`, `docs/demo/`.
+  - **Report:** drafted in `docs/report/` (report.md, generated figures, HTML and PDF).
 
 **Decided:** retrieval labels. The ~25 policy questions from the frozen eval set plus about 15 extra retrieval-only policy questions, labelled with gold rule ids in `retrieval_labels.jsonl` and kept outside the frozen set, give ~40 for recall@k. The eval set stays at about 60–70.
 

@@ -4,7 +4,7 @@ subtitle: "IIT Kharagpur / upGrad Executive PG capstone · Track B (API-side) ·
 date: "Draft of 13 November 2026 · submission 27 November 2026"
 ---
 
-**Team:** DLlamas · **Code:** `final-capstone-project/demo/swateek/` · **Model:** Qwen3-8B (frozen weights, hosted) · **Results:** eval set v2, run 3, on SiliconFlow
+**Team:** DLlamas · **Code:** `final-capstone-project/demo/swateek/` · **Model:** Qwen3-8B (frozen weights, hosted) · **Results:** run 5, eval set v3, on SiliconFlow: 57/60 citation-graded, 55/60 with the content check
 
 Every number below links to a file in `docs/results/` or an entry in `docs/small-model-log.md` (cited as "log #n"). The figures are generated from those files by `docs/report/make_figures.py`.
 
@@ -65,7 +65,7 @@ Gold answers were checked mechanically, not by eye (`backend/tests/test_procurem
 
 Where a manual restates a GFR rule for the same scope, the restating section is listed in `also_accept`, so citing either source counts as correct.
 
-**Freezing.** `eval/freeze.lock.yaml` holds the SHA-256 of 68 frozen files, and `tests/test_eval_freeze.py` fails if any of them changes. A gold answer may change only with a version bump and a written reason. One change has been made. **v2** adds two `also_accept` citations to P-015, because both manual sections state the rule word for word ("50 (fifty) per cent"), and the pre-freeze scan for "50%" missed them. Results are always reported with their eval version, and run 2 is shown re-scored on v2 so that v1 and v2 numbers are never mixed in one comparison.
+**Freezing.** `eval/freeze.lock.yaml` holds the SHA-256 of 68 frozen files, and `tests/test_eval_freeze.py` fails if any of them changes. A gold answer may change only with a version bump and a written reason. Two changes have been made, both adding `also_accept` citations for manual sections that restate the gold rule word for word:\n\n- **v2 (P-015):** the pre-freeze scan searched for "50%" and missed sections that write "50 (fifty) per cent".\n- **v3 (P-011, P-012):** sections headed "(Rule 170/171 of GFR 2017)". A heading scan then checked every gold GFR rule for other restatements.\n\nRuns are never compared across versions: every run in §9 is re-scored on v3 from its saved answers.
 
 **Kept apart from the frozen set:**
 
@@ -170,7 +170,7 @@ The weaknesses the experiment exposed are handled in code rather than prompts. U
 **Harness.** The harness uses LangChain Deep Agents only. The plan's three roles map onto it as follows:
 
 - **Planner.** The main agent. It writes a short plan (one to three todos) with `write_todos` and delegates through `task`, in a single reply.
-- **Executor.** A Deep Agents subagent that holds the three tools (`search_policy`, `screen_vendor`, `score_bids`) and drafts the answer.
+- **Executor.** A Deep Agents subagent that holds the three tools (`search_policy`, `screen_vendor`, `score_bids`) and drafts the answer. Every executor call also carries the user's question and the session memory (`ExecutorContext`). Otherwise the executor sees only the planner's task description, which after a critic rejection often drops the case id (log #38).
 - **Critic.** Run **in code** on every draft. A small model might skip calling a critic, so the model never decides whether its answer is reviewed.
 
 The harness is assembled from `create_agent`, `TodoListMiddleware` and `SubAgentMiddleware` rather than `create_deep_agent`. The default build spends 2,889 tokens on the planner's first call; ours spends 471 (§8).
@@ -230,20 +230,21 @@ These entries come from `docs/small-model-log.md`, which recorded each failure a
 |---|---|---|---|
 | Thinking mode is on by default and costs about 14× the output tokens | Spike: 612 vs 41 tokens; 22.2 s vs 3.7 s (log #1) | `enable_thinking: false` on every call | One-sentence answers in ≈ 4 s |
 | Default Deep Agents prompts use 35% of the 8K window before any retrieval | 2,889 tokens on the planner's first call (log #5) | Built from `create_agent` + todo + subagent middleware, with short prompts and tool descriptions | **471 tokens** (−84%; chart below) |
-| Token estimate 40% low with tools | 128 estimated vs 212 actual (log #4) | Calibrated estimator, pinned by a test | 0 runs stopped by a budget in run 3 |
+| Token estimate 40% low with tools | 128 estimated vs 212 actual (log #4) | Calibrated estimator, pinned by a test | No run stopped by the token cap (runs 3–5) |
 | Invented and rewritten citation ids | Closed-book 9/25 ids not in the corpus; with context 5/25 not retrieved (log #8, #10) | Opaque source handles, mapped to ids in code | Every id in an answer comes from the payload, by construction; fake `[15]`/`[16]` dropped (log #14) |
 | Citation refs and tool names written where no search ran | `[P1]` in bid answers; `[score_bids]` as a citation (log #18) | Repaired in code before review, and logged in the trace | Unsupported refs are removed before the critic sees the answer |
 | Refusals fail once context is present | Baseline 0/2 with context (log #11) | Refusal pre-check in code; the critic requires the decline | **8/8** eval refusals in every run; safety probes 7/7 |
 | The 8B critic rejects correct answers and loops to the step cap | Smoke run returned nothing (log #17) | Only deterministic checks block; LLM notes are advisory | No empty answers; 60/60 completion |
-| The planner spends steps re-typing the executor's answer | 10/10 steps, empty answer (log #19) | The gate releases the executor's draft directly | 4.4 model calls per task (run 3) |
+| The planner spends steps re-typing the executor's answer | 10/10 steps, empty answer (log #19) | The gate releases the executor's draft directly | 4.4–4.7 model calls per task (runs 3–5) |
 | The planner answers facts itself without delegating | Ungrounded "cleared vendor" answer (log #20) | A long answer with no tool use is sent back | Covered by an offline test |
-| Bid answers drift to vague summaries | "The draft includes all criteria…" (log #21) | Domain check: every technical total must appear | Bid 10/11 in run 3 |
+| Bid answers drift to vague summaries | "The draft includes all criteria…" (log #21) | Domain check: every technical total must appear | Vague summaries are sent back; a dropped total is flagged (B-003, B-004 in run 5) |
 | The executor's own search queries lose recall | Raw question: gold in top 5 for 23/23; the agent missed some (log #27) | **Query anchoring**: every agent search also runs the user's question, fused with RRF | "20%" answered with a valid citation; the cost is one extra embed + rerank |
 | Misuse of the optional instrument filter | Run 1: 7 retrieval misses, all with a filter set (log #30) | The agent's search tool takes a query only | **Retrieval misses 7 → 0** |
 | "I cannot find this" without searching | 5 run-1 answers with no tool call (log #31) | The critic sends back substantive questions with no tool use | Policy accuracy 11/23 → 19/23 (with #30) |
-| Scores with no evidence attached | B-002 couldn't say which bidder had the shortest delivery (log #32) | Evidence quotes in the compact score sheet | B-002 correct in runs 2 and 3 |
+| Scores with no evidence attached | B-002 couldn't say which bidder had the shortest delivery (log #32) | Evidence quotes in the compact score sheet | B-002 correct in runs 2–5 |
 | One revision is often not enough | 4 run-2 misses flagged twice (log #34) | Up to 2 revisions | B-011 fixed; +6% tokens; p50 latency unchanged |
 | Malformed tool arguments, unbounded retries | Offline scripted model (log #28) | `ToolArgGuard`: one retry, then refuse; counted against budgets | Offline tests pass |
+| On a revision the executor loses the question and guesses the case id (copied the example `case_001`, later invented `case_123`) | Run 3 B-003; demo preflight; run 4 B-001 (log #38) | No example ids; a code check of the case against the question; the executor always gets the user's question and session memory | No wrong case executed in run 5; P-023 and S-005 right for the first time; tool-call errors 2 → 0 |
 
 **What did *not* work:**
 
@@ -257,54 +258,65 @@ The pattern across all of these: when a small model is unreliable at something, 
 
 ## 9. End-to-end evaluation
 
-Each run sends all 60 frozen questions through the full agent, each in a fresh conversation. Langfuse traces every question (tags `eval`, the eval version, the job and the question id). Scoring rules live in `backend/eval/e2e.py`:
+Each run sends all 60 frozen questions through the full agent, each in a fresh conversation, and Langfuse traces every question. Scoring rules live in `backend/eval/e2e.py`:
 
-- **Policy:** correct if the answer cites a gold or `also_accept` rule.
-- **Screening:** correct if `screen_vendor` returned the gold status, and the answer states the snapshot date without contradicting the tool.
+- **Policy:** correct if the answer cites a gold or `also_accept` rule. A separate content check (below) tests what it says.
+- **Screening:** correct if `screen_vendor` returned the gold status and the answer states the snapshot date without contradicting the tool.
 - **Bid:** correct if the score sheet for the asked case matches the gold ranking, and the answer gives every technical total, names withheld bidders and says "draft".
 - **Refusal:** correct if the answer declines without doing the thing asked.
 
-| | Run 1 (v1) | Run 2 (v1) | Run 2 re-scored (v2) | **Run 3 (v2)** |
-|---|---|---|---|---|
-| **All 60** | 45 (75%) | 53 (88%) | 54 (90%) | **56 (93%)** |
-| Policy (23 factual) | 11 | 19 | 20 | **21** |
-| Screening (18) | 17 | 17 | 17 | 17 |
-| Bid (11) | 9 | 9 | 9 | **10** |
-| Refusals (8) | 8 | 8 | 8 | 8 |
-| Task completion (released within budgets, no error) | 59/60 | 60/60 | | **60/60** |
-| Critic passed on the released answer | 47 | 55 | | 56 |
-| Mean tool calls / model calls per task | 1.72 / 4.35 | 1.33 / 4.15 | | 1.38 / 4.37 |
-| Latency p50 / p95 / max (s) | 13.2 / 54.4 / 61.3 | 25.5 / 42.6 / 146.4 | | 26.5 / 43.9 / 52.9 |
-| Mean cost per task (chat + embed + rerank) | $0.00065 | $0.00067 | | $0.00069 |
+**All runs are scored on eval v3** from their saved answers, so they compare like for like (§3).
 
-![Share correct per job across runs. Run 1 is scored on v1; runs 2 and 3 on v2. Source: `results/e2e-*.json`.](figures/fig3-e2e-accuracy.png)
+| | Run 1 | Run 2 | Run 3 | Run 4 | **Run 5 (final)** |
+|---|---|---|---|---|---|
+| **All 60** | 45 (75%) | 54 (90%) | 56 (93%) | 55 (92%) | **57 (95%)** |
+| Policy (23 factual) | 11 | 20 | 21 | 21 | **22** |
+| Screening (18) | 17 | 17 | 17 | 16 | **18** |
+| Bid (11) | 9 | 9 | 10 | 10 | 9 |
+| Refusals (8) | 8 | 8 | 8 | 8 | 8 |
+| **Content-checked:** policy / all | | | 18 / 53 | 20 / 54 | **20 / 55** |
+| Task completion | 59 | 60 | 60 | 59 | 58 |
+| Critic passed | 47 | 55 | 56 | 54 | 53 |
+| Tool / model calls per task | 1.72 / 4.35 | 1.33 / 4.15 | 1.38 / 4.37 | 1.38 / 4.45 | 1.50 / 4.68 |
+| Latency p50 / p95 (s) | 13.2 / 54.4 | 25.5 / 42.6 | 26.5 / 43.9 | 24.9 / 46.0 | 26.2 / 50.3 |
+| Cost per task | $0.00065 | $0.00067 | $0.00069 | $0.00069 | $0.00072 |
 
-**Definitions.** A *step* is one model call by any role. A *tool call* is one tool execution, including a rejected one. *Task completion* means an answer was released within all budgets with no error. A whole run of 60 questions costs about $0.04 at SiliconFlow's prices: chat $0.06/M tokens, embeddings $0.01/M, rerank $0.04/M.
+![Share correct per job across runs, all scored on eval v3. Source: `results/e2e-v3-*-rescored.json`.](figures/fig3-e2e-accuracy.png)
 
-**What changed between runs.**
+**Definitions.** A *step* is one model call by any role; a *tool call* is one tool execution, including a rejected one; *task completion* means an answer was released within all budgets with no error. A run of 60 questions costs about $0.04 at SiliconFlow's prices (chat $0.06/M tokens, embeddings $0.01/M, rerank $0.04/M).
 
-- **Run 1 → 2:** three mechanism fixes, none of them tuned to particular questions (log #30–32): the instrument filter was removed from the agent's search tool, the critic was made to reject answers that use no tool, and evidence quotes were added to score sheets.
-- **Run 2 → 3:** a second critic revision was allowed (log #34).
+**What changed between runs.** Each step targets a mechanism, not a question:
 
-The eval set itself changed only from v1 to v2, for P-015.
+| Step | Change | Effect |
+|---|---|---|
+| **1 → 2** | No instrument filter on the agent's search; the critic rejects answers that use no tool; evidence quotes in score sheets (log #30–32) | Retrieval misses 7 → 0; policy 11 → 20 |
+| **2 → 3** | A second critic revision (log #34) | B-011 fixed |
+| **3 → 4** | The example id `case_001` removed from the prompt; a code check sends back `score_bids` calls for a case the question doesn't name (log #38) | B-003 fixed; B-001 regressed |
+| **4 → 5** | The executor always sees the user's question and the session memory (log #38) | B-001 fixed; P-023 and S-005 right for the first time; 0 tool-call errors |
 
-**Failure taxonomy.** Each wrong answer gets one label, assigned by rules in code in a fixed order; the first match wins:
+**Failure taxonomy.** Each wrong answer gets one label from rules in code, first match wins: *tool-call error* (the run failed, no usable tool call, or the wrong name screened), *retrieval miss* (gold rule never retrieved), *hallucination* (an unknown ref, or the advisory critic marked a claim unsupported), else *reasoning error*.
 
-1. **Tool-call error:** the run failed, no usable tool call was made, or the wrong name was screened.
-2. **Retrieval miss:** a policy answer whose gold rule was never retrieved.
-3. **Hallucination:** an unknown ref, or the advisory LLM critic marked a claim as not supported by its source.
-4. **Reasoning error:** anything else.
+![Failure labels per run (eval v3). Retrieval misses disappear after run 1, and tool-call errors after run 4. Source: `results/e2e-v3-*-rescored.json`.](figures/fig4-failures.png)
 
-![Failure labels per run. Retrieval misses disappear after the agent's search tool loses its instrument filter. Source: `results/e2e-*.json`.](figures/fig4-failures.png)
+**Run 5 misses.**
 
-**Run 3 misses:**
+- **P-021** (hallucination) gives QCBS for a highly complex assignment as 70/30, against the manual's 80/20. It carries a valid citation, so the critic passed it.
+- **B-003 and B-004** (reasoning) score the right case and withhold B2 correctly, but leave out B2's total (log #33). The critic flagged both.
 
-- **P-021 (hallucination).** It gave QCBS for a highly complex assignment as 70/30; the manual says 80/20. The answer cites the right section, so the critic passed it.
-- **P-023 (tool-call error).** "Which evaluation sheet does this office use?" was answered by scoring case_001 instead of searching the office note. The critic passed it.
-- **S-005 (tool-call error).** "Check DNS Overseas" searched the rules three times and never screened the firm. The critic flagged it.
-- **B-003 (reasoning error).** "Score case_002" was answered with case_001's totals. The critic flagged it.
+**Content check.** A correct citation doesn't guarantee a correct answer, so the 23 factual policy answers of runs 3–5 were also judged on content (`backend/eval/judge.py`):
 
-**Run-to-run caveat.** The model samples, and each configuration ran once, so a difference of one or two questions is not a reliable effect. The large shifts are reliable: retrieval misses 7 → 0, and policy accuracy 48% → 91%. **Latency** roughly doubled at the median after run 1, because query anchoring runs two searches per agent search and the 8B reranker is the slowest step. A cached repeat of a search took 0.1 s against 29.7 s cold.
+- **Automatic judge.** DeepSeek-V3.2, a larger model from a different family, compared each answer with its gold points and with the cited and gold passage text, in two passes. Each error it reported had to quote the source text that shows the claim is false, and code checked that the quote exists.
+- **Review.** Its failures were then reviewed against the sources (`results/judge-*-review.md`). The verdicts were prepared by the coding assistant and are pending team confirmation.
+
+Some answers cite the right rule but state the wrong thing: **P-013** says splitting a demand is allowed (runs 3 and 5), **P-014** gets the Make in India yes/no wrong (run 3), **P-005** gives two limits (runs 3 and 4), and **P-006** never names the Local Purchase Committee (run 5). Run 5 is therefore **20/23 policy and 55/60 overall** (log #36). The judge alone said 11/23, but in every run it also failed answers that the sources support, so it finds problems and a person decides them.
+
+**Run-to-run caveat.** The model samples, and each configuration ran once, so a difference of one or two questions is not a reliable effect. The reliable shifts are the ones with a traced mechanism:
+
+- retrieval misses 7 → 0;
+- citation-graded policy accuracy 48% → 96%;
+- tool-call errors 6 → 0.
+
+**Latency** has been about 25 s at the median since run 2, because query anchoring runs two searches per agent search and the 8B reranker is the slowest step. A cached repeat of a search took 0.1 s, against 29.7 s cold.
 
 ## 10. Responsible AI
 
@@ -342,28 +354,18 @@ The screening tool reports only "name appears on list as of date". It refuses do
 
 ## 11. Deployment
 
-The deployment is a set of Docker images run with `docker-compose`, on ports 3400 (web), 3401 (api) and 3402 (qdrant):
+The deployment is a set of Docker images run with `docker-compose` on ports 3400–3402: **web** (Next.js 15 + assistant-ui; proxies only an allow-list of API routes and streams SSE), **api** (FastAPI with the harness; a 727 MB image built with uv), **qdrant** (v1.20.0, the dense index), **redis** (7.4.11-alpine, the retrieval cache and rate-limit counters) and a one-shot **ingest** profile that downloads and hash-checks the sources, chunks and embeds them, and skips re-embedding when the corpus hash matches. Secrets come only from `.env`. Tracing goes to Langfuse Cloud, with one trace per agent turn and the session id set to the thread id.
 
-- **web:** Next.js 15 with assistant-ui. It proxies only an allow-list of API routes and streams SSE.
-- **api:** FastAPI with the agent harness; a 727 MB image built with uv.
-- **qdrant:** v1.20.0, holding the dense index.
-- **redis:** 7.4.11-alpine, holding the retrieval cache and the rate-limit counters.
-- **ingest:** a one-shot profile that downloads and hash-checks the sources, chunks them and embeds them. It skips re-embedding when the corpus hash matches.
-
-Secrets come only from `.env`. Tracing goes to Langfuse Cloud, with one trace per agent turn and the session id set to the thread id.
-
-**Rate limits:** 60 requests/min per client IP and 10 agent turns/min per conversation, with a 429 and `Retry-After` when exceeded. Both were verified in the container: 60 requests returned 200, then 429.
-
-**Retrieval cache:** keyed by the normalised query, corpus hash, chunker, models, k and filter. A repeated search took 0.1 s against 29.7 s cold.
+**Rate limits:** 60 requests/min per client IP and 10 agent turns/min per conversation, with a 429 and `Retry-After` when exceeded; verified in the container (60 × 200, then 429). **Retrieval cache:** keyed by the normalised query, corpus hash, chunker, models, k and filter; a repeated search took 0.1 s against 29.7 s cold.
 
 Development runs without Docker: embedded Qdrant, plus an in-process cache and limiter.
 
 ## 12. Limitations and next steps
 
-- **Provider.** Every number is on SiliconFlow, with the Track B 8,192-token budget enforced in code. The course endpoint is wired as a configuration switch but not yet used. The final numbers will be re-run on it, one teammate at a time, since a group shares one active request.
-- **The critic checks form, not meaning.** It verifies that a citation exists, not that the cited text supports the sentence. P-021 (a wrong ratio with a valid citation) and P-023 (a fluent answer to a different question) passed it (log #35). An entailment check between sentence and passage is the obvious next step. It would have to fit the 8K budget and not reintroduce false rejections (log #17).
-- **Tool choice on terse requests.** "Check DNS Overseas" did not trigger screening. A routing hint, i.e. a name with no question words goes to `screen_vendor` first, would have to be tuned on the development set only.
-- **Latency.** The p50 is 26 s, driven by query anchoring and the 8B reranker. The cache helps repeats, and a smaller reranker would cost 16 points of recall@1.
+- **Provider.** Every number is on SiliconFlow, with the Track B 8,192-token budget enforced in code. The course endpoint is a configuration switch, not yet used; the final numbers will be re-run on it, one teammate at a time.
+- **The critic checks form, not meaning.** It verifies that a citation exists, not that the cited text supports the sentence. In run 5 it passed P-021 (a wrong ratio with a valid citation), and P-006 and P-013 (the right rule cited, the wrong content) (log #35–36). An entailment check between sentence and passage is the obvious next step. It would have to fit the 8K budget and not bring back false rejections (log #17).
+- **Withheld totals and bid detail questions.** The case_002 answers sometimes leave out the withheld bidder's total (the critic flags it). Detail questions can drift back to the totals (log #33, #37). The bid scorer checks totals and withheld bidders, not answer points.
+- **Latency.** The p50 is about 26 s, driven by query anchoring and the 8B reranker. The cache helps repeats, and a smaller reranker would cost 16 points of recall@1.
 - **Corpus edges.** GFR Rule 194 has no heading in the PDF and isn't indexed. A footnote can attach to every rule on its page. The PPP-MII PDF renders "Class-II" as "Class-I I".
 - **Evaluation.** One run per configuration; failure labels assigned by rules, not by a human; 1,690 documents against a 500–1,200 target; no MSE questions until an MSME instrument is hashed in.
 

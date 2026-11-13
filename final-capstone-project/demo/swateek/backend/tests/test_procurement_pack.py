@@ -86,3 +86,13 @@ def test_every_gold_citation_exists_in_the_index():
     cited += [c for lb in labels for c in lb["gold_rule_ids"]]
     assert set(cited) <= known, sorted(set(cited) - known)
     assert len(labels) == 15
+
+
+def test_case_check_only_when_the_question_names_a_case():
+    from tools import check_case_named
+
+    assert check_case_named("Score case_002.", {"case_id": "case_002"}) is None
+    msg = check_case_named("Who should we recommend in case_002?", {"case_id": "case_001"})
+    assert msg and "case_002" in msg
+    assert check_case_named("Compare case_001 and case 003", {"case_id": "case_003"}) is None
+    assert check_case_named("Which bidder was withheld?", {"case_id": "case_001"}) is None

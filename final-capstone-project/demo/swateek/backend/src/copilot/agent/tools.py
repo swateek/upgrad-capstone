@@ -5,6 +5,8 @@
 - Domain tools return a compact, model-facing view (the domain's `compact` hook); the full
   payload is kept in the RunContext for the UI and the critic.
 - Every tool call is accounted against the tool budget and logged as events. Tools never raise.
+- A domain tool may supply `check(question, args)`: arguments that contradict the user's own
+  question are sent back with a message before the tool runs (one retry, then refused).
 """
 
 from __future__ import annotations
@@ -22,6 +24,7 @@ from copilot.retrieval.hybrid import rrf
 from copilot.tools.registry import Toolbox, ToolSpec
 
 HEADER = re.compile(r"^\[[^\]]+\]\n?")
+ARG_RETRIES = 1  # same allowance as ToolArgGuard: one corrected retry per tool
 MAX_HIT_CHARS = 1800  # ~450 tokens per hit keeps five hits inside the retrieved-context budget
 
 
@@ -102,6 +105,17 @@ def make_tool(spec: ToolSpec) -> StructuredTool:
             ctx.emit("tool_refused", tool=spec.name, reason=str(err))
             return json.dumps({"error": str(err), "retryable": False})
         ctx.emit("tool_call", tool=spec.name, args=kwargs)
+        mismatch = spec.check(ctx.question, kwargs) if spec.check and ctx.question else None
+        if mismatch:  # small-model-log #38: args that contradict the user's own question
+            ctx.arg_errors[spec.name] = ctx.arg_errors.get(spec.name, 0) + 1
+            attempt = ctx.arg_errors[spec.name]
+            ctx.emit("tool_arg_mismatch", tool=spec.name, attempt=attempt, error=mismatch[:200])
+            if attempt > ARG_RETRIES:
+                mismatch += (
+                    f" Arguments for {spec.name} did not match the question twice; no more "
+                    "retries. Answer with what you have, or say the request could not be completed."
+                )
+            return json.dumps({"error": mismatch, "retryable": attempt <= ARG_RETRIES})
         payload = spec.call(kwargs)
         if spec.is_search and "error" not in payload:
             payload = _anchor(spec, kwargs, payload, ctx.question)

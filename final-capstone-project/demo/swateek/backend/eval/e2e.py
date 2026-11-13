@@ -4,7 +4,7 @@
     uv run python -m eval.e2e --ids P-001 S-005    # a subset (debugging only; not reported)
 
 Each question runs through the full harness (planner -> executor -> critic) in a fresh thread,
-traced in Langfuse with tags [eval, eval-v<version>, <job>, <id>]. Scoring is code, per job:
+traced in Langfuse with tags [eval, eval-v<version>, <job>, <id>, <label>]. Scoring is code, per job:
   policy     cites an acceptable gold rule (rule_ids + also_accept)
   screening  the tool's status matches gold, and the answer states it with the snapshot date
              without contradicting it
@@ -236,7 +236,7 @@ def main() -> int:
         r = harness.run(
             q["query"],
             f"e2e-{run_id}-{q['id']}",
-            tags=["eval", f"eval-v{version}", q["job"], q["id"]],
+            tags=["eval", f"eval-v{version}", q["job"], q["id"], args.label],
         )
         emb = embedder.tokens_used - e0
         rr = (reranker.tokens_used if reranker else 0) - k0
@@ -272,6 +272,13 @@ def main() -> int:
                 "tools": [
                     {"tool": p["tool"], "args": p["args"], "ok": "error" not in p["result"]}
                     for p in r["tool_payloads"]
+                ],
+                # calls stopped before the tool ran: malformed args, args that contradict the
+                # question (small-model-log #38), budget refusals
+                "guard_events": [
+                    {k: e.get(k) for k in ("type", "tool", "attempt", "error", "reason")}
+                    for e in r["events"]
+                    if e["type"] in ("tool_arg_error", "tool_arg_mismatch", "tool_refused")
                 ],
             }
         )

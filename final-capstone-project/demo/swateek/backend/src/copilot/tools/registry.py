@@ -43,6 +43,8 @@ class ToolSpec:
     ui_mode: str | None = None
     compact: Callable[[dict[str, Any]], Any] | None = None  # agent-facing view of the result
     state: Callable[[dict[str, Any], dict[str, Any]], dict[str, Any]] | None = None
+    # agent-only: (user question, args) -> message if the args don't fit the question, else None
+    check: Callable[[str, dict[str, Any]], str | None] | None = None
     is_search: bool = False
 
     def call(self, args: dict[str, Any]) -> dict[str, Any]:
@@ -205,6 +207,7 @@ class Toolbox:
                 t.get("ui_mode"),
                 compact=t.get("compact"),
                 state=t.get("state"),
+                check=t.get("check"),
             )
         return specs
 

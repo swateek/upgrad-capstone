@@ -99,7 +99,24 @@ def screen_vendor(name: str) -> dict[str, Any]:
 # --- score_bids ----------------------------------------------------------------------------------
 class ScoreBidsInput(BaseModel):
     case_id: str = Field(
-        pattern=r"^case_\d{3}$", description="Preloaded bid case id, e.g. case_001"
+        pattern=r"^case_\d{3}$",
+        description="The bid case id exactly as written in the question: case_ and three digits",
+    )
+
+
+CASE_MENTION = re.compile(r"\bcase[_ ]?(\d{3})\b", re.IGNORECASE)
+
+
+def check_case_named(question: str, args: dict[str, Any]) -> str | None:
+    """The 8B executor sometimes scored case_001 when another case was asked (small-model-log
+    #38). If the question names case ids, the case scored must be one of them. A question that
+    names no case (a follow-up) is not checked; the session's active case applies."""
+    asked = sorted({f"case_{n}" for n in CASE_MENTION.findall(question)})
+    if not asked or args.get("case_id") in asked:
+        return None
+    return (
+        f"The question asks about {' or '.join(asked)}, not {args.get('case_id')}. "
+        f"Call score_bids with case_id {asked[0] if len(asked) == 1 else 'from the question'}."
     )
 
 
@@ -330,7 +347,8 @@ def bid_state(args: dict[str, Any], r: dict[str, Any]) -> dict[str, Any]:
 
 # --- registration ----------------------------------------------------------------------------------
 # fn/input/description/ui_mode: used by the API and the UI.
-# compact: what the agent sees; state: session fields to remember across turns.
+# compact: what the agent sees; state: session fields to remember across turns;
+# check: agent-only test of the args against the user's question.
 TOOLS = {
     "screen_vendor": {
         "fn": screen_vendor,
@@ -349,6 +367,7 @@ TOOLS = {
         "ui_mode": "bid",
         "compact": compact_score_sheet,
         "state": bid_state,
+        "check": check_case_named,
     },
 }
 LISTINGS = {"bid-cases": list_cases}
