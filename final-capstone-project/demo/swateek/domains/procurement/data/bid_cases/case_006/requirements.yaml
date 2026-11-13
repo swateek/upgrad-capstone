@@ -1,0 +1,51 @@
+case_id: case_006
+synthetic: true
+mandatory:
+  - id: M1
+    text: Bid Securing Declaration in the prescribed form is submitted with the bid.
+    field: bid_security_declaration
+    pass_if: true
+  - id: M2
+    text: Authorisation from the Original Equipment Manufacturer (OEM) for the offered cameras is submitted.
+    field: oem_authorisation
+    pass_if: true
+  - id: M3
+    text: The offered camera models hold a valid STQC test certificate.
+    field: stqc_certified
+    pass_if: true
+scored:
+  - id: S1
+    text: Number of similar surveillance camera supply orders (at least 25 IP cameras each) completed in the last three years.
+    field: similar_orders
+    weight: 30
+    rubric:
+      - {min: 3, marks: 30}
+      - {min: 2, marks: 20}
+      - {min: 1, marks: 10}
+      - {min: 0, marks: 0}
+  - id: S2
+    text: Comprehensive onsite warranty offered, in years.
+    field: warranty_years
+    weight: 30
+    rubric:
+      - {min: 5, marks: 30}
+      - {min: 3, marks: 20}
+      - {min: 0, marks: 0}
+  - id: S3
+    text: Authorised service centre located in the consignee's city.
+    field: local_service_centre
+    weight: 20
+    rubric:
+      - {equals: true, marks: 20}
+      - {equals: false, marks: 0}
+  - id: S4
+    text: Delivery and installation period offered, in days from the date of the contract (lower is better).
+    field: delivery_days
+    weight: 20
+    rubric:
+      - {max: 30, marks: 20}
+      - {max: 45, marks: 10}
+      - {min: 0, marks: 0}
+price:
+  field: quoted_price_inr
+  basis: Total price for 36 IP surveillance cameras with mounting, cabling and installation, including GST.

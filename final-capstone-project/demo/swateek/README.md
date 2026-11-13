@@ -8,7 +8,7 @@ A Deep Agents copilot on Qwen3-8B for policy Q&A, vendor screening, and draft bi
 
 ## Status
 
-**Phase 0** (spec + scaffold):
+**Phase 0** (spec + scaffold) is done. **Phase 1** (eval gate) is drafted; the eval set awaits team review before freezing. Phase 0 delivered:
 - Config and LLM provider layer: token budget, Track B retry policy, rate/concurrency gate
 - Domain-pack loader
 - Corpus manifest with hashes
@@ -55,3 +55,24 @@ uv run python spikes/deepagents_prompt_size.py
 ```
 
 Findings so far are in [`docs/small-model-log.md`](docs/small-model-log.md).
+
+## Phase 1: corpus, screening data, bid cases, eval set, baseline
+
+Run from `backend/`, after downloading the corpus:
+
+```bash
+uv run python -m copilot.ingest.build_chunks                          # by_rule chunks -> data/processed/<domain>/chunks/
+uv run python ../domains/procurement/pipelines/build_screening.py     # GeM delist PDF -> data/screening/*.csv
+uv run python ../domains/procurement/pipelines/validate_bid_cases.py  # checks all 10 synthetic cases against their gold
+uv run python -m eval.baseline                                        # single-prompt baseline (~50 small API calls)
+uv run python -m eval.baseline --rescore                              # re-score saved answers, no API calls
+uv run pytest -q
+```
+
+| Output | Where |
+|---|---|
+| Corpus counts | [`docs/results/phase1-corpus-by_rule.md`](docs/results/phase1-corpus-by_rule.md) |
+| Eval set (60), dev set (8), retrieval labels (15) | `domains/procurement/eval/` |
+| Synthetic bid cases (10) | `domains/procurement/data/bid_cases/` |
+| Screening snapshot | `domains/procurement/data/screening/` |
+| Baseline results | [`docs/results/phase1-baseline.md`](docs/results/phase1-baseline.md) |

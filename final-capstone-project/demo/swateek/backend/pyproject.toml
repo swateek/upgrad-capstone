@@ -10,8 +10,11 @@ dependencies = [
     "openai>=3.49.0",
     "pydantic>=2.14.3",
     "pydantic-settings>=2.16.2",
+    "pymupdf>=2.1",
     "pypdf>=7.0.1",
     "pyyaml>=6.0.3",
+    "rank-bm25>=0.2.2",
+    "rapidfuzz>=3.14.6",
     "tokenizers>=0.23.3",
 ]
 
@@ -25,6 +28,9 @@ packages = ["src/copilot"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+[tool.ruff.lint.isort]
+known-first-party = ["copilot", "screening"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

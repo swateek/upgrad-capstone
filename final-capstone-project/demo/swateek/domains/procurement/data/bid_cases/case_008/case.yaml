@@ -1,0 +1,9 @@
+case_id: case_008
+synthetic: true
+title: Security guarding services (24x7) for the office complex for 12 months (SYNTHETIC)
+procurement_type: non_consultancy
+estimated_value_inr: 3600000
+method: GeM bid for services, two-packet; evaluated on the sheet stored with this case
+requirement_sheet: requirements.yaml
+bidders: [B1, B2, B3]
+purpose: Buyer-specific debarment. B2 is present on the SYNTHETIC buyer-specific debarment list, so it is withheld even though it would rank second.

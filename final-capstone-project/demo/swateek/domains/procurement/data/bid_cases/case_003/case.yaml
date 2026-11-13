@@ -1,0 +1,9 @@
+case_id: case_003
+synthetic: true
+title: Housekeeping services for the office building for 12 months (SYNTHETIC)
+procurement_type: non_consultancy
+estimated_value_inr: 2800000
+method: GeM bid for services, two-packet; evaluated on the sheet stored with this case
+requirement_sheet: requirements.yaml
+bidders: [B1, B2, B3]
+purpose: Mandatory fail. B1 declares no valid EPF and ESIC registration, so it is non-responsive and its scored rows are not evaluated.

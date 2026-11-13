@@ -1,0 +1,43 @@
+{
+  "case_id": "case_002",
+  "synthetic": true,
+  "is_draft": true,
+  "rows": [
+    {"bidder": "B1", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "We enclose the signed Bid Securing Declaration in the prescribed form.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "The OEM authorisation letter covering the offered cameras and NVR is attached as Annex C.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Our average annual turnover over the last three financial years is Rs 62 lakh.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "S1", "kind": "scored", "weight": 35, "quoted_evidence": "We completed two CCTV supply and installation orders of 30 or more IP cameras each in the last three years.", "score": 20, "gap": null},
+    {"bidder": "B1", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "We offer a five-year comprehensive onsite warranty on cameras and NVR.", "score": 25, "gap": null},
+    {"bidder": "B1", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "The offered camera models hold valid STQC test certificates, copies enclosed.", "score": 20, "gap": null},
+    {"bidder": "B1", "requirement_id": "S4", "kind": "scored", "weight": 20, "quoted_evidence": "Delivery and installation will be completed within 40 days of the contract.", "score": 10, "gap": null},
+
+    {"bidder": "B2", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "A signed Bid Securing Declaration is submitted with this bid.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "The OEM authorisation for the quoted cameras and NVR is attached.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Average annual turnover for the last three financial years: Rs 90 lakh.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "S1", "kind": "scored", "weight": 35, "quoted_evidence": "Four similar CCTV orders, each for more than 30 IP cameras, were completed in the last three years.", "score": 35, "gap": null},
+    {"bidder": "B2", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "Warranty: three years comprehensive, onsite, for cameras and NVR.", "score": 15, "gap": null},
+    {"bidder": "B2", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "STQC test certificates for the offered camera models are enclosed.", "score": 20, "gap": null},
+    {"bidder": "B2", "requirement_id": "S4", "kind": "scored", "weight": 20, "quoted_evidence": "We will deliver and install within 28 days from the date of the contract.", "score": 20, "gap": null},
+
+    {"bidder": "B3", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "Bid Securing Declaration (signed) is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "OEM authorisation for the offered cameras and recorder is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Our average turnover in the last three financial years is Rs 44 lakh per year.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "S1", "kind": "scored", "weight": 35, "quoted_evidence": "We have completed one order of 36 IP cameras with NVR in the last three years.", "score": 10, "gap": null},
+    {"bidder": "B3", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "We provide three years of comprehensive onsite warranty.", "score": 15, "gap": null},
+    {"bidder": "B3", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "The camera models offered are STQC certified; certificates are at Annex 4.", "score": 20, "gap": null},
+    {"bidder": "B3", "requirement_id": "S4", "kind": "scored", "weight": 20, "quoted_evidence": "Supply and installation will be completed in 25 days from the contract date.", "score": 20, "gap": null}
+  ],
+  "bidders": [
+    {"bidder": "B1", "name": "Lakeshore Secure Systems Pvt Ltd", "status": "responsive", "technical_total": 75, "quoted_price_inr": 3060000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}},
+    {"bidder": "B2", "name": "Prama Hikvision India Pvt. Ltd.", "status": "withheld_screening", "technical_total": 90, "quoted_price_inr": 2890000,
+     "screening": {"status": "present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}},
+    {"bidder": "B3", "name": "Tarang Vision Technologies LLP", "status": "responsive", "technical_total": 65, "quoted_price_inr": 2750000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}}
+  ],
+  "ranking_eligible": ["B1", "B3"],
+  "withheld_bidders": [
+    {"bidder": "B2", "reason": "Bidder name is present (exact normalized match, PRAMA HIKVISION INDIA) in the latest version of the GeM list of delisted sellers. The listing concerns eligibility to participate on GeM only (GFR Rule 144(xi)) and is not a finding about the firm.", "list": "gem_delisted_sellers", "snapshot_date": "2024-09-03"}
+  ],
+  "notes": "B2 has the highest technical total (90) but is withheld on screening: its rows are computed and shown, but it is excluded from the ranking and cannot be recommended. Without the withholding B2 would rank first. The proposal content for B2 is invented test data. Draft ranking for the committee; not an award."
+}

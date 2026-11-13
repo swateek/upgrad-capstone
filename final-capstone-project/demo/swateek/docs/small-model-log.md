@@ -12,6 +12,24 @@ A running record of where Qwen3-8B, or the harness around it, broke or cost too 
 | 6 | 12 Nov | **No 10-message cap in practice.** The API docs list `messages` as 1–10 items, but a 12-message history was accepted and answered correctly ("21" for note 3). Streaming works: first token in 1.2 s, 94 chunks in 4.6 s. (The first run of these checks hit 402 after ~1.3K tokens; the international site bills Qwen3-8B at 0.06/M tokens. They passed after a top-up.) | spike checks 6–7 | History length is limited only by the 8K token budget, not by message count. SSE streaming to the UI is viable. |
 | 7 | 12 Nov | **Ungrounded answers hallucinate confidently.** Asked to "name three Indian procurement manuals" with no context, the model invented "PMGS", "PMCW" and "PMC". None of them exist. The real ones are the DoE manuals for goods, works, consultancy and non-consultancy services. | spike check 7 content | Policy answers come only from retrieved clauses. The critic rejects any factual sentence without a citation from the payload. Good material for the baseline failure note. |
 
+## Phase 1 baseline: how the single-prompt model fails
+
+Source: `results/phase1-baseline.json` and `.md`. The 25 policy questions (23 factual, 2 refusal), Qwen3-8B on SiliconFlow, thinking off, temperature 0, one call per question. "Gold" includes the verified alternate citations (`also_accept`) where a manual restates the same rule for the same scope.
+
+| # | Date | Finding | Evidence | Compensation (planned) |
+|---|---|---|---|---|
+| 8 | 12 Nov | **Closed-book answers are confidently wrong, and the citations are invented.** Only 1/23 cited a real gold rule. Answers used well-formed but non-existent ids (`dfpr_2024:R3.2`, `gem_terms:4.2`, `gem:IM-P01`). `gfr_2017:R154` was used as a catch-all citation for unrelated facts (P-009, -010, -012, -021, -022). Wrong facts include bid security "1.5%" (rule: 2–5%), GeM payment "within 30 days" (rule: 10 days of CRAC), IM levels "Minor/Major/Critical" (rule: four levels incl. mild and serious), and **"rules do not prohibit bids from neighbouring countries"** (the rule requires DPIIT registration). It also invented a body, the "Department of Financial Programming and Reform". | closed_book rows | Never answer policy questions without retrieval. The critic rejects any citation not in this turn's payload. |
+| 9 | 12 Nov | **Retrieval is the bigger bottleneck.** With BM25 top-5 pasted in, 15/23 answers cite a correct source. The gold source was retrieved for 18/23, so the model dropped or mis-cited it in 3 retrieved cases, and retrieval missed it in 5. | bm25_top5 rows | Phase 3: hybrid BM25 + dense with RRF, reranker, chunking experiment. Recall@k is measured separately (Track B). |
+| 10 | 12 Nov | **The model rewrites citation ids.** It glued a GFR rule number onto a manual (`goods_manual_2024:R170`), attributed Make in India paragraphs to manual doc ids (`consultancy_manual_2025:5`, `works_manual_2025:6`), and added sub-clauses not in the index (`dfpr_2024:R11(2)`). 5/25 answers cite an id that was never retrieved, even when the facts in the sentence were right. | P-011, P-014, P-015, P-020 | Give each hit a short opaque handle ([1]..[5]) and map it back to the citation in code, or normalise and validate ids in the critic: strip sub-clauses, reject unknown ids, one revision. |
+| 11 | 12 Nov | **Refusals fail once context is given.** With context, neither refusal case refused. For P-024 (June 2022 manual) it answered from the 2024 manual as if it were the 2022 one. For P-025 (debar a firm) it explained how to debar instead of declining. Closed-book declined one of the two. | P-024, P-025 | Refusal rules are checked in code before generation (intent check plus the domain's `refusals.yaml`), not left to the prompt. |
+| 12 | 12 Nov | **Self-contradicting phrasing**: "Yes, the Make in India order does not apply…" (P-014). | P-014 bm25 | Structured answer schema (verdict field + cited sentences), tested in the Phase 3 prompt comparison. |
+
+## Ingest notes (12 Nov)
+
+- The GFR PDF has no heading for **Rule 194**; it only appears in a cross-reference. It isn't in the index and the eval set doesn't ask about it.
+- Footnotes (amendment history) are attached to **every rule on the same page**, so a rule's chunk can carry a neighbour's footnotes (e.g. Rule 154's scientific-department limit also appears on R151–R155). The eval gold cites only the rule the footnote belongs to.
+- The PPP-MII PDF renders "Class-II" as "Class-I I". Retrieval still finds it; worth knowing when reading answers.
+
 ## Harness facts worth remembering (deepagents 0.7.36)
 
 - `create_deep_agent` no longer includes the todo-list middleware by default. Add `TodoListMiddleware` explicitly.

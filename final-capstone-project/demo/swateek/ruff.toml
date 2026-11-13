@@ -1,0 +1,7 @@
+# Shared ruff settings for files outside backend/ (e.g. domains/*). backend/pyproject.toml
+# carries the same settings for backend code. Keeps pre-commit and `uv run ruff` in agreement.
+line-length = 100
+target-version = "py312"
+
+[lint.isort]
+known-first-party = ["copilot", "screening"]

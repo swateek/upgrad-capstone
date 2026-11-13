@@ -1,0 +1,9 @@
+case_id: case_002
+synthetic: true
+title: Supply and installation of IP CCTV cameras and NVR for the office campus (SYNTHETIC)
+procurement_type: goods
+estimated_value_inr: 3200000
+method: GeM bid, two-packet; evaluated on the sheet stored with this case
+requirement_sheet: requirements.yaml
+bidders: [B1, B2, B3]
+purpose: Screening withholding. B2 is present on the GeM delist snapshot and is the highest technical scorer, so it is withheld and the ranking changes.

@@ -5,6 +5,8 @@ ui_modes: [policy, vendor, bid]
 corpus:
   manifest: corpus/manifest.yaml
   exclusions: corpus/exclusions.yaml
+  splitting: corpus/splitting.yaml
+  synthetic_dir: corpus/synthetic
   parser: pdf_by_heading
   chunkers: [by_rule, fixed_512, recursive_800]
   default_chunker: by_rule # replace with the winner of the chunking experiment
@@ -23,3 +25,10 @@ tools:
   module: tools.py
 
 state_fields: [active_vendor, active_case_id, last_tool_payload]
+
+eval:
+  queries: eval/queries.jsonl
+  dev: eval/dev.jsonl
+  retrieval_labels: eval/retrieval_labels.jsonl
+  baseline_jobs: [policy]
+  baseline_prompt: prompts/baseline.md

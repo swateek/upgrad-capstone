@@ -1,0 +1,9 @@
+case_id: case_009
+synthetic: true
+title: Supply of UV-Visible spectrophotometers for the testing laboratory (SYNTHETIC)
+procurement_type: goods
+estimated_value_inr: 4500000
+method: GeM bid, two-packet; Public Procurement (Preference to Make in India) Order applies; evaluated on the sheet stored with this case
+requirement_sheet: requirements.yaml
+bidders: [B1, B2, B3]
+purpose: Make in India eligibility. B3 declares itself a non-local supplier, fails the mandatory local-supplier condition and is non-responsive.

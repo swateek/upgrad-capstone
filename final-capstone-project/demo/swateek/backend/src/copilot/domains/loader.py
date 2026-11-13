@@ -13,6 +13,8 @@ class CorpusConfig(BaseModel):
 
     manifest: str
     exclusions: str
+    splitting: str
+    synthetic_dir: str | None = None
     parser: str
     chunkers: list[str]
     default_chunker: str
@@ -37,6 +39,16 @@ class ToolsConfig(BaseModel):
     module: str | None = None
 
 
+class EvalConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    queries: str = "eval/queries.jsonl"
+    dev: str = "eval/dev.jsonl"
+    retrieval_labels: str = "eval/retrieval_labels.jsonl"
+    baseline_jobs: list[str] = []  # which jobs the single-prompt baseline runs on
+    baseline_prompt: str = "prompts/baseline.md"
+
+
 class DomainConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -47,6 +59,7 @@ class DomainConfig(BaseModel):
     retrieval: RetrievalConfig
     tools: ToolsConfig
     state_fields: list[str]
+    eval: EvalConfig = EvalConfig()
 
     root: Path | None = None
 

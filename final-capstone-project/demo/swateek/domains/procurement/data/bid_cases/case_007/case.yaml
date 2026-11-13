@@ -1,0 +1,9 @@
+case_id: case_007
+synthetic: true
+title: Supply of 60 laptops for the training institute (SYNTHETIC)
+procurement_type: goods
+estimated_value_inr: 4200000
+method: GeM bid, two-packet; evaluated on the sheet stored with this case
+requirement_sheet: requirements.yaml
+bidders: [B1, B2, B3]
+purpose: Screening history and brand matches. B1 appears only in an older version of the GeM list and B2's name contains a listed brand; neither is withheld, both are noted for a human.

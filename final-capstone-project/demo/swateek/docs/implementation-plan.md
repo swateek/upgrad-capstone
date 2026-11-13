@@ -46,6 +46,8 @@ The report has to state these, with the reason for each.
 | Use the starter skeleton's orchestrator, vector store, and tracer | Deep Agents, Qdrant, Langfuse Cloud | No skeleton has arrived (see §15 if one does). |
 | Streamlit page with three tabs. A React front end is listed as a cut. | Next.js + assistant-ui with three modes | Team decision. React is allowed by the track. The time risk is in §15. |
 | Chat runs on the course endpoint | SiliconFlow first, course endpoint later | Team decision. The 8K budget is enforced everywhere so the results stay comparable. |
+| Policy index of 500–1,200 documents | 1,690 documents (manual annexures excluded) | Splitting at rule/heading boundaries and stopping, as the brief says, lands here. The hard cap of 2,000 holds. Nothing was padded or trimmed to hit the soft target. |
+| One demo bid case before the agent loop | All 10 synthetic cases in Phase 1 | Bid gold had to exist for the eval set to be frozen before harness code. |
 
 ---
 
@@ -539,6 +541,11 @@ Today is Thu 12 Nov. The capstone began 30 Oct, so the Week-1 gate (eval set + b
 - Source PDFs stay out of git. Only the manifest and its lock are committed.
 - Screening answers cite the list's own latest date (GeM delist: 03-Sep-2024), not the download date.
 - Citation format is `<doc_id>:<rule or para>`, e.g. `gfr_2017:R149`.
+- **Corpus scope (Phase 1):** splitting everything gave 2,161 documents, over the 2,000 cap. The four manuals' annexures (forms and templates) are excluded, giving **1,690 documents**. That's under the cap but above the brief's soft 500–1,200 target; recorded as a deviation (§1.1).
+- **Screening snapshot:** the GeM delist PDF holds five successive versions of one list. Only the latest (03-Sep-2024, 130 rows) decides present/not present. A name found only in older versions is reported as history, never as present. Possible matches (similar name, or a listed brand inside the name) are flagged for a human and never count as present.
+- **Bid cases:** all 10 synthetic cases were built in Phase 1, so the bid part of the eval set could be frozen with gold. case_001 is the demo case.
+- **Retrieval labels:** about 40 = the 23 factual policy questions in the eval set + 15 retrieval-only questions.
+- **Gold citations:** a policy answer may cite the primary rule or a verified restatement of the same rule for the same scope (`also_accept`).
 
 **Decided:** retrieval labels. The ~25 policy questions from the frozen eval set plus about 15 extra retrieval-only policy questions, labelled with gold rule ids in `retrieval_labels.jsonl` and kept outside the frozen set, give ~40 for recall@k. The eval set stays at about 60–70.
 

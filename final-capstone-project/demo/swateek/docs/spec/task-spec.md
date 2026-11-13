@@ -69,16 +69,18 @@ The system drafts. Awarding, ordering, debarring, and any eligibility decision s
 
 | Job | Count | Includes |
 |---|---|---|
-| Policy | ~25 | the superseded-edition safety case |
-| Screening | ~20 | exact hit, near-miss, clean name, buyer-specific-only name, the "clear this absent firm" safety case |
-| Bid | ~15 | delisted bidder, failed mandatory condition, the injected-instruction safety case, the award/debar safety case |
+| Policy | 25 (23 factual, 2 refusal) | the superseded-edition safety case (P-024) |
+| Screening | 20 (18 lookups, 2 refusal) | exact and normalized hits, brand hit, history-only names, near-miss (possible match), clean names, buyer-specific-only names (synthetic list), the "clear this absent firm" safety case (S-019), a dossier refusal (S-020) |
+| Bid | 15 (11 scoring, 4 refusal) | all 10 cases: delisted bidder (case_002), failed mandatory condition (case_003, case_009), injected instruction (case_004, B-006/B-007), missing price (case_005), near-miss and history screening (case_006, case_007), synthetic buyer-list hit (case_008), no sheet (case_010), award/debar requests (B-014, B-015) |
 
-Total 60–70. Refusals count inside these numbers. About 15 extra retrieval-only policy questions go in `retrieval_labels.jsonl`, outside the frozen set. Few-shot examples come from `dev.jsonl` only.
+60 questions in total, 8 of them refusals. 15 extra retrieval-only policy questions are in `retrieval_labels.jsonl`, outside the frozen set. Few-shot examples come from `dev.jsonl` (8 items) only. Every gold citation, screening result and bid score sheet has been checked mechanically (see `backend/tests/test_procurement_pack.py`).
+
+**Freezing.** After team review, the set is frozen by committing it, tagging the commit `eval-v1`, and recording the sha256 of `queries.jsonl` in `docs/results/eval-freeze.md`. After that, a gold answer changes only with a new tag and a written reason.
 
 Row format (`queries.jsonl`):
 
 ```json
-{"id": "P-001", "job": "policy", "query": "...", "gold": {"rule_ids": ["gfr_2017:R149"]}, "must_refuse": false, "notes": "..."}
+{"id": "P-001", "job": "policy", "query": "...", "gold": {"rule_ids": ["gfr_2017:R149"], "also_accept": ["goods_manual_2024:4.17.2"], "answer_points": ["..."]}, "must_refuse": false, "notes": "..."}
 {"id": "S-004", "job": "screening", "query": "...", "gold": {"status": "present", "source_list": "gem_delisted_sellers", "snapshot_date": "2024-09-03"}, "must_refuse": false}
 {"id": "S-009", "job": "screening", "query": "...", "gold": {"status": "not_present", "snapshot_date": "2024-09-03"}, "must_refuse": false}
 {"id": "B-002", "job": "bid", "query": "...", "gold": {"case_id": "case_002", "rows_ref": "gold_scores.json", "withheld": ["..."]}, "must_refuse": false}

@@ -15,9 +15,18 @@ Which edition of each instrument is indexed, and why. Checked against the live o
 | PPP-MII order | Revised 19 Jul 2024 | As in the brief. |
 | Model tender (consultancy) | No.F.13/1/2022-PPD, 8 Jun 2023 | Indexed **only** if the by-rule policy split is under 500 documents. Its main job is the bid-case template. |
 
+## Index scope (decided 12 Nov 2026)
+
+- **DoE manuals:** body chapters only. Annexures are excluded: the goods manual from PDF page 275, non-consultancy from 217, consultancy from 216, works from 240. They are forms, templates and FAQs, and including them would breach the 2,000-document cap (2,161 with them, 1,690 without).
+- **GFR:** Chapter 6, Rules 142–206. The PDF has no heading for Rule 194, so it isn't indexed.
+- **DFPR:** rules and annexures/appendices (the financial-power schedules) are both indexed.
+- **Model tender (consultancy):** not indexed, because the policy split is above 500.
+
+Counts per source: `docs/results/phase1-corpus-by_rule.md`.
+
 ## Screening snapshot
 
-The GeM delist PDF has five "As on" sections: 31-Jan-2024, 11-Mar-2024, 08-May-2024, 22-May-2024, and 03-Sep-2024. It has about 659 rows and was downloaded on 12 Nov 2026. GeM's disclaimer (page 1) is stored with the snapshot.
+The GeM delist PDF has five "As on" sections: 31-Jan-2024, 11-Mar-2024, 08-May-2024, 22-May-2024, and 03-Sep-2024. They turned out to be **successive versions of one list**: each newer version is contained in the older ones, and the list shrinks over time. The PDF has 830 rows in total, and the latest version has 130 rows across 9 suppliers. Only the latest version decides present/not present (snapshot date 2024-09-03). Older versions are kept as history. The file was downloaded on 12 Nov 2026, and GeM's disclaimer (page 1) is stored with the snapshot. Built by `pipelines/build_screening.py`.
 
 ## Not yet in the manifest
 
