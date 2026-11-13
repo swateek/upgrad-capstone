@@ -1,4 +1,4 @@
-"""The eval set is frozen (eval-v1). Any change to a frozen file fails here, by name."""
+"""The eval set is frozen (see freeze.lock.yaml for the version). Any change to a frozen file fails here, by name."""
 
 import hashlib
 
@@ -17,8 +17,8 @@ def test_frozen_eval_files_unchanged():
         if hashlib.sha256((PACK / rel).read_bytes()).hexdigest() != digest
     ]
     assert not changed, (
-        f"frozen eval files changed since {lock['tag']}: {changed}. "
-        "Gold changes need a new tag and a written reason (docs/results/eval-freeze.md)."
+        f"frozen eval files changed since version {lock['version']}: {changed}. "
+        "Gold changes need a version bump and a written reason (docs/results/eval-freeze.md)."
     )
 
 

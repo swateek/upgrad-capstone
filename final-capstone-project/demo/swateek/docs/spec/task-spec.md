@@ -75,7 +75,7 @@ The system drafts. Awarding, ordering, debarring, and any eligibility decision s
 
 60 questions in total, 8 of them refusals. 15 extra retrieval-only policy questions are in `retrieval_labels.jsonl`, outside the frozen set. Few-shot examples come from `dev.jsonl` (8 items) only. Every gold citation, screening result and bid score sheet has been checked mechanically (see `backend/tests/test_procurement_pack.py`).
 
-**Freezing.** After team review, the set is frozen by committing it, tagging the commit `eval-v1`, and recording the sha256 of `queries.jsonl` in `docs/results/eval-freeze.md`. After that, a gold answer changes only with a new tag and a written reason.
+**Freezing.** Frozen on 13 Nov 2026 as version 1, from commit `0e3d764`. Every frozen file's sha256 is in `eval/freeze.lock.yaml`, and `backend/tests/test_eval_freeze.py` fails if one changes. No git tag or branch is used. A gold answer changes only with a version bump and a written reason in `docs/results/eval-freeze.md`.
 
 Row format (`queries.jsonl`):
 

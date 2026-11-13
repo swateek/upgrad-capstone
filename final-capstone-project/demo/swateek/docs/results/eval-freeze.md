@@ -2,11 +2,11 @@
 
 The Track B Week-1 gate: the evaluation set is frozen before any agent harness code is written.
 
-## eval-v1: frozen 13 November 2026
+## Version 1: frozen 13 November 2026
 
 | | |
 |---|---|
-| Git tag | `eval-v1` → commit `0e3d764` ("#17 - phase 1 - evals") |
+| Commit | `0e3d764` ("#17 - phase 1 - evals") on branch #17. No git tag or branch is used for the eval set. |
 | Questions | 60: 25 policy, 20 screening, 15 bid. 8 are refusals. |
 | Also frozen | 15 retrieval-only labels, 8 dev (few-shot) questions, 10 synthetic bid cases with gold score sheets, the screening snapshot (GeM latest version 03-Sep-2024 + the synthetic buyer list), `refusals.yaml` |
 | `eval/queries.jsonl` sha256 | `4ebb75965543cee2678a4623670809ccf540a10649aec93691e59ec116c334a2` |
@@ -23,10 +23,10 @@ The gold was checked mechanically before the freeze:
 
 Don't edit a frozen file in place. If a gold answer is found to be wrong:
 
-1. Fix it, regenerate `freeze.lock.yaml`, and tag the commit `eval-v2`.
+1. Fix it, bump `version` in `freeze.lock.yaml`, and regenerate the hashes in the same commit.
 2. Add a section below with the date, the question ids, what changed, and why.
-3. Report results against the tag they were run on. Never mix versions in one table.
+3. Report results with the eval version and commit they were run on. Never mix versions in one table.
 
-## Changes since eval-v1
+## Changes since version 1
 
 None.
