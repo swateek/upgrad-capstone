@@ -1,6 +1,6 @@
 # Technical report: outline (12 pages)
 
-**Working title:** Procurement and vendor-review copilot: an agentic system on a hosted 8B model
+**Team:** DLlamas · **Working title:** Procurement and vendor-review copilot: an agentic system on a hosted 8B model
 
 Page budgets are targets. Every claim points at a file in `docs/results/` or `docs/small-model-log.md`.
 

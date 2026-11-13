@@ -1,5 +1,7 @@
 # Evaluation report (Track B: evaluation and observability)
 
+**Team:** DLlamas
+
 Frozen eval set: 60 questions (25 policy, 20 screening, 15 bid; 8 refusals). **v1** is commit `0e3d764`. **v2** adds two accepted citations to P-015 and changes nothing else (reason in [`eval-freeze.md`](eval-freeze.md)). Every run uses the full agent (planner → executor → critic) on Qwen3-8B via SiliconFlow, by_rule chunks, hybrid BM25 + `Qwen3-Embedding-0.6B`, and `Qwen3-Reranker-8B`. Each question runs in a fresh conversation and is traced in Langfuse (tags `eval`, the eval version, job, question id).
 
 ## Headline

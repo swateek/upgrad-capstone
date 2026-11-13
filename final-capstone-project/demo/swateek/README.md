@@ -1,5 +1,7 @@
 # Procurement and vendor-review copilot (Track B)
 
+**Team DLlamas** · IIT Kharagpur / upGrad Executive PG capstone, Track B (API-side).
+
 A Deep Agents copilot on Qwen3-8B for policy Q&A, vendor screening, and draft bid scoring. Everything domain-specific lives in a swappable domain pack under `domains/`.
 
 - Plan: [`docs/implementation-plan.md`](docs/implementation-plan.md)
@@ -8,7 +10,7 @@ A Deep Agents copilot on Qwen3-8B for policy Q&A, vendor screening, and draft bi
 
 ## Status
 
-**Phases 0–4 are done.** Next is **Phase 5**: the report, the final evaluation, and demo prep.
+**Phases 0–4 are done.** **Phase 5** is in progress: the report draft is in [`docs/report/report.md`](docs/report/report.md) (build steps in [`docs/report/README.md`](docs/report/README.md)). The final evaluation and demo prep follow.
 
 | Phase | Delivered |
 |---|---|

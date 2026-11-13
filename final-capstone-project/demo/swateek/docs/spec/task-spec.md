@@ -1,6 +1,6 @@
 # Task specification: procurement and vendor-review copilot
 
-**Status:** draft for team review (Phase 0, 12 Nov 2026) · **Track B deliverable I** (task decomposition)
+**Team:** DLlamas · **Status:** draft for team review (Phase 0, 12 Nov 2026) · **Track B deliverable I** (task decomposition)
 
 This is what the copilot does, what it refuses, and what a correct answer looks like. The [build brief](../../../../docs/exploration/procurement-vendor-review-assistant.md) is the source; this file makes it testable. The eval set (`domains/procurement/eval/queries.jsonl`) is written against this spec and frozen before any harness code.
 
