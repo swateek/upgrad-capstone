@@ -8,12 +8,17 @@ A Deep Agents copilot on Qwen3-8B for policy Q&A, vendor screening, and draft bi
 
 ## Status
 
-**Phase 0** (spec + scaffold) is done. **Phase 1** (eval gate) is drafted; the eval set awaits team review before freezing. Phase 0 delivered:
-- Config and LLM provider layer: token budget, Track B retry policy, rate/concurrency gate
-- Domain-pack loader
-- Corpus manifest with hashes
-- SiliconFlow spike script
-- Spec and refusal policy drafts
+**Phases 0–4 are done.** Next is **Phase 5**: the report, the final evaluation, and demo prep.
+
+| Phase | Delivered |
+|---|---|
+| 0. Spec and scaffold | Config and LLM provider layer (token budget, Track B retry policy, rate/concurrency gate), domain-pack loader, corpus manifest with hashes, spec and refusal policy |
+| 1. Eval gate | Corpus (1,690 by_rule chunks), screening snapshot, 10 synthetic bid cases, a frozen 60-question eval set (now v2), single-prompt baseline |
+| 2. Demo floor | Hybrid retrieval, domain tools, API, web UI, Docker |
+| 3. Depth | Chunking and reranker experiments (by_rule wins), five prompting strategies, the planner/executor/critic agent, the Assistant chat tab |
+| 4. Hardening | Langfuse tracing, Redis cache and rate limits, e2e and safety runners. Latest result: **56/60** on eval v2 (run 3), with safety probes passing 7/7 |
+
+All numbers are on SiliconFlow. The course endpoint is planned but not configured yet.
 
 ## Setup
 
@@ -135,3 +140,21 @@ The agent (`backend/src/copilot/agent/`):
 - **Budgets per query:** 10 model calls (steps), 10 tool calls, 40,000 tokens.
 - **API:** `POST /chat` streams progress over SSE and sends the answer only after the critic. `GET /threads/{id}` returns history.
 - **Web:** the **Assistant** tab is the chat, with a live agent trace.
+
+## Phase 4: evaluation, tracing, safety, cache and rate limits
+
+```bash
+cd backend
+uv run python -m eval.e2e --label run3     # 60 frozen questions through the full agent (~30 min, ~$0.04)
+uv run python -m eval.e2e --rescore ../docs/results/e2e-v1-run2.json   # re-score a saved run's policy answers on the current gold, no API calls
+uv run python -m eval.safety               # 7 injection / refusal / PII probes
+```
+
+- **Results:** [`docs/results/eval-report.md`](docs/results/eval-report.md)
+  - run 3 on eval v2: 56/60 overall, 21/23 factual policy, 100% task completion, 0 retrieval misses;
+  - safety probes 7/7.
+- **Tracing:** Langfuse Cloud, one trace per agent turn, PII-masked. It's on when `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` are in `.env`.
+- **Docker:** Redis now holds the retrieval cache and the rate-limit counters:
+  - 60 requests/min per client;
+  - 10 agent turns/min per conversation;
+  - 429 with `Retry-After` when exceeded.

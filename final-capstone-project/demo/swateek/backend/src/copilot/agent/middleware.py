@@ -232,3 +232,43 @@ class CriticGate(AgentMiddleware):
             return None  # already reviewed (released relay)
         update = self._judge(str(last.content).strip())
         return None if update is None else {"jump_to": "model", **update}
+
+
+class ToolArgGuard(AgentMiddleware):
+    """Malformed tool arguments (Track B): the validation error goes back to the model and it
+    may retry once per tool; a second malformed call for the same tool is refused. Bad calls
+    count against the tool budget and are logged, so a confused model cannot loop."""
+
+    MAX_RETRIES = 1
+
+    def wrap_tool_call(self, request: Any, handler: Callable[[Any], Any]) -> Any:
+        ctx = require()
+        name = request.tool_call.get("name", "?")
+        result = handler(request)
+        if not (isinstance(result, ToolMessage) and result.status == "error"):
+            return result
+        try:
+            ctx.take_tool_call()  # validation failures never reach the tool's own accounting
+        except BudgetExceeded:
+            pass
+        ctx.arg_errors[name] = ctx.arg_errors.get(name, 0) + 1
+        ctx.emit(
+            "tool_arg_error",
+            tool=name,
+            attempt=ctx.arg_errors[name],
+            error=str(result.content)[:200],
+        )
+        if ctx.arg_errors[name] > self.MAX_RETRIES:
+            return ToolMessage(
+                content=json.dumps(
+                    {
+                        "error": f"Arguments for {name} were invalid twice; no more retries. Answer "
+                        "with what you have, or say the request could not be completed.",
+                        "retryable": False,
+                    }
+                ),
+                tool_call_id=result.tool_call_id,
+                name=name,
+                status="error",
+            )
+        return result

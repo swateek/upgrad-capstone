@@ -73,7 +73,14 @@ class Critic:
                     "These sentences state facts without a [P#] ref: "
                     + " | ".join(u[:120] for u in uncited[:3])
                 )
-        if not ctx.tool_payloads and not ctx.refusal_hits and len(draft.split()) > 30:
+        substantive = len(ctx.question.split()) >= 5
+        tried = bool(ctx.tool_payloads or ctx.arg_errors)  # a rejected call still counts as trying
+        if not tried and not ctx.refusal_hits and substantive:
+            problems.append(
+                "No tool was used for this question. Search the indexed rules, screen the firm, or "
+                "load the score sheet before answering, even to say the rules do not cover it."
+            )
+        elif not tried and not ctx.refusal_hits and len(draft.split()) > 30:
             problems.append(
                 "This answer states facts without using any tool. Delegate to the executor so "
                 "the answer comes from the indexed rules, the screening lists or the score sheet."
@@ -117,7 +124,7 @@ class Critic:
         try:
             result = self.llm.with_structured_output(
                 LLMVerdict, method="json_schema", strict=True, include_raw=True
-            ).invoke(messages)
+            ).invoke(messages, config={"callbacks": ctx.callbacks, "run_name": "critic"})
         except Exception as err:  # noqa: BLE001 - a failed review is recorded, not fatal
             ctx.emit("critic_error", error=f"{type(err).__name__}: {err}"[:200])
             return []

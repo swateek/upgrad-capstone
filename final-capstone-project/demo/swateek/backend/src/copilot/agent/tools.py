@@ -14,8 +14,11 @@ import re
 from typing import Any
 
 from langchain_core.tools import StructuredTool
+from pydantic import BaseModel, Field
 
 from copilot.agent.context import BudgetExceeded, require
+from copilot.cache import normalize_query
+from copilot.retrieval.hybrid import rrf
 from copilot.tools.registry import Toolbox, ToolSpec
 
 HEADER = re.compile(r"^\[[^\]]+\]\n?")
@@ -57,6 +60,39 @@ def _search_view(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _anchor(spec: ToolSpec, kwargs: dict[str, Any], payload: dict[str, Any], question: str):
+    """Query anchoring (small-model-log #27): the 8B executor rewrites the user's question into
+    its own search query and loses recall that the raw question has. Also search with the
+    user's question and fuse both reranked lists (RRF), keeping the usual top-k."""
+    if not question or normalize_query(question) == normalize_query(kwargs.get("query", "")):
+        return payload
+    other = spec.call({**kwargs, "query": question[:500]})
+    if "error" in other:
+        return payload
+    k = len(payload["hits"]) or len(other["hits"])
+    fused = rrf(
+        {
+            "model_query": [h["citation"] + f"#{h['part']}" for h in payload["hits"]],
+            "user_question": [h["citation"] + f"#{h['part']}" for h in other["hits"]],
+        }
+    )
+    by_key = {h["citation"] + f"#{h['part']}": h for h in [*payload["hits"], *other["hits"]]}
+    return {
+        **payload,
+        "anchored_on": question[:200],
+        "hits": [by_key[key] for key, _, _ in fused[:k]],
+    }
+
+
+class AgentSearchInput(BaseModel):
+    """The agent-facing search takes only a query. In the first full e2e run the 8B executor set
+    the optional instrument filter on most searches, often to the wrong instrument or an
+    invalid name, which hid the right document (small-model-log #30). People can still filter
+    through the API and the UI."""
+
+    query: str = Field(min_length=3, max_length=500, description="What to look up in the rules")
+
+
 def make_tool(spec: ToolSpec) -> StructuredTool:
     def run(**kwargs: Any) -> str:
         ctx = require()
@@ -67,6 +103,8 @@ def make_tool(spec: ToolSpec) -> StructuredTool:
             return json.dumps({"error": str(err), "retryable": False})
         ctx.emit("tool_call", tool=spec.name, args=kwargs)
         payload = spec.call(kwargs)
+        if spec.is_search and "error" not in payload:
+            payload = _anchor(spec, kwargs, payload, ctx.question)
         ctx.tool_payloads.append({"tool": spec.name, "args": kwargs, "result": payload})
         if spec.is_search:
             view = _search_view(payload)
@@ -83,7 +121,10 @@ def make_tool(spec: ToolSpec) -> StructuredTool:
         return json.dumps(view, ensure_ascii=False, default=str)
 
     return StructuredTool.from_function(
-        func=run, name=spec.name, description=spec.description, args_schema=spec.input_model
+        func=run,
+        name=spec.name,
+        description=spec.description,
+        args_schema=AgentSearchInput if spec.is_search else spec.input_model,
     )
 
 

@@ -23,7 +23,7 @@ Key dates: demo floor **Tue 17 Nov**, submission **Fri 27 Nov** (no extensions),
 | Chat provider, later | **Course Track B endpoint** | Replaces SiliconFlow for inference when the team switches. Config switch only, no code change. Details in §6.2. **No action now.** |
 | Token budget | **8,192 tokens in + out per call, enforced in code on every provider**, plus a per-query cumulative cap | Keeps results honest against the course endpoint's limits, even while running on SiliconFlow. |
 | Embeddings | **SiliconFlow `Qwen/Qwen3-Embedding-0.6B`** | Move to `Qwen3-Embedding-4B` if recall@k is weak. `BAAI/bge-m3` is a comparison row. The course endpoint has no embeddings, so this stays on SiliconFlow after the switch. |
-| Reranker | **SiliconFlow `BAAI/bge-reranker-v2-m3`** via `/v1/rerank` | Replaces the brief's local CPU `bge-reranker-base`. Keeps PyTorch out of the image. |
+| Reranker | **SiliconFlow `Qwen/Qwen3-Reranker-8B`** via `/v1/rerank` | Replaces the brief's local CPU `bge-reranker-base`. Keeps PyTorch out of the image. The first choice, `bge-reranker-v2-m3`, isn't offered on api.siliconflow.com (§16, Phase 3). |
 | Sparse retrieval | `rank-bm25`, in-process | As the brief says. |
 | Vector store | **Qdrant**: embedded mode for dev/eval, server container in Docker | One collection per *domain × chunking strategy*. Collection metadata records embedding model and corpus hash. |
 | Agent harness | **LangChain Deep Agents** (`deepagents`, on LangGraph), the only orchestrator | No starter skeleton has arrived. No CrewAI, AutoGen, or second framework. |
@@ -42,7 +42,7 @@ The report has to state these, with the reason for each.
 | Brief says | This plan does | Reason |
 |---|---|---|
 | Embeddings come from an endpoint provided with the chat endpoint | SiliconFlow embeddings | The Track B API guide (p. 2) says no embeddings are provided. |
-| Rerank with a small CPU cross-encoder (`bge-reranker-base`) | Hosted `bge-reranker-v2-m3` on SiliconFlow | Smaller image, no PyTorch. Still never sends the corpus to the 8B model. |
+| Rerank with a small CPU cross-encoder (`bge-reranker-base`) | Hosted `Qwen3-Reranker-8B` on SiliconFlow | Smaller image, no PyTorch. Still never sends the corpus to the 8B model. |
 | Use the starter skeleton's orchestrator, vector store, and tracer | Deep Agents, Qdrant, Langfuse Cloud | No skeleton has arrived (see §15 if one does). |
 | Streamlit page with three tabs. A React front end is listed as a cut. | Next.js + assistant-ui with three modes | Team decision. React is allowed by the track. The time risk is in §15. |
 | Chat runs on the course endpoint | SiliconFlow first, course endpoint later | Team decision. The 8K budget is enforced everywhere so the results stay comparable. |
@@ -175,7 +175,7 @@ corpus:
   target_docs: [500, 1200]                # brief's target; hard cap 2000 is enforced in core
 retrieval:
   embedding_model: Qwen/Qwen3-Embedding-0.6B
-  reranker_model: BAAI/bge-reranker-v2-m3
+  reranker_model: Qwen/Qwen3-Reranker-8B
   top_k_fused: 20
   top_k_final: 5
 tools:
@@ -223,7 +223,7 @@ No core code changes. The loader checks that the collection's stored embedding m
 
 1. Check the cache (Redis key: normalized query + instrument + corpus hash + collection).
 2. BM25 top 20 and dense top 20, both filtered by `instrument` if given, merged with reciprocal rank fusion.
-3. Rerank the fused top 20 with `bge-reranker-v2-m3` and keep the top 5.
+3. Rerank the fused top 20 with `Qwen3-Reranker-8B` and keep the top 5.
 4. Return chunks with `doc_id` + `rule_id` citations. The model is only allowed to cite ids from this payload.
 
 ### 5.4 Retrieval experiments (Phase 3)
@@ -275,7 +275,7 @@ Embeddings and rerank stay on SiliconFlow after the switch.
 |---|---|---|
 | **Planner** | Main agent with `write_todos` (todo-list middleware) | Reads the turn and session state, writes a short plan (≤ 4 todos), and delegates each todo to the executor via `task`. |
 | **Executor** | Subagent `executor`, tools: `search_policy`, `screen_vendor`, `score_bids` | Runs tools and drafts the answer in the domain's answer schema. |
-| **Critic** | Subagent `critic` (no tools) **plus** deterministic checks in `critic_rules.py` | Checks below. A failure sends one revision back to the executor. |
+| **Critic** | Subagent `critic` (no tools) **plus** deterministic checks in `critic_rules.py` | Checks below. A failure sends the answer back to the executor, up to 2 revisions (`AGENT_MAX_REVISIONS`). |
 
 Critic checks (from the brief):
 - every factual sentence carries a citation
@@ -370,7 +370,7 @@ Rules:
 | `GET /bid-cases` | Case ids for the bid mode picker. |
 | `GET /health` | Liveness, Qdrant/Redis reachability, index/model match. |
 
-- **Streaming rule:** progress events (todos, tool calls, tool results) stream live. The **final answer text is released only after the critic passes** (or with a visible "failed review" label after the one revision). The UI never shows an unreviewed answer as final.
+- **Streaming rule:** progress events (todos, tool calls, tool results) stream live. The **final answer text is released only after the critic passes** (or with a visible "failed review" label after the last allowed revision). The UI never shows an unreviewed answer as final.
 - **Rate limit:** token bucket per session in Redis (starting at 10 turns/min, configurable). Returns 429 with `Retry-After`.
 - **Stream format:** assistant-ui's data-stream protocol. Confirm the Python helper during scaffolding.
 
@@ -567,6 +567,18 @@ Today is Thu 12 Nov. The capstone began 30 Oct, so the Week-1 gate (eval set + b
     - a SQLite checkpointer plus a session store.
   - **API:** `/chat` streams progress events and sends the answer only after the critic. `/threads/{id}` returns released turns.
   - **Web:** an Assistant tab (assistant-ui 0.15.32, local runtime over SSE) with a live trace. The three direct tool modes stay as fallbacks.
+- **Phase 4 (13 Nov):**
+  - **Tracing:** Langfuse Cloud (US region, SDK 5.0.4). One trace per agent turn: session = thread id; tags = domain, provider, eval id; PII masked before export.
+  - **Cache:** a retrieval cache keyed by normalized query, corpus hash, chunker, embedding and reranker models, k and filter.
+  - **Rate limits:** per client IP (60/min, all routes) and per conversation (10 agent turns/min), with 429 and `Retry-After`.
+  - **Redis** in compose; an in-process fallback for development.
+  - **Query anchoring** for agent searches.
+  - **ToolArgGuard** for malformed tool arguments.
+  - **Runners:** `eval.e2e` (60 frozen questions, failure taxonomy) and `eval.safety` (injection, refusal and PII probes).
+  - **Model injection** in the harness, so the full flow is tested offline with a scripted model.
+  - **Critic revisions:** up to 2 per query (`AGENT_MAX_REVISIONS`), raised from 1 after run 2 (small-model-log #34).
+  - **Eval v2:** P-015 accepts two more citations, with the reason recorded in `results/eval-freeze.md`.
+  - **Results** (`results/eval-report.md`): run 1 45/60, run 2 53/60 (v1), **run 3 56/60 on v2**. Run 3 scored policy 21/23, screening 17/18, bid 10/11 and refusals 8/8, with 100% task completion and 0 retrieval misses. Safety probes passed 7/7.
 
 **Decided:** retrieval labels. The ~25 policy questions from the frozen eval set plus about 15 extra retrieval-only policy questions, labelled with gold rule ids in `retrieval_labels.jsonl` and kept outside the frozen set, give ~40 for recall@k. The eval set stays at about 60–70.
 

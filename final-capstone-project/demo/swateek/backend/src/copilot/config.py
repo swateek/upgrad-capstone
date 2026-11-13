@@ -47,6 +47,7 @@ class Settings(BaseSettings):
     agent_tool_limit: int = 10  # tool executions per query
     agent_token_limit: int = 40000  # prompt + completion tokens per query
     agent_max_tokens: int = 700  # max_tokens for each agent model call
+    agent_max_revisions: int = 2  # critic-requested revisions per query (decided 13 Nov)
 
     # --- client-side gates and retry -----------------------------------------------
     requests_per_minute: int = 60
@@ -57,6 +58,20 @@ class Settings(BaseSettings):
     # --- retrieval ------------------------------------------------------------------
     # Unset: embedded Qdrant under data/qdrant (dev/eval). Docker sets http://qdrant:6333.
     qdrant_url: str | None = None
+    # --- tracing (Langfuse Cloud; disabled unless both keys are set) -------------------
+    langfuse_public_key: str | None = None
+    langfuse_secret_key: SecretStr | None = None
+    langfuse_base_url: str = "https://cloud.langfuse.com"  # .env sets the US region
+    tracing_enabled: bool = True
+    trace_environment: str = "development"
+
+    # --- cache and rate limit ---------------------------------------------------------
+    # Unset: in-process fallback (single worker, dev). Docker sets redis://redis:6379/0.
+    redis_url: str | None = None
+    rate_limit_chat_per_min: int = 10  # agent turns per conversation per minute
+    rate_limit_ip_per_min: int = 60  # all API calls per client IP per minute
+    retrieval_cache_ttl_s: int = 24 * 3600
+
     # --- API -------------------------------------------------------------------------
     allowed_origins: list[str] = ["http://localhost:3400"]
 

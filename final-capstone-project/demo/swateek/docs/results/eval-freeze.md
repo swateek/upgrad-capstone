@@ -29,4 +29,12 @@ Don't edit a frozen file in place. If a gold answer is found to be wrong:
 
 ## Changes since version 1
 
-None.
+### Version 2: 13 November 2026
+
+| | |
+|---|---|
+| Changed | **P-015** only: `gold.also_accept` += `goods_manual_2024:1.11.3`, `consultancy_manual_2025:1.10.2` |
+| Why | Both manual sections state the rule word for word ("50 (fifty) per cent and 20 (twenty) per cent for 'Class-I local supplier'/'Class-II local supplier'"). The pre-freeze scan for restatements missed them because they write "50 (fifty) per cent" instead of "50%". In run 2 the agent answered P-015 correctly, citing these two sections, and was scored wrong. |
+| Not changed | Every other question, gold answer, bid case and screening file. |
+| `eval/queries.jsonl` sha256 | `31c47e5fb0325a4b…` (full hash in `freeze.lock.yaml`) |
+| Reporting | Runs 1–2 were scored on v1. Run 2 is also re-scored on v2 from its saved answers (no new API calls), so v1 and v2 numbers sit side by side. Later runs use v2. |

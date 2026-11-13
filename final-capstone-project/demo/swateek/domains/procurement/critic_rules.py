@@ -12,6 +12,17 @@ RECOMMEND = re.compile(
 )
 NEGATED = re.compile(r"\b(not|cannot|can't|never|withheld|excluded|no)\b", re.IGNORECASE)
 SENTENCE = re.compile(r"(?<=[.!?])\s+")
+# How an answer may name each screening list (any one is enough). Lives here because the list
+# metadata files are frozen with the eval set.
+LIST_MENTIONS = {
+    "gem_delisted_sellers": ["GeM"],
+    "synthetic_buyer_debarment": ["buyer-specific", "Directorate of Estates"],
+}
+
+
+def _names_list(draft: str, list_id: str) -> bool:
+    words = LIST_MENTIONS.get(list_id, [list_id])
+    return any(w.lower() in draft.lower() for w in words)
 
 
 def _date_forms(iso: str) -> list[str]:
@@ -57,6 +68,11 @@ def check(draft: str, payloads: list[dict[str, Any]]) -> list[str]:
                     "A screening answer must state the snapshot date of the list "
                     f"({', '.join(sorted(dates))})."
                 )
+            for e in result["lists"]:
+                if e.get("status") == "present" and not _names_list(draft, e.get("list", "")):
+                    problems.append(
+                        f"Name the list the firm is on ({e.get('title', e.get('list'))})."
+                    )
             if result["status"] == "not_present" and re.search(r"\b(is|are) eligible\b", low):
                 problems.append(
                     "Absence from a snapshot is not eligibility; do not say the firm is eligible."
@@ -79,6 +95,12 @@ def check(draft: str, payloads: list[dict[str, Any]]) -> list[str]:
                     + "."
                 )
             for w in result["withheld_bidders"]:
+                for hit in w.get("hits", []):
+                    if not _names_list(draft, hit["list"]):
+                        problems.append(
+                            f"Say which list {w['bidder']} is on ({hit['list']}, "
+                            f"as of {hit['snapshot_date']})."
+                        )
                 names = [w["bidder"], w["name"]]
                 for sent in SENTENCE.split(draft):
                     if (

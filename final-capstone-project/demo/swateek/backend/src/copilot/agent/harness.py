@@ -33,12 +33,13 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 
 from copilot.agent.context import BudgetExceeded, RunContext, activate, deactivate
 from copilot.agent.critic import Critic
-from copilot.agent.middleware import BudgetMiddleware, CriticGate, PlannerContext
+from copilot.agent.middleware import BudgetMiddleware, CriticGate, PlannerContext, ToolArgGuard
 from copilot.agent.refusals import RefusalPolicy
 from copilot.agent.tools import build_tools
 from copilot.config import Settings
 from copilot.domains.loader import DomainConfig
 from copilot.llm import get_provider
+from copilot.observability.tracing import Tracer
 from copilot.tools.registry import Toolbox
 
 REF = re.compile(r"\[(P\d+)\]")
@@ -86,13 +87,15 @@ class SessionStore:
 
 
 class Harness:
-    def __init__(self, settings: Settings, domain: DomainConfig, toolbox: Toolbox) -> None:
+    def __init__(
+        self, settings: Settings, domain: DomainConfig, toolbox: Toolbox, llm: Any = None
+    ) -> None:
         self.settings = settings
         self.domain = domain
         self.toolbox = toolbox
         provider = get_provider(settings)
         self.provider_url = f"{provider.base_url}/chat/completions"
-        self.llm = ChatOpenAI(
+        self.llm = llm or ChatOpenAI(
             model=provider.model,
             base_url=provider.base_url,
             api_key=provider.api_key,
@@ -124,6 +127,8 @@ class Harness:
             sqlite3.connect(state_dir / "threads.sqlite", check_same_thread=False)
         )
         self.agent = self._build()
+        self.tracer = Tracer(settings)
+        self.provider_name = provider.name
 
     def _budget(self, role: str) -> BudgetMiddleware:
         return BudgetMiddleware(
@@ -137,7 +142,7 @@ class Harness:
             "system_prompt": self.prompts["executor"],
             "tools": self.tools,
             "model": self.llm,
-            "middleware": [self._budget("executor")],
+            "middleware": [self._budget("executor"), ToolArgGuard()],
         }
         return create_agent(
             self.llm,
@@ -148,7 +153,7 @@ class Harness:
                 # spending a step; BudgetMiddleware then accounts every real model call.
                 CriticGate(
                     self.critic.review,
-                    max_revisions=1,
+                    max_revisions=self.settings.agent_max_revisions,
                     search_tools=frozenset(n for n, t in self.toolbox.tools.items() if t.is_search),
                     tool_names=frozenset(self.toolbox.tools),
                 ),
@@ -169,7 +174,9 @@ class Harness:
             name="planner",
         )
 
-    def run(self, question: str, thread_id: str, on_event: Any = None) -> dict[str, Any]:
+    def run(
+        self, question: str, thread_id: str, on_event: Any = None, tags: list[str] | None = None
+    ) -> dict[str, Any]:
         ctx = RunContext(
             step_limit=self.settings.agent_step_limit,
             tool_limit=self.settings.agent_tool_limit,
@@ -185,10 +192,23 @@ class Harness:
         t0 = time.perf_counter()
         error = None
         state: dict[str, Any] = {}
+        trace_ctx = self.tracer.run(
+            f"{self.domain.name}-agent",
+            thread_id,
+            question,
+            tags=[self.domain.name, self.provider_name, *(tags or [])],
+            metadata={"chunker": self.settings.chunker, "model": self.settings.chat_model},
+        )
+        trace = trace_ctx.__enter__()
+        ctx.callbacks = trace.callbacks
         try:
             state = self.agent.invoke(
                 {"messages": [HumanMessage(content=question)]},
-                config={"configurable": {"thread_id": thread_id}, "recursion_limit": 100},
+                config={
+                    "configurable": {"thread_id": thread_id},
+                    "recursion_limit": 100,
+                    "callbacks": trace.callbacks,
+                },
             )
         except BudgetExceeded as err:
             ctx.stopped = ctx.stopped or str(err)
@@ -204,6 +224,21 @@ class Harness:
         resolved, citations, unknown = _resolve(draft, ctx.refs)
         self._update_session(thread_id, ctx)
         final_critic = ctx.critic[-1] if ctx.critic else None
+        trace.finish(
+            output={"answer": resolved, "citations": citations},
+            metadata={
+                "steps": ctx.steps,
+                "tool_calls": ctx.tool_calls,
+                "tokens": ctx.tokens,
+                "critic_passed": bool(final_critic and final_critic["passed"]),
+                "revisions": ctx.revisions,
+                "stopped": ctx.stopped,
+                "partial": partial,
+                "refusal_rules": [h.rule_id for h in ctx.refusal_hits],
+            },
+        )
+        trace_ctx.__exit__(None, None, None)
+        self.tracer.flush()
         self.sessions.add_turn(
             thread_id,
             {
@@ -242,6 +277,7 @@ class Harness:
             "tool_payloads": ctx.tool_payloads,
             "events": ctx.events,
             "session": self.sessions.get(thread_id),
+            "trace_url": trace.url,
             "is_draft": True,
         }
 

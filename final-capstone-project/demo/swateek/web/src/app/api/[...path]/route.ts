@@ -11,9 +11,10 @@ async function forward(req: Request, path: string[]): Promise<Response> {
     return Response.json({ detail: "not found" }, { status: 404 });
   }
   try {
+    const client = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "browser";
     const upstream = await fetch(`${API_URL()}/${target}`, {
       method: req.method,
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", "x-forwarded-for": client },
       body: req.method === "POST" ? await req.text() : undefined,
       cache: "no-store",
     });

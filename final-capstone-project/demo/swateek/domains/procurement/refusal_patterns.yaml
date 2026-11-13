@@ -25,6 +25,8 @@ rules:
     patterns:
       - '\b(?:confirm|certify|declare|mark|treat)\b.{0,50}\b(?:eligible|cleared|clean)\b'
       - '\bcleared to bid\b'
+      - '\b(?:automatically|therefore|thus)\b.{0,30}\b(?:cleared|eligible)\b'
+      - '\b(?:missing|absent|not present)\b.{0,60}\b(?:cleared|eligible)\b'
   R5_private_person_dossier:
     patterns:
       - '\b(?:directors?|owners?|proprietors?|partners?)\b.{0,80}\b(?:address|phone|mobile|e-?mail|family|personal)\b'

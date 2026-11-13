@@ -12,6 +12,7 @@ Every tool takes validated input and returns a JSON-serialisable dict. Failures 
 from __future__ import annotations
 
 import importlib.util
+import logging
 import sys
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -20,14 +21,17 @@ from typing import Any
 
 from pydantic import BaseModel, Field, ValidationError
 
+from copilot.cache import Store, cache_key, make_store, normalize_query
 from copilot.config import Settings
 from copilot.domains.loader import DomainConfig
 from copilot.ingest.index import chunks_path, file_hash
 from copilot.retrieval.bm25 import BM25Index
 from copilot.retrieval.dense import DenseStore, collection_name, make_client
 from copilot.retrieval.embed import Embedder
-from copilot.retrieval.hybrid import HybridRetriever
+from copilot.retrieval.hybrid import FusedHit, HybridRetriever
 from copilot.retrieval.rerank import Reranker
+
+log = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -70,6 +74,8 @@ class Toolbox:
         self.settings = settings
         self.domain = domain
         self._domain_module = _load_domain_module(domain)
+        self.store: Store = make_store(settings)
+        self.cache_stats = {"hits": 0, "misses": 0}
 
     @cached_property
     def retriever(self) -> HybridRetriever:
@@ -77,7 +83,8 @@ class Toolbox:
         store = DenseStore(
             make_client(self.settings), collection_name(self.domain.name, self.settings.chunker)
         )
-        store.check(self.domain.retrieval.embedding_model, file_hash(path))
+        self.corpus_hash = file_hash(path)
+        store.check(self.domain.retrieval.embedding_model, self.corpus_hash)
         embedder = Embedder(
             self.settings,
             self.domain.retrieval.embedding_model,
@@ -114,7 +121,7 @@ class Toolbox:
                     "retryable": True,
                 }
             doc_ids = self.instruments[instrument]
-        hits = self.retriever.search(query, k=self.domain.retrieval.top_k_final, doc_ids=doc_ids)
+        hits = self._cached_search(query, doc_ids)
         by_id = self.retriever.by_id
         return {
             "query": query,
@@ -136,6 +143,45 @@ class Toolbox:
             ],
         }
 
+    def _cached_search(self, query: str, doc_ids: set[str] | None) -> list[FusedHit]:
+        """Retrieval cache (Track B): keyed by the normalized query plus everything that changes
+        the result: corpus hash, chunker, embedding and reranker models, k and filter."""
+        r = self.domain.retrieval
+        k = r.top_k_final
+        key = cache_key(
+            self.domain.name,
+            self.settings.chunker,
+            self.retriever and self.corpus_hash,
+            r.embedding_model,
+            r.reranker_model,
+            k,
+            sorted(doc_ids or []),
+            normalize_query(query),
+        )
+        try:
+            cached = self.store.get(key)
+        except Exception:  # noqa: BLE001 - a cache outage must not break retrieval
+            cached = None
+        if cached is not None:
+            self.cache_stats["hits"] += 1
+            by_id = self.retriever.by_id
+            return [
+                FusedHit(c, by_id[c]["citation"], by_id[c]["doc_id"], by_id[c]["text"], s, rk)
+                for c, s, rk in cached
+                if c in by_id
+            ]
+        self.cache_stats["misses"] += 1
+        hits = self.retriever.search(query, k=k, doc_ids=doc_ids)
+        try:
+            self.store.set(
+                key,
+                [(h.chunk_id, h.score, h.ranks) for h in hits],
+                self.settings.retrieval_cache_ttl_s,
+            )
+        except Exception as err:  # noqa: BLE001 - cache writes are best-effort
+            log.warning("retrieval cache write failed: %s", err)
+        return hits
+
     @cached_property
     def tools(self) -> dict[str, ToolSpec]:
         alias = self.domain.tools.aliases.get("search_docs", "search_docs")
@@ -144,7 +190,8 @@ class Toolbox:
                 alias,
                 "Search the indexed rule text. Returns clauses with citations (doc_id:rule_id).",
                 SearchDocsInput,
-                self.search_docs,
+                # looked up at call time, so tests and probes can wrap search_docs
+                lambda query, instrument=None: self.search_docs(query, instrument),
                 ui_mode=self.domain.ui_modes[0] if self.domain.ui_modes else None,
                 is_search=True,
             )

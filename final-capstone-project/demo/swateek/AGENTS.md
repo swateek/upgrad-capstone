@@ -34,7 +34,7 @@ A Track B capstone (group DLlamas): a procurement and vendor-review copilot buil
 |---|---|---|
 | Chat (Qwen3-8B) | SiliconFlow | **Active** for development |
 | Embeddings (`Qwen/Qwen3-Embedding-0.6B`) | SiliconFlow | Active, and stays on SiliconFlow |
-| Rerank (`BAAI/bge-reranker-v2-m3`) | SiliconFlow `/v1/rerank` | Active, and stays on SiliconFlow |
+| Rerank (`Qwen/Qwen3-Reranker-8B`) | SiliconFlow `/v1/rerank` | Active, and stays on SiliconFlow |
 | Chat (Qwen3-8B) | Course Track B endpoint | **Planned. Do not configure or call it until the user says so.** |
 
 Selected by `LLM_PROVIDER=siliconflow|course`. Qwen3 thinking mode is off by default.

@@ -14,9 +14,9 @@ import threading
 from contextlib import asynccontextmanager
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
 from copilot.agent.harness import Harness
@@ -63,6 +63,40 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
 )
+
+
+def _client_ip(request: Request) -> str:
+    # The web proxy forwards the browser's address. Trusted because the API is only published
+    # on 127.0.0.1 and reached through that proxy; do not expose it publicly as-is.
+    fwd = request.headers.get("x-forwarded-for", "")
+    return fwd.split(",")[0].strip() or (request.client.host if request.client else "unknown")
+
+
+def _limited(key: str, limit: int) -> JSONResponse | None:
+    try:
+        count, retry_after = toolbox().store.hit(key, 60)
+    except Exception:  # noqa: BLE001 - a limiter outage must not take the API down
+        return None
+    if count <= limit:
+        return None
+    return JSONResponse(
+        {
+            "detail": f"Rate limit reached ({limit} per minute). Try again in {retry_after}s.",
+            "retry_after": retry_after,
+        },
+        status_code=429,
+        headers={"Retry-After": str(retry_after)},
+    )
+
+
+@app.middleware("http")
+async def rate_limit(request: Request, call_next):
+    """Per-client limit on every route except /health (Track B: rate limiting)."""
+    if request.url.path != "/health" and STATE.get("toolbox") is not None:
+        blocked = _limited(f"rl:ip:{_client_ip(request)}", STATE["settings"].rate_limit_ip_per_min)
+        if blocked is not None:
+            return blocked
+    return await call_next(request)
 
 
 def toolbox() -> Toolbox:
@@ -123,7 +157,7 @@ def call_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
     spec = tb.tools.get(name)
     if spec is None:
         raise HTTPException(404, f"no tool '{name}' in this domain")
-    if spec.fn == tb.search_docs and STATE["index_error"]:
+    if spec.is_search and STATE["index_error"]:
         raise HTTPException(503, f"retrieval unavailable: {STATE['index_error']}")
     return {"tool": name, "is_draft": True, "result": spec.call(args)}
 
@@ -178,13 +212,16 @@ def _sse(event: str, data: Any) -> str:
     return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False, default=str)}\n\n"
 
 
-@app.post("/chat")
-async def chat(req: ChatRequest) -> StreamingResponse:
+@app.post("/chat", response_model=None)
+async def chat(req: ChatRequest) -> StreamingResponse | JSONResponse:
     """One agent turn as server-sent events. Progress events (todos, tool calls, critic verdicts)
     stream live; the answer text is sent only in the final event, after the critic has run."""
     harness: Harness | None = STATE.get("harness")
     if harness is None:
         raise HTTPException(503, f"agent unavailable: {STATE.get('index_error')}")
+    blocked = _limited(f"rl:thread:{req.thread_id}", STATE["settings"].rate_limit_chat_per_min)
+    if blocked is not None:  # per-conversation limit on agent turns
+        return blocked
     loop = asyncio.get_running_loop()
     queue: asyncio.Queue = asyncio.Queue()
 

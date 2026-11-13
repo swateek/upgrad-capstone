@@ -57,6 +57,30 @@ Source: `results/phase3-prompts.md` and `.json`. The 25 policy questions; the sa
 
 What the system uses: the agent's executor and `/answer` use the **plain** pattern with source handles (fast, 21/23, refs mapped in code). The two weaknesses the experiment exposed are covered in code: uncited sentences are caught by the deterministic critic, and refusals are decided before generation (refusal pre-check), not by the model. **Constrained decoding** is used wherever the system needs JSON, such as the critic verdict. The free-text refusal metric is a keyword heuristic that over-counts when an answer quotes "competent authority" (P-004, P-009, P-022); the structured strategies' refuse flag is exact.
 
+## Phase 4: hardening (13 Nov)
+
+| # | Date | Finding | Evidence | Compensation |
+|---|---|---|---|---|
+| 27 | 13 Nov | **The 8B executor's own search queries lose recall.** On the raw questions, hybrid + rerank found the gold passage in the top 5 for 23/23 factual questions. Inside the agent, the executor rewrites the question into its own search terms and misses passages the raw question finds. On a smoke question about the margin of purchase preference, the answer cited GFR 153 vaguely instead of stating 20%. | smoke run; 4-question e2e subset (P-016 labelled retrieval miss) | **Query anchoring** in code: every agent search also runs the user's original question, and both reranked lists are fused (RRF, top-5). The smoke question then answered "20%" with a valid citation. Costs one extra embed + rerank per search (≈ $0.0001). |
+| 28 | 13 Nov | **Malformed tool arguments.** LangChain already sends the validation error back to the model, and the 8B model did retry, but with no limit, and the failed call skipped our budgets and trace. | offline test with a scripted model | `ToolArgGuard` on the executor: the validation error goes back once per tool; a second malformed call is refused with a clear message. Each bad call counts against the tool budget and is logged (`tool_arg_error`). Covered by `tests/test_harness_offline.py`. |
+| 29 | 13 Nov | **Follow-ups dropped the list name.** "Which bidder was withheld, and on what list?" got the bidder but not the list. Separately, "Is a missing vendor automatically cleared?" was answered as a fact question with an unsupported inference. | Phase 3 browser test, smoke run | Domain checks: a screening hit, or a withheld bidder, must name its list. A refusal pattern routes "absent ⇒ cleared/eligible" questions to rule R4's wording. Neither change was tuned on the eval set (it has no false positives against these patterns). |
+
+### Findings from the first full e2e run (`results/e2e-v1-run1.md`: 45/60, policy 11/23)
+
+| # | Date | Finding | Evidence | Compensation |
+|---|---|---|---|---|
+| 30 | 13 Nov | **The executor misuses the optional instrument filter.** It set `instrument` on most searches, often to the wrong document (margin of purchase preference restricted to GFR; land-border rule restricted to DFPR) or to names the tool rejects ("DFPR 2024", "Manual for Procurement of Goods, June 2022"). The filter hid the right passage, and anchoring reused it. This explains why the agent's policy accuracy (48%) fell far below what retrieval alone achieves (gold in top-5 for 23/23). | run 1: 7 retrieval misses, all with a filter set | The agent-facing search tool takes only a query. People can still filter through the API and the UI. |
+| 31 | 13 Nov | **The executor says "I cannot find this" without searching.** 5 questions ended in 2 steps with no tool call, and the critic passed them because "cannot find" is an allowed non-answer. | run 1: P-004, P-009, P-013, P-023, S-005 | Critic rule: a substantive question (5+ words) answered with no tool use and no refusal goes back for a revision. A rejected tool call (bad args) counts as trying. Offline test added. |
+| 32 | 13 Nov | **The compact score sheet lacked evidence.** "Which bidder has the shortest delivery?" can't be answered from marks alone; the model fell back to a generic summary. | run 1: B-002 | Compact rows now carry a short quote of the evidence. |
+| 33 | 13 Nov | **The withheld bidder's total is easy to drop.** B-004 was substantively right (B1, B3; B2 withheld) but omitted B2's total, which the critic requires. Released marked as failing review. | run 1: B-004 | No change: the rule stands and the miss is reported as it is. |
+
+### Findings from runs 2 and 3 (`results/e2e-v1-run2.md`: 53/60; `results/e2e-v2-run3.md`: 56/60)
+
+| # | Date | Finding | Evidence | Compensation |
+|---|---|---|---|---|
+| 34 | 13 Nov | **One revision often isn't enough for the 8B executor.** In run 2 the critic correctly flagged 4 of the 7 misses (P-023, S-005, B-003, B-011), but each second draft failed the same check, so all four were released marked as failing review. | run 2: 19 answers revised, 4 still flagged and wrong | `AGENT_MAX_REVISIONS` raised from 1 to 2. In run 3, 6 answers used the second revision. B-011 then passed: B1's total was added. P-013 and P-020 were correct but still flagged. P-023, S-005 and B-003 stayed wrong, so a flagged wrong tool choice or wrong case isn't fixed by more revisions. Cost: about 6% more chat tokens per task, and the p50 latency is about the same. Overall 54/60 → 56/60 on eval v2, from one run each. |
+| 35 | 13 Nov | **The critic can't catch a wrong fact that carries a valid citation, or a fluent answer to a different question.** P-021 (QCBS 70/30 instead of 80/20, citing the right section) and P-023 (scored case_001 when asked which sheet the office uses) both passed the critic. | run 3 | Not compensated. The deterministic checks verify that citations exist, not what they say, and the advisory LLM critic didn't catch either answer. Reported as a known limit. |
+
 ## Ingest notes (12 Nov)
 
 - The GFR PDF has no heading for **Rule 194**; it only appears in a cross-reference. It isn't in the index and the eval set doesn't ask about it.

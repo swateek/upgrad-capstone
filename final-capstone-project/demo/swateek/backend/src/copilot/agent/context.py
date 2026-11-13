@@ -47,8 +47,10 @@ class RunContext:
     drafts: list[str] = field(default_factory=list)  # every reviewed draft, in order
     question: str = ""
     revisions: int = 0
+    arg_errors: dict[str, int] = field(default_factory=dict)  # malformed-args count per tool
     stopped: str | None = None  # why the run ended early, if it did
     on_event: Any = None  # optional callback(event) for live streaming
+    callbacks: list[Any] = field(default_factory=list)  # tracing handlers for direct LLM calls
     started: float = field(default_factory=time.perf_counter)
 
     # --- budgets ---------------------------------------------------------------------------

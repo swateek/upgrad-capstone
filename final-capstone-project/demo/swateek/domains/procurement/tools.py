@@ -312,6 +312,7 @@ def compact_score_sheet(r: dict[str, Any]) -> dict[str, Any]:
             f"{x['bidder']} {x['requirement_id']} ({x['kind']}"
             + (f", weight {x['weight']}" if x["weight"] else "")
             + f"): {x['score'] if x['score'] is not None else 'GAP - ' + str(x['gap'])}"
+            + (f' | evidence: "{x["quoted_evidence"][:110]}"' if x["quoted_evidence"] else "")
             for x in r["rows"]
         ],
         "draft_ranking_of_eligible_bidders": r["ranking_eligible"],
