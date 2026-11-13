@@ -27,6 +27,7 @@ from copilot.retrieval.bm25 import BM25Index
 from copilot.retrieval.dense import DenseStore, collection_name, make_client
 from copilot.retrieval.embed import Embedder
 from copilot.retrieval.hybrid import HybridRetriever
+from copilot.retrieval.rerank import Reranker
 
 
 @dataclass(frozen=True)
@@ -36,6 +37,9 @@ class ToolSpec:
     input_model: type[BaseModel]
     fn: Callable[..., dict[str, Any]]
     ui_mode: str | None = None
+    compact: Callable[[dict[str, Any]], Any] | None = None  # agent-facing view of the result
+    state: Callable[[dict[str, Any], dict[str, Any]], dict[str, Any]] | None = None
+    is_search: bool = False
 
     def call(self, args: dict[str, Any]) -> dict[str, Any]:
         try:
@@ -79,11 +83,18 @@ class Toolbox:
             self.domain.retrieval.embedding_model,
             query_task=self.domain.retrieval.query_instruction,
         )
+        r = self.domain.retrieval
+        reranker = (
+            Reranker(self.settings, r.reranker_model, instruction=r.query_instruction)
+            if r.reranker_model
+            else None
+        )
         return HybridRetriever(
             BM25Index.from_jsonl(path),
             store,
             embedder.embed_query,
-            candidates=self.domain.retrieval.top_k_fused,
+            candidates=r.top_k_fused,
+            reranker=reranker,
         )
 
     @cached_property
@@ -135,10 +146,19 @@ class Toolbox:
                 SearchDocsInput,
                 self.search_docs,
                 ui_mode=self.domain.ui_modes[0] if self.domain.ui_modes else None,
+                is_search=True,
             )
         }
         for name, t in getattr(self._domain_module, "TOOLS", {}).items():
-            specs[name] = ToolSpec(name, t["description"], t["input"], t["fn"], t.get("ui_mode"))
+            specs[name] = ToolSpec(
+                name,
+                t["description"],
+                t["input"],
+                t["fn"],
+                t.get("ui_mode"),
+                compact=t.get("compact"),
+                state=t.get("state"),
+            )
         return specs
 
     def listing(self, name: str) -> Any:

@@ -1,0 +1,1811 @@
+{
+  "meta": {
+    "run_at": "2026-11-13T04:58:56+00:00",
+    "chunker": "recursive_800",
+    "embedding_model": "Qwen/Qwen3-Embedding-0.6B",
+    "queries": 38,
+    "candidates_per_retriever": 20,
+    "fusion": "RRF k=60",
+    "reranker": "Qwen/Qwen3-Reranker-8B",
+    "rerank_tokens": 533496
+  },
+  "recall": {
+    "bm25": {
+      "recall@1": 0.289,
+      "recall@5": 0.632,
+      "recall@10": 0.763
+    },
+    "dense": {
+      "recall@1": 0.421,
+      "recall@5": 0.711,
+      "recall@10": 0.816
+    },
+    "hybrid": {
+      "recall@1": 0.5,
+      "recall@5": 0.816,
+      "recall@10": 0.868
+    },
+    "hybrid_rerank": {
+      "recall@1": 0.579,
+      "recall@5": 0.842,
+      "recall@10": 0.868
+    }
+  },
+  "rows": [
+    {
+      "id": "P-001",
+      "gold": [
+        "gfr_2017:R149",
+        "goods_manual_2024:4.17.2",
+        "ncs_manual_2025:4.6.3",
+        "consultancy_manual_2025:4.5.2",
+        "gem_gtc_4_0:C4"
+      ],
+      "bm25": {
+        "first_hit_rank": 1,
+        "top": [
+          "gem_gtc_4_0:C4",
+          "gem_gtc_4_0:C26",
+          "ncs_manual_2025:4.6.3",
+          "consultancy_manual_2025:4.5.2",
+          "goods_manual_2024:4.17.2"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "goods_manual_2024:4.17.2",
+          "gfr_2017:R149",
+          "gem_gtc_4_0:C4",
+          "ncs_manual_2025:4.6.3",
+          "consultancy_manual_2025:4.5.2"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "ncs_manual_2025:4.6.3",
+          "gem_gtc_4_0:C4",
+          "goods_manual_2024:4.17.2",
+          "gfr_2017:R149",
+          "consultancy_manual_2025:4.5.2"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "ncs_manual_2025:4.6.3",
+          "consultancy_manual_2025:4.5.2",
+          "goods_manual_2024:4.17.2",
+          "gem_gtc_4_0:C4",
+          "gfr_2017:R149"
+        ]
+      }
+    },
+    {
+      "id": "P-002",
+      "gold": [
+        "gfr_2017:R149",
+        "goods_manual_2024:4.17.2",
+        "ncs_manual_2025:4.6.3",
+        "consultancy_manual_2025:4.5.2",
+        "gem_gtc_4_0:C4"
+      ],
+      "bm25": {
+        "first_hit_rank": 2,
+        "top": [
+          "gem_incident_management_policy:2.2",
+          "goods_manual_2024:4.17.2",
+          "gem_gtc_4_0:C4",
+          "gem_gtc_4_0:C26",
+          "gem_incident_management_policy:14"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "goods_manual_2024:4.17.2",
+          "gfr_2017:R149",
+          "gem_gtc_4_0:C4",
+          "ncs_manual_2025:4.6.3",
+          "gem_gtc_4_0:C6"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R149",
+          "goods_manual_2024:4.17.2",
+          "gem_gtc_4_0:C4",
+          "gem_gtc_4_0:C6",
+          "goods_manual_2024:4.13"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "ncs_manual_2025:4.6.3",
+          "gfr_2017:R149",
+          "goods_manual_2024:4.17.2",
+          "consultancy_manual_2025:4.5.2",
+          "gem_gtc_4_0:C4"
+        ]
+      }
+    },
+    {
+      "id": "P-003",
+      "gold": [
+        "gfr_2017:R149",
+        "goods_manual_2024:4.17.2",
+        "ncs_manual_2025:4.6.3",
+        "consultancy_manual_2025:4.5.2",
+        "gem_gtc_4_0:C4"
+      ],
+      "bm25": {
+        "first_hit_rank": 9,
+        "top": [
+          "gem_incident_management_policy:2.2",
+          "gem_incident_management_policy:14",
+          "gem_incident_management_policy:14",
+          "gem_incident_management_policy:14",
+          "dfpr_2024:annexure-ii-to-order-2-3"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "goods_manual_2024:4.17.2",
+          "gem_gtc_4_0:C4",
+          "gem_gtc_4_0:C4",
+          "gfr_2017:R149",
+          "ncs_manual_2025:4.6.3"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "goods_manual_2024:4.17.2",
+          "goods_manual_2024:4.13",
+          "goods_manual_2024:4.17.2",
+          "ncs_manual_2025:4.6.3",
+          "consultancy_manual_2025:4.5.2"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "ncs_manual_2025:4.6.3",
+          "goods_manual_2024:4.17.2",
+          "gem_gtc_4_0:C4",
+          "gem_gtc_4_0:C4",
+          "gfr_2017:R149"
+        ]
+      }
+    },
+    {
+      "id": "P-004",
+      "gold": [
+        "gfr_2017:R154",
+        "goods_manual_2024:4.17.2"
+      ],
+      "bm25": {
+        "first_hit_rank": 1,
+        "top": [
+          "goods_manual_2024:4.17.2",
+          "gfr_2017:R154",
+          "gfr_2017:R159",
+          "goods_manual_2024:5.1.4",
+          "consultancy_manual_2025:4.5.2"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "goods_manual_2024:4.17.2",
+          "goods_manual_2024:4.12",
+          "gfr_2017:R154",
+          "goods_manual_2024:4.13",
+          "goods_manual_2024:4.17.2"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "goods_manual_2024:4.17.2",
+          "gfr_2017:R154",
+          "goods_manual_2024:4.17.2",
+          "consultancy_manual_2025:4.5.2",
+          "ncs_manual_2025:4.6.3"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 2,
+        "top": [
+          "goods_manual_2024:4.12",
+          "gfr_2017:R154",
+          "goods_manual_2024:4.17.2",
+          "ncs_manual_2025:4.6.3",
+          "goods_manual_2024:4.13"
+        ]
+      }
+    },
+    {
+      "id": "P-005",
+      "gold": [
+        "gfr_2017:R154"
+      ],
+      "bm25": {
+        "first_hit_rank": 2,
+        "top": [
+          "goods_manual_2024:4.13.1",
+          "gfr_2017:R154",
+          "goods_manual_2024:4.12",
+          "gfr_2017:R151",
+          "goods_manual_2024:4.13"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 2,
+        "top": [
+          "gfr_2017:R149",
+          "gfr_2017:R154",
+          "gfr_2017:R161",
+          "gfr_2017:R151",
+          "gfr_2017:R144"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R154",
+          "gfr_2017:R151",
+          "goods_manual_2024:4.13.1",
+          "goods_manual_2024:4.12",
+          "gfr_2017:R149"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 2,
+        "top": [
+          "goods_manual_2024:4.12",
+          "gfr_2017:R154",
+          "gfr_2017:R155",
+          "gfr_2017:R151",
+          "goods_manual_2024:4.13"
+        ]
+      }
+    },
+    {
+      "id": "P-006",
+      "gold": [
+        "gfr_2017:R155",
+        "goods_manual_2024:4.13"
+      ],
+      "bm25": {
+        "first_hit_rank": 1,
+        "top": [
+          "goods_manual_2024:4.13",
+          "gem_incident_management_policy:2.2",
+          "gfr_2017:R153",
+          "gfr_2017:R151",
+          "consultancy_manual_2025:7.3.3"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 2,
+        "top": [
+          "goods_manual_2024:4.17.2",
+          "goods_manual_2024:4.13",
+          "gfr_2017:R154",
+          "goods_manual_2024:4.17.2",
+          "goods_manual_2024:4.12"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "goods_manual_2024:4.13",
+          "goods_manual_2024:4.12",
+          "gfr_2017:R154",
+          "gfr_2017:R153",
+          "goods_manual_2024:4.17.2"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R155",
+          "goods_manual_2024:4.17.2",
+          "goods_manual_2024:4.13",
+          "gfr_2017:R153",
+          "gfr_2017:R149"
+        ]
+      }
+    },
+    {
+      "id": "P-007",
+      "gold": [
+        "gfr_2017:R161"
+      ],
+      "bm25": {
+        "first_hit_rank": null,
+        "top": [
+          "gfr_2017:R162",
+          "gfr_2017:R158",
+          "goods_manual_2024:4.1",
+          "gfr_2017:R201",
+          "goods_manual_2024:4.9"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": null,
+        "top": [
+          "gfr_2017:R162",
+          "goods_manual_2024:4.2",
+          "gfr_2017:R201",
+          "goods_manual_2024:4.13",
+          "goods_manual_2024:4.3.1"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": null,
+        "top": [
+          "gfr_2017:R162",
+          "gfr_2017:R201",
+          "gfr_2017:R158",
+          "consultancy_manual_2025:7.2",
+          "consultancy_manual_2025:4.3"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": null,
+        "top": [
+          "gfr_2017:R162",
+          "goods_manual_2024:4.1",
+          "goods_manual_2024:4.9",
+          "goods_manual_2024:4.2",
+          "works_manual_2025:3.6"
+        ]
+      }
+    },
+    {
+      "id": "P-008",
+      "gold": [
+        "gfr_2017:R162"
+      ],
+      "bm25": {
+        "first_hit_rank": 5,
+        "top": [
+          "consultancy_manual_2025:4.3",
+          "ncs_manual_2025:4.4",
+          "goods_manual_2024:4.1",
+          "works_manual_2025:3.6",
+          "gfr_2017:R162"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R162",
+          "consultancy_manual_2025:4.3",
+          "works_manual_2025:3.6",
+          "goods_manual_2024:4.3.2",
+          "ncs_manual_2025:4.4"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 2,
+        "top": [
+          "consultancy_manual_2025:4.3",
+          "gfr_2017:R162",
+          "ncs_manual_2025:4.4",
+          "works_manual_2025:3.6",
+          "consultancy_manual_2025:7.2"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R162",
+          "ncs_manual_2025:4.4",
+          "consultancy_manual_2025:4.3",
+          "goods_manual_2024:4.8.1",
+          "gfr_2017:R201"
+        ]
+      }
+    },
+    {
+      "id": "P-009",
+      "gold": [
+        "gfr_2017:R166"
+      ],
+      "bm25": {
+        "first_hit_rank": null,
+        "top": [
+          "works_manual_2025:3.3.3",
+          "consultancy_manual_2025:4.2.4",
+          "ncs_manual_2025:4.3.3",
+          "works_manual_2025:3.12",
+          "consultancy_manual_2025:4.3"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": null,
+        "top": [
+          "works_manual_2025:3.12",
+          "goods_manual_2024:4.11",
+          "goods_manual_2024:4.10",
+          "works_manual_2025:1.11.2",
+          "ncs_manual_2025:4.3.3"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": null,
+        "top": [
+          "works_manual_2025:3.12",
+          "works_manual_2025:3.3.3",
+          "ncs_manual_2025:4.3.3",
+          "consultancy_manual_2025:4.2.4",
+          "goods_manual_2024:4.11"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": null,
+        "top": [
+          "consultancy_manual_2025:4.3",
+          "works_manual_2025:3.6",
+          "ncs_manual_2025:4.4",
+          "goods_manual_2024:4.1",
+          "goods_manual_2024:4.11"
+        ]
+      }
+    },
+    {
+      "id": "P-010",
+      "gold": [
+        "gfr_2017:R170"
+      ],
+      "bm25": {
+        "first_hit_rank": 2,
+        "top": [
+          "consultancy_manual_2025:6.1.1",
+          "gfr_2017:R170",
+          "ncs_manual_2025:6.1.1",
+          "works_manual_2025:5.1.1",
+          "goods_manual_2024:6.1.1"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R170",
+          "ncs_manual_2025:6.1.1",
+          "works_manual_2025:5.1.1",
+          "consultancy_manual_2025:6.1.1",
+          "goods_manual_2024:6.1.1"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R170",
+          "consultancy_manual_2025:6.1.1",
+          "ncs_manual_2025:6.1.1",
+          "works_manual_2025:5.1.1",
+          "goods_manual_2024:6.1.1"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 5,
+        "top": [
+          "goods_manual_2024:6.1.1",
+          "ncs_manual_2025:6.1.1",
+          "works_manual_2025:5.1.1",
+          "consultancy_manual_2025:6.1.1",
+          "gfr_2017:R170"
+        ]
+      }
+    },
+    {
+      "id": "P-011",
+      "gold": [
+        "gfr_2017:R170"
+      ],
+      "bm25": {
+        "first_hit_rank": null,
+        "top": [
+          "consultancy_manual_2025:6.1.2",
+          "ncs_manual_2025:7.5.3",
+          "works_manual_2025:5.1.1",
+          "goods_manual_2024:6.1.1",
+          "works_manual_2025:6.5.1"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 2,
+        "top": [
+          "goods_manual_2024:6.1.1",
+          "gfr_2017:R170",
+          "works_manual_2025:5.1.1",
+          "ncs_manual_2025:6.1.1",
+          "consultancy_manual_2025:6.1.1"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 10,
+        "top": [
+          "goods_manual_2024:6.1.1",
+          "works_manual_2025:5.1.1",
+          "consultancy_manual_2025:6.1.1",
+          "ncs_manual_2025:6.1.1",
+          "gem_gtc_4_0:C4"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 2,
+        "top": [
+          "consultancy_manual_2025:6.1.1",
+          "gfr_2017:R170",
+          "goods_manual_2024:6.1.1",
+          "works_manual_2025:5.1.1",
+          "ncs_manual_2025:6.1.1"
+        ]
+      }
+    },
+    {
+      "id": "P-012",
+      "gold": [
+        "gfr_2017:R171",
+        "goods_manual_2024:4.4.1"
+      ],
+      "bm25": {
+        "first_hit_rank": 5,
+        "top": [
+          "goods_manual_2024:7.7.1",
+          "gem_gtc_4_0:C7",
+          "ncs_manual_2025:7.5.3",
+          "goods_manual_2024:7.7.2",
+          "gfr_2017:R171"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 2,
+        "top": [
+          "goods_manual_2024:6.1.2",
+          "gfr_2017:R171",
+          "gem_gtc_4_0:C7",
+          "ncs_manual_2025:6.1.2",
+          "consultancy_manual_2025:6.1.2"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 2,
+        "top": [
+          "gem_gtc_4_0:C7",
+          "gfr_2017:R171",
+          "goods_manual_2024:6.1.2",
+          "ncs_manual_2025:7.5.3",
+          "goods_manual_2024:7.7.1"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R171",
+          "goods_manual_2024:6.1.2",
+          "ncs_manual_2025:6.1.2",
+          "goods_manual_2024:6.1.2",
+          "consultancy_manual_2025:6.1.2"
+        ]
+      }
+    },
+    {
+      "id": "P-013",
+      "gold": [
+        "gfr_2017:R157",
+        "gfr_2017:R149"
+      ],
+      "bm25": {
+        "first_hit_rank": null,
+        "top": [
+          "goods_manual_2024:1.10.5",
+          "works_manual_2025:2.14",
+          "works_manual_2025:2.14",
+          "ncs_manual_2025:4.3.3",
+          "dfpr_2024:R13"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 2,
+        "top": [
+          "dfpr_2024:R11",
+          "gfr_2017:R149",
+          "gfr_2017:R158",
+          "goods_manual_2024:4.13",
+          "goods_manual_2024:7.6.5"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 4,
+        "top": [
+          "works_manual_2025:2.14",
+          "dfpr_2024:R11",
+          "goods_manual_2024:1.10.5",
+          "gfr_2017:R149",
+          "works_manual_2025:2.14"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R149",
+          "gfr_2017:R158",
+          "dfpr_2024:R11",
+          "ncs_manual_2025:4.3.3",
+          "works_manual_2025:2.14"
+        ]
+      }
+    },
+    {
+      "id": "P-014",
+      "gold": [
+        "ppp_mii_order_2024:P4",
+        "goods_manual_2024:1.11.3",
+        "ncs_manual_2025:1.10.2",
+        "consultancy_manual_2025:1.10.2"
+      ],
+      "bm25": {
+        "first_hit_rank": 1,
+        "top": [
+          "ppp_mii_order_2024:P3",
+          "consultancy_manual_2025:8.7.5",
+          "consultancy_manual_2025:1.10.2",
+          "consultancy_manual_2025:8.2.1",
+          "ncs_manual_2025:1.10.2"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "ncs_manual_2025:1.10.2",
+          "consultancy_manual_2025:1.10.2",
+          "works_manual_2025:1.11.2",
+          "goods_manual_2024:1.11.3",
+          "dfpr_2024:R11"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "ncs_manual_2025:1.10.2",
+          "ppp_mii_order_2024:P3",
+          "consultancy_manual_2025:1.10.2",
+          "consultancy_manual_2025:8.7.5",
+          "consultancy_manual_2025:1.10.2"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "ncs_manual_2025:1.10.2",
+          "goods_manual_2024:1.11.3",
+          "ncs_manual_2025:1.10.2",
+          "works_manual_2025:1.11.2",
+          "consultancy_manual_2025:1.10.2"
+        ]
+      }
+    },
+    {
+      "id": "P-015",
+      "gold": [
+        "ppp_mii_order_2024:P5"
+      ],
+      "bm25": {
+        "first_hit_rank": 9,
+        "top": [
+          "ncs_manual_2025:1.10.2",
+          "consultancy_manual_2025:1.10.2",
+          "ppp_mii_order_2024:P2",
+          "works_manual_2025:1.11.2",
+          "consultancy_manual_2025:1.10.2"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": null,
+        "top": [
+          "works_manual_2025:1.11.2",
+          "consultancy_manual_2025:1.10.2",
+          "ncs_manual_2025:1.10.2",
+          "goods_manual_2024:1.11.3",
+          "goods_manual_2024:1.11.3"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 10,
+        "top": [
+          "ncs_manual_2025:1.10.2",
+          "consultancy_manual_2025:1.10.2",
+          "works_manual_2025:1.11.2",
+          "works_manual_2025:1.11.2",
+          "goods_manual_2024:1.11.3"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 10,
+        "top": [
+          "goods_manual_2024:1.11.3",
+          "works_manual_2025:1.11.2",
+          "consultancy_manual_2025:1.10.2",
+          "ppp_mii_order_2024:P2",
+          "ncs_manual_2025:1.10.2"
+        ]
+      }
+    },
+    {
+      "id": "P-016",
+      "gold": [
+        "ppp_mii_order_2024:P6",
+        "goods_manual_2024:1.11.3",
+        "ncs_manual_2025:1.10.2",
+        "consultancy_manual_2025:1.10.2",
+        "works_manual_2025:1.11.2"
+      ],
+      "bm25": {
+        "first_hit_rank": 1,
+        "top": [
+          "ncs_manual_2025:1.10.2",
+          "goods_manual_2024:1.11.3",
+          "ppp_mii_order_2024:P3",
+          "consultancy_manual_2025:1.10.2",
+          "works_manual_2025:1.11.2"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "works_manual_2025:1.11.2",
+          "goods_manual_2024:1.11.3",
+          "ncs_manual_2025:1.10.2",
+          "goods_manual_2024:1.11.3",
+          "goods_manual_2024:1.11.3"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "ncs_manual_2025:1.10.2",
+          "works_manual_2025:1.11.2",
+          "goods_manual_2024:1.11.3",
+          "ppp_mii_order_2024:P3",
+          "consultancy_manual_2025:1.10.2"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "ncs_manual_2025:1.10.2",
+          "works_manual_2025:1.11.2",
+          "goods_manual_2024:1.11.3",
+          "consultancy_manual_2025:1.10.2",
+          "goods_manual_2024:1.11.3"
+        ]
+      }
+    },
+    {
+      "id": "P-017",
+      "gold": [
+        "gem_gtc_4_0:C12"
+      ],
+      "bm25": {
+        "first_hit_rank": null,
+        "top": [
+          "goods_manual_2024:6.9",
+          "gem_gtc_4_0:C11",
+          "gem_incident_management_policy:4.1",
+          "goods_manual_2024:6.9",
+          "gem_gtc_4_0:C10"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "gem_gtc_4_0:C12",
+          "gem_gtc_4_0:C6",
+          "gem_gtc_4_0:C3",
+          "gem_gtc_4_0:C2",
+          "goods_manual_2024:4.17.2"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 2,
+        "top": [
+          "gem_gtc_4_0:C3",
+          "gem_gtc_4_0:C12",
+          "gem_gtc_4_0:C6",
+          "gem_gtc_4_0:C17",
+          "gem_gtc_4_0:C10"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "gem_gtc_4_0:C12",
+          "gfr_2017:R149",
+          "ncs_manual_2025:4.6.3",
+          "gem_gtc_4_0:C3",
+          "goods_manual_2024:4.17.2"
+        ]
+      }
+    },
+    {
+      "id": "P-018",
+      "gold": [
+        "gem_gtc_4_0:C15"
+      ],
+      "bm25": {
+        "first_hit_rank": 4,
+        "top": [
+          "goods_manual_2024:9.3.9",
+          "consultancy_manual_2025:10.4.6",
+          "ncs_manual_2025:9.4.7",
+          "gem_gtc_4_0:C15",
+          "goods_manual_2024:6.9"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 5,
+        "top": [
+          "gem_gtc_4_0:C12",
+          "gem_incident_management_policy:14",
+          "gem_incident_management_policy:14",
+          "gem_incident_management_policy:14",
+          "gem_gtc_4_0:C15"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "gem_gtc_4_0:C15",
+          "gem_incident_management_policy:14",
+          "ncs_manual_2025:9.4.7",
+          "goods_manual_2024:9.3.9",
+          "consultancy_manual_2025:10.4.9"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "gem_gtc_4_0:C15",
+          "gem_gtc_4_0:C2",
+          "goods_manual_2024:9.3.9",
+          "gem_gtc_4_0:C17",
+          "ncs_manual_2025:9.4.7"
+        ]
+      }
+    },
+    {
+      "id": "P-019",
+      "gold": [
+        "gem_incident_management_policy:2.1"
+      ],
+      "bm25": {
+        "first_hit_rank": 2,
+        "top": [
+          "gem_incident_management_policy:2.2",
+          "gem_incident_management_policy:1.8",
+          "gem_incident_management_policy:3.3",
+          "gem_incident_management_policy:14",
+          "gem_incident_management_policy:14"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 9,
+        "top": [
+          "gem_incident_management_policy:1.3",
+          "gem_incident_management_policy:3.4",
+          "gem_incident_management_policy:1.8",
+          "gem_gtc_4_0:C24",
+          "gem_incident_management_policy:3.2"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 4,
+        "top": [
+          "gem_incident_management_policy:1.3",
+          "gem_incident_management_policy:3.4",
+          "gem_incident_management_policy:2.2",
+          "gem_incident_management_policy:1.8",
+          "gem_incident_management_policy:1.8"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "gem_incident_management_policy:1.8",
+          "gem_incident_management_policy:3.4",
+          "gem_incident_management_policy:14",
+          "gem_incident_management_policy:14",
+          "gem_incident_management_policy:14"
+        ]
+      }
+    },
+    {
+      "id": "P-020",
+      "gold": [
+        "dfpr_2024:R11"
+      ],
+      "bm25": {
+        "first_hit_rank": 1,
+        "top": [
+          "dfpr_2024:R11",
+          "dfpr_2024:annexure-ii-to-order-2-3",
+          "consultancy_manual_2025:1.5",
+          "goods_manual_2024:1.5",
+          "dfpr_2024:annexure-ii-to-order-2-3"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "dfpr_2024:R11",
+          "gfr_2017:R149",
+          "dfpr_2024:R16",
+          "dfpr_2024:appendix-i",
+          "gfr_2017:R144"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "dfpr_2024:R11",
+          "dfpr_2024:R16",
+          "dfpr_2024:annexure-ii-to-order-2-3",
+          "dfpr_2024:annexure-ii",
+          "works_manual_2025:2.14"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "dfpr_2024:R11",
+          "works_manual_2025:2.14",
+          "dfpr_2024:annexure-ii",
+          "dfpr_2024:R16",
+          "dfpr_2024:annexure-ii-to-order-2-3"
+        ]
+      }
+    },
+    {
+      "id": "P-021",
+      "gold": [
+        "consultancy_manual_2025:4.2.2"
+      ],
+      "bm25": {
+        "first_hit_rank": 2,
+        "top": [
+          "ncs_manual_2025:4.3.2",
+          "consultancy_manual_2025:4.2.2",
+          "consultancy_manual_2025:4.2.2",
+          "works_manual_2025:3.3.2",
+          "ncs_manual_2025:4.2.4"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 2,
+        "top": [
+          "ncs_manual_2025:4.3.2",
+          "consultancy_manual_2025:4.2.2",
+          "works_manual_2025:3.3.2",
+          "consultancy_manual_2025:4.2.2",
+          "consultancy_manual_2025:8.5.3"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 2,
+        "top": [
+          "ncs_manual_2025:4.3.2",
+          "consultancy_manual_2025:4.2.2",
+          "consultancy_manual_2025:4.2.2",
+          "works_manual_2025:3.3.2",
+          "consultancy_manual_2025:9.5"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "consultancy_manual_2025:4.2.2",
+          "ncs_manual_2025:4.3.2",
+          "works_manual_2025:3.3.2",
+          "consultancy_manual_2025:4.2.2",
+          "consultancy_manual_2025:9.5"
+        ]
+      }
+    },
+    {
+      "id": "P-022",
+      "gold": [
+        "goods_manual_2024:1.11.4",
+        "ncs_manual_2025:3.8",
+        "consultancy_manual_2025:3.8",
+        "works_manual_2025:1.11.3",
+        "gem_gtc_4_0:C26"
+      ],
+      "bm25": {
+        "first_hit_rank": 1,
+        "top": [
+          "consultancy_manual_2025:3.8",
+          "ncs_manual_2025:3.8",
+          "gem_gtc_4_0:C26",
+          "works_manual_2025:1.11.3",
+          "works_manual_2025:1.11.3"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "gem_gtc_4_0:C26",
+          "goods_manual_2024:1.11.4",
+          "works_manual_2025:1.11.3",
+          "goods_manual_2024:1.11.4",
+          "consultancy_manual_2025:3.8"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "gem_gtc_4_0:C26",
+          "consultancy_manual_2025:3.8",
+          "ncs_manual_2025:3.8",
+          "works_manual_2025:1.11.3",
+          "works_manual_2025:1.11.3"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "goods_manual_2024:1.11.4",
+          "works_manual_2025:1.11.3",
+          "goods_manual_2024:1.11.4",
+          "consultancy_manual_2025:3.8",
+          "gem_gtc_4_0:C26"
+        ]
+      }
+    },
+    {
+      "id": "P-023",
+      "gold": [
+        "office_note_001:P3"
+      ],
+      "bm25": {
+        "first_hit_rank": null,
+        "top": [
+          "works_manual_2025:6.4.5",
+          "ncs_manual_2025:7.4.4",
+          "consultancy_manual_2025:8.5.3",
+          "consultancy_manual_2025:8.5.3",
+          "ncs_manual_2025:4.3.2"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": null,
+        "top": [
+          "consultancy_manual_2025:8.5.3",
+          "consultancy_manual_2025:8.1.2",
+          "consultancy_manual_2025:8.3.5",
+          "goods_manual_2024:7.1",
+          "ncs_manual_2025:7.1.2"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": null,
+        "top": [
+          "consultancy_manual_2025:8.5.3",
+          "works_manual_2025:6.4.5",
+          "ncs_manual_2025:7.4.4",
+          "consultancy_manual_2025:8.4.5",
+          "ncs_manual_2025:4.3.2"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": null,
+        "top": [
+          "ncs_manual_2025:7.1.2",
+          "goods_manual_2024:7.1",
+          "works_manual_2025:6.4.5",
+          "ncs_manual_2025:4.3.2",
+          "goods_manual_2024:7.1"
+        ]
+      }
+    },
+    {
+      "id": "RL-001",
+      "gold": [
+        "gfr_2017:R158"
+      ],
+      "bm25": {
+        "first_hit_rank": null,
+        "top": [
+          "goods_manual_2024:10.5",
+          "dfpr_2024:annexure-ii",
+          "goods_manual_2024:8.1.2",
+          "goods_manual_2024:2.1",
+          "works_manual_2025:7.3.4"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R158",
+          "gfr_2017:R143",
+          "consultancy_manual_2025:4.5.2",
+          "gfr_2017:R154",
+          "goods_manual_2024:10.8"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R158",
+          "gfr_2017:R149",
+          "goods_manual_2024:10.5",
+          "dfpr_2024:annexure-ii",
+          "gfr_2017:R143"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R158",
+          "gfr_2017:R149",
+          "gfr_2017:R162",
+          "gfr_2017:R143",
+          "consultancy_manual_2025:4.5.2"
+        ]
+      }
+    },
+    {
+      "id": "RL-002",
+      "gold": [
+        "gfr_2017:R153"
+      ],
+      "bm25": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R153",
+          "goods_manual_2024:1.11.1",
+          "ncs_manual_2025:1.10.1",
+          "goods_manual_2024:1.11.2",
+          "ncs_manual_2025:1.10.1"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R153",
+          "goods_manual_2024:1.11.1",
+          "goods_manual_2024:1.11.2",
+          "ncs_manual_2025:1.10.1",
+          "works_manual_2025:1.11.2"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R153",
+          "goods_manual_2024:1.11.1",
+          "ncs_manual_2025:1.10.1",
+          "goods_manual_2024:1.11.2",
+          "goods_manual_2024:1.11.3"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R153",
+          "goods_manual_2024:1.11.1",
+          "goods_manual_2024:1.11.1",
+          "works_manual_2025:1.11.2",
+          "goods_manual_2024:1.11.2"
+        ]
+      }
+    },
+    {
+      "id": "RL-003",
+      "gold": [
+        "gfr_2017:R151"
+      ],
+      "bm25": {
+        "first_hit_rank": 8,
+        "top": [
+          "works_manual_2025:4.6.2",
+          "consultancy_manual_2025:3.8.2",
+          "ncs_manual_2025:3.8.1",
+          "works_manual_2025:8.7.1",
+          "goods_manual_2024:3.7.2"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R151",
+          "works_manual_2025:8.7.1",
+          "ncs_manual_2025:3.8.1",
+          "ncs_manual_2025:3.8.2",
+          "ncs_manual_2025:3.8.2"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 3,
+        "top": [
+          "works_manual_2025:8.7.1",
+          "ncs_manual_2025:3.8.1",
+          "gfr_2017:R151",
+          "works_manual_2025:8.7.1",
+          "consultancy_manual_2025:3.8.2"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 3,
+        "top": [
+          "ncs_manual_2025:3.8.1",
+          "works_manual_2025:8.7.1",
+          "gfr_2017:R151",
+          "ncs_manual_2025:3.8.2",
+          "works_manual_2025:8.7.1"
+        ]
+      }
+    },
+    {
+      "id": "RL-004",
+      "gold": [
+        "goods_manual_2024:3.7.2"
+      ],
+      "bm25": {
+        "first_hit_rank": 3,
+        "top": [
+          "consultancy_manual_2025:3.8.2",
+          "ncs_manual_2025:3.8.2",
+          "goods_manual_2024:3.7.2",
+          "ncs_manual_2025:4.4",
+          "gem_gtc_4_0:C4"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 3,
+        "top": [
+          "gem_gtc_4_0:C23",
+          "gem_gtc_4_0:C4",
+          "goods_manual_2024:3.7.2",
+          "gem_gtc_4_0:C4",
+          "gem_gtc_4_0:C3"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "goods_manual_2024:3.7.2",
+          "gem_gtc_4_0:C4",
+          "ncs_manual_2025:3.8.2",
+          "consultancy_manual_2025:3.8.2",
+          "works_manual_2025:8.7.1"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 2,
+        "top": [
+          "works_manual_2025:8.7.1",
+          "goods_manual_2024:3.7.2",
+          "ncs_manual_2025:3.8.2",
+          "consultancy_manual_2025:3.8.2",
+          "gem_gtc_4_0:C4"
+        ]
+      }
+    },
+    {
+      "id": "RL-005",
+      "gold": [
+        "consultancy_manual_2025:4.2"
+      ],
+      "bm25": {
+        "first_hit_rank": 3,
+        "top": [
+          "ncs_manual_2025:4.2.4",
+          "consultancy_manual_2025:9.6",
+          "consultancy_manual_2025:4.2",
+          "consultancy_manual_2025:4.2.2",
+          "works_manual_2025:3.3"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 8,
+        "top": [
+          "consultancy_manual_2025:9.2",
+          "consultancy_manual_2025:3.8",
+          "ncs_manual_2025:8.3",
+          "gfr_2017:R177",
+          "consultancy_manual_2025:9.5"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "consultancy_manual_2025:4.2",
+          "consultancy_manual_2025:4.2.4",
+          "consultancy_manual_2025:7.1",
+          "consultancy_manual_2025:4.2.1",
+          "consultancy_manual_2025:9.2"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "consultancy_manual_2025:4.2",
+          "consultancy_manual_2025:3.8",
+          "consultancy_manual_2025:4.2.2",
+          "consultancy_manual_2025:9.2",
+          "consultancy_manual_2025:7.1"
+        ]
+      }
+    },
+    {
+      "id": "RL-006",
+      "gold": [
+        "dfpr_2024:R13"
+      ],
+      "bm25": {
+        "first_hit_rank": 1,
+        "top": [
+          "dfpr_2024:R13",
+          "dfpr_2024:annexure-i",
+          "dfpr_2024:R13",
+          "dfpr_2024:appendix-i",
+          "goods_manual_2024:5.1.4"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "dfpr_2024:R13",
+          "dfpr_2024:R13",
+          "dfpr_2024:annexure-v-to-appendix-iii",
+          "dfpr_2024:R15",
+          "works_manual_2025:1.3"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "dfpr_2024:R13",
+          "dfpr_2024:R13",
+          "dfpr_2024:appendix-i",
+          "dfpr_2024:annexure-i",
+          "dfpr_2024:annexure-v-to-appendix-iii"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "dfpr_2024:R13",
+          "dfpr_2024:R13",
+          "dfpr_2024:annexure-ii",
+          "dfpr_2024:R11",
+          "dfpr_2024:appendix-i"
+        ]
+      }
+    },
+    {
+      "id": "RL-007",
+      "gold": [
+        "gem_gtc_4_0:C26"
+      ],
+      "bm25": {
+        "first_hit_rank": null,
+        "top": [
+          "works_manual_2025:1.11.3",
+          "consultancy_manual_2025:3.8",
+          "ncs_manual_2025:3.8",
+          "goods_manual_2024:1.11.4",
+          "goods_manual_2024:1.11.4"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": null,
+        "top": [
+          "goods_manual_2024:1.11.4",
+          "gem_gtc_4_0:C23",
+          "gem_gtc_4_0:C1",
+          "ncs_manual_2025:3.8",
+          "gem_gtc_4_0:C8"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": null,
+        "top": [
+          "goods_manual_2024:1.11.4",
+          "works_manual_2025:1.11.3",
+          "ncs_manual_2025:3.8",
+          "gem_gtc_4_0:C23",
+          "consultancy_manual_2025:3.8"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": null,
+        "top": [
+          "gem_gtc_4_0:C1",
+          "gem_gtc_4_0:C3",
+          "gem_incident_management_policy:14",
+          "ncs_manual_2025:3.8",
+          "goods_manual_2024:1.11.4"
+        ]
+      }
+    },
+    {
+      "id": "RL-008",
+      "gold": [
+        "gfr_2017:R149"
+      ],
+      "bm25": {
+        "first_hit_rank": 3,
+        "top": [
+          "goods_manual_2024:4.17.2",
+          "ncs_manual_2025:4.6.3",
+          "gfr_2017:R149",
+          "consultancy_manual_2025:4.5.2",
+          "gem_gtc_4_0:C4"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 4,
+        "top": [
+          "goods_manual_2024:4.17.2",
+          "gem_gtc_4_0:C4",
+          "gem_gtc_4_0:C4",
+          "gfr_2017:R149",
+          "ncs_manual_2025:4.6.3"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 4,
+        "top": [
+          "goods_manual_2024:4.17.2",
+          "gem_gtc_4_0:C4",
+          "ncs_manual_2025:4.6.3",
+          "gfr_2017:R149",
+          "consultancy_manual_2025:4.5.2"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 5,
+        "top": [
+          "goods_manual_2024:4.17.2",
+          "ncs_manual_2025:4.6.3",
+          "gem_gtc_4_0:C4",
+          "consultancy_manual_2025:4.5.2",
+          "gfr_2017:R149"
+        ]
+      }
+    },
+    {
+      "id": "RL-009",
+      "gold": [
+        "office_note_001:P4"
+      ],
+      "bm25": {
+        "first_hit_rank": null,
+        "top": [
+          "consultancy_manual_2025:3.8",
+          "ncs_manual_2025:5.1.4",
+          "goods_manual_2024:9.4.5",
+          "gem_incident_management_policy:5.3",
+          "goods_manual_2024:9.4.5"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": null,
+        "top": [
+          "consultancy_manual_2025:3.8.2",
+          "ncs_manual_2025:3.8.2",
+          "works_manual_2025:8.7.1",
+          "ncs_manual_2025:3.8.2",
+          "works_manual_2025:8.7.1"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": null,
+        "top": [
+          "works_manual_2025:8.7.1",
+          "ncs_manual_2025:3.8.2",
+          "ppp_mii_order_2024:P9",
+          "works_manual_2025:8.7.1",
+          "works_manual_2025:8.7.1"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": null,
+        "top": [
+          "ncs_manual_2025:3.8.2",
+          "works_manual_2025:8.7.1",
+          "consultancy_manual_2025:3.8.2",
+          "goods_manual_2024:3.7.2",
+          "consultancy_manual_2025:3.8.2"
+        ]
+      }
+    },
+    {
+      "id": "RL-010",
+      "gold": [
+        "consultancy_manual_2025:4.2.1"
+      ],
+      "bm25": {
+        "first_hit_rank": 7,
+        "top": [
+          "consultancy_manual_2025:4.2",
+          "consultancy_manual_2025:4.2.2",
+          "consultancy_manual_2025:9.2",
+          "works_manual_2025:3.3",
+          "consultancy_manual_2025:3.8"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 1,
+        "top": [
+          "consultancy_manual_2025:4.2.1",
+          "consultancy_manual_2025:8.5.3",
+          "consultancy_manual_2025:4.2.2",
+          "consultancy_manual_2025:9.2",
+          "consultancy_manual_2025:4.2"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 4,
+        "top": [
+          "consultancy_manual_2025:4.2.2",
+          "consultancy_manual_2025:4.2",
+          "consultancy_manual_2025:9.2",
+          "consultancy_manual_2025:4.2.1",
+          "consultancy_manual_2025:8.5.3"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "consultancy_manual_2025:4.2.1",
+          "consultancy_manual_2025:8.5.3",
+          "ncs_manual_2025:4.3.1",
+          "consultancy_manual_2025:4.2",
+          "works_manual_2025:3.3.1"
+        ]
+      }
+    },
+    {
+      "id": "RL-011",
+      "gold": [
+        "gfr_2017:R173"
+      ],
+      "bm25": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R173",
+          "ncs_manual_2025:3.8",
+          "works_manual_2025:3.8.1",
+          "goods_manual_2024:4.3.1",
+          "ncs_manual_2025:5.1.4"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 3,
+        "top": [
+          "goods_manual_2024:5.1.2",
+          "works_manual_2025:4.1",
+          "gfr_2017:R173",
+          "works_manual_2025:4.2.1",
+          "gfr_2017:R173"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R173",
+          "works_manual_2025:4.2.1",
+          "ncs_manual_2025:3.8",
+          "gfr_2017:R173",
+          "works_manual_2025:3.8.1"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "gfr_2017:R173",
+          "gfr_2017:R173",
+          "goods_manual_2024:5.1.2",
+          "works_manual_2025:4.2.1",
+          "works_manual_2025:4.1"
+        ]
+      }
+    },
+    {
+      "id": "RL-012",
+      "gold": [
+        "ncs_manual_2025:3.8.2"
+      ],
+      "bm25": {
+        "first_hit_rank": 4,
+        "top": [
+          "consultancy_manual_2025:3.8.2",
+          "consultancy_manual_2025:3.8.2",
+          "ncs_manual_2025:3.8",
+          "ncs_manual_2025:3.8.2",
+          "goods_manual_2024:3.7.2"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 6,
+        "top": [
+          "gfr_2017:R177",
+          "gfr_2017:R201",
+          "consultancy_manual_2025:3.8.2",
+          "consultancy_manual_2025:3.8.2",
+          "goods_manual_2024:3.7.2"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 3,
+        "top": [
+          "consultancy_manual_2025:3.8.2",
+          "consultancy_manual_2025:3.8.2",
+          "ncs_manual_2025:3.8.2",
+          "goods_manual_2024:3.7.2",
+          "consultancy_manual_2025:3.8"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 2,
+        "top": [
+          "works_manual_2025:8.7.1",
+          "ncs_manual_2025:3.8.2",
+          "goods_manual_2024:3.7.2",
+          "ncs_manual_2025:3.8",
+          "ncs_manual_2025:3.8.2"
+        ]
+      }
+    },
+    {
+      "id": "RL-013",
+      "gold": [
+        "gem_gtc_4_0:C11"
+      ],
+      "bm25": {
+        "first_hit_rank": 1,
+        "top": [
+          "gem_gtc_4_0:C11",
+          "gem_gtc_4_0:C4",
+          "gem_incident_management_policy:14",
+          "gem_incident_management_policy:3.2",
+          "gem_incident_management_policy:14"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 6,
+        "top": [
+          "gem_gtc_4_0:C3",
+          "gem_gtc_4_0:C12",
+          "gem_gtc_4_0:C23",
+          "gem_incident_management_policy:14",
+          "gem_gtc_4_0:C2"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 1,
+        "top": [
+          "gem_gtc_4_0:C11",
+          "gem_gtc_4_0:C12",
+          "gem_incident_management_policy:14",
+          "gem_incident_management_policy:14",
+          "gem_gtc_4_0:C17"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 1,
+        "top": [
+          "gem_gtc_4_0:C11",
+          "gem_incident_management_policy:14",
+          "goods_manual_2024:4.17.2",
+          "goods_manual_2024:4.17.2",
+          "gem_gtc_4_0:C3"
+        ]
+      }
+    },
+    {
+      "id": "RL-014",
+      "gold": [
+        "gem_gtc_4_0:C9"
+      ],
+      "bm25": {
+        "first_hit_rank": 2,
+        "top": [
+          "gem_gtc_4_0:C26",
+          "gem_gtc_4_0:C8",
+          "gem_incident_management_policy:14",
+          "ncs_manual_2025:3.8",
+          "works_manual_2025:8.3"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": null,
+        "top": [
+          "gem_gtc_4_0:C1",
+          "works_manual_2025:8.3",
+          "gem_incident_management_policy:14",
+          "gem_gtc_4_0:C23",
+          "gem_gtc_4_0:C3"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 4,
+        "top": [
+          "gem_incident_management_policy:14",
+          "works_manual_2025:8.3",
+          "gem_gtc_4_0:C1",
+          "gem_gtc_4_0:C8",
+          "gem_gtc_4_0:C23"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 3,
+        "top": [
+          "gem_gtc_4_0:C26",
+          "ncs_manual_2025:3.8",
+          "gem_gtc_4_0:C8",
+          "gem_gtc_4_0:C2",
+          "gem_gtc_4_0:C1"
+        ]
+      }
+    },
+    {
+      "id": "RL-015",
+      "gold": [
+        "gem_incident_management_policy:1.4"
+      ],
+      "bm25": {
+        "first_hit_rank": 6,
+        "top": [
+          "gem_incident_management_policy:3.2",
+          "gem_incident_management_policy:14",
+          "gem_incident_management_policy:1.8",
+          "gem_incident_management_policy:9",
+          "gem_incident_management_policy:2.2"
+        ]
+      },
+      "dense": {
+        "first_hit_rank": 2,
+        "top": [
+          "gem_incident_management_policy:14",
+          "gem_incident_management_policy:1.3",
+          "gem_incident_management_policy:1.8",
+          "gem_incident_management_policy:3.2",
+          "gem_gtc_4_0:C24"
+        ]
+      },
+      "hybrid": {
+        "first_hit_rank": 4,
+        "top": [
+          "gem_incident_management_policy:14",
+          "gem_incident_management_policy:3.2",
+          "gem_incident_management_policy:1.8",
+          "gem_incident_management_policy:1.3",
+          "gem_incident_management_policy:2.2"
+        ]
+      },
+      "hybrid_rerank": {
+        "first_hit_rank": 2,
+        "top": [
+          "gem_incident_management_policy:14",
+          "gem_incident_management_policy:1.3",
+          "gem_incident_management_policy:3.2",
+          "gem_incident_management_policy:2.2",
+          "gem_incident_management_policy:1.8"
+        ]
+      }
+    }
+  ]
+}

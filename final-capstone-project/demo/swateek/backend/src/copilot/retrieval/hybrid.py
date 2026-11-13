@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 
 from copilot.retrieval.bm25 import BM25Index
 from copilot.retrieval.dense import DenseStore
+from copilot.retrieval.rerank import Reranker
 
 RRF_K = 60  # standard constant from Cormack et al.; dampens the head of each list
 
@@ -42,16 +43,26 @@ class HybridRetriever:
         dense: DenseStore,
         embed_query: Callable[[str], list[float]],
         candidates: int = 20,
+        reranker: Reranker | None = None,
     ) -> None:
         self.bm25 = bm25
         self.dense = dense
         self.embed_query = embed_query
         self.candidates = candidates
+        self.reranker = reranker
         self.by_id = {c["chunk_id"]: c for c in bm25.chunks}
 
     def search(
-        self, query: str, k: int = 5, doc_ids: set[str] | None = None, mode: str = "hybrid"
+        self, query: str, k: int = 5, doc_ids: set[str] | None = None, mode: str | None = None
     ) -> list[FusedHit]:
+        """mode: bm25 | dense | hybrid | hybrid_rerank (default: hybrid_rerank if a reranker
+        is configured, else hybrid)."""
+        mode = mode or ("hybrid_rerank" if self.reranker else "hybrid")
+        rerank = mode == "hybrid_rerank"
+        if rerank and self.reranker is None:
+            raise ValueError("hybrid_rerank needs a reranker")
+        if rerank:
+            mode = "hybrid"
         rankings: dict[str, list[str]] = {}
         if mode in ("hybrid", "bm25"):
             rankings["bm25"] = [
@@ -62,8 +73,16 @@ class HybridRetriever:
             rankings["dense"] = [
                 h.chunk_id for h in self.dense.search(vec, self.candidates, doc_ids)
             ]
+        fused = rrf(rankings)
+        if rerank:
+            pool = fused[: self.candidates]
+            order = self.reranker.rerank(query, [self.by_id[c]["text"] for c, _, _ in pool], k)
+            fused = []
+            for pos, (idx, score) in enumerate(order, start=1):
+                cid, _, ranks = pool[idx]
+                fused.append((cid, score, {**ranks, "rerank": pos}))
         hits = []
-        for cid, score, ranks in rrf(rankings)[:k]:
+        for cid, score, ranks in fused[:k]:
             c = self.by_id[cid]
             hits.append(FusedHit(cid, c["citation"], c["doc_id"], c["text"], score, ranks))
         return hits

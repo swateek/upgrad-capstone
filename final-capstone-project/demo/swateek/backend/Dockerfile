@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # Backend image: API (uvicorn) and the one-shot ingest job share it.
 # Layout mirrors the repo so PROJECT_ROOT resolves to /app:
 #   /app/backend (code)   /app/domains (mounted read-only)   /app/data (volume)
@@ -11,6 +12,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PROJECT_ENVIRONMENT=/opt/venv \
+    UV_HTTP_TIMEOUT=300 \
     HF_HOME=/opt/hf \
     PATH="/opt/venv/bin:$PATH"
 
@@ -18,10 +20,12 @@ WORKDIR /app/backend
 
 # Dependencies first (cached layer), then the project itself.
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev --no-install-project
+# The cache mount keeps downloaded wheels between builds, so a retry after a network failure
+# does not start from zero (onnxruntime, required by PyMuPDF 2.x, is large).
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-install-project
 COPY src ./src
 COPY eval ./eval
-RUN uv sync --frozen --no-dev
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev
 
 # Bake the Qwen3 tokenizer (tokenizer.json only, no weights) so the budget guard works offline.
 RUN python -c "from tokenizers import Tokenizer; Tokenizer.from_pretrained('Qwen/Qwen3-8B')"

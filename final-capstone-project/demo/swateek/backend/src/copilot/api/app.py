@@ -1,4 +1,4 @@
-"""FastAPI app. Demo floor: direct tool routes and a grounded answer route, no planner yet.
+"""FastAPI app: direct tool routes (demo floor), grounded /answer, and the agent /chat.
 
     uv run uvicorn copilot.api.app:app --reload --port 3401
 
@@ -7,14 +7,19 @@ Nothing here can award, order, debar or approve. Every tool result is returned a
 
 from __future__ import annotations
 
+import asyncio
+import json
 import logging
+import threading
 from contextlib import asynccontextmanager
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
+from copilot.agent.harness import Harness
 from copilot.answer import Answerer
 from copilot.config import get_settings
 from copilot.domains.loader import load_domain
@@ -42,6 +47,9 @@ async def lifespan(_: FastAPI):
         if prompt_path
         else None
     )
+    STATE["harness"] = None if STATE["index_error"] else Harness(settings, domain, toolbox)
+    # one agent run at a time per process: the course endpoint allows 1 active request per key
+    STATE["agent_lock"] = threading.Lock()
     yield
     if not STATE["index_error"]:
         toolbox.retriever.dense.client.close()
@@ -137,3 +145,92 @@ def answer(req: AnswerRequest) -> dict[str, Any]:
         raise HTTPException(422, found["error"])
     result = STATE["answerer"].answer(req.question, found["hits"])
     return {"question": req.question, "is_draft": True, "hits": found["hits"], **result}
+
+
+class ChatRequest(BaseModel):
+    thread_id: str = Field(min_length=1, max_length=80, pattern=r"^[A-Za-z0-9_-]+$")
+    message: str = Field(min_length=1, max_length=2000)
+
+
+FINAL_KEYS = (
+    "answer",
+    "citations",
+    "sources",
+    "todos",
+    "critic",
+    "critic_passed",
+    "revisions",
+    "refusal_rules",
+    "steps",
+    "tool_calls",
+    "tokens",
+    "stopped",
+    "error",
+    "complete",
+    "partial",
+    "latency_s",
+    "session",
+    "is_draft",
+)
+
+
+def _sse(event: str, data: Any) -> str:
+    return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False, default=str)}\n\n"
+
+
+@app.post("/chat")
+async def chat(req: ChatRequest) -> StreamingResponse:
+    """One agent turn as server-sent events. Progress events (todos, tool calls, critic verdicts)
+    stream live; the answer text is sent only in the final event, after the critic has run."""
+    harness: Harness | None = STATE.get("harness")
+    if harness is None:
+        raise HTTPException(503, f"agent unavailable: {STATE.get('index_error')}")
+    loop = asyncio.get_running_loop()
+    queue: asyncio.Queue = asyncio.Queue()
+
+    def on_event(event: dict[str, Any]) -> None:
+        loop.call_soon_threadsafe(queue.put_nowait, ("progress", event))
+
+    def work() -> None:
+        try:
+            with STATE["agent_lock"]:
+                result = harness.run(req.message, req.thread_id, on_event=on_event)
+            payloads = _ui_payloads(result["tool_payloads"])
+            final = {k: result[k] for k in FINAL_KEYS} | {"payloads": payloads}
+            loop.call_soon_threadsafe(queue.put_nowait, ("final", final))
+        except Exception as err:  # noqa: BLE001 - always end the stream with a typed event
+            loop.call_soon_threadsafe(queue.put_nowait, ("error", {"error": str(err)[:300]}))
+        finally:
+            loop.call_soon_threadsafe(queue.put_nowait, (None, None))
+
+    async def stream():
+        threading.Thread(target=work, daemon=True).start()
+        while True:
+            kind, data = await queue.get()
+            if kind is None:
+                break
+            yield _sse(kind, data)
+
+    return StreamingResponse(
+        stream(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
+def _ui_payloads(payloads: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The last result of each non-search tool, for rich rendering (score sheet, screening)."""
+    latest: dict[str, dict[str, Any]] = {}
+    for p in payloads:
+        spec = toolbox().tools.get(p["tool"])
+        if spec and not spec.is_search:
+            latest[p["tool"]] = {"tool": p["tool"], "ui_mode": spec.ui_mode, "result": p["result"]}
+    return list(latest.values())
+
+
+@app.get("/threads/{thread_id}")
+def thread(thread_id: str) -> dict[str, Any]:
+    harness: Harness | None = STATE.get("harness")
+    if harness is None:
+        raise HTTPException(503, "agent unavailable")
+    return harness.history(thread_id)

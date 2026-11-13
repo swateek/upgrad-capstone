@@ -42,6 +42,12 @@ class Settings(BaseSettings):
     default_max_tokens: int = 768
     tokenizer_id: str = "Qwen/Qwen3-8B"
 
+    # --- agent harness (Track B caps; definitions in copilot.agent.context) --------
+    agent_step_limit: int = 10  # model calls per query, all roles
+    agent_tool_limit: int = 10  # tool executions per query
+    agent_token_limit: int = 40000  # prompt + completion tokens per query
+    agent_max_tokens: int = 700  # max_tokens for each agent model call
+
     # --- client-side gates and retry -----------------------------------------------
     requests_per_minute: int = 60
     max_concurrency: int = 2

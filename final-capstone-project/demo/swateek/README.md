@@ -111,3 +111,27 @@ cd ../web && pnpm install && pnpm dev                         # http://localhost
 | `POST /answer` | Hybrid retrieval plus one grounded model call. Citations are mapped from source handles in code. |
 
 No route awards, orders, debars or approves. The web proxy forwards only these routes.
+
+## Phase 3: experiments and the agent
+
+```bash
+cd backend
+uv run python -m copilot.ingest.rechunk                    # fixed_512 + recursive_800 chunk sets
+uv run python -m copilot.ingest.index --chunker fixed_512  # (and recursive_800) embed into Qdrant
+uv run python -m eval.retrieval --chunker by_rule --reranker Qwen/Qwen3-Reranker-8B
+uv run python -m eval.prompts                              # 5 prompting strategies on the policy questions
+```
+
+| Result | File |
+|---|---|
+| Chunking and reranker matrix | `docs/results/retrieval-<chunker>--<reranker>.md` |
+| Prompt strategies | `docs/results/phase3-prompts.md` |
+| What broke and what compensates | `docs/small-model-log.md` |
+
+The agent (`backend/src/copilot/agent/`):
+- **Planner:** the main agent writes todos, then delegates.
+- **Executor:** a Deep Agents subagent with the tools.
+- **Critic:** enforced in code on every answer.
+- **Budgets per query:** 10 model calls (steps), 10 tool calls, 40,000 tokens.
+- **API:** `POST /chat` streams progress over SSE and sends the answer only after the critic. `GET /threads/{id}` returns history.
+- **Web:** the **Assistant** tab is the chat, with a live agent trace.

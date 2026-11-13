@@ -27,7 +27,7 @@ class RetrievalConfig(BaseModel):
 
     embedding_model: str
     query_instruction: str | None = None  # task line for instruction-aware query embeddings
-    reranker_model: str
+    reranker_model: str | None = None
     top_k_fused: int = 20
     top_k_final: int = 5
 
@@ -61,7 +61,10 @@ class DomainConfig(BaseModel):
     tools: ToolsConfig
     state_fields: list[str]
     eval: EvalConfig = EvalConfig()
-    prompts: dict[str, str] = {}  # name -> path in the pack, e.g. answer: prompts/answer.md
+    prompts: dict[str, str] = {}
+    refusals: dict[
+        str, str
+    ] = {}  # rules: refusals.yaml, patterns: refusal_patterns.yaml  # name -> path in the pack, e.g. answer: prompts/answer.md
 
     root: Path | None = None
 

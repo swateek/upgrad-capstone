@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import { api, type DomainInfo } from "@/lib/api";
 import { BidMode } from "@/components/BidMode";
+import { ChatMode } from "@/components/ChatMode";
 import { PolicyMode } from "@/components/PolicyMode";
 import { VendorMode } from "@/components/VendorMode";
 import { Badge, ErrorNote, Spinner } from "@/components/ui";
 
 const MODE_LABELS: Record<string, string> = {
+  chat: "Assistant",
   policy: "Policy Q&A",
   vendor: "Vendor screening",
   bid: "Bid comparison",
@@ -23,7 +25,7 @@ export default function Home() {
       .domain()
       .then((d) => {
         setDomain(d);
-        setMode(d.ui_modes[0] ?? "policy");
+        setMode("chat");
       })
       .catch((e: Error) => setError(e.message));
   }, []);
@@ -47,7 +49,7 @@ export default function Home() {
       {domain && (
         <>
           <nav className="relative z-10 mb-5 flex gap-1 rounded-xl border border-line bg-panel p-1" role="tablist">
-            {domain.ui_modes.map((m) => (
+            {["chat", ...domain.ui_modes].map((m) => (
               <button
                 key={m}
                 role="tab"
@@ -62,6 +64,9 @@ export default function Home() {
             ))}
           </nav>
           {/* keep each mode mounted so results survive tab switches */}
+          <div hidden={mode !== "chat"}>
+            <ChatMode />
+          </div>
           <div hidden={mode !== "policy"}>
             <PolicyMode instruments={domain.instruments} />
           </div>

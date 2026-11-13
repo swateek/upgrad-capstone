@@ -21,9 +21,10 @@ from copilot.retrieval.bm25 import BM25Index
 from copilot.retrieval.dense import DenseStore, collection_name, make_client
 from copilot.retrieval.embed import Embedder
 from copilot.retrieval.hybrid import HybridRetriever
+from copilot.retrieval.rerank import Reranker
 
 KS = (1, 5, 10)
-MODES = ("bm25", "dense", "hybrid")
+MODES = ("bm25", "dense", "hybrid", "hybrid_rerank")
 
 
 def labelled(domain) -> list[dict]:
@@ -42,6 +43,7 @@ def labelled(domain) -> list[dict]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--chunker")
+    parser.add_argument("--reranker", help="override domain.yaml retrieval.reranker_model")
     args = parser.parse_args()
     settings = get_settings()
     domain = load_domain(settings.domain_dir)
@@ -59,15 +61,21 @@ def main() -> int:
             cache[q] = embedder.embed_query(q)
         return cache[q]
 
-    retriever = HybridRetriever(BM25Index.from_jsonl(path), store, embed)
+    rerank_model = args.reranker or domain.retrieval.reranker_model
+    reranker = Reranker(settings, rerank_model, instruction=domain.retrieval.query_instruction)
+    retriever = HybridRetriever(BM25Index.from_jsonl(path), store, embed, reranker=reranker)
     queries = labelled(domain)
     rows = []
     for q in queries:
         row = {"id": q["id"], "gold": q["gold"]}
         for mode in MODES:
-            cites = [h.citation for h in retriever.search(q["query"], k=max(KS), mode=mode)]
-            first = next((i + 1 for i, c in enumerate(cites) if c in q["gold"]), None)
-            row[mode] = {"first_hit_rank": first, "top": cites[:5]}
+            hits = retriever.search(q["query"], k=max(KS), mode=mode)
+            # re-cut chunks can span several rules: a hit if any overlapped rule is gold
+            covered = [retriever.by_id[h.chunk_id].get("citations", [h.citation]) for h in hits]
+            first = next(
+                (i + 1 for i, cits in enumerate(covered) if set(cits) & set(q["gold"])), None
+            )
+            row[mode] = {"first_hit_rank": first, "top": [h.citation for h in hits[:5]]}
         rows.append(row)
 
     def recall(mode: str, k: int) -> float:
@@ -82,9 +90,11 @@ def main() -> int:
         "queries": len(rows),
         "candidates_per_retriever": retriever.candidates,
         "fusion": "RRF k=60",
-        "reranker": None,
+        "reranker": rerank_model,
+        "rerank_tokens": reranker.tokens_used,
     }
-    out = PROJECT_ROOT / "docs" / "results" / f"retrieval-{chunker}"
+    tag = rerank_model.split("/")[-1].lower().replace(".", "_")
+    out = PROJECT_ROOT / "docs" / "results" / f"retrieval-{chunker}--{tag}"
     out.with_suffix(".json").write_text(
         json.dumps({"meta": meta, "recall": table, "rows": rows}, indent=2) + "\n", encoding="utf-8"
     )
@@ -94,7 +104,7 @@ def main() -> int:
         (
             f"{meta['run_at']} · {len(rows)} labelled policy questions · "
             f"{meta['embedding_model']} · BM25 and dense top-{retriever.candidates}, RRF k=60 · "
-            "no reranker yet"
+            f"reranker {rerank_model} on the fused top-{retriever.candidates}"
         ),
         "",
         "| Mode | " + " | ".join(f"recall@{k}" for k in KS) + " |",
@@ -102,8 +112,8 @@ def main() -> int:
     ]
     for m in MODES:
         lines.append(f"| {m} | " + " | ".join(f"{table[m][f'recall@{k}']:.2f}" for k in KS) + " |")
-    misses = [r["id"] for r in rows if not r["hybrid"]["first_hit_rank"]]
-    lines += ["", f"Hybrid misses at k=10: {', '.join(misses) if misses else 'none'}", ""]
+    misses = [r["id"] for r in rows if not r["hybrid_rerank"]["first_hit_rank"]]
+    lines += ["", f"hybrid_rerank misses at k=10: {', '.join(misses) if misses else 'none'}", ""]
     out.with_suffix(".md").write_text("\n".join(lines), encoding="utf-8")
     print("\n".join(lines))
     return 0

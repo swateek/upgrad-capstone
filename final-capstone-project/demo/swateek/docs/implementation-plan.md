@@ -552,6 +552,21 @@ Today is Thu 12 Nov. The capstone began 30 Oct, so the Week-1 gate (eval set + b
   - API routes as built: `/health`, `/domain`, `/listings/{name}`, `/tools/{name}`, `/answer`. `/chat` and `/threads` arrive with the harness in Phase 3.
   - Redis joins in Phase 4, with the cache and rate limit it serves.
   - Host ports are configurable (`WEB_PORT`, `API_PORT`).
+- **Phase 3 (13 Nov):**
+  - **Chunker:** `by_rule` won the chunking experiment (recall@5 0.97 vs 0.84 and 0.84).
+  - **Reranker:** **Qwen3-Reranker-8B**, because `bge-reranker-v2-m3` isn't offered on api.siliconflow.com.
+  - **Step definition (stated in the report):**
+    - a step is one model call by any role, capped at 10 per query;
+    - tool calls are capped separately at 10;
+    - tokens are capped at 40,000 per query.
+  - **Harness, as built:**
+    - `create_agent` + `TodoListMiddleware` + Deep Agents `SubAgentMiddleware` (executor);
+    - the critic is enforced in code: deterministic checks block, LLM review is advisory;
+    - the critic gate releases the executor's reviewed answer directly;
+    - refusal rules are detected in code before planning (`refusal_patterns.yaml`; `refusals.yaml` stays frozen);
+    - a SQLite checkpointer plus a session store.
+  - **API:** `/chat` streams progress events and sends the answer only after the critic. `/threads/{id}` returns released turns.
+  - **Web:** an Assistant tab (assistant-ui 0.15.32, local runtime over SSE) with a live trace. The three direct tool modes stay as fallbacks.
 
 **Decided:** retrieval labels. The ~25 policy questions from the frozen eval set plus about 15 extra retrieval-only policy questions, labelled with gold rule ids in `retrieval_labels.jsonl` and kept outside the frozen set, give ~40 for recall@k. The eval set stays at about 60–70.
 

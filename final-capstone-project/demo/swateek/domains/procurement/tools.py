@@ -261,7 +261,75 @@ def _row(bid: str, item: dict, kind: str, evidence: Any, score: Any, gap: str | 
     }
 
 
+# --- agent views: what the model sees (full payloads go to the UI and the critic) ---------------
+def compact_screening(r: dict[str, Any]) -> dict[str, Any]:
+    if "error" in r:
+        return r
+    return {
+        "status": r["status"],
+        "statement": r["statement"],
+        "lists": [
+            {
+                "list": e["title"],
+                "synthetic": e["synthetic"],
+                "snapshot_date": e["snapshot_date"],
+                "status": e["status"],
+                "matched_rows": e["matched_rows"],
+                "example_rows": [
+                    f"{m['supplier_name']} / {m['brand']} / {m['category']}"
+                    for m in e["matches"][:3]
+                ],
+                "older_versions_only": e["history_versions"],
+                "possible_matches_to_verify": [p["listed_name"] for p in e["possible_matches"]],
+            }
+            for e in r["lists"]
+        ],
+    }
+
+
+def compact_score_sheet(r: dict[str, Any]) -> dict[str, Any]:
+    if "error" in r:
+        return r
+    return {
+        "case_id": r["case_id"],
+        "title": r["title"],
+        "notice": r["draft_notice"],
+        "bidders": [
+            {
+                "bidder": b["bidder"],
+                "name": b["name"],
+                "status": b["status"],
+                "failed_mandatory": b["failed_mandatory"],
+                "technical_total": b["technical_total"],
+                "quoted_price_inr": b["quoted_price_inr"],
+                "price_gap": b["price_gap"],
+                "screening": b["screening"]["statement"],
+                "possible_matches_to_verify": b["screening"]["possible_matches"],
+            }
+            for b in r["bidders"]
+        ],
+        "rows": [
+            f"{x['bidder']} {x['requirement_id']} ({x['kind']}"
+            + (f", weight {x['weight']}" if x["weight"] else "")
+            + f"): {x['score'] if x['score'] is not None else 'GAP - ' + str(x['gap'])}"
+            for x in r["rows"]
+        ],
+        "draft_ranking_of_eligible_bidders": r["ranking_eligible"],
+        "withheld_bidders": [w["bidder"] + " " + w["name"] for w in r["withheld_bidders"]],
+    }
+
+
+def screening_state(args: dict[str, Any], r: dict[str, Any]) -> dict[str, Any]:
+    return {} if "error" in r else {"active_vendor": args["name"]}
+
+
+def bid_state(args: dict[str, Any], r: dict[str, Any]) -> dict[str, Any]:
+    return {"active_case_id": args["case_id"]}
+
+
 # --- registration ----------------------------------------------------------------------------------
+# fn/input/description/ui_mode: used by the API and the UI.
+# compact: what the agent sees; state: session fields to remember across turns.
 TOOLS = {
     "screen_vendor": {
         "fn": screen_vendor,
@@ -269,6 +337,8 @@ TOOLS = {
         "description": "Check a firm or brand name against the dated screening lists. Matching is "
         "done in code; absence is not eligibility.",
         "ui_mode": "vendor",
+        "compact": compact_screening,
+        "state": screening_state,
     },
     "score_bids": {
         "fn": score_bids,
@@ -276,6 +346,8 @@ TOOLS = {
         "description": "Draft score sheet for a preloaded bid case from its stored evaluation "
         "sheet. Never an award.",
         "ui_mode": "bid",
+        "compact": compact_score_sheet,
+        "state": bid_state,
     },
 }
 LISTINGS = {"bid-cases": list_cases}
