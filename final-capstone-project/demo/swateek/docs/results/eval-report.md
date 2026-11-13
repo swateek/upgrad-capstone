@@ -22,7 +22,7 @@ Each question runs in a fresh conversation and is traced in Langfuse, tagged `ev
 
 ## Headline
 
-**Run 5 is the final configuration: 57/60 on the citation check, and 55/60 with the content check on policy answers.** The content check depends on review verdicts that await a team member's confirmation.
+**Run 5 is the final configuration: 57/60 on the citation check, and 55/60 with the content check on policy answers.** The content-check verdicts were confirmed by the team.
 
 | | Run 1 | Run 2 | Run 3 | Run 4 | **Run 5 (final)** |
 |---|---|---|---|---|---|
@@ -66,7 +66,7 @@ The citation check marks a policy answer correct when it **cites** a gold rule. 
    - the text of the cited and the gold passages.
 
    For each point it gave a verdict (stated, partial, contradicted or missing), and it listed material errors. Each error had to quote the source text that shows the claim is false, and code checked that the quote exists. Each answer was judged in two independent passes.
-2. **Review.** The answers the judge failed were checked against the source text, and a verdict was proposed for each: [`judge-v2-run3-review.md`](judge-v2-run3-review.md), [`judge-v2-run4-review.md`](judge-v2-run4-review.md), [`judge-v3-run5-review.md`](judge-v3-run5-review.md). These verdicts were prepared by Claude Code and **await a team member's confirmation**.
+2. **Review.** The answers the judge failed were checked against the source text, and a verdict was proposed for each: [`judge-v2-run3-review.md`](judge-v2-run3-review.md), [`judge-v2-run4-review.md`](judge-v2-run4-review.md), [`judge-v3-run5-review.md`](judge-v3-run5-review.md). These verdicts were prepared by Claude Code and **confirmed by the team (DLlamas)**.
 
 | Factual policy answers (23) | Run 3 | Run 4 | Run 5 |
 |---|---|---|---|
@@ -114,7 +114,7 @@ The content check adds P-006 and P-013, both wrong content with valid citations.
 ## Caveats
 
 - **One run per configuration.** The model samples, so differences of one or two questions between runs aren't reliable effects.
-- **The content check is pending review.** The headline content-checked numbers depend on Claude-prepared verdicts that a team member has to confirm.
+- **The content check is a reviewed judgement, not a mechanical score.** The verdicts were prepared by Claude Code and confirmed by the team; four run-5 answers are counted as correct with a minor error (see the review sheet).
 - **Gold gaps were found by running.** Three questions (P-015, P-011, P-012) were scored wrong only because a manual section restating the gold rule wasn't accepted. Each was fixed by a version bump with a written reason, and every run was re-scored. A heading scan now checks every gold GFR rule for restatements ([`eval-freeze.md`](eval-freeze.md), v3).
 - **Labels come from rules in code** (`backend/eval/e2e.py: failure_label`), applied in order. They're a consistent first pass, not a human adjudication.
 - **Latency.** The median has been about 25 s since run 2. Query anchoring runs two searches per agent search, and the 8B reranker is the slowest hop. A cached repeat of a search took 0.1 s against 29.7 s cold.

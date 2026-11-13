@@ -155,7 +155,7 @@ uv run python -m eval.safety               # 7 injection / refusal / PII probes
 
 - **Results:** [`docs/results/eval-report.md`](docs/results/eval-report.md)
   - final, run 5 on eval v3: 57/60 overall, 22/23 factual policy, 0 retrieval misses, 0 tool-call errors;
-  - with the content check on policy answers: 55/60 overall, 20/23 policy (review in `docs/results/judge-v3-run5-review.md`, pending team confirmation);
+  - with the content check on policy answers: 55/60 overall, 20/23 policy (verdicts confirmed by the team: `docs/results/judge-v3-run5-review.md`);
   - safety probes 7/7.
 - **Tracing:** Langfuse Cloud, one trace per agent turn, PII-masked. It's on when `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` are in `.env`.
 - **Docker:** Redis now holds the retrieval cache and the rate-limit counters:
@@ -178,4 +178,6 @@ uv run python -m eval.demo_preflight                    # run the scripted demo 
   - talk track in [`docs/demo/demo-script.md`](docs/demo/demo-script.md);
   - questions and checks in `domains/procurement/demo.yaml`;
   - latest preflight in `docs/results/demo-preflight.md`.
-- **Trace dashboard:** what to capture from Langfuse, in [`docs/demo/trace-dashboard.md`](docs/demo/trace-dashboard.md).
+- **Trace dashboard:**
+  - screenshots in `docs/demo/traces/` (also report Appendix D);
+  - how to reproduce each view: [`docs/demo/trace-dashboard.md`](docs/demo/trace-dashboard.md).
