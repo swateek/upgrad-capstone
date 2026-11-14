@@ -1,6 +1,6 @@
 # Endpoint switch plan: `PROVIDER=siliconflow | upgrad`
 
-**Team:** DLlamas · **Status:** in progress
+**Team:** DLlamas · **Status:** **done (14 Nov 2026).** The switch is built and every result step ran on `upgrad`. The demo and the submitted report use `upgrad`; SiliconFlow stays as the fallback.
 
 One setting in `.env` picks where the copilot's models run. `siliconflow` is today's stack. `upgrad` moves chat, embeddings and reranking to the course endpoints, with no SiliconFlow calls. Both stay usable: both indexes are kept built, and every result is saved under its provider's own directory.
 
@@ -14,7 +14,8 @@ One setting in `.env` picks where the copilot's models run. `siliconflow` is tod
 |---|---|
 | Group id | **031–045**: chat on `https://103.42.50.41:1033/v1` with `vm05-ca.crt` |
 | Reranker under `upgrad` (the course offers none; Track B requires one) | **`UPGRAD_RERANKER=upgrad`: Qwen3-8B on the course chat endpoint orders the fused top-20 in one listwise call.** No SiliconFlow under `upgrad`. `none` remains available (hybrid only). |
-| Token quota | The user asks the coordinator. The full upgrad e2e run waits for the answer. |
+| Token quota | The full run went ahead on the user's go-ahead (14 Nov). About 2.7M chat tokens were used that day (probe, smoke test, an interrupted first attempt, two full runs, chunking, safety, preflight), plus about 1.49M on the shared embedding key for the two extra chunker indexes. |
+| Demo and submission | **`upgrad`** (user's decision, 14 Nov): `.env` has `PROVIDER=upgrad`; the submitted report is `docs/report/upgrad/report.pdf`. |
 | Content-check judge under `upgrad` | **Not run.** The Track B brief doesn't require an LLM judge (see below). |
 | Results | **Both kept, in separate directories, labelled by provider** |
 
@@ -150,9 +151,8 @@ The bge tokenizer (`BAAI/bge-small-en-v1.5` `tokenizer.json`) loads the same way
 ```
 docs/results/
   eval-freeze.md            shared (the eval set is the same for both)
-  eval-report.md            one entry point, with a SiliconFlow part and an upgrad part
-  siliconflow/              everything that is in docs/results/ today (git mv)
-  upgrad/                   probe, retrieval, e2e, safety, preflight on the course endpoints
+  siliconflow/              the SiliconFlow results, with their own eval-report.md
+  upgrad/                   probe, retrieval, e2e, safety, preflight on the course endpoints, with their own eval-report.md
 ```
 
 - `e2e`, `retrieval`, `safety`, `judge` and `demo_preflight` write to `docs/results/<provider>/`. `--rescore` takes a file name in that directory.
@@ -205,9 +205,11 @@ docs/results/
 | 3 | upgrad index: 1,690 chunks → 2,489 vectors (794 chunks windowed), 754K tokens, 159 s | **done** on the host (before the no-calls rule). The SiliconFlow index is untouched. |
 | 4a | Retrieval eval, upgrad embeddings, with the SiliconFlow reranker as a reference point (table below) | **done** (before the no-calls rule) |
 | 4b | Retrieval eval with the `upgrad` listwise reranker | **done** (your go-ahead): 0.66 / 0.95 / 0.97, slightly below hybrid alone; 218K chat tokens for 38 searches (~5.7K each); 0 fallbacks. **Kept** (your decision): it meets Track B's "a reranker", and the report states both numbers. |
-| 5 | e2e (60), safety probes (7), demo preflight ×2 on `upgrad`. No judge. | **waiting** for the quota answer and your go-ahead |
-| 6 | Eval report and report: the `upgrad` part, side by side with SiliconFlow run 5 | after 5 |
-| 7 | Docker: index for the stack | **done.** Image rebuilt. Both collections were copied from the host with `copilot.ingest.copy_index` (no API calls), and the chunk files were copied into the data volume. The stack serves `siliconflow`, and the `upgrad` setup loads in Docker. |
+| 5 | e2e (60), safety probes (7), demo preflight ×2 on `upgrad`. No judge. | **done** (your go-ahead, 14 Nov): two full runs, **55/60** each (58 of 60 answers identical); safety 7/7; preflight 9/10 twice. The first run1 attempt stopped at question 47 on a scorer bug (fixed; no outcome changes) and was repeated in full. |
+| 6 | Reports | **done**: `docs/results/upgrad/eval-report.md` and the technical report `docs/report/upgrad/report.pdf`, each with SiliconFlow run 5 as the reference. The SiliconFlow reports moved under `siliconflow/` folders, content unchanged. |
+| 7 | Docker: index for the stack | **done.** Image rebuilt. Both collections were copied from the host with `copilot.ingest.copy_index` (no API calls), and the chunk files were copied into the data volume. The stack serves **`upgrad`** (since 14 Nov). |
+| 8 | Chunking comparison on bge (fixed_512, recursive_800) | **done** (your go-ahead): two new collections (SiliconFlow's untouched); recall@5 0.71 and 0.79 against 0.95 for by_rule |
+| 9 | Langfuse screenshots of the `upgrad` runs | **done**: `docs/demo/traces/upgrad/`, in the upgrad report's Appendix E |
 
 **Retrieval recall (38 labelled questions, eval v3 gold; k = 1 / 5 / 10):**
 
@@ -229,7 +231,7 @@ Done in the review:
 - **Rerank cost.** Under `upgrad`, rerank tokens are now priced at $0; they were left at the SiliconFlow price.
 - **The listwise rerank call is visible and budgeted.** It's recorded as a `rerank` event in the agent run (tokens, seconds, fallback). Its tokens count toward the 40K per-query token cap but not the 10-step cap, per your decision: it's part of the search tool. e2e rows report them once, under `rerank_tokens`.
 - **Over-long queries.** A search query too long for the embedding endpoint is now cut to fit, instead of failing with a 422 (never retried).
-- **Probe labels.** The probe now marks the endpoint's documented rejections (17 texts, ≥512 tokens) as passing checks. `docs/results/upgrad/probe.md` still shows them as "no" until the probe is re-run.
+- **Probe labels.** The probe now marks the endpoint's documented rejections (17 texts, ≥512 tokens) as passing checks; re-run on 14 Nov, 13/13.
 - **Tests.** Three new ones (100 in total).
 
 Still to keep in mind:
@@ -243,7 +245,7 @@ Still to keep in mind:
 
 ## 5. Demo with two providers
 
-- **The demo runs on whatever `PROVIDER` says in `.env`.** The other value is the fallback, and both indexes are built in Docker. `docs/demo/demo-script.md` has the checklist.
+- **The demo runs on `upgrad`** (`PROVIDER=upgrad` in `.env`); SiliconFlow is the fallback, and both indexes are built in Docker. `docs/demo/demo-script.md` has the checklist.
 - **Fallback in under a minute:** change `PROVIDER` in `.env`, run `docker compose up -d api`, then check `"provider"` in `curl localhost:3401/health`. No re-index is needed.
 - **Day before:** `docker compose up -d --build`, then run the preflight twice on the demo provider and once on the fallback. Check the SiliconFlow balance, which matters for the fallback.
 - **During the demo:** no one else on the team uses the course key. Demo week is when every group is presenting, and VM05 allows 15 active requests in total, so expect it to be slower than on a quiet day.
@@ -259,9 +261,9 @@ Still to keep in mind:
 | bge-small retrieves worse than Qwen3-Embedding-0.6B (384 d, English, 512 tokens) | lower recall, more retrieval misses | measured: dense is lower at k = 1, but hybrid recall@5 is 0.97 on both providers; BM25 is unchanged |
 | The listwise reranker is slower and weaker than a cross-encoder | each search takes a few seconds longer; ordering may be worse than hybrid alone | measure it (4b); fall back to `UPGRAD_RERANKER=none`, which keeps recall@5 at 0.97 |
 | The embedding endpoint is shared by all groups | capacity errors while indexing | retry the batch; indexing happens once |
-| Unknown team token quota | the quota runs out mid-run | ask the coordinator before step 5; about 400K tokens per full e2e run |
+| Unknown team token quota | the quota runs out mid-run | measured: about 742K tokens per full e2e run (agent + rerank); results are now saved per question, so an interrupted run keeps its answers |
 | A key leaks into a results file, trace or screenshot | key exposure | keys come only from `.env` as `SecretStr`; headers show the host only; the guide says to ask for a replacement if exposed |
 
 ## 7. Still open
 
-1. The team token quota (you're asking the coordinator), then your go-ahead for the full run (5). With the reranker on, a full e2e run is roughly 400K agent tokens plus about 500K rerank tokens.
+Nothing for the switch itself. Findings from the runs that are not fixed (reported in the upgrad report §8 and §12): S-005's three-word request skips the no-tool check; B-010 screens invented bidder names; B-004 leaves out the withheld bidder; B-015 releases an empty answer at the step cap, and the scorer counts it as a refusal.

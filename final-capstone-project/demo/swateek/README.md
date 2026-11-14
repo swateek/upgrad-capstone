@@ -20,7 +20,7 @@ A Deep Agents copilot on Qwen3-8B for policy Q&A, vendor screening, and draft bi
 | 3. Depth | Chunking and reranker experiments (by_rule wins), five prompting strategies, the planner/executor/critic agent, the Assistant chat tab |
 | 4. Hardening | Langfuse tracing, Redis cache and rate limits, e2e and safety runners. Latest result: **56/60** on eval v2 (run 3), with safety probes passing 7/7 |
 
-All reported numbers so far are on SiliconFlow. `PROVIDER=upgrad` in `.env` switches chat, embeddings and rerank to the course endpoints (see [Providers](#providers)).
+**The system now runs on the course endpoints (`PROVIDER=upgrad`, switched 14 Nov):** 55/60 in two full runs on eval v3. This is the submitted and demo configuration; SiliconFlow, where it was developed (57/60), is the fallback. See [Providers](#providers).
 
 ## Setup
 
@@ -48,7 +48,7 @@ A hash mismatch fails the run. If an official file changed upstream, record the 
 
 ## Providers
 
-One setting in `.env`, `PROVIDER=siliconflow|upgrad`, picks where every model call goes. Plan and measurements: [`docs/endpoint-switch-plan.md`](docs/endpoint-switch-plan.md).
+One setting in `.env`, `PROVIDER=siliconflow|upgrad`, picks where every model call goes; **`.env` has `upgrad`**. Plan and status (done): [`docs/endpoint-switch-plan.md`](docs/endpoint-switch-plan.md).
 
 | | `siliconflow` | `upgrad` |
 |---|---|---|
@@ -174,7 +174,10 @@ uv run python -m eval.judge e2e-v3-run5-rescored.json # content check of policy 
 uv run python -m eval.safety               # 7 injection / refusal / PII probes
 ```
 
-- **Results:** [`docs/results/eval-report.md`](docs/results/eval-report.md)
+- **Results, course endpoints (`upgrad`, the submitted configuration):** [`docs/results/upgrad/eval-report.md`](docs/results/upgrad/eval-report.md)
+  - two runs on eval v3: 55/60 each, 22/23 factual policy, 8/8 refusals; 58 of 60 answers identical between the runs;
+  - safety probes 7/7; demo preflight 9/10 twice.
+- **Results, SiliconFlow:** [`docs/results/siliconflow/eval-report.md`](docs/results/siliconflow/eval-report.md)
   - final, run 5 on eval v3: 57/60 overall, 22/23 factual policy, 0 retrieval misses, 0 tool-call errors;
   - with the content check on policy answers: 55/60 overall, 20/23 policy (verdicts confirmed by the team: `docs/results/siliconflow/judge-v3-run5-review.md`);
   - safety probes 7/7.
@@ -194,12 +197,12 @@ uv run --with matplotlib python ../docs/report/upgrad/make_figures.py        # u
 uv run python -m eval.demo_preflight                    # run the scripted demo against the live API (stack must be up)
 ```
 
-- **Reports:** [`docs/report/siliconflow/report.md`](docs/report/siliconflow/report.md) and [`docs/report/upgrad/report.md`](docs/report/upgrad/report.md), each with HTML and PDF beside it (build steps in [`docs/report/README.md`](docs/report/README.md)).
+- **Reports:** [`docs/report/upgrad/report.md`](docs/report/upgrad/report.md) (**submitted**) and [`docs/report/siliconflow/report.md`](docs/report/siliconflow/report.md), each with HTML and PDF beside it (build steps in [`docs/report/README.md`](docs/report/README.md)).
 - **Content check:** review sheets `docs/results/siliconflow/judge-*-review.md` (final: [`judge-v3-run5-review.md`](docs/results/siliconflow/judge-v3-run5-review.md)). The judge finds the problems, and a person confirms the verdicts.
 - **Demo:**
   - talk track in [`docs/demo/demo-script.md`](docs/demo/demo-script.md);
   - questions and checks in `domains/procurement/demo.yaml`;
-  - latest preflight in `docs/results/siliconflow/demo-preflight.md`.
+  - latest preflights: `docs/results/upgrad/demo-preflight-1.md` and `-2.md` (the demo provider), `docs/results/siliconflow/demo-preflight.md` (the fallback).
 - **Trace dashboard:**
-  - screenshots in `docs/demo/traces/` (also report Appendix D);
+  - screenshots of the `upgrad` runs in `docs/demo/traces/upgrad/` (upgrad report Appendix E), and of the SiliconFlow runs in `docs/demo/traces/` (SiliconFlow report Appendix D);
   - how to reproduce each view: [`docs/demo/trace-dashboard.md`](docs/demo/trace-dashboard.md).

@@ -580,7 +580,7 @@ Today is Thu 12 Nov. The capstone began 30 Oct, so the Week-1 gate (eval set + b
   - **Model injection** in the harness, so the full flow is tested offline with a scripted model.
   - **Critic revisions:** up to 2 per query (`AGENT_MAX_REVISIONS`), raised from 1 after run 2 (small-model-log #34).
   - **Eval v2:** P-015 accepts two more citations, with the reason recorded in `results/eval-freeze.md`.
-  - **Results** (`results/eval-report.md`): run 1 45/60, run 2 53/60 (v1), **run 3 56/60 on v2**. Run 3 scored policy 21/23, screening 17/18, bid 10/11 and refusals 8/8, with 100% task completion and 0 retrieval misses. Safety probes passed 7/7.
+  - **Results** (`results/siliconflow/eval-report.md`): run 1 45/60, run 2 53/60 (v1), **run 3 56/60 on v2**. Run 3 scored policy 21/23, screening 17/18, bid 10/11 and refusals 8/8, with 100% task completion and 0 retrieval misses. Safety probes passed 7/7.
 - **Phase 5 (13 Nov):**
   - **Policy content check (§11.2 judge method):** an LLM judge (DeepSeek-V3.2, a different and larger family than the system's model) runs two passes, and every error it reports needs a verified source quote. A person then reviews the judge's failures; the team confirmed the verdicts on 13 Nov.
   - **Executor fixes (small-model-log #38):**

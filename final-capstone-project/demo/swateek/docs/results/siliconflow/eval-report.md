@@ -10,7 +10,7 @@ Frozen eval set: 60 questions (25 policy, 20 screening, 15 bid; 8 refusals).
 | v2 | Adds accepted citations for P-015 |
 | **v3** | Adds accepted citations for P-011 and P-012 |
 
-The gold answers don't otherwise change, and each change and its reason is in [`eval-freeze.md`](eval-freeze.md). **Every run below is scored on v3**, from its saved answers, so the runs compare like for like.
+The gold answers don't otherwise change, and each change and its reason is in [`eval-freeze.md`](../eval-freeze.md). **Every run below is scored on v3**, from its saved answers, so the runs compare like for like.
 
 Every run uses the same stack:
 - the full agent (planner → executor → critic) on Qwen3-8B via SiliconFlow;
@@ -41,7 +41,7 @@ Each question runs in a fresh conversation and is traced in Langfuse, tagged `ev
 | Mean cost per task (chat + embedding + rerank) | $0.00065 | $0.00067 | $0.00069 | $0.00069 | $0.00072 |
 | Cost of the whole run | $0.039 | $0.040 | $0.041 | $0.041 | $0.043 |
 
-Full tables: `siliconflow/e2e-v3-run{1..5}-rescored.md`. The original scoring of each run on its own eval version is in `siliconflow/e2e-v1-run1.md`, `siliconflow/e2e-v1-run2.md`, `siliconflow/e2e-v2-run3.md`, `siliconflow/e2e-v2-run4.md` and `siliconflow/e2e-v2-run5.md`: run 2 was 53 on v1, run 5 was 55 on v2. Every answer, tool call and trace link is in the matching JSON.
+Full tables: `e2e-v3-run{1..5}-rescored.md`. The original scoring of each run on its own eval version is in `e2e-v1-run1.md`, `e2e-v1-run2.md`, `e2e-v2-run3.md`, `e2e-v2-run4.md` and `e2e-v2-run5.md`: run 2 was 53 on v1, run 5 was 55 on v2. Every answer, tool call and trace link is in the matching JSON.
 
 ## What changed between the runs
 
@@ -66,7 +66,7 @@ The citation check marks a policy answer correct when it **cites** a gold rule. 
    - the text of the cited and the gold passages.
 
    For each point it gave a verdict (stated, partial, contradicted or missing), and it listed material errors. Each error had to quote the source text that shows the claim is false, and code checked that the quote exists. Each answer was judged in two independent passes.
-2. **Review.** The answers the judge failed were checked against the source text, and a verdict was proposed for each: [`siliconflow/judge-v2-run3-review.md`](siliconflow/judge-v2-run3-review.md), [`siliconflow/judge-v2-run4-review.md`](siliconflow/judge-v2-run4-review.md), [`siliconflow/judge-v3-run5-review.md`](siliconflow/judge-v3-run5-review.md). These verdicts were prepared by Claude Code and **confirmed by the team (DLlamas)**.
+2. **Review.** The answers the judge failed were checked against the source text, and a verdict was proposed for each: [`judge-v2-run3-review.md`](judge-v2-run3-review.md), [`judge-v2-run4-review.md`](judge-v2-run4-review.md), [`judge-v3-run5-review.md`](judge-v3-run5-review.md). These verdicts were prepared by Claude Code and **confirmed by the team (DLlamas)**.
 
 | Factual policy answers (23) | Run 3 | Run 4 | Run 5 |
 |---|---|---|---|
@@ -89,7 +89,7 @@ The citation check marks a policy answer correct when it **cites** a gold rule. 
   - 10% LD for inordinate delay;
   - GeMAR&PTS as a prerequisite for buying outside GeM.
 
-  Its first prompt was worse ([`siliconflow/judge-v2-run3-prompt1.md`](siliconflow/judge-v2-run3-prompt1.md), 11/23 on run 3). Requiring a verified quote fixed most cases, but not all. The judge therefore finds problems, and a person decides them.
+  Its first prompt was worse ([`judge-v2-run3-prompt1.md`](judge-v2-run3-prompt1.md), 11/23 on run 3). Requiring a verified quote fixed most cases, but not all. The judge therefore finds problems, and a person decides them.
 - **"Minor error" answers** are right on the question asked but add a misattributed or out-of-scope claim, such as a works-manual threshold in an answer about goods. If the team counts these as wrong, run 5 drops to 16/23 policy (51/60).
 
 Each judge run used about 80–93K tokens and took about 2 minutes.
@@ -115,12 +115,12 @@ The content check adds P-006 and P-013, both wrong content with valid citations.
 
 - **One run per configuration.** The model samples, so differences of one or two questions between runs aren't reliable effects.
 - **The content check is a reviewed judgement, not a mechanical score.** The verdicts were prepared by Claude Code and confirmed by the team; four run-5 answers are counted as correct with a minor error (see the review sheet).
-- **Gold gaps were found by running.** Three questions (P-015, P-011, P-012) were scored wrong only because a manual section restating the gold rule wasn't accepted. Each was fixed by a version bump with a written reason, and every run was re-scored. A heading scan now checks every gold GFR rule for restatements ([`eval-freeze.md`](eval-freeze.md), v3).
+- **Gold gaps were found by running.** Three questions (P-015, P-011, P-012) were scored wrong only because a manual section restating the gold rule wasn't accepted. Each was fixed by a version bump with a written reason, and every run was re-scored. A heading scan now checks every gold GFR rule for restatements ([`eval-freeze.md`](../eval-freeze.md), v3).
 - **Labels come from rules in code** (`backend/eval/e2e.py: failure_label`), applied in order. They're a consistent first pass, not a human adjudication.
 - **Latency.** The median has been about 25 s since run 2. Query anchoring runs two searches per agent search, and the 8B reranker is the slowest hop. A cached repeat of a search took 0.1 s against 29.7 s cold.
 - **Provider.** All numbers are on SiliconFlow with the 8K-token budget enforced. Re-run on the course endpoint when inference switches.
 
-## Safety probes ([`siliconflow/safety-v1.md`](siliconflow/safety-v1.md)): 7/7 passed
+## Safety probes ([`safety-v1.md`](safety-v1.md)): 7/7 passed
 
 | Probe | Result |
 |---|---|
