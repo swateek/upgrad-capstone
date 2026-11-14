@@ -1,0 +1,129 @@
+{
+  "meta": {
+    "run_at": "2026-11-14T05:33:44+00:00",
+    "chat_host": "103.42.50.41:1033",
+    "embed_host": "103.42.50.41:1035",
+    "chat": "probed"
+  },
+  "rows": [
+    {
+      "check": "embed: 1 text",
+      "ok": true,
+      "vectors": 1,
+      "dimensions": 384,
+      "usage": {
+        "prompt_tokens": 5,
+        "total_tokens": 5
+      },
+      "seconds": 0.28
+    },
+    {
+      "check": "embed: 16 texts",
+      "ok": true,
+      "vectors": 16,
+      "dimensions": 384,
+      "usage": {
+        "prompt_tokens": 64,
+        "total_tokens": 64
+      },
+      "seconds": 0.09
+    },
+    {
+      "check": "embed: 17 texts (limit 16)",
+      "ok": false,
+      "status": 422,
+      "error": "{'message': 'batch size 17 > maximum allowed batch size 16', 'code': 422, 'type': 'Validation'}",
+      "seconds": 0.03
+    },
+    {
+      "check": "embed: 802-token text (limit 512)",
+      "ok": false,
+      "status": 422,
+      "error": "{'message': 'Input validation error: `inputs` must have less than 512 tokens. Given: 802', 'code': 422, 'type': 'Validation'}",
+      "seconds": 0.03
+    },
+    {
+      "check": "chat: list models",
+      "ok": true,
+      "models": [
+        "Qwen/Qwen3-8B"
+      ],
+      "seconds": 0.14
+    },
+    {
+      "check": "chat: thinking off (chat_template_kwargs)",
+      "ok": true,
+      "thinking_seen": false,
+      "completion_tokens": 19,
+      "finish": "stop",
+      "answer": "A reranker reorders or prioritizes items in a list based on relevance or importance.",
+      "seconds": 0.57
+    },
+    {
+      "check": "chat: thinking off (enable_thinking)",
+      "ok": true,
+      "thinking_seen": false,
+      "completion_tokens": 19,
+      "finish": "stop",
+      "answer": "A reranker reorders or prioritizes items in a list based on relevance or importance.",
+      "seconds": 0.52
+    },
+    {
+      "check": "chat: no thinking flag (default)",
+      "ok": true,
+      "thinking_seen": false,
+      "completion_tokens": 19,
+      "finish": "stop",
+      "answer": "A reranker reorders or prioritizes items in a list based on relevance or importance.",
+      "seconds": 0.61
+    },
+    {
+      "check": "chat: prompt-token estimate",
+      "ok": true,
+      "server_prompt_tokens": 35,
+      "our_estimate": 35,
+      "server_with_tool": 178,
+      "our_estimate_with_tool": 187,
+      "seconds": 1.31
+    },
+    {
+      "check": "chat: tool call",
+      "ok": true,
+      "tool_calls": [
+        "lookup_record"
+      ],
+      "arguments": {
+        "name": "Acme Traders"
+      },
+      "seconds": 0.62
+    },
+    {
+      "check": "chat: strict json_schema",
+      "ok": true,
+      "parsed": {
+        "passed": true,
+        "reason": "The draft is clear and concise. It effectively communicates the rule allowing purchases up to Rs 50,000 without quotations."
+      },
+      "seconds": 1.05
+    },
+    {
+      "check": "chat: streamed usage",
+      "ok": true,
+      "chunks": 21,
+      "usage": {
+        "completion_tokens": 19,
+        "prompt_tokens": 24,
+        "total_tokens": 43,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "seconds": 0.52
+    },
+    {
+      "check": "chat: max_tokens=1025 refused",
+      "ok": true,
+      "status": 400,
+      "seconds": 0.1
+    }
+  ]
+}

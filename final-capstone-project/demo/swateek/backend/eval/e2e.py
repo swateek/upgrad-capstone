@@ -13,7 +13,7 @@ traced in Langfuse with tags [eval, eval-v<version>, <job>, <id>, <label>]. Scor
   refusal    declined (refusal rule, decline wording, or a tool refusal) without doing the thing
 Every miss gets one failure label: tool-call error, retrieval miss, hallucination, or
 reasoning error (taxonomy from the Track B brief; rules in `failure_label`).
-Writes docs/results/e2e-v<version>.json and .md.
+Writes docs/results/<provider>/e2e-v<version>-<label>.json and .md.
 """
 
 from __future__ import annotations
@@ -33,10 +33,16 @@ import yaml
 from copilot.agent.harness import Harness
 from copilot.config import PROJECT_ROOT, get_settings
 from copilot.domains.loader import load_domain
+from copilot.retrieval.rerank import ChatReranker
 from copilot.tools.registry import Toolbox
 
-# USD per million tokens on api.siliconflow.com, checked 13 Nov 2026.
-PRICE = {"chat": 0.06, "embedding": 0.01, "rerank": 0.04}
+# USD per million tokens. SiliconFlow list prices, checked 13 Nov 2026. Everything under upgrad
+# (chat, embeddings, the listwise rerank on the course chat endpoint) counts against the team's
+# token quota, not money; the token columns report it.
+PRICES = {
+    "siliconflow": {"chat": 0.06, "embedding": 0.01, "rerank": 0.04},
+    "upgrad": {"chat": 0.0, "embedding": 0.0, "rerank": 0.0},
+}
 DECLINE = re.compile(
     r"\b(can(?:'|no)t|cannot|unable to|not able to|won't|will not|decline|"
     r"not (?:a finding|in the indexed)|competent authority)\b",
@@ -215,6 +221,7 @@ def main() -> int:
     domain = load_domain(settings.domain_dir)
     toolbox = Toolbox(settings, domain)
     harness = Harness(settings, domain, toolbox)
+    PRICE = PRICES[settings.provider]
     lock = yaml.safe_load(domain.path("eval/freeze.lock.yaml").read_text(encoding="utf-8"))
     version = lock["version"]
     with domain.path(domain.eval.queries).open(encoding="utf-8") as fh:
@@ -242,7 +249,10 @@ def main() -> int:
         rr = (reranker.tokens_used if reranker else 0) - k0
         s = score(q, r, gold_sheets)
         label = failure_label(q, r, s)
-        cost = (r["tokens"] * PRICE["chat"] + emb * PRICE["embedding"] + rr * PRICE["rerank"]) / 1e6
+        # a listwise reranker's tokens are inside the run's total (they count toward the token
+        # cap); report them once, in rerank_tokens
+        chat = r["tokens"] - (rr if isinstance(reranker, ChatReranker) else 0)
+        cost = (chat * PRICE["chat"] + emb * PRICE["embedding"] + rr * PRICE["rerank"]) / 1e6
         rows.append(
             {
                 "id": q["id"],
@@ -261,7 +271,7 @@ def main() -> int:
                 "refusal_rules": r["refusal_rules"],
                 "steps": r["steps"],
                 "tool_calls": r["tool_calls"],
-                "chat_tokens": r["tokens"],
+                "chat_tokens": chat,
                 "embedding_tokens": emb,
                 "rerank_tokens": rr,
                 "cost_usd": round(cost, 6),
@@ -291,11 +301,13 @@ def main() -> int:
         "eval_version": version,
         "eval_commit": lock["commit"],
         "code_commit": git_sha(),
-        "provider": settings.llm_provider,
+        "provider": settings.provider,
+        "chat_host": harness.provider_url.split("/")[2],
         "model": settings.chat_model,
         "chunker": settings.chunker,
-        "embedding_model": domain.retrieval.embedding_model,
-        "reranker": domain.retrieval.reranker_model,
+        "embedding_model": embedder.model,
+        "collection": retr.dense.collection,
+        "reranker": reranker.model if reranker else None,
         "queries": len(rows),
         "budgets": {
             "steps": settings.agent_step_limit,
@@ -308,7 +320,8 @@ def main() -> int:
         "label": args.label,
     }
     name = f"e2e-v{version}-{args.label}" + ("-subset" if args.ids else "")
-    out = PROJECT_ROOT / "docs" / "results" / name
+    settings.results_dir.mkdir(parents=True, exist_ok=True)
+    out = settings.results_dir / name
     out.with_suffix(".json").write_text(
         json.dumps({"meta": meta, "rows": rows}, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
@@ -327,7 +340,9 @@ def rescore(path: str) -> int:
     lock = yaml.safe_load(domain.path("eval/freeze.lock.yaml").read_text(encoding="utf-8"))
     with domain.path(domain.eval.queries).open(encoding="utf-8") as fh:
         gold = {q["id"]: q for q in map(json.loads, fh)}
-    src = PROJECT_ROOT / "docs" / "results" / path
+    src = settings.results_dir / path  # e.g. siliconflow/... when PROVIDER=siliconflow
+    if not src.exists():
+        src = PROJECT_ROOT / "docs" / "results" / path  # or a path under docs/results
     data = json.loads(src.read_text(encoding="utf-8"))
     changed = []
     for r in data["rows"]:
@@ -347,7 +362,7 @@ def rescore(path: str) -> int:
         "rescore_changed": changed,
     }
     name = src.name.replace(f"e2e-v{data['meta']['eval_version']}", f"e2e-v{lock['version']}")
-    out = (PROJECT_ROOT / "docs" / "results" / name).with_suffix("")
+    out = (src.parent / name).with_suffix("")
     out = out.with_name(out.name + "-rescored")
     out.with_suffix(".json").write_text(
         json.dumps({"meta": meta, "rows": data["rows"]}, indent=2, ensure_ascii=False) + "\n",

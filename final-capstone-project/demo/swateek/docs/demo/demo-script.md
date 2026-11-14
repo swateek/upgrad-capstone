@@ -4,17 +4,24 @@
 
 Every answer takes 10–35 s, because the agent plans, searches and is reviewed by the critic. Plan to talk *while* it works: the **Agent trace** panel streams the plan, the tool calls and the critic's verdict live. That panel is the point of the demo.
 
+## Provider
+
+The demo runs on whatever `PROVIDER` says in `.env`: `siliconflow` or `upgrad`. The other value is the fallback. Both indexes are in Docker, so switching is: edit the line, run `docker compose up -d api`, then check `curl localhost:3401/health`, whose `"provider"` field should show the new value. No rebuild is needed.
+
 ## Before the day
 
-- [ ] `docker compose up -d`; `curl localhost:3401/health` reports the index as ready.
-- [ ] **Run `uv run python -m eval.demo_preflight` twice** (from `backend/`). The first run checks every answer and warms the retrieval cache; the second shows demo-day latency. Every required turn must be PASS. Any FAIL is investigated, not hoped away.
+- [ ] `docker compose up -d`; `curl localhost:3401/health` reports the index as ready and the `"provider"` you mean to demo on.
+- [ ] **Run `uv run python -m eval.demo_preflight` twice** (from `backend/`) on the demo provider. The first run checks every answer and warms the retrieval cache; the second shows demo-day latency. Every required turn must be PASS. Any FAIL is investigated, not hoped away. The report lands in `docs/results/<provider>/demo-preflight.md`.
+- [ ] Switch to the fallback provider, run the preflight once, then switch back. That way the fallback is known to work, not assumed.
 - [ ] Record the fallback video: the full script below, in one take, screen and voice.
-- [ ] Check the SiliconFlow balance. The whole script costs under $0.01, but a 402 on stage ends the demo.
+- [ ] **On `siliconflow`** (as demo or fallback): check the SiliconFlow balance. The whole script costs under $0.01, but a 402 on stage ends the demo.
+- [ ] **On `upgrad`** (as demo or fallback): the group key allows one active request and is shared by the whole team. Agree that nobody else uses it during the demo slot. Each search adds a Qwen3-8B rerank call, so answers take a few seconds longer than on SiliconFlow.
 - [ ] Open a Langfuse tab on the Sessions view, filtered to sessions starting with `demo-` (see `trace-dashboard.md`).
-- [ ] Use one demo machine. Close anything else using the SiliconFlow key.
+- [ ] Use one demo machine. Close anything else using the demo provider's key, including host evals.
 
 ## On the day (30 minutes before)
 
+- [ ] Check `curl localhost:3401/health`: `"provider"` is the one you're demoing on.
 - [ ] Run the preflight once more and keep its console open as a crib sheet.
 - [ ] Open http://localhost:3400 → **Assistant** tab → **New conversation**.
 
@@ -45,5 +52,5 @@ If the agent is slow, drop the two follow-ups first (they're demonstrated in the
 |---|---|
 | An answer is wrong or **critic flagged** | Say so. The flag is the system working: the UI never presents an unreviewed answer as final. Move on. |
 | An agent turn takes over 60 s | Switch to the direct tabs (**Policy Q&A**, **Vendor screening**, **Bid comparison**). They call the tools without the planner and answer in seconds. |
-| SiliconFlow errors (402/429/503) | The direct **Vendor screening** and **Bid comparison** tabs need no chat model; screening and scoring are code. Then play the recorded video for the agent parts. |
+| Provider errors (402/429/503) or a very slow course VM | Switch `PROVIDER` to the fallback and run `docker compose up -d api` (about 15 s). Meanwhile, the direct **Vendor screening** and **Bid comparison** tabs need no chat model, since screening and scoring are code. If both providers fail, play the recorded video. |
 | The stack is down | Play the recorded video. |

@@ -45,6 +45,7 @@ from copilot.agent.tools import build_tools
 from copilot.config import Settings
 from copilot.domains.loader import DomainConfig
 from copilot.llm import get_provider
+from copilot.llm.providers import make_http_client
 from copilot.observability.tracing import Tracer
 from copilot.tools.registry import Toolbox
 
@@ -111,6 +112,9 @@ class Harness:
             timeout=settings.request_timeout_s,
             extra_body=provider.extra_body,
             stream_usage=True,
+            # TLS against the provider's CA + the process-wide gate (one active request on
+            # the course key); the critic shares this client, so its calls are gated too.
+            http_client=make_http_client(provider, settings.request_timeout_s),
         )
         p = domain.path
         self.prompts = {

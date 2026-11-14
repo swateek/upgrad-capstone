@@ -1,5 +1,5 @@
 """The budget guard must never under-count. Ground truth: SiliconFlow usage.prompt_tokens
-from the Phase 0 spike (docs/results/phase0-spike-siliconflow.json)."""
+from the Phase 0 spike (docs/results/siliconflow/phase0-spike-siliconflow.json)."""
 
 import pytest
 

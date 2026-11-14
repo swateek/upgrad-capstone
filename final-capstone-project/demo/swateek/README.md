@@ -20,7 +20,7 @@ A Deep Agents copilot on Qwen3-8B for policy Q&A, vendor screening, and draft bi
 | 3. Depth | Chunking and reranker experiments (by_rule wins), five prompting strategies, the planner/executor/critic agent, the Assistant chat tab |
 | 4. Hardening | Langfuse tracing, Redis cache and rate limits, e2e and safety runners. Latest result: **56/60** on eval v2 (run 3), with safety probes passing 7/7 |
 
-All numbers are on SiliconFlow. The course endpoint is planned but not configured yet.
+All reported numbers so far are on SiliconFlow. `PROVIDER=upgrad` in `.env` switches chat, embeddings and rerank to the course endpoints (see [Providers](#providers)).
 
 ## Setup
 
@@ -46,6 +46,27 @@ uv run python -m copilot.ingest.download --freeze   # re-pin hashes after a deli
 
 A hash mismatch fails the run. If an official file changed upstream, record the decision in `corpus/editions.md` before freezing again.
 
+## Providers
+
+One setting in `.env`, `PROVIDER=siliconflow|upgrad`, picks where every model call goes. Plan and measurements: [`docs/endpoint-switch-plan.md`](docs/endpoint-switch-plan.md).
+
+| | `siliconflow` | `upgrad` |
+|---|---|---|
+| Chat | Qwen3-8B on SiliconFlow | Qwen3-8B on the course endpoint (group 031–045) |
+| Embeddings | `Qwen3-Embedding-0.6B` | `bge-small-en-v1.5` on the course embedding endpoint |
+| Rerank | `Qwen3-Reranker-8B` | Qwen3-8B on the course chat endpoint, listwise (`UPGRAD_RERANKER=upgrad`) |
+| Qdrant collection | `procurement__by_rule` | `procurement__by_rule__bge-small-en-v1-5` |
+| Results | `docs/results/siliconflow/` | `docs/results/upgrad/` |
+
+Each provider keeps its own index, so switching never rebuilds one: edit `.env`, then restart the API (`docker compose up -d api`). `GET /health` shows the provider, models and collection in use. The course CA certificates are in `certs/` (public CAs, mounted read-only in Docker); TLS verification stays on.
+
+```bash
+uv run python -m copilot.llm.probe              # check the course endpoints' behaviour (calls them)
+PROVIDER=upgrad uv run python -m copilot.ingest.index   # build the upgrad index once (calls the embedding endpoint)
+uv run python -m copilot.ingest.copy_index --to http://localhost:3402 --only procurement__by_rule procurement__by_rule__bge-small-en-v1-5
+                                                # fill Docker's Qdrant from the host index (no API calls)
+```
+
 ## Phase 0 spike (SiliconFlow)
 
 ```bash
@@ -53,7 +74,7 @@ cd backend
 uv run python spikes/siliconflow_spike.py
 ```
 
-The spike makes seven small calls (thinking on/off, tool round trip, JSON modes, long history, streaming) and writes `docs/results/phase0-spike-siliconflow.json`. To rerun only some checks and merge them into the existing file: `--only 5,6,7`.
+The spike makes seven small calls (thinking on/off, tool round trip, JSON modes, long history, streaming) and writes `docs/results/siliconflow/phase0-spike-siliconflow.json`. To rerun only some checks and merge them into the existing file: `--only 5,6,7`.
 
 The Deep Agents prompt-size measurement is offline (a stub model, no API calls):
 
@@ -82,7 +103,7 @@ uv run pytest -q
 | Eval set (60), dev set (8), retrieval labels (15) | `domains/procurement/eval/` |
 | Synthetic bid cases (10) | `domains/procurement/data/bid_cases/` |
 | Screening snapshot | `domains/procurement/data/screening/` |
-| Baseline results | [`docs/results/phase1-baseline.md`](docs/results/phase1-baseline.md) |
+| Baseline results | [`docs/results/siliconflow/phase1-baseline.md`](docs/results/siliconflow/phase1-baseline.md) |
 
 ## Phase 2: demo floor (hybrid retrieval, tools, API, web, Docker)
 
@@ -131,8 +152,8 @@ uv run python -m eval.prompts                              # 5 prompting strateg
 
 | Result | File |
 |---|---|
-| Chunking and reranker matrix | `docs/results/retrieval-<chunker>--<reranker>.md` |
-| Prompt strategies | `docs/results/phase3-prompts.md` |
+| Chunking and reranker matrix | `docs/results/siliconflow/retrieval-<chunker>--<reranker>.md` |
+| Prompt strategies | `docs/results/siliconflow/phase3-prompts.md` |
 | What broke and what compensates | `docs/small-model-log.md` |
 
 The agent (`backend/src/copilot/agent/`):
@@ -155,7 +176,7 @@ uv run python -m eval.safety               # 7 injection / refusal / PII probes
 
 - **Results:** [`docs/results/eval-report.md`](docs/results/eval-report.md)
   - final, run 5 on eval v3: 57/60 overall, 22/23 factual policy, 0 retrieval misses, 0 tool-call errors;
-  - with the content check on policy answers: 55/60 overall, 20/23 policy (verdicts confirmed by the team: `docs/results/judge-v3-run5-review.md`);
+  - with the content check on policy answers: 55/60 overall, 20/23 policy (verdicts confirmed by the team: `docs/results/siliconflow/judge-v3-run5-review.md`);
   - safety probes 7/7.
 - **Tracing:** Langfuse Cloud, one trace per agent turn, PII-masked. It's on when `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` are in `.env`.
 - **Docker:** Redis now holds the retrieval cache and the rate-limit counters:
@@ -173,11 +194,11 @@ uv run python -m eval.demo_preflight                    # run the scripted demo 
 ```
 
 - **Report:** [`docs/report/report.md`](docs/report/report.md), with HTML and PDF beside it (build steps in [`docs/report/README.md`](docs/report/README.md)).
-- **Content check:** review sheets `docs/results/judge-*-review.md` (final: [`judge-v3-run5-review.md`](docs/results/judge-v3-run5-review.md)). The judge finds the problems, and a person confirms the verdicts.
+- **Content check:** review sheets `docs/results/siliconflow/judge-*-review.md` (final: [`judge-v3-run5-review.md`](docs/results/siliconflow/judge-v3-run5-review.md)). The judge finds the problems, and a person confirms the verdicts.
 - **Demo:**
   - talk track in [`docs/demo/demo-script.md`](docs/demo/demo-script.md);
   - questions and checks in `domains/procurement/demo.yaml`;
-  - latest preflight in `docs/results/demo-preflight.md`.
+  - latest preflight in `docs/results/siliconflow/demo-preflight.md`.
 - **Trace dashboard:**
   - screenshots in `docs/demo/traces/` (also report Appendix D);
   - how to reproduce each view: [`docs/demo/trace-dashboard.md`](docs/demo/trace-dashboard.md).

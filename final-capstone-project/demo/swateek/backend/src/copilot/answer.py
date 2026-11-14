@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from copilot.config import Settings
-from copilot.llm import RateGate, call_with_retry, check_budget, get_provider, make_openai_client
+from copilot.llm import call_with_retry, check_budget, get_provider, make_openai_client
 from copilot.llm.budget import count_message_tokens, get_tokenizer
 
 HANDLE = re.compile(r"\[(\d{1,2})\]")
@@ -31,7 +31,6 @@ class Answerer:
     def __post_init__(self) -> None:
         self.provider = get_provider(self.settings)
         self.client = make_openai_client(self.provider, self.settings.request_timeout_s)
-        self.gate = RateGate(self.provider.max_concurrency, self.provider.requests_per_minute)
         self.tokenizer = get_tokenizer(self.settings.tokenizer_id)
 
     def answer(self, question: str, hits: list[dict[str, Any]]) -> dict[str, Any]:
@@ -57,7 +56,6 @@ class Answerer:
             provider=self.provider.name,
             url=f"{self.provider.base_url}/chat/completions",
             delays=self.settings.retry_delays_s,
-            gate=self.gate,
         )
         raw = resp.choices[0].message.content or ""
         result = resolve_handles(raw, [h["citation"] for h in hits])

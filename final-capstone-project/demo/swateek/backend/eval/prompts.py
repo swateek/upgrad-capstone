@@ -25,7 +25,7 @@ from typing import Any
 from pydantic import BaseModel, Field, ValidationError
 
 from copilot.answer import resolve_handles
-from copilot.config import PROJECT_ROOT, get_settings
+from copilot.config import get_settings
 from copilot.domains.loader import load_domain
 from copilot.llm import RateGate, call_with_retry, check_budget, get_provider, make_openai_client
 from copilot.llm.budget import count_message_tokens, get_tokenizer
@@ -291,10 +291,11 @@ def main() -> int:
         "model": r.provider.model,
         "provider": r.provider.name,
         "chunker": r.settings.chunker,
-        "reranker": r.domain.retrieval.reranker_model,
+        "reranker": (rr.model if (rr := r.toolbox.retriever.reranker) else None),
         "queries": len(queries),
     }
-    out = PROJECT_ROOT / "docs" / "results" / "phase3-prompts"
+    r.settings.results_dir.mkdir(parents=True, exist_ok=True)
+    out = r.settings.results_dir / "phase3-prompts"
     out.with_suffix(".json").write_text(
         json.dumps({"meta": meta, "rows": rows}, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",

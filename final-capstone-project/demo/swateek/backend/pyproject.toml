@@ -41,7 +41,7 @@ known-first-party = ["copilot", "screening"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]  # "." for the eval runners
 
 [dependency-groups]
 dev = [

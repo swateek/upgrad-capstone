@@ -4,7 +4,7 @@
 - `report.html`, `report.pdf`: built from `report.md` (steps below).
 - `outline.md`: the section plan and page budgets it was written to.
 - `figures/`: generated PNGs. Don't edit them by hand.
-- `make_figures.py`: rebuilds the figures from `docs/results/*.json`. No API calls.
+- `make_figures.py`: rebuilds the figures from `docs/results/siliconflow/*.json`. No API calls.
 - `print.css`: the print style for the PDF.
 
 ## Rebuild the figures

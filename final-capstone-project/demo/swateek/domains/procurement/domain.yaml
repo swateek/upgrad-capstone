@@ -14,11 +14,12 @@ corpus:
   target_docs: [500, 1200]
 
 retrieval:
-  embedding_model: Qwen/Qwen3-Embedding-0.6B
+  # The embedding and reranker models come with the provider (PROVIDER in .env; see
+  # backend/src/copilot/llm/providers.py), not the domain. On siliconflow: Qwen3-Embedding-0.6B and
+  # Qwen3-Reranker-8B (chosen 13 Nov 2026 on recall: by_rule 0.76/0.97/1.00 at k=1/5/10 vs
+  # 0.60/0.95/0.97 for the 0.6B reranker). On upgrad: bge-small-en-v1.5 and UPGRAD_RERANKER.
+  # The task line below is used by the instruction-aware Qwen3 embedder and reranker.
   query_instruction: Given a question about procurement rules, retrieve the rule text that answers it
-  # bge-reranker-v2-m3 is not offered on api.siliconflow.com. Qwen3-Reranker-8B chosen 13 Nov 2026
-  # on recall (by_rule: 0.76/0.97/1.00 at k=1/5/10 vs 0.60/0.95/0.97 for 0.6B); see docs/results.
-  reranker_model: Qwen/Qwen3-Reranker-8B
   top_k_fused: 20
   top_k_final: 5
 

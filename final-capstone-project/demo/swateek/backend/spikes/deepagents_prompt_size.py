@@ -11,7 +11,7 @@ Measures the main agent's first model call for:
      no general-purpose subagent), short prompts
 
 Tool bodies are placeholders; only their schemas matter here. Writes
-docs/results/phase0-deepagents-prompt-size.json.
+docs/results/siliconflow/phase0-deepagents-prompt-size.json.
 """
 
 from __future__ import annotations
@@ -192,7 +192,7 @@ def main() -> int:
             )
         else:
             print(f"{c['label']:34s} FAILED {c['error']}")
-    out = PROJECT_ROOT / "docs" / "results" / "phase0-deepagents-prompt-size.json"
+    out = PROJECT_ROOT / "docs" / "results" / "siliconflow" / "phase0-deepagents-prompt-size.json"
     out.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {out}")
     return 0

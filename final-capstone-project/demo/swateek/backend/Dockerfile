@@ -27,8 +27,9 @@ COPY src ./src
 COPY eval ./eval
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev
 
-# Bake the Qwen3 tokenizer (tokenizer.json only, no weights) so the budget guard works offline.
-RUN python -c "from tokenizers import Tokenizer; Tokenizer.from_pretrained('Qwen/Qwen3-8B')"
+# Bake the tokenizers (tokenizer.json only, no weights): Qwen3 for the budget guard and the
+# listwise reranker, bge-small for cutting chunks to the course embedding endpoint's 512 tokens.
+RUN python -c "from tokenizers import Tokenizer; [Tokenizer.from_pretrained(m) for m in ('Qwen/Qwen3-8B', 'BAAI/bge-small-en-v1.5')]"
 
 RUN useradd --create-home --uid 10001 app && mkdir -p /app/data /app/docs/results \
     && chown -R app /app/data /app/docs /opt/hf

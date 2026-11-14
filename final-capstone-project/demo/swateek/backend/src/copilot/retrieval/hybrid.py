@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 
 from copilot.retrieval.bm25 import BM25Index
 from copilot.retrieval.dense import DenseStore
-from copilot.retrieval.rerank import Reranker
+from copilot.retrieval.rerank import ChatReranker, Reranker
 
 RRF_K = 60  # standard constant from Cormack et al.; dampens the head of each list
 
@@ -43,7 +43,7 @@ class HybridRetriever:
         dense: DenseStore,
         embed_query: Callable[[str], list[float]],
         candidates: int = 20,
-        reranker: Reranker | None = None,
+        reranker: Reranker | ChatReranker | None = None,
     ) -> None:
         self.bm25 = bm25
         self.dense = dense

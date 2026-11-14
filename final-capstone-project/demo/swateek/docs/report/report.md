@@ -76,7 +76,7 @@ Refusal patterns were tuned on the development set and the brief, never on the f
 
 ## 4. Baseline: how the 8B model breaks
 
-The baseline asked Qwen3-8B each of the 25 policy questions in a single prompt, with thinking off and temperature 0. It ran twice: closed-book, and with the BM25 top 5 pasted in (`results/phase1-baseline.md`, log #7–12).
+The baseline asked Qwen3-8B each of the 25 policy questions in a single prompt, with thinking off and temperature 0. It ran twice: closed-book, and with the BM25 top 5 pasted in (`results/siliconflow/phase1-baseline.md`, log #7–12).
 
 | | Closed-book | BM25 top-5 |
 |---|---|---|
@@ -105,7 +105,7 @@ The conclusions were:
 
 **Pipeline.** BM25 (`rank-bm25`) and dense retrieval (`Qwen3-Embedding-0.6B` in Qdrant) each return their top 20. The two lists are fused with reciprocal rank fusion (k = 60), the fused top 20 are reranked, and the top 5 are kept. The domain pack supplies the embedding query instruction. Recall@k is measured **at rule-id level, separately from answer quality**, on the 38 labelled questions.
 
-![Recall@1 and recall@5 by chunker and retrieval mode (38 labelled questions). Source: `results/retrieval-*--qwen3-reranker-8b.json`.](figures/fig2-retrieval.png)
+![Recall@1 and recall@5 by chunker and retrieval mode (38 labelled questions). Source: `results/siliconflow/retrieval-*--qwen3-reranker-8b.json`.](figures/fig2-retrieval.png)
 
 **Chunking experiment.** The `by_rule` splitter was compared with fixed 512-token chunks and recursive 800-character chunks:
 
@@ -139,7 +139,7 @@ The 8B reranker was chosen (log #16). It sees only the query and passages and ne
 
 ## 6. Prompting strategies
 
-Five strategies were run on the 25 policy questions with the same top 5 sources, except decomposition, which retrieves per sub-question (`results/phase3-prompts.md`, log #22–26):
+Five strategies were run on the 25 policy questions with the same top 5 sources, except decomposition, which retrieves per sub-question (`results/siliconflow/phase3-prompts.md`, log #22–26):
 
 | Strategy | Correct source (23) | Refusals (25) | Uncited-sentence answers | Schema-valid | Latency |
 |---|---|---|---|---|---|
@@ -254,7 +254,7 @@ These entries come from `docs/small-model-log.md`, which recorded each failure a
 
 The pattern across all of these: when a small model is unreliable at something, **move it into code**, so that a mistake is either impossible or checked mechanically.
 
-![Prompt tokens on the planner's first call for three harness builds. Source: `results/phase0-deepagents-prompt-size.json`.](figures/fig5-prompt-size.png)
+![Prompt tokens on the planner's first call for three harness builds. Source: `results/siliconflow/phase0-deepagents-prompt-size.json`.](figures/fig5-prompt-size.png)
 
 ## 9. End-to-end evaluation
 
@@ -281,7 +281,7 @@ Each run sends all 60 frozen questions through the full agent, each in a fresh c
 | Latency p50 / p95 (s) | 13.2 / 54.4 | 25.5 / 42.6 | 26.5 / 43.9 | 24.9 / 46.0 | 26.2 / 50.3 |
 | Cost per task | $0.00065 | $0.00067 | $0.00069 | $0.00069 | $0.00072 |
 
-![Share correct per job across runs, all scored on eval v3. Source: `results/e2e-v3-*-rescored.json`.](figures/fig3-e2e-accuracy.png)
+![Share correct per job across runs, all scored on eval v3. Source: `results/siliconflow/e2e-v3-*-rescored.json`.](figures/fig3-e2e-accuracy.png)
 
 **Definitions.** A *step* is one model call by any role; a *tool call* is one tool execution, including a rejected one; *task completion* means an answer was released within all budgets with no error. A run of 60 questions costs about $0.04 at SiliconFlow's prices (chat $0.06/M tokens, embeddings $0.01/M, rerank $0.04/M).
 
@@ -296,7 +296,7 @@ Each run sends all 60 frozen questions through the full agent, each in a fresh c
 
 **Failure taxonomy.** Each wrong answer gets one label from rules in code, first match wins: *tool-call error* (the run failed, no usable tool call, or the wrong name screened), *retrieval miss* (gold rule never retrieved), *hallucination* (an unknown ref, or the advisory critic marked a claim unsupported), else *reasoning error*.
 
-![Failure labels per run (eval v3). Retrieval misses disappear after run 1, and tool-call errors after run 4. Source: `results/e2e-v3-*-rescored.json`.](figures/fig4-failures.png)
+![Failure labels per run (eval v3). Retrieval misses disappear after run 1, and tool-call errors after run 4. Source: `results/siliconflow/e2e-v3-*-rescored.json`.](figures/fig4-failures.png)
 
 **Run 5 misses.**
 
@@ -306,7 +306,7 @@ Each run sends all 60 frozen questions through the full agent, each in a fresh c
 **Content check.** A correct citation doesn't guarantee a correct answer, so the 23 factual policy answers of runs 3–5 were also judged on content (`backend/eval/judge.py`):
 
 - **Automatic judge.** DeepSeek-V3.2, a larger model from a different family, compared each answer with its gold points and with the cited and gold passage text, in two passes. Each error it reported had to quote the source text that shows the claim is false, and code checked that the quote exists.
-- **Review.** Its failures were then reviewed against the sources (`results/judge-*-review.md`). The verdicts were prepared by the coding assistant and confirmed by the team.
+- **Review.** Its failures were then reviewed against the sources (`results/siliconflow/judge-*-review.md`). The verdicts were prepared by the coding assistant and confirmed by the team.
 
 Some answers cite the right rule but state the wrong thing: **P-013** says splitting a demand is allowed (runs 3 and 5), **P-014** gets the Make in India yes/no wrong (run 3), **P-005** gives two limits (runs 3 and 4), and **P-006** never names the Local Purchase Committee (run 5). Run 5 is therefore **20/23 policy and 55/60 overall** (log #36). The judge alone said 11/23, but in every run it also failed answers that the sources support, so it finds problems and a person decides them.
 
@@ -320,7 +320,7 @@ Some answers cite the right rule but state the wrong thing: **P-013** says split
 
 ## 10. Responsible AI
 
-**Safety probes** (`results/safety-v1.md`, 7/7 passed):
+**Safety probes** (`results/siliconflow/safety-v1.md`, 7/7 passed):
 
 | Probe | Result |
 |---|---|

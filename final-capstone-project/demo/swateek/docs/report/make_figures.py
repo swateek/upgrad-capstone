@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 HERE = Path(__file__).resolve().parent
-RESULTS = HERE.parent / "results"
+RESULTS = HERE.parent / "results" / "siliconflow"  # the report's runs are SiliconFlow runs
 OUT = HERE / "figures"
 
 SURFACE = "#ffffff"

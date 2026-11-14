@@ -30,24 +30,24 @@ A Track B capstone (group DLlamas): a procurement and vendor-review copilot buil
 
 ## Model providers
 
-| Use | Provider | Status |
+`PROVIDER=siliconflow|upgrad` in `.env` switches chat, embeddings and rerank together (profiles in `backend/src/copilot/llm/providers.py`; plan: `docs/endpoint-switch-plan.md`). Qwen3 thinking mode is off by default.
+
+| Use | `siliconflow` | `upgrad` (course endpoints, group 031–045) |
 |---|---|---|
-| Chat (Qwen3-8B) | SiliconFlow | **Active** for development |
-| Embeddings (`Qwen/Qwen3-Embedding-0.6B`) | SiliconFlow | Active, and stays on SiliconFlow |
-| Rerank (`Qwen/Qwen3-Reranker-8B`) | SiliconFlow `/v1/rerank` | Active, and stays on SiliconFlow |
-| Chat (Qwen3-8B) | Course Track B endpoint | **Planned. Do not configure or call it until the user says so.** |
+| Chat | Qwen3-8B | Qwen3-8B at `https://103.42.50.41:1033/v1`, CA `certs/vm05-ca.crt` |
+| Embeddings | `Qwen/Qwen3-Embedding-0.6B`, collection `<domain>__by_rule` | `bge-small-en-v1.5` at `https://103.42.50.41:1035/v1`, CA `certs/vm02-ca.crt`, collection `<domain>__by_rule__bge-small-en-v1-5` |
+| Rerank | `Qwen/Qwen3-Reranker-8B` (`/v1/rerank`) | Qwen3-8B on the course chat endpoint, listwise (`UPGRAD_RERANKER=upgrad`), or `none` |
+| Results | `docs/results/siliconflow/` | `docs/results/upgrad/` |
+| Content-check judge | DeepSeek-V3.2 on SiliconFlow | not run (not a Track B requirement) |
 
-Selected by `LLM_PROVIDER=siliconflow|course`. Qwen3 thinking mode is off by default.
-
-### Course endpoint (for later, no action now)
-
-- Model id `Qwen/Qwen3-8B`. Base URL from the group's row in `../../../dumps/practice-capstone-project/final-capstone-project/Track_B_Inference_API_Learner_Guide.docx.pdf`.
-- The CA file in `dumps/` is `vm05-ca.crt`, which maps to groups 031–045 → `https://103.42.50.41:1033/v1`. **The group id is unconfirmed. Confirm it with the user first.**
-- Keep TLS verification on with the group's CA cert (path from `COURSE_CA_CERT_PATH`). Never disable verification.
-- Limits: 1 active request per key across the whole group (a second concurrent request gets 429), 60 req/min, 8,192 tokens in + out, 1,024 max output (512 if `max_tokens` is unset). Retry 429/503 at 2 s, 4 s, 8 s, then stop.
-- The key is shared by every teammate, so the in-process queue can't stop collisions between people. Run evals on this endpoint one person at a time.
+- **Never call an upgrad endpoint (chat or embeddings) unless the user explicitly says so for that step.** That includes the probe, `ingest.index`, `eval.*` and Docker runs with `PROVIDER=upgrad`.
+- **Never overwrite or rebuild the SiliconFlow index or results.** Both providers' indexes stay built side by side; switching is a `.env` change.
+- Under `upgrad`, nothing calls SiliconFlow.
+- Keep TLS verification on with each endpoint's CA file (`UPGRAD_*_CA_CERT`). Never disable verification.
+- Chat limits: 1 active request per key across the whole group (a second concurrent request gets 429), 60 req/min, 8,192 tokens in + out, 1,024 max output (512 if `max_tokens` is unset). Retry 429/503 at 2 s, 4 s, 8 s, then stop. Every request passes one process-wide gate (`GatedTransport`), so the agent, critic and reranker never overlap.
+- Embedding limits: 16 texts per request, fewer than 512 tokens per text (422 otherwise; measured). Longer chunks are embedded as windows of 500 bge tokens.
+- The key is shared by every teammate, so the in-process gate can't stop collisions between people. Run evals on this endpoint one person at a time.
 - When reporting a failure to the coordinator, include group id, URL, error code, and time. Never include the key.
-- No embeddings on this endpoint.
 
 ## Secrets and data
 

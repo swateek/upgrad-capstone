@@ -6,7 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, SecretStr
+from pydantic import AliasChoices, Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # backend/src/copilot/config.py -> parents[3] is final-capstone-project/demo/swateek
@@ -26,12 +26,28 @@ class Settings(BaseSettings):
     domains_dir: Path = PROJECT_ROOT / "domains"
     data_dir: Path = PROJECT_ROOT / "data"
 
-    # --- chat model ----------------------------------------------------------------
-    # "course" (the Track B endpoint) is planned but deliberately not wired yet.
-    llm_provider: Literal["siliconflow", "course"] = "siliconflow"
+    # --- provider: one switch for chat, embeddings and rerank -------------------------
+    # siliconflow: everything on SiliconFlow. upgrad: chat and embeddings on the course
+    # endpoints; rerank per UPGRAD_RERANKER. Models per provider: copilot.llm.providers.
+    # LLM_PROVIDER is the old name and is still read.
+    provider: Literal["siliconflow", "upgrad"] = Field(
+        default="siliconflow",
+        validation_alias=AliasChoices("provider", "llm_provider"),
+    )
     chat_model: str = "Qwen/Qwen3-8B"
     siliconflow_api_key: SecretStr | None = None
     siliconflow_base_url: str = "https://api.siliconflow.com/v1"
+
+    # upgrad course endpoints (group 031-045). Cert paths may be relative to PROJECT_ROOT.
+    upgrad_chat_base_url: str = "https://103.42.50.41:1033/v1"
+    upgrad_chat_api_key: SecretStr | None = None
+    upgrad_chat_ca_cert: Path = Path("certs/vm05-ca.crt")
+    upgrad_embed_base_url: str = "https://103.42.50.41:1035/v1"
+    upgrad_embed_api_key: SecretStr | None = None
+    upgrad_embed_ca_cert: Path = Path("certs/vm02-ca.crt")
+    # The course offers no reranker and Track B requires one (brief, item III): "upgrad" has
+    # Qwen3-8B on the course chat endpoint order the fused candidates. "none" = hybrid only.
+    upgrad_reranker: Literal["upgrad", "none"] = "upgrad"
 
     # Qwen3 thinking mode. SiliconFlow defaults it to ON, so it is sent explicitly.
     enable_thinking: bool = False
@@ -80,9 +96,24 @@ class Settings(BaseSettings):
     # --- domain-independent ingest -------------------------------------------------
     max_corpus_docs: int = Field(default=2000, description="Track B hard cap on indexed documents")
 
+    @field_validator("provider", mode="before")
+    @classmethod
+    def _renamed_provider(cls, v: object) -> object:
+        if isinstance(v, str) and v.strip().lower() == "course":
+            raise ValueError("the course provider is now called 'upgrad': set PROVIDER=upgrad")
+        return v.strip().lower() if isinstance(v, str) else v
+
     @property
     def domain_dir(self) -> Path:
         return self.domains_dir / self.domain
+
+    @property
+    def results_dir(self) -> Path:
+        """Eval outputs, one directory per provider: docs/results/<provider>/."""
+        return PROJECT_ROOT / "docs" / "results" / self.provider
+
+    def resolve(self, path: Path) -> Path:
+        return path if path.is_absolute() else PROJECT_ROOT / path
 
 
 @lru_cache

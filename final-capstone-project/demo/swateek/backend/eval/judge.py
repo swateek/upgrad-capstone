@@ -16,6 +16,10 @@ Qwen3-8B) so it doesn't grade its own phrasing. Each row is judged in two indepe
 rows where the passes disagree are listed for a person to review. No agent runs, no API calls
 to the system.
 
+The judge always runs on SiliconFlow, whatever PROVIDER says, and only on SiliconFlow runs
+(docs/results/siliconflow/). Runs on the upgrad course endpoint are not judged: Track B asks for
+end-to-end accuracy and a failure taxonomy, not an LLM judge (team decision, 13 Nov 2026).
+
     uv run python -m eval.judge e2e-v2-run3.json
 """
 
@@ -37,7 +41,7 @@ from copilot.domains.loader import load_domain
 from copilot.ingest.index import chunks_path
 from copilot.llm.providers import get_provider, make_openai_client
 
-RESULTS = PROJECT_ROOT / "docs" / "results"
+RESULTS = PROJECT_ROOT / "docs" / "results" / "siliconflow"
 PASSAGE_CHARS = 2500
 
 JUDGE_PROMPT_VERSION = 2  # v1 listed source-supported claims as errors; v2 requires a quote
@@ -177,7 +181,7 @@ def judge_once(client, model: str, prompt: str) -> tuple[Judgement, dict[str, in
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("run", help="saved e2e run in docs/results, e.g. e2e-v2-run3.json")
+    ap.add_argument("run", help="saved run in docs/results/siliconflow, e.g. e2e-v2-run3.json")
     ap.add_argument("--model", default="deepseek-ai/DeepSeek-V3.2")
     ap.add_argument("--passes", type=int, default=2)
     args = ap.parse_args()
@@ -186,9 +190,19 @@ def main() -> int:
     domain = load_domain(settings.domain_dir)
     with domain.path(domain.eval.queries).open(encoding="utf-8") as fh:
         gold = {q["id"]: q for q in map(json.loads, fh)}
-    run = json.loads((RESULTS / args.run).read_text(encoding="utf-8"))
+    src = RESULTS / args.run
+    if not src.exists():
+        raise SystemExit(
+            f"{args.run} is not a SiliconFlow run (looked in {src.parent}). "
+            "Runs on the upgrad course endpoint are not judged."
+        )
+    run = json.loads(src.read_text(encoding="utf-8"))
+    if run["meta"].get("provider", "siliconflow") != "siliconflow":
+        raise SystemExit(
+            f"{args.run} ran on {run['meta']['provider']}; only SiliconFlow runs are judged."
+        )
     passages = load_passages(settings, settings.domain)
-    client = make_openai_client(get_provider(settings), settings.request_timeout_s)
+    client = make_openai_client(get_provider(settings, "siliconflow"), settings.request_timeout_s)
 
     todo = [
         (gold[r["id"]], r)

@@ -250,7 +250,9 @@ No core code changes. The loader checks that the collection's stored embedding m
 - **Usage capture:** read `usage` from every response for the cost and latency reports.
 - **Self-consistency stays off** on the default path. Sampling several answers burns the shared quota.
 
-### 6.2 Course endpoint (later, no action now)
+### 6.2 Course endpoint
+
+> **Superseded (14 Nov 2026):** the switch is built as `PROVIDER=siliconflow|upgrad`, covering chat, the course embedding endpoint and a listwise Qwen3-8B reranker. See [`endpoint-switch-plan.md`](endpoint-switch-plan.md). The table below is the original plan.
 
 When the team switches inference from SiliconFlow:
 
@@ -292,7 +294,7 @@ A small model may skip calling the critic, so the critic is enforced in code. A 
 
 The default deep-agent prompt and built-in tools are written for large models. For Qwen3-8B:
 
-Measured in Phase 0 (`docs/results/phase0-deepagents-prompt-size.json`, `docs/small-model-log.md` #5):
+Measured in Phase 0 (`docs/results/siliconflow/phase0-deepagents-prompt-size.json`, `docs/small-model-log.md` #5):
 
 | Build | Planner's first call |
 |---|---|

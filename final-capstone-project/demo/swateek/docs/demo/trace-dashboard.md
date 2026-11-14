@@ -8,12 +8,12 @@
 |---|---|---|
 | Trace name | `procurement-agent` (`<domain>-agent`) | every agent turn |
 | Session | the conversation's thread id | multi-turn conversations, e.g. `demo-withheld-…` |
-| Tags | always: `procurement`, `siliconflow` | – |
+| Tags | always: `procurement` and the provider, `siliconflow` or `upgrad` | runs on one provider: filter on its tag |
 | Tags, e2e eval runs | `eval`, `eval-v1` or `eval-v2`, the job (`policy`, `screening`, `bid`), the question id; from run 4 also the run label (`run4`, `run5`) | **run 5 (final) = tag `run5`**. Runs 3–5 all carry `eval-v2`, the version they ran on (later re-scored on v3), and runs 1–2 carry `eval-v1`. |
 | Tags, safety probes | `safety`, the probe id | the 7 probes |
-| Metadata | chunker, chat model; at the end, steps, tool calls, revisions, critic result | – |
+| Metadata | chunker, chat model; at the end, steps, tool calls, revisions, critic result. Under `upgrad`, each search's listwise rerank call is a `rerank` event (tokens, seconds) in the run's events. | – |
 
-Direct links to individual traces are in the `trace_url` field of each row in `docs/results/e2e-v2-run5.json` (and the earlier runs) and `docs/results/safety-v1.json`.
+Direct links to individual traces are in the `trace_url` field of each row in `docs/results/siliconflow/e2e-v2-run5.json` (and the earlier runs) and `docs/results/siliconflow/safety-v1.json`.
 
 ## Screenshots (captured)
 

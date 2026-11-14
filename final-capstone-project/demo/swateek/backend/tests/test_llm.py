@@ -79,8 +79,3 @@ def test_siliconflow_sends_thinking_off_and_hides_key():
 def test_missing_key_is_clear_error():
     with pytest.raises(ProviderNotConfigured):
         get_provider(Settings(_env_file=None, domain="test", siliconflow_api_key=None))
-
-
-def test_course_provider_not_wired_yet():
-    with pytest.raises(ProviderNotConfigured):
-        get_provider(Settings(_env_file=None, domain="test", llm_provider="course"))

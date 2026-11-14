@@ -25,9 +25,8 @@ class CorpusConfig(BaseModel):
 class RetrievalConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    embedding_model: str
+    # Embedding and reranker models belong to the provider profile (copilot.llm.providers).
     query_instruction: str | None = None  # task line for instruction-aware query embeddings
-    reranker_model: str | None = None
     top_k_fused: int = 20
     top_k_final: int = 5
 

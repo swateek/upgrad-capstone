@@ -28,8 +28,6 @@ from copilot.config import PROJECT_ROOT, get_settings
 from copilot.domains.loader import load_domain
 from eval.e2e import _says_date
 
-OUT = PROJECT_ROOT / "docs" / "results" / "demo-preflight.md"
-
 
 def chat(client: httpx.Client, api: str, thread_id: str, message: str) -> dict[str, Any]:
     """One /chat turn; returns the final event (or the error event) plus progress counts."""
@@ -90,7 +88,10 @@ def main() -> int:
     rows, required_failures = [], 0
     with httpx.Client(timeout=httpx.Timeout(180.0, connect=10.0)) as client:
         health = client.get(f"{args.api}/health").json()
-        print(f"API {args.api} · {json.dumps(health)[:160]}")
+        print(f"API {args.api} · {json.dumps(health)[:240]}")
+        # the provider the running API serves, not this shell's .env
+        provider = health.get("provider") or settings.provider
+        out = PROJECT_ROOT / "docs" / "results" / provider / "demo-preflight.md"
         for scene in scenes:
             thread_id = f"demo-{scene['id']}-{stamp}"
             print(f"\n[{scene['id']}] {scene['title']}  (thread {thread_id})")
@@ -125,20 +126,26 @@ def main() -> int:
                     }
                 )
 
-    OUT.write_text(report(args.api, stamp, rows), encoding="utf-8")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(report(args.api, stamp, rows, health), encoding="utf-8")
     total = sum(r["seconds"] for r in rows)
     print(
         f"\n{sum(r['result'] == 'PASS' for r in rows)}/{len(rows)} passed · "
-        f"{total:.0f} s of agent time · {OUT.relative_to(PROJECT_ROOT)}"
+        f"{total:.0f} s of agent time · {out.relative_to(PROJECT_ROOT)}"
     )
     return 1 if required_failures else 0
 
 
-def report(api: str, stamp: str, rows: list[dict[str, Any]]) -> str:
+def report(api: str, stamp: str, rows: list[dict[str, Any]], health: dict[str, Any]) -> str:
     lines = [
-        "# Demo preflight",
+        f"# Demo preflight ({health.get('provider', '?')})",
         "",
-        f"{stamp} UTC · API `{api}` · script `domains/<domain>/demo.yaml`",
+        (
+            f"{stamp} UTC · API `{api}` · provider {health.get('provider', '?')} · chat "
+            f"`{health.get('chat_model', '?')}` · embeddings "
+            f"`{health.get('embedding_model', '?')}` · reranker `{health.get('reranker')}` · "
+            "script `domains/<domain>/demo.yaml`"
+        ),
         "",
         "| Scene | Turn | Eval id | Result | Seconds | Steps | Tools | Problems |",
         "|---|---|---|---|---|---|---|---|",

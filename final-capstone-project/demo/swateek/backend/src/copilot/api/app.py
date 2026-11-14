@@ -23,6 +23,7 @@ from copilot.agent.harness import Harness
 from copilot.answer import Answerer
 from copilot.config import get_settings
 from copilot.domains.loader import load_domain
+from copilot.llm.providers import get_embedding, get_reranker, validate
 from copilot.retrieval.dense import StaleIndex
 from copilot.tools.registry import Toolbox
 
@@ -33,6 +34,7 @@ STATE: dict[str, Any] = {}
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     settings = get_settings()
+    validate(settings)  # every key and CA file PROVIDER needs; the error names the variable
     domain = load_domain(settings.domain_dir)
     toolbox = Toolbox(settings, domain)
     STATE.update(settings=settings, domain=domain, toolbox=toolbox, index_error=None)
@@ -107,16 +109,24 @@ def toolbox() -> Toolbox:
 def health() -> dict[str, Any]:
     tb = toolbox()
     ok = STATE["index_error"] is None
+    s = tb.settings
+    rr = get_reranker(s)
     return {
         "status": "ok" if ok else "degraded",
+        "provider": s.provider,
+        "chat_model": s.chat_model,
+        "embedding_model": get_embedding(s).model,
+        "reranker": rr.model if rr else None,
         "domain": tb.domain.name,
-        "chunker": tb.settings.chunker,
+        "chunker": s.chunker,
         "index": (
-            {"points": tb.retriever.dense.client.count(tb.retriever.dense.collection).count}
+            {
+                "collection": tb.retriever.dense.collection,
+                "points": tb.retriever.dense.client.count(tb.retriever.dense.collection).count,
+            }
             if ok
             else {"error": STATE["index_error"]}
         ),
-        "llm_provider": tb.settings.llm_provider,
     }
 
 

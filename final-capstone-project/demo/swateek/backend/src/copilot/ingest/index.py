@@ -3,8 +3,10 @@
     uv run python -m copilot.ingest.index                 # active chunker (CHUNKER, default by_rule)
     uv run python -m copilot.ingest.index --force         # rebuild even if up to date
 
-Skips work when the collection already matches the chunk file's hash and the embedding model.
-BM25 needs no index step: it is built in memory from the same chunk file at startup.
+Indexes for the active provider (PROVIDER in .env): its embedding model, its own collection.
+Run once per provider; both indexes stay side by side. Skips work when the collection already
+matches the chunk file's hash and the embedding model. BM25 needs no index step: it is built in
+memory from the same chunk file at startup.
 """
 
 from __future__ import annotations
@@ -19,6 +21,7 @@ from pathlib import Path
 
 from copilot.config import get_settings
 from copilot.domains.loader import load_domain
+from copilot.llm.providers import get_embedding
 from copilot.retrieval.dense import DenseStore, StaleIndex, collection_name, make_client
 from copilot.retrieval.embed import Embedder
 
@@ -45,8 +48,11 @@ def main() -> int:
         print(f"FAIL {path} missing; run copilot.ingest.build_chunks first", file=sys.stderr)
         return 1
     corpus_hash = file_hash(path)
-    model = domain.retrieval.embedding_model
-    store = DenseStore(make_client(settings), collection_name(domain.name, chunker))
+    emb = get_embedding(settings)
+    model = emb.model
+    store = DenseStore(
+        make_client(settings), collection_name(domain.name, chunker, emb.collection_suffix)
+    )
 
     if not args.force:
         try:
@@ -60,23 +66,29 @@ def main() -> int:
 
     with path.open(encoding="utf-8") as fh:
         chunks = [json.loads(x) for x in fh]
-    embedder = Embedder(settings, model)
+    embedder = Embedder(settings)
     t0 = time.perf_counter()
-    vectors = embedder.embed_documents([c["text"] for c in chunks])
-    store.recreate(len(vectors[0]))
+    vectors = embedder.embed_chunks([c["text"] for c in chunks])
+    store.recreate(len(vectors[0][0]))
     store.upsert(chunks, vectors, model, corpus_hash)
     n = store.check(model, corpus_hash)
     meta = {
+        "provider": settings.provider,
         "collection": store.collection,
         "embedding_model": model,
-        "dimensions": len(vectors[0]),
+        "dimensions": len(vectors[0][0]),
         "corpus_hash": corpus_hash,
+        "chunks": len(chunks),
+        "chunks_windowed": sum(len(v) > 1 for v in vectors),
         "points": n,
         "embedding_tokens": embedder.tokens_used,
         "seconds": round(time.perf_counter() - t0, 1),
         "built_at": datetime.now(UTC).isoformat(timespec="seconds"),
     }
-    path.with_suffix(".index.json").write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
+    # SiliconFlow keeps the original file name; other providers get their own
+    name = "index.json" if settings.provider == "siliconflow" else f"{settings.provider}.index.json"
+    out = path.with_name(f"{path.stem}.{name}")
+    out.write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(meta, indent=2))
     return 0
 

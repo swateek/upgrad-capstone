@@ -1,8 +1,11 @@
 """Dense vectors in Qdrant: embedded (local path) for dev/eval, server (QDRANT_URL) in Docker.
 
-One collection per domain x chunker, e.g. "<domain>__by_rule". Every point's payload carries
-the embedding model and corpus hash; `check()` refuses to serve an index built from a different
-corpus or model.
+One collection per domain x chunker x embedding: "<domain>__by_rule" for SiliconFlow (the
+original name) and "<domain>__by_rule__bge-small-en-v1-5" for upgrad, so each provider's index
+stays built side by side and switching never rebuilds one.
+Every point's payload carries the embedding model and corpus hash; `check()` refuses to serve an
+index built from a different corpus or model. A chunk may have several points (one per window,
+when the embedding endpoint takes fewer tokens than the chunk has); search keeps the best one.
 """
 
 from __future__ import annotations
@@ -28,8 +31,8 @@ class DenseHit:
     score: float
 
 
-def collection_name(domain: str, chunker: str) -> str:
-    return f"{domain}__{chunker}"
+def collection_name(domain: str, chunker: str, suffix: str | None = None) -> str:
+    return f"{domain}__{chunker}" + (f"__{suffix}" if suffix else "")
 
 
 def make_client(settings: Settings) -> QdrantClient:
@@ -40,8 +43,8 @@ def make_client(settings: Settings) -> QdrantClient:
     return QdrantClient(path=str(path))
 
 
-def point_id(chunk_id: str) -> str:
-    return str(uuid.uuid5(uuid.NAMESPACE_URL, chunk_id))
+def point_id(chunk_id: str, window: int = 0) -> str:
+    return str(uuid.uuid5(uuid.NAMESPACE_URL, chunk_id if window == 0 else f"{chunk_id}#{window}"))
 
 
 class DenseStore:
@@ -65,23 +68,26 @@ class DenseStore:
     def upsert(
         self,
         chunks: Sequence[dict],
-        vectors: Sequence[Sequence[float]],
+        vectors: Sequence[Sequence[Sequence[float]]],
         embedding_model: str,
         corpus_hash: str,
     ) -> None:
+        """vectors[i] holds chunk i's vectors, one per window (usually one)."""
         points = [
             models.PointStruct(
-                id=point_id(c["chunk_id"]),
+                id=point_id(c["chunk_id"], w),
                 vector=list(v),
                 payload={
                     "chunk_id": c["chunk_id"],
                     "citation": c["citation"],
                     "doc_id": c["doc_id"],
+                    "window": w,
                     "embedding_model": embedding_model,
                     "corpus_hash": corpus_hash,
                 },
             )
-            for c, v in zip(chunks, vectors, strict=True)
+            for c, vs in zip(chunks, vectors, strict=True)
+            for w, v in enumerate(vs)
         ]
         for i in range(0, len(points), 256):
             self.client.upsert(self.collection, points=points[i : i + 256])
@@ -113,10 +119,13 @@ class DenseStore:
             if doc_ids
             else None
         )
+        # over-fetch, then keep each chunk's best window (points come back best first)
         res = self.client.query_points(
-            self.collection, query=list(vector), limit=k, query_filter=flt, with_payload=True
+            self.collection, query=list(vector), limit=k * 3, query_filter=flt, with_payload=True
         )
-        return [
-            DenseHit(p.payload["chunk_id"], p.payload["citation"], float(p.score))
-            for p in res.points
-        ]
+        hits: dict[str, DenseHit] = {}
+        for p in res.points:
+            cid = p.payload["chunk_id"]
+            if cid not in hits:
+                hits[cid] = DenseHit(cid, p.payload["citation"], float(p.score))
+        return list(hits.values())[:k]

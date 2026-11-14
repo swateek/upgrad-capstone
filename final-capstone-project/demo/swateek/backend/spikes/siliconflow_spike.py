@@ -13,7 +13,7 @@ Checks
   6. 12-message history         -> docs suggest a 10-message cap
   7. streaming                  -> SSE chunks arrive
 
-Writes docs/results/phase0-spike-siliconflow.json. Never prints the API key.
+Writes docs/results/siliconflow/phase0-spike-siliconflow.json. Never prints the API key.
 """
 
 from __future__ import annotations
@@ -326,7 +326,7 @@ CHECKS: list[tuple[str, Callable[[], dict[str, Any]]]] = [
 ]
 
 
-OUT = PROJECT_ROOT / "docs" / "results" / "phase0-spike-siliconflow.json"
+OUT = PROJECT_ROOT / "docs" / "results" / "siliconflow" / "phase0-spike-siliconflow.json"
 
 
 def main() -> int:

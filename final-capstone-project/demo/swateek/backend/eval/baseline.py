@@ -21,7 +21,7 @@ import time
 from datetime import UTC, datetime
 from typing import Any
 
-from copilot.config import PROJECT_ROOT, get_settings
+from copilot.config import get_settings
 from copilot.domains.loader import load_domain
 from copilot.llm import RateGate, call_with_retry, check_budget, get_provider, make_openai_client
 from copilot.llm.budget import count_message_tokens, get_tokenizer
@@ -147,7 +147,7 @@ def main() -> int:
         "git_sha": git_sha(),
         "n_queries": len(queries),
     }
-    out = PROJECT_ROOT / "docs" / "results" / "phase1-baseline.json"
+    out = settings.results_dir / "phase1-baseline.json"
     out.write_text(json.dumps({"meta": meta, "rows": rows}, indent=2, ensure_ascii=False) + "\n")
     (out.with_suffix(".md")).write_text(summary(meta, rows), encoding="utf-8")
     print(f"wrote {out} and {out.with_suffix('.md')}")
@@ -159,7 +159,7 @@ def rescore() -> int:
     domain = load_domain(settings.domain_dir)
     with domain.path(domain.eval.queries).open(encoding="utf-8") as fh:
         gold = {q["id"]: q["gold"] for q in map(json.loads, fh)}
-    out = PROJECT_ROOT / "docs" / "results" / "phase1-baseline.json"
+    out = settings.results_dir / "phase1-baseline.json"
     data = json.loads(out.read_text(encoding="utf-8"))
     for r in data["rows"]:
         g = gold[r["id"]].get("rule_ids", []) + gold[r["id"]].get("also_accept", [])

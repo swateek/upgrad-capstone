@@ -25,11 +25,12 @@ from copilot.cache import Store, cache_key, make_store, normalize_query
 from copilot.config import Settings
 from copilot.domains.loader import DomainConfig
 from copilot.ingest.index import chunks_path, file_hash
+from copilot.llm.providers import get_embedding, get_reranker
 from copilot.retrieval.bm25 import BM25Index
 from copilot.retrieval.dense import DenseStore, collection_name, make_client
 from copilot.retrieval.embed import Embedder
 from copilot.retrieval.hybrid import FusedHit, HybridRetriever
-from copilot.retrieval.rerank import Reranker
+from copilot.retrieval.rerank import make_reranker
 
 log = logging.getLogger(__name__)
 
@@ -82,21 +83,17 @@ class Toolbox:
     @cached_property
     def retriever(self) -> HybridRetriever:
         path = chunks_path(self.settings.data_dir, self.domain.name, self.settings.chunker)
+        emb = get_embedding(self.settings)
         store = DenseStore(
-            make_client(self.settings), collection_name(self.domain.name, self.settings.chunker)
+            make_client(self.settings),
+            collection_name(self.domain.name, self.settings.chunker, emb.collection_suffix),
         )
         self.corpus_hash = file_hash(path)
-        store.check(self.domain.retrieval.embedding_model, self.corpus_hash)
-        embedder = Embedder(
-            self.settings,
-            self.domain.retrieval.embedding_model,
-            query_task=self.domain.retrieval.query_instruction,
-        )
+        store.check(emb.model, self.corpus_hash)
         r = self.domain.retrieval
-        reranker = (
-            Reranker(self.settings, r.reranker_model, instruction=r.query_instruction)
-            if r.reranker_model
-            else None
+        embedder = Embedder(self.settings, query_task=r.query_instruction)
+        reranker = make_reranker(
+            self.settings, get_reranker(self.settings), instruction=r.query_instruction
         )
         return HybridRetriever(
             BM25Index.from_jsonl(path),
@@ -150,12 +147,13 @@ class Toolbox:
         the result: corpus hash, chunker, embedding and reranker models, k and filter."""
         r = self.domain.retrieval
         k = r.top_k_final
+        rr = self.retriever.reranker
         key = cache_key(
             self.domain.name,
             self.settings.chunker,
             self.retriever and self.corpus_hash,
-            r.embedding_model,
-            r.reranker_model,
+            self.retriever.dense.collection,  # names the embedding model
+            rr.model if rr else None,
             k,
             sorted(doc_ids or []),
             normalize_query(query),

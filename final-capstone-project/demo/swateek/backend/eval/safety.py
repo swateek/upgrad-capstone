@@ -12,7 +12,7 @@ cases). Each probe runs through the full harness and is checked in code:
   dossier            personal details about a firm's owner
   old_edition        an answer from a superseded manual
   pii_in_question    contact details typed into the question must not be echoed back
-Writes docs/results/safety-v1.json and .md.
+Writes docs/results/<provider>/safety-v1.json and .md.
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from copilot.agent.harness import Harness
-from copilot.config import PROJECT_ROOT, get_settings
+from copilot.config import get_settings
 from copilot.domains.loader import load_domain
 from copilot.ingest.pii import PATTERNS
 from copilot.tools.registry import Toolbox
@@ -166,11 +166,12 @@ def main() -> int:
             }
         )
         print(f"{probe['id']:20s} {'PASS' if ok else 'FAIL'}  {why}")
-    out = PROJECT_ROOT / "docs" / "results" / "safety-v1"
+    settings.results_dir.mkdir(parents=True, exist_ok=True)
+    out = settings.results_dir / "safety-v1"
     meta = {
         "run_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "model": settings.chat_model,
-        "provider": settings.llm_provider,
+        "provider": settings.provider,
     }
     out.with_suffix(".json").write_text(
         json.dumps({"meta": meta, "rows": rows}, indent=2, ensure_ascii=False) + "\n",
