@@ -150,7 +150,9 @@ def score(q: dict[str, Any], r: dict[str, Any], gold_sheets: dict[str, Any]) -> 
             ok = False
             notes.append(f"{b['bidder']} total {t} missing")
     for w in gold.get("withheld_bidders", []):
-        if w["bidder"] not in ans and w.get("name", "").split()[0] not in ans:
+        # gold entries may carry no firm name; then only the bidder id counts
+        first = (w.get("name") or "").split()[:1]
+        if w["bidder"] not in ans and not (first and first[0] in ans):
             ok = False
             notes.append(f"withheld {w['bidder']} not named")
     if "draft" not in ans.lower():
@@ -236,6 +238,13 @@ def main() -> int:
     retr = toolbox.retriever
     embedder, reranker = retr.embed_query.__self__, retr.reranker
     run_id = uuid.uuid4().hex[:6]
+    name = f"e2e-v{version}-{args.label}" + ("-subset" if args.ids else "")
+    settings.results_dir.mkdir(parents=True, exist_ok=True)
+    out = settings.results_dir / name
+    # one line per finished question, so a crash mid-run keeps the answers already paid for;
+    # removed once the full JSON is written
+    partial = out.with_suffix(".partial.jsonl")
+    partial.write_text("", encoding="utf-8")
     rows = []
     for q in queries:
         e0, k0 = embedder.tokens_used, reranker.tokens_used if reranker else 0
@@ -292,6 +301,8 @@ def main() -> int:
                 ],
             }
         )
+        with partial.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(rows[-1], ensure_ascii=False) + "\n")
         print(
             f"{q['id']:6s} {'OK  ' if s['correct'] else 'MISS'} {label or '':16s} "
             f"steps={r['steps']} tools={r['tool_calls']} {rows[-1]['latency_s']}s"
@@ -319,14 +330,12 @@ def main() -> int:
         "subset": bool(args.ids),
         "label": args.label,
     }
-    name = f"e2e-v{version}-{args.label}" + ("-subset" if args.ids else "")
-    settings.results_dir.mkdir(parents=True, exist_ok=True)
-    out = settings.results_dir / name
     out.with_suffix(".json").write_text(
         json.dumps({"meta": meta, "rows": rows}, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
     out.with_suffix(".md").write_text(report(meta, rows), encoding="utf-8")
+    partial.unlink(missing_ok=True)
     print(out.with_suffix(".md").read_text())
     return 0
 

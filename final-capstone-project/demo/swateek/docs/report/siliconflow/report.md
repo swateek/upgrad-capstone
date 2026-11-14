@@ -6,7 +6,7 @@ date: "Draft of 13 November 2026 · submission 27 November 2026"
 
 **Team:** DLlamas · **Code:** `final-capstone-project/demo/swateek/` · **Model:** Qwen3-8B (frozen weights, hosted) · **Results:** run 5, eval set v3, on SiliconFlow: 57/60 citation-graded, 55/60 with the content check
 
-Every number below links to a file in `docs/results/` or an entry in `docs/small-model-log.md` (cited as "log #n"). The figures are generated from those files by `docs/report/make_figures.py`.
+Every number below links to a file in `docs/results/` or an entry in `docs/small-model-log.md` (cited as "log #n"). The figures are generated from those files by `docs/report/siliconflow/make_figures.py`.
 
 ## 1. Problem and scope
 
@@ -405,14 +405,14 @@ All prompts are in `domains/procurement/prompts/`: planner, executor, critic, an
 
 Real query executions, captured from the project's Langfuse Cloud workspace on 13 Nov 2026. One trace per agent turn; the session is the conversation's thread id. Eval traces are tagged `eval`, the eval version, the job, the question id and the run label. All seven captures are in `docs/demo/traces/`, and how to reproduce each view is in `docs/demo/trace-dashboard.md`. The Langfuse SDK records its own public key as a trace attribute; it is blurred in D.3. The secret key is never sent.
 
-![D.1 Langfuse's Agent Dashboard over the evaluation day: about 2,000 tool calls; the most-called tools (`task`, `write_todos`, `search_policy`, `score_bids`, `screen_vendor`); p95 latency per tool (retrieval ≈ 11 s, while scoring and screening, which are code, take milliseconds).](../demo/traces/07-agent-dashboard.jpg)
+![D.1 Langfuse's Agent Dashboard over the evaluation day: about 2,000 tool calls; the most-called tools (`task`, `write_todos`, `search_policy`, `score_bids`, `screen_vendor`); p95 latency per tool (retrieval ≈ 11 s, while scoring and screening, which are code, take milliseconds).](../../demo/traces/07-agent-dashboard.jpg)
 
-![D.2 The 60 traces of run 5 (filter: root observations, tag `run5`), with latency per question. Langfuse shows no cost because SiliconFlow's Qwen3-8B is not in its price table; costs in §9 come from token usage × SiliconFlow prices.](../demo/traces/01-run5-trace-list.jpg)
+![D.2 The 60 traces of run 5 (filter: root observations, tag `run5`), with latency per question. Langfuse shows no cost because SiliconFlow's Qwen3-8B is not in its price table; costs in §9 come from token usage × SiliconFlow prices.](../../demo/traces/01-run5-trace-list.jpg)
 
-![D.3 One full agent turn, S-005 "Check DNS Overseas.": planner → `task` → executor → `screen_vendor`. The tool's own output, computed in code, gives the status, the list and the snapshot date that the answer repeats.](../demo/traces/03-trace-s005-screen-vendor.jpg)
+![D.3 One full agent turn, S-005 "Check DNS Overseas.": planner → `task` → executor → `screen_vendor`. The tool's own output, computed in code, gives the status, the list and the snapshot date that the answer repeats.](../../demo/traces/03-trace-s005-screen-vendor.jpg)
 
-![D.4 Trace metadata for B-004 "Who should we recommend in case_002?": two critic revisions, `critic_passed: false` (B2's total was left out), 9 steps, 3 tool calls, 12,733 tokens, inside every budget.](../demo/traces/04-trace-b004-two-revisions.jpg)
+![D.4 Trace metadata for B-004 "Who should we recommend in case_002?": two critic revisions, `critic_passed: false` (B2's total was left out), 9 steps, 3 tool calls, 12,733 tokens, inside every budget.](../../demo/traces/04-trace-b004-two-revisions.jpg)
 
-![D.5 A multi-turn demo session: the critic sends the first draft back ("Report each bidder's technical total…"), and the follow-up "Which bidder was withheld, and on what list?" is answered from session state.](../demo/traces/06-session-demo-withheld.jpg)
+![D.5 A multi-turn demo session: the critic sends the first draft back ("Report each bidder's technical total…"), and the follow-up "Which bidder was withheld, and on what list?" is answered from session state.](../../demo/traces/06-session-demo-withheld.jpg)
 
-![D.6 PII masking: the safety probe typed an email address and a phone number into the question; the exported trace shows `[REDACTED-EMAIL]` and `[REDACTED-PHONE]`.](../demo/traces/05-trace-pii-masked.jpg)
+![D.6 PII masking: the safety probe typed an email address and a phone number into the question; the exported trace shows `[REDACTED-EMAIL]` and `[REDACTED-PHONE]`.](../../demo/traces/05-trace-pii-masked.jpg)

@@ -6,7 +6,7 @@
 
 - [ ] **1. Merge the PR into main.** Plan §14 asks for phase work to show up in git history, and the branch `17-swateek---sample-design` hasn't been merged yet. Claude Code can draft the PR description; `gh` isn't logged in, so open the PR yourself.
 - [ ] **2. Mentor notes.** `docs/mentor-notes/` is still empty. Write a short note for each mentor session, covering the feedback and what you did about it. This meets the "act on mentor feedback" requirement.
-- [ ] **3. Release tag and submission.** Tag the final commit (name of your choice). Then submit the repo link and `docs/report/report.pdf`. The eval report and trace screenshots are in the repo and also in the PDF's appendices.
+- [ ] **3. Release tag and submission.** Tag the final commit (name of your choice). Then submit the repo link and `docs/report/siliconflow/report.pdf`. The eval report and trace screenshots are in the repo and also in the PDF's appendices.
 
 ## When you decide
 

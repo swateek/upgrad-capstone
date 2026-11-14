@@ -2,9 +2,9 @@
 
 Run from backend/ (matplotlib isn't a project dependency):
 
-    uv run --with matplotlib python ../docs/report/make_figures.py
+    uv run --with matplotlib python ../docs/report/siliconflow/make_figures.py
 
-Writes PNGs to docs/report/figures/. Colours are the validated categorical palette
+Writes PNGs to docs/report/siliconflow/figures/. Colours are the validated categorical palette
 (slots 1-4: blue, orange, aqua, yellow); identity is never colour alone, since every
 series is also in the legend and the numbers are in the report's tables.
 """
@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 HERE = Path(__file__).resolve().parent
-RESULTS = HERE.parent / "results" / "siliconflow"  # the report's runs are SiliconFlow runs
+RESULTS = HERE.parents[1] / "results" / "siliconflow"  # the report's runs are SiliconFlow runs
 OUT = HERE / "figures"
 
 SURFACE = "#ffffff"

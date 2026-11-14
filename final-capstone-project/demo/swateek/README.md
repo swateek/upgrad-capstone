@@ -10,7 +10,7 @@ A Deep Agents copilot on Qwen3-8B for policy Q&A, vendor screening, and draft bi
 
 ## Status
 
-**Phases 0–4 are done.** **Phase 5** is in progress: the report draft is in [`docs/report/report.md`](docs/report/report.md) (build steps in [`docs/report/README.md`](docs/report/README.md)). The final evaluation and demo prep follow.
+**Phases 0–4 are done.** **Phase 5** is in progress: the reports are in [`docs/report/siliconflow/report.md`](docs/report/siliconflow/report.md) and [`docs/report/upgrad/report.md`](docs/report/upgrad/report.md) (build steps in [`docs/report/README.md`](docs/report/README.md)). The final evaluation and demo prep follow.
 
 | Phase | Delivered |
 |---|---|
@@ -189,11 +189,12 @@ uv run python -m eval.safety               # 7 injection / refusal / PII probes
 ```bash
 cd backend
 uv run python -m eval.judge e2e-v3-run5-rescored.json   # content check of policy answers (larger judge model)
-uv run --with matplotlib python ../docs/report/make_figures.py   # report figures from docs/results/*.json
+uv run --with matplotlib python ../docs/report/siliconflow/make_figures.py   # report figures from docs/results/siliconflow/*.json
+uv run --with matplotlib python ../docs/report/upgrad/make_figures.py        # upgrad report figures from docs/results/upgrad/*.json
 uv run python -m eval.demo_preflight                    # run the scripted demo against the live API (stack must be up)
 ```
 
-- **Report:** [`docs/report/report.md`](docs/report/report.md), with HTML and PDF beside it (build steps in [`docs/report/README.md`](docs/report/README.md)).
+- **Reports:** [`docs/report/siliconflow/report.md`](docs/report/siliconflow/report.md) and [`docs/report/upgrad/report.md`](docs/report/upgrad/report.md), each with HTML and PDF beside it (build steps in [`docs/report/README.md`](docs/report/README.md)).
 - **Content check:** review sheets `docs/results/siliconflow/judge-*-review.md` (final: [`judge-v3-run5-review.md`](docs/results/siliconflow/judge-v3-run5-review.md)). The judge finds the problems, and a person confirms the verdicts.
 - **Demo:**
   - talk track in [`docs/demo/demo-script.md`](docs/demo/demo-script.md);
