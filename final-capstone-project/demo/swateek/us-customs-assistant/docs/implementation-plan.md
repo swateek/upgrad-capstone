@@ -431,10 +431,10 @@ No calendar. "STOP (sign-off)" waits for your approval; "STOP (upgrad OK)" waits
 3. **Regulatory checks R1–R12** → `docs/regulatory-checks.md`, rule, rate, brand and facts tables. *Done and signed off 17 Nov (decisions A–G).*
    **STOP (sign-off):** each row.
 4. **SPEC.md**: scope, refusal policy, answer-changing facts, the corpus document unit, tool contracts, what counts as correct, metrics, HITL boundary.
-   **STOP (sign-off):** SPEC APPROVED.
+   **STOP (sign-off):** SPEC APPROVED. *Approved 17 Nov (v1.0).*
 5. In parallel:
    - **Eval scenarios** (80 + ~6 corrections + 20 dev) and retrieval labels; **gold** by the fresh subagent (D18).
-     **STOP (sign-off):** your hand-check of 20 → freeze `eval-v1`.
+     **STOP (sign-off):** your hand-check of 20 → freeze `eval-v1`. *Done 17 Nov: `eval-v1` frozen (80 + 6 corrections, 20 dev); gold built independently; the hand-check of 20 was done by the main session at the user's request (20/20 OK, finding F1 fixed). See `docs/results/eval-freeze.md`.*
    - **Calculators and tools (offline)**, unit tests per rule, the four corrected business-case examples.
    - **UI mock-up** of the answer card (offline).
 6. **Index.** **STOP (upgrad OK):** 3 chunking variants (~600 docs → ~1,500–2,500 chunks, ≈100–160 embedding requests per variant; ×2 for the prefix experiment).
