@@ -439,7 +439,7 @@ No calendar. "STOP (sign-off)" waits for your approval; "STOP (upgrad OK)" waits
    - **UI mock-up** of the answer card (offline).
 6. **Index.** **STOP (upgrad OK):** 3 chunking variants (~600 docs → ~1,500–2,500 chunks, ≈100–160 embedding requests per variant; ×2 for the prefix experiment). *Done 17 Nov with the user's OK: 3,528 distinct texts embedded in 221 requests (logged in `docs/quota-log.md`); three collections built (paragraph 1,413, section 920, window200 1,601 points, 384 dims); vectors cached in `data/embeddings/` so rebuilds, including Docker, need no upgrad calls.*
 7. **Baselines (the gate).** **STOP (upgrad OK):** ≈850 chat calls (4 strategies, dollar items without calculators, constrained-decoding comparison). → `week1_strategies.csv`, `week1_failures.csv`. *Done 17 Nov with the user's OK: 924 chat calls in all (smoke 20 + stopped run 15 + resumed run 889, incl. 36 JSON retries), 64 min, no API errors. Turn accuracy 1–13% (few-shot best); amount right on 12–22% of answered turns; see `docs/results/week1-baselines.md` and `docs/COMPENSATIONS.md` #3–7.* Report §1–2 (problem, spec, eval design) and §3 (prompting) drafted.
-   **STOP (mentor):** share the gate evidence.
+   **STOP (mentor):** share the gate evidence. *Done 17 Nov: `docs/mentor-check-01.md`.*
 8. **Retrieval experiment.** **STOP (upgrad OK):** listwise rerank ≈ 1 chat call per labelled question per variant (a few hundred). → recall@k, three decisions; report §4 (retrieval) drafted.
 9. **Agent graph (offline first).** All nodes, the four modes, state and corrections, error handling; offline tests; prompt-size measurement.
 10. **Dev-set runs.** **STOP (upgrad OK):** 20 questions × ~4 calls per iteration (+ a few corrections). Tune on dev only → **prompt freeze**.
