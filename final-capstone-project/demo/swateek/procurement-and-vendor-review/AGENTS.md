@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Instructions for coding agents and contributors working in `final-capstone-project/demo/swateek/`.
+Instructions for coding agents and contributors working in `final-capstone-project/demo/swateek/procurement-and-vendor-review/`.
 
 ## What this is
 

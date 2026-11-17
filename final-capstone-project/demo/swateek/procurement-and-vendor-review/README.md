@@ -27,7 +27,7 @@ A Deep Agents copilot on Qwen3-8B for policy Q&A, vendor screening, and draft bi
 Prerequisites: [uv](https://docs.astral.sh/uv/) and Python 3.12.
 
 ```bash
-cd final-capstone-project/demo/swateek
+cd final-capstone-project/demo/swateek/procurement-and-vendor-review
 cp env.sample .env          # then fill SILICONFLOW_API_KEY; never commit .env
 cd backend
 uv sync

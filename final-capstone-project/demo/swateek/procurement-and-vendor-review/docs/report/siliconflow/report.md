@@ -4,7 +4,7 @@ subtitle: "IIT Kharagpur / upGrad Executive PG capstone · Track B (API-side) ·
 date: "Draft of 13 November 2026 · submission 27 November 2026"
 ---
 
-**Team:** DLlamas · **Code:** `final-capstone-project/demo/swateek/` · **Model:** Qwen3-8B (frozen weights, hosted) · **Results:** run 5, eval set v3, on SiliconFlow: 57/60 citation-graded, 55/60 with the content check
+**Team:** DLlamas · **Code:** `final-capstone-project/demo/swateek/procurement-and-vendor-review/` · **Model:** Qwen3-8B (frozen weights, hosted) · **Results:** run 5, eval set v3, on SiliconFlow: 57/60 citation-graded, 55/60 with the content check
 
 Every number below links to a file in `docs/results/` or an entry in `docs/small-model-log.md` (cited as "log #n"). The figures are generated from those files by `docs/report/siliconflow/make_figures.py`.
 

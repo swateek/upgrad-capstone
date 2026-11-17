@@ -85,7 +85,7 @@ UPGRAD_RERANKER=upgrad        # upgrad: Qwen3-8B (course chat) ranks the top-20 
 - `LLM_PROVIDER` becomes `PROVIDER`, because it now switches embeddings as well as chat. The old name is still read as an alias, so an existing `.env` keeps working. The old value `course` fails with "use `upgrad`".
 - Model ids aren't in `.env`. Each provider serves fixed models, so they live in the provider profile in code (§3.2). The chat model is `Qwen/Qwen3-8B` on both.
 - **Fail fast at startup.** With `PROVIDER=upgrad`, a missing key or a missing certificate file stops the API with a message that names the variable. Keys are never printed.
-- **Certificates:** copy both `.crt` files into `final-capstone-project/demo/swateek/certs/`. They're public CA certificates and are already in git under `dumps/`. Relative paths resolve against the project folder, so the same `.env` works on the host and in Docker. Compose mounts `./certs:/app/certs:ro`.
+- **Certificates:** copy both `.crt` files into `final-capstone-project/demo/swateek/procurement-and-vendor-review/certs/`. They're public CA certificates and are already in git under `dumps/`. Relative paths resolve against the project folder, so the same `.env` works on the host and in Docker. Compose mounts `./certs:/app/certs:ro`.
 
 ### 3.2 One provider profile
 

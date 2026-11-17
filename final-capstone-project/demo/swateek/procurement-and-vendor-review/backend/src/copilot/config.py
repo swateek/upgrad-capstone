@@ -9,7 +9,7 @@ from typing import Literal
 from pydantic import AliasChoices, Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# backend/src/copilot/config.py -> parents[3] is final-capstone-project/demo/swateek
+# backend/src/copilot/config.py -> parents[3] is final-capstone-project/demo/swateek/procurement-and-vendor-review
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 

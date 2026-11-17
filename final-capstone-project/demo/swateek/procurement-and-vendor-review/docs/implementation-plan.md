@@ -90,10 +90,10 @@ flowchart LR
 
 ## 3. Repository layout
 
-Everything lives under `final-capstone-project/demo/swateek/`. The build brief stays where it is, in `final-capstone-project/docs/exploration/`.
+Everything lives under `final-capstone-project/demo/swateek/procurement-and-vendor-review/`. The build brief stays where it is, in `final-capstone-project/docs/exploration/`.
 
 ```text
-final-capstone-project/demo/swateek/
+final-capstone-project/demo/swateek/procurement-and-vendor-review/
 ├── AGENTS.md                  # rules for coding agents and contributors
 ├── README.md                  # how to run (written in Phase 0)
 ├── docker-compose.yml
@@ -127,7 +127,7 @@ final-capstone-project/demo/swateek/
 
 Repo hygiene this layout needs:
 
-- The root `.gitignore` ignores every dotfile (`.*`), so `.env` stays out of git. `.dockerignore` is whitelisted (done). Still to add: `final-capstone-project/demo/swateek/data/`, `node_modules/`, and `.next/`.
+- The root `.gitignore` ignores every dotfile (`.*`), so `.env` stays out of git. `.dockerignore` is whitelisted (done). Still to add: `final-capstone-project/demo/swateek/procurement-and-vendor-review/data/`, `node_modules/`, and `.next/`.
 - The 500 KB pre-commit size limit has been removed, but **source PDFs are not committed** (decided). `manifest.yaml` (URLs, editions) and `manifest.lock.yaml` (sha256, sizes) are committed. `copilot.ingest.download` fetches and verifies the files into `data/raw/<domain>/`.
 - The env template is called `env.sample`, not `.env.example`, because of the dotfile rule. The practice project uses the same name.
 
