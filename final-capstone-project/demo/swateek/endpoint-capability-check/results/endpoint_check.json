@@ -1,0 +1,260 @@
+{
+  "meta": {
+    "run_at": "2026-11-17T08:10:04+00:00",
+    "by": "swateek",
+    "args": "(full)",
+    "chat_host": "103.42.50.41:1033",
+    "embed_host": "103.42.50.41:1035",
+    "chat_model": "Qwen/Qwen3-8B",
+    "embed_model": "bge-small-en-v1.5",
+    "tokens": {
+      "requests": 27,
+      "chat_prompt_tokens": 1683,
+      "chat_completion_tokens": 364,
+      "embedding_tokens": 73
+    }
+  },
+  "checks": {
+    "models": {
+      "check": "A1 chat: /models",
+      "ok": true,
+      "models": [
+        "Qwen/Qwen3-8B"
+      ],
+      "max_model_len": {
+        "Qwen/Qwen3-8B": 8192
+      },
+      "configured": "Qwen/Qwen3-8B",
+      "seconds": 0.14
+    },
+    "tools": {
+      "check": "A2 chat: tools auto x5",
+      "ok": true,
+      "runs": 5,
+      "called": 5,
+      "valid_arguments": 5,
+      "first": {
+        "name": "get_weather",
+        "arguments": {
+          "city": "Pune"
+        },
+        "valid": true
+      },
+      "seconds": 2.65
+    },
+    "json_schema": {
+      "check": "A3 chat: json_schema (strict)",
+      "ok": true,
+      "parsed": {
+        "city": "Mumbai",
+        "state": "Maharashtra"
+      },
+      "seconds": 0.5
+    },
+    "json_object": {
+      "check": "A4 chat: json_object",
+      "ok": true,
+      "parsed": {
+        "city": "Mumbai",
+        "state": "Maharashtra"
+      },
+      "raw": null,
+      "seconds": 0.51
+    },
+    "usage": {
+      "check": "A6 chat: usage",
+      "ok": true,
+      "usage": {
+        "completion_tokens": 3,
+        "prompt_tokens": 15,
+        "total_tokens": 18,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "seconds": 0.13
+    },
+    "tool_required": {
+      "check": "B1 chat: tool_choice=required",
+      "ok": true,
+      "tool_calls": [
+        "get_weather"
+      ],
+      "arguments": {
+        "city": "New York"
+      },
+      "text": null,
+      "seconds": 0.51
+    },
+    "tool_named": {
+      "check": "B1 chat: tool_choice=named",
+      "ok": true,
+      "tool_calls": [
+        "get_weather"
+      ],
+      "arguments": {
+        "city": "New York"
+      },
+      "text": null,
+      "seconds": 0.24
+    },
+    "embed_models": {
+      "check": "A5 embed: /models",
+      "ok": false,
+      "status": 404,
+      "error": "",
+      "seconds": 0.11
+    },
+    "embeddings": {
+      "check": "A5 embed: 1 text",
+      "ok": true,
+      "model": "bge-small-en-v1.5",
+      "dimensions": 384,
+      "usage": {
+        "prompt_tokens": 4,
+        "total_tokens": 4
+      },
+      "seconds": 1.23
+    },
+    "embed_info": {
+      "check": "B2 embed: /info (TEI)",
+      "ok": true,
+      "available": false,
+      "status": 404,
+      "seconds": 0.14
+    }
+  },
+  "probe": [
+    {
+      "check": "embed: 1 text",
+      "ok": true,
+      "vectors": 1,
+      "dimensions": 384,
+      "usage": {
+        "prompt_tokens": 5,
+        "total_tokens": 5
+      },
+      "seconds": 0.16
+    },
+    {
+      "check": "embed: 16 texts",
+      "ok": true,
+      "vectors": 16,
+      "dimensions": 384,
+      "usage": {
+        "prompt_tokens": 64,
+        "total_tokens": 64
+      },
+      "seconds": 0.13
+    },
+    {
+      "check": "embed: 17 texts (limit 16) is refused",
+      "ok": true,
+      "expected": "rejected",
+      "status": 422,
+      "error": "{'message': 'batch size 17 > maximum allowed batch size 16', 'code': 422, 'type': 'Validation'}",
+      "seconds": 0.04
+    },
+    {
+      "check": "embed: 802-token text (limit 512) is refused",
+      "ok": true,
+      "expected": "rejected",
+      "status": 422,
+      "error": "{'message': 'Input validation error: `inputs` must have less than 512 tokens. Given: 802', 'code': 422, 'type': 'Validation'}",
+      "bge_tokens": 802,
+      "seconds": 0.05
+    },
+    {
+      "check": "chat: list models",
+      "ok": true,
+      "models": [
+        "Qwen/Qwen3-8B"
+      ],
+      "seconds": 0.15
+    },
+    {
+      "check": "chat: thinking off (chat_template_kwargs)",
+      "ok": true,
+      "thinking_seen": false,
+      "completion_tokens": 19,
+      "finish": "stop",
+      "answer": "A reranker reorders or prioritizes items in a list based on relevance or importance.",
+      "seconds": 0.48
+    },
+    {
+      "check": "chat: thinking off (enable_thinking)",
+      "ok": true,
+      "thinking_seen": false,
+      "completion_tokens": 19,
+      "finish": "stop",
+      "answer": "A reranker reorders or prioritizes items in a list based on relevance or importance.",
+      "seconds": 0.48
+    },
+    {
+      "check": "chat: no thinking flag (default)",
+      "ok": true,
+      "thinking_seen": false,
+      "completion_tokens": 19,
+      "finish": "stop",
+      "answer": "A reranker reorders or prioritizes items in a list based on relevance or importance.",
+      "seconds": 0.48
+    },
+    {
+      "check": "chat: prompt-token estimate",
+      "ok": true,
+      "server_prompt_tokens": 35,
+      "our_estimate": 35,
+      "server_with_tool": 178,
+      "our_estimate_with_tool": 187,
+      "seconds": 1.16
+    },
+    {
+      "check": "chat: tool call",
+      "ok": true,
+      "tool_calls": [
+        "lookup_record"
+      ],
+      "arguments": {
+        "name": "Acme Traders"
+      },
+      "seconds": 0.57
+    },
+    {
+      "check": "chat: strict json_schema",
+      "ok": true,
+      "parsed": {
+        "passed": true,
+        "reason": "The draft is clear and concise. It effectively communicates the rule allowing purchases up to Rs 50,000 without quotations."
+      },
+      "seconds": 0.99
+    },
+    {
+      "check": "chat: streamed usage",
+      "ok": true,
+      "chunks": 21,
+      "usage": {
+        "completion_tokens": 19,
+        "prompt_tokens": 24,
+        "total_tokens": 43,
+        "completion_tokens_details": null,
+        "prompt_tokens_details": null
+      },
+      "seconds": 0.5
+    },
+    {
+      "check": "chat: max_tokens=1025 refused",
+      "ok": true,
+      "status": 400,
+      "seconds": 0.06
+    }
+  ],
+  "verdict": [
+    "models: 1 chat model ['Qwen/Qwen3-8B']; matches CHAT_MODEL; context length 8192 (copilot budgets 8192 per call). Develop locally on the same family; write the name in SPEC.md.",
+    "tools: OK in 5/5 runs -> native tool calling; keep the tools parameter in the planner and still validate arguments with Pydantic.",
+    "forced tool calls: required OK, named OK -> the planner can force a call when a step must use a tool.",
+    "json_schema: OK -> constrained decoding is available: use it for the planner, writer and critic outputs; record 'with vs. without' as an experiment.",
+    "embeddings: OK -> configure the vector store with dimension 384 (model bge-small-en-v1.5).",
+    "embedding model name: the server publishes none (/v1/models and /info answer 404 and 404); it accepted 'bge-small-en-v1.5', but that does not prove which model it is. The dimension fits bge-small-en-v1.5; ask the programme office to confirm the name (Q2).",
+    "usage reported: token counting works -> log prompt_tokens and completion_tokens per call for the cost metric and the quota log.",
+    "known behaviour (14 Nov probe): 13/13 as before."
+  ]
+}
