@@ -2,9 +2,12 @@
 !.gitignore
 !.pre-commit-config.yaml
 !.dockerignore
+!.github/
+!.gitkeep
 chroma
 *.sqlite3
 __pycache__/
 node_modules/
 *.part
 final-capstone-project/demo/swateek/procurement-and-vendor-review/data/
+final-capstone-project/demo/swateek/us-customs-assistant/data/

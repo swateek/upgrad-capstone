@@ -1,0 +1,82 @@
+# CI for final-capstone-project/demo/swateek/us-customs-assistant (plan §13.1).
+# Lint, offline tests, web build and image build. No secrets are used, and nothing reaches the
+# upgrad course endpoints: tests use mock endpoints and fail if anything connects to the course host.
+name: us-customs-assistant
+
+on:
+  push:
+    paths:
+      - "final-capstone-project/demo/swateek/us-customs-assistant/**"
+      - ".github/workflows/us-customs-assistant.yml"
+  pull_request:
+    paths:
+      - "final-capstone-project/demo/swateek/us-customs-assistant/**"
+      - ".github/workflows/us-customs-assistant.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: us-customs-assistant-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP_DIR: final-capstone-project/demo/swateek/us-customs-assistant
+
+jobs:
+  backend:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: ${{ env.APP_DIR }}/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.9.18"
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: ${{ env.APP_DIR }}/backend/uv.lock
+      - name: Install
+        run: uv sync --frozen
+      - name: Lint
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+      - name: Test (offline)
+        run: uv run pytest -q
+
+  web:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: ${{ env.APP_DIR }}/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: ${{ env.APP_DIR }}/web/package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: ${{ env.APP_DIR }}/web/pnpm-lock.yaml
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint
+      - name: Build
+        run: pnpm build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+
+  images:
+    runs-on: ubuntu-24.04
+    needs: [backend, web]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build backend image
+        run: docker build -t customs-backend:ci "$APP_DIR/backend"
+      - name: Build web image
+        run: docker build -t customs-web:ci "$APP_DIR/web"
