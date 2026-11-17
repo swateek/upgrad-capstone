@@ -1,0 +1,1 @@
+Think step by step before answering. Put your working in a "reasoning" field FIRST: the traveller's facts, which duty-free exemption applies, how much alcohol and tobacco it covers, what is over it, the duty and excise on what is over it, and anything prohibited. Then give the other fields based on that reasoning.

@@ -1,6 +1,6 @@
 # SPEC: US Customs Assistant (alcohol and tobacco, v1)
 
-**Status: APPROVED 2026-11-17 (v1.0).** The eval set (plan step 5) is written against this version. Changes after approval need a version bump and a note in § 14.
+**Status: APPROVED 2026-11-17 (v1.1).** The eval set (plan step 5) is written against this version. Changes after approval need a version bump and a note in § 14.
 
 Track B item I: what the assistant does, what it must refuse, and what a correct answer looks like. The rules themselves are in `pack/rules/` (signed off 17 Nov 2026), and their research is in `docs/regulatory-checks.md`. This spec says how they are applied and judged.
 
@@ -61,6 +61,8 @@ profile:
   arrival_state: US state code | null
   us_resident: bool (default true; false only if the traveller says so)
   travelling_as_family: bool (default false)
+  crew: bool (default false)          # intake-only scope signal: on duty for a carrier
+  shipped: bool (default false)       # intake-only scope signal: goods shipped or mailed home
 basket: [line]
 line:
   item: wine | sparkling_wine | beer | spirits | liqueur | hard_cider | cigarettes | cigars | other
@@ -73,9 +75,10 @@ line:
   bought_in: country | duty_free | null
   brand: str | null
   us_made_export_labelled: bool | null   # cigarettes only
+  other_kind: other_goods | vapes_nicotine   # intake-only, for item "other": which scope note
 ```
 
-The intake never computes anything. `normalise` (code) turns units into ml and sticks using `pack/rules/units.yaml` and fills defaults: wine 12.5%, spirits 40%, beer 5%, liqueur 25%. Every default is stated in "facts relied on".
+`crew`, `shipped` and `other_kind` are intake-only signals for the scope notes in §2. They are not part of the scored facts (`eval-v1` facts never set them). The intake never computes anything. `normalise` (code) turns units into ml and sticks using `pack/rules/units.yaml` and fills defaults: wine 12.5%, spirits 40%, beer 5%, liqueur 25%. Every default is stated in "facts relied on".
 
 ## 4. Output: the answer card
 
@@ -239,3 +242,4 @@ Runs: 3× planner, 1× router, 1× tool_calling, 1× single_rag (plan §10.4).
 |---|---|---|
 | draft | 2026-11-17 | First draft, after the rules sign-off |
 | 1.0 | 2026-11-17 | Approved by the user |
+| 1.1 | 2026-11-17 | §3: added intake-only scope signals `crew`, `shipped` (profile) and `other_kind` (line), approved by the user. Not scored; `eval-v1` unchanged |

@@ -60,9 +60,10 @@ class DenseStore:
         )
         if not getattr(self.client, "_client", None).__class__.__name__.startswith("QdrantLocal"):
             # payload indexes only matter on the server; embedded mode filters by scanning
-            self.client.create_payload_index(
-                self.collection, field_name="doc_id", field_schema=models.PayloadSchemaType.KEYWORD
-            )
+            for name in ("doc_id", "topic"):
+                self.client.create_payload_index(
+                    self.collection, field_name=name, field_schema=models.PayloadSchemaType.KEYWORD
+                )
 
     def upsert(
         self,
@@ -81,6 +82,9 @@ class DenseStore:
                     "citation": c["citation"],
                     "doc_id": c["doc_id"],
                     "topic": c.get("topic"),
+                    "role": c.get("role"),
+                    "clause_ids": c.get("clause_ids", []),
+                    "chunker": c.get("chunker"),
                     "window": w,
                     "embedding_model": embedding_model,
                     "corpus_hash": corpus_hash,

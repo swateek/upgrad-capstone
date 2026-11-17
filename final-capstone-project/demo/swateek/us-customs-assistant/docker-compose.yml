@@ -8,10 +8,11 @@
 # are mounted from ./certs. The api calls the upgrad endpoints once questions are asked, so
 # running the stack with real keys needs the user's OK (AGENTS.md).
 #
-#   docker compose --profile ingest run --rm ingest   # download (verify vs lock) -> chunk
+#   docker compose --profile ingest run --rm ingest   # download (verify vs lock) -> chunk -> index
 #
-# The ingest job fetches public government pages only; indexing (upgrad embeddings) is added
-# in plan step 6 and needs the user's OK.
+# The ingest job fetches public government pages only and indexes FROM THE EMBEDDING CACHE
+# (./data/embeddings, built on the host by `customs.ingest.index` with the user's OK), so it never
+# calls the upgrad endpoints; it fails if a text is missing from the cache.
 
 x-backend: &backend
   build: ./backend
@@ -56,12 +57,21 @@ services:
   ingest:
     <<: *backend
     profiles: ["ingest"]
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    volumes:
+      - ./pack:/app/pack:ro
+      - ./certs:/app/certs:ro
+      - customs-data:/app/data
+      - ./data/embeddings:/app/data/embeddings:ro
     command:
       - sh
       - -c
       - >-
         python -m customs.ingest.download &&
-        python -m customs.ingest.build_chunks
+        python -m customs.ingest.build_chunks &&
+        python -m customs.ingest.index --from-cache
 
   api:
     <<: *backend
