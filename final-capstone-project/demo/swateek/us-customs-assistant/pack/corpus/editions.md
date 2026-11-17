@@ -14,7 +14,7 @@ One document is one citable unit, the thing an answer cites:
 | OFAC | one FAQ | OFAC FAQ 720 |
 | Web pages (CBP, TTB, states) | one heading block of the main content | CBP, Customs Duty Information — Alcoholic Beverages |
 
-Result: **1,258 documents** (Track B range 500–2,000). Reserved paragraphs and heading-only blocks are dropped (5), and so are page footers (California's contact and campaign blocks, TTB's "Contact us").
+Result: **1,261 documents** (Track B range 500–2,000). Reserved paragraphs and heading-only blocks are dropped (5), and so are page footers (California's contact and campaign blocks, TTB's "Contact us"). Florida's statute page has no `<main>` element, so its content is picked with a CSS selector (`div.Section`).
 
 ## Decisions per source
 
@@ -24,7 +24,7 @@ Result: **1,258 documents** (Track B range 500–2,000). Reserved paragraphs and
 | 27 CFR 27 and 41 | as above | Added beyond the business case: they hold the **import** rate provisions. § 27.45 sets the import rates, § 27.262 covers the foreign producer's assignment of the reduced CBMA rates (rule check R8), § 41.31–41.32 set the cigar and cigarette rates, and § 41.85a covers returned US tobacco (R6). |
 | 26 USC 5001, 5041, 5051, 5701, 5754, 5761 | **United States Code, 2024 edition** (govinfo) | govinfo's annual edition is static and versioned. uscode.house.gov serves the "prelim" text dynamically, with no stable file per section. Only the statute text is indexed; amendment notes are left out. |
 | HTSUS Chapter 98 | **2026 HTS Revision 23** (released 10 Nov 2026), PDF | Pages 21 and 55 only: the U.S. Notes of Subchapter IV (personal exemptions) and Subchapter XVI (9816 flat rate). Pages 22–25 hold the same headings as a table, which the JSON rows give more cleanly. |
-| HTSUS General Notes | **2026 HTS Revision 23**, PDF | Pages 3–4 (GN 3, rates of duty, incl. (a)(iv) insular possessions), 23–25 (GN 7, Caribbean Basin beneficiary countries, for the 2-litre rule R2) and 28–29 (GN 11 general provisions, USMCA, for R7). The hundreds of product-specific USMCA origin rules are left out. Each range opens mid-note (GN 3, 6, 10); GN 6 and GN 10 are kept as hard negatives. |
+| HTSUS General Notes | **2026 HTS Revision 23**, PDF | Pages 3–7 (GN 3: rates of duty, (a)(iv) insular possessions, (b) Column 2 countries, (c) the special-program symbols used by 9816.00.20), 23–25 (GN 7, Caribbean Basin beneficiary countries, for the 2-litre rule R2) and 28–29 (GN 11 general provisions, USMCA, for R7). The hundreds of product-specific USMCA origin rules are left out. Each range opens mid-note (GN 3, 6, 10); GN 6 and GN 10 are kept as hard negatives. |
 | HTSUS 9804 and 9816 rows | current HTS release, JSON (`exportList`) | USITC's JSON export has no release parameter, so these two files track the current release. On 17 Nov 2026 that was Revision 23, the same as the PDFs. The lock's text hash flags any change. |
 | OFAC Cuba FAQs | live topic page, all **136 FAQs** | Static HTML; each FAQ carries its release date. FAQ 719 covers goods acquired in Cuba, and FAQ 720 covers third-country purchases, citing 31 CFR 515.585(c)–(d) (rule check R4). The rest are hard negatives about other Cuba rules. |
 | TTB Tax Rates; ACE CBMA Tax Rates Table | live pages | The rate tables (2018 to present) and the import CBMA table. The rates page says importers not assigned a reduced rate pay the general rate (R8). |
@@ -51,7 +51,7 @@ Effect on counts: CBP web pages give 73 documents instead of the 100–200 plann
 | Mentor's source group | Mentor's estimate | Indexed |
 |---|---|---|
 | 19 CFR 148 | 120–180 | 201 |
-| HTSUS Ch. 98 + notes | 30–50 | 42 |
+| HTSUS Ch. 98 + notes | 30–50 | 45 |
 | 27 CFR TTB rate provisions + TTB tables | 40–60 | 358 (Parts 27 and 41 whole) + 5 |
 | 26 USC sections | 20–30 | 32 |
 | 31 CFR 515 + OFAC FAQs | 100–150 | 379 + 136 |

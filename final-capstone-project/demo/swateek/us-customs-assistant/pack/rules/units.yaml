@@ -1,0 +1,28 @@
+# Unit conversions and defaults used by normalise_units (rules R8, R11).
+litres_per_us_gallon: 3.785411784
+gallons_per_barrel: 31
+proof_per_abv_percent: 2 # proof = 2 x ABV%; proof gallons = gallons x proof / 100
+
+volumes_ml:
+  fifth: 750 # modern "fifth" bottle
+  bottle_wine: 750
+  bottle_spirits: 750
+  magnum: 1500
+  litre: 1000
+  half_bottle: 375
+  pint_us: 473.176
+  can_12oz: 354.882
+  fl_oz_us: 29.5735
+
+counts:
+  cigarettes_per_pack: 20
+  cigarettes_per_carton: 200 # 10 packs of 20
+  cigars_per_box: null # ask: boxes come in 5, 10, 20, 25, 50
+
+# Defaults when the traveller does not say (stated in "facts relied on"; facts.yaml)
+default_abv:
+  wine: 12.5 # inside the <=16% band, which is what decides the rate
+  sparkling_wine: 12.0
+  beer: 5.0 # beer is taxed by volume; ABV does not change the rate
+  spirits: 40.0
+  liqueur: 25.0

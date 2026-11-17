@@ -238,8 +238,17 @@ def _blocks(el: Tag, levels: list[str]) -> list[tuple[str, list[str]]]:
 
 def parse_html_sections(src: Source, spec: SplitSpec, raw: bytes) -> list[Document]:
     soup = BeautifulSoup(raw.decode("utf-8", errors="replace"), "html.parser")
-    container = clean_container(main_container(soup))
+    if spec.content_selector:
+        picked = soup.select_one(spec.content_selector)
+        if picked is None:
+            raise ParseError(f"{src.id}: content selector {spec.content_selector!r} not found")
+        container = clean_container(picked)
+    else:
+        container = clean_container(main_container(soup))
     blocks = _blocks(container, spec.heading_levels)
+    if not blocks:  # text held in spans/divs only (e.g. a statute page): one block
+        whole = norm(container.get_text(" "))
+        blocks = [("", [whole])] if whole else []
     drops = [re.compile(x, re.IGNORECASE) for x in spec.drop_headings]
     blocks = [(h, ls) for h, ls in blocks if not (h and any(d.search(h) for d in drops))]
     merged: list[tuple[str, list[str]]] = []

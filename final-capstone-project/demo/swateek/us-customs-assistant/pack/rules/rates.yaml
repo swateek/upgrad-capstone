@@ -1,0 +1,27 @@
+# Duty and excise rates for travellers (rule R8). General rates: a traveller is not an electing
+# importer, so the reduced CBMA rates and wine credits do not apply.
+as_of: 2026-11-17
+
+duty:
+  flat_rate: {rate: 0.03, cap_usd: 1000, cites: [hts_9816_rows:9816.00.20, cfr19_p148:148.102(a)]}
+  column2_flat_rate: {rate: 0.04, cites: [hts_9816_rows:9816.00.20, hts_general_notes:general-note-3-b]}
+
+excise_alcohol:
+  - {class: distilled_spirits, rate: 13.50, per: proof_gallon, cites: [usc26_5001:5001(a), ttb_tax_rates:alcohol-tax-rates-for-calendar-years-2018-to-pre]}
+  - {class: still_wine_le_16, max_abv: 16.0, rate: 1.07, per: wine_gallon, cites: [usc26_5041:5041(b)]}
+  - {class: still_wine_16_21, min_abv_exclusive: 16.0, max_abv: 21.0, rate: 1.57, per: wine_gallon, cites: [usc26_5041:5041(b)]}
+  - {class: still_wine_21_24, min_abv_exclusive: 21.0, max_abv: 24.0, rate: 3.15, per: wine_gallon, cites: [usc26_5041:5041(b)]}
+  - {class: sparkling_wine, rate: 3.40, per: wine_gallon, cites: [usc26_5041:5041(b)]}
+  - {class: artificially_carbonated_wine, rate: 3.30, per: wine_gallon, cites: [usc26_5041:5041(b)]}
+  - {class: hard_cider, rate: 0.226, per: wine_gallon, cites: [usc26_5041:5041(b)]}
+  - {class: beer, rate: 18.00, per: barrel, cites: [usc26_5051:5051(a), cfr27_p27:27.45]}
+  # wine over 24% ABV is taxed as distilled spirits (26 USC 5001(a)(3))
+
+# Reference only: tobacco over the allowance is not taxed in v1 (rule R5).
+excise_tobacco_reference:
+  cites: [ttb_tax_rates:tobacco-current-tax-rates-view-historic-tax-rate]
+  rows:
+    - {class: small_cigarettes, rate: 50.33, per: 1000_units}
+    - {class: large_cigarettes, rate: 105.69, per: 1000_units}
+    - {class: small_cigars, rate: 50.33, per: 1000_units}
+    - {class: large_cigars, rate: "52.75% of sales price, max 402.60", per: 1000_units}

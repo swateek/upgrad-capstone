@@ -1,0 +1,40 @@
+# Country groups used by rules R2, R7, R9. ISO 3166 alpha-2 codes; names as in the source.
+mexico: [MX] # R9: no 48-hour minimum on direct arrival (19 CFR 148.35(a))
+
+insular_possessions: # out of scope for v1
+  codes: [AS, GU, MP, VI]
+  cites: [cfr19_p148:148.33(a), cfr19_p148:148.102(b)]
+
+caribbean_basin: # R2 beneficiary countries
+  used_by_R2: cbp_types_of_exemptions_page # Decision A (17 Nov): CBP's list, not GN 7(a)
+  general_note_7a: # HTS 2026 Rev 23, General Note 7(a)
+    cites: [hts_general_notes:general-note-7-a, hts_ch98_pdf:subchapter-iv-u-s-note-4]
+    codes: [AG, AW, BS, BB, BZ, CW, DM, GD, GY, HT, JM, MS, KN, LC, VC, TT, VG]
+    note: "Netherlands Antilles is listed but its eligibility has ended (GN 7(a) footnote)."
+  cbp_types_of_exemptions_page: # older, longer list on cbp.gov
+    cites: [cbp_types_exemptions:overview]
+    codes: [AG, AW, BS, BB, BZ, BO, VG, CO, CR, DM, DO, EC, SV, GD, GT, GY, HT, HN, JM, MS, NI, PA, PE, KN, LC, VC, TT]
+
+column2: # 4% flat rate (R7)
+  codes: [KP, BY, RU, CU]
+  cites: [hts_general_notes:general-note-3-b]
+
+trade_agreement_programs: # R7, Decision C: products of these countries are duty-free under 9816.00.20. Symbols from 9816.00.20 Special; legend GN 3(c)(i).
+  cites: [hts_9816_rows:9816.00.20, hts_general_notes:general-note-3-c, hts_general_notes:general-note-11-a]
+  members_source: >-
+    Programme names are from GN 3(c)(i). Member countries for the multi-country programmes
+    (S = USMCA, P = CAFTA-DR) are team knowledge, signed off by the user on 2026-11-17.
+  programs:
+    BH: {name: US-Bahrain FTA, codes: [BH]}
+    CL: {name: US-Chile FTA, codes: [CL]}
+    CO: {name: US-Colombia TPA, codes: [CO]}
+    IL: {name: US-Israel FTA, codes: [IL]}
+    JO: {name: US-Jordan FTA, codes: [JO]}
+    KR: {name: US-Korea FTA, codes: [KR]}
+    MA: {name: US-Morocco FTA, codes: [MA]}
+    OM: {name: US-Oman FTA, codes: [OM]}
+    P: {name: CAFTA-DR, codes: [CR, DO, SV, GT, HN, NI]}
+    PA: {name: US-Panama TPA, codes: [PA]}
+    PE: {name: US-Peru TPA, codes: [PE]}
+    S: {name: USMCA, codes: [CA, MX]}
+    SG: {name: US-Singapore FTA, codes: [SG]}

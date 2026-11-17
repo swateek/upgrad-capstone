@@ -167,6 +167,19 @@ def test_html_sections_blocks_lists_tables_and_drops():
     assert all("Menu" not in d.text and "Last Modified" not in d.text for d in docs)
 
 
+def test_html_content_selector_and_whole_text_fallback():
+    raw = (
+        b"<html><body><div id='main'><a>Quick Links</a><a>Statute Search Tips</a>"
+        b"<div class='Section'><span>562.16 Possession of beverages</span>"
+        b"<span>this section shall not apply to persons possessing not in excess of 1 gallon"
+        b"</span></div></div></body></html>"
+    )
+    spec = SplitSpec(citation_prefix="Fla. Stat. 562.16", content_selector="div.Section")
+    docs = parse_html_sections(_src(), spec, raw)
+    assert len(docs) == 1 and "1 gallon" in docs[0].text
+    assert "Quick Links" not in docs[0].text
+
+
 def test_ofac_faqs_one_document_each():
     items = "".join(
         f"<h3>{700 + i}. Question number {i}?</h3><p>Answer {i}.</p>" for i in range(12)

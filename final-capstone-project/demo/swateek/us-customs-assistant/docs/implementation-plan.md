@@ -128,6 +128,8 @@ I read the official text from the downloaded corpus and write the finding, exact
 
 Several missing facts are asked in **one** short question (as in the business case's example 1).
 
+**Done and signed off (17 Nov):** findings, citations and decisions A–G are in `docs/regulatory-checks.md`; the tables (rules, rates, units, countries, brands, states, facts) are in `pack/rules/`. Two corrections beyond the mentor's: arrivals directly from **Mexico** get the $800 exemption regardless of time away (19 CFR 148.35(a)), so the Tijuana example is not a $200 case; and 9816.00.20 is duty-free for trade-agreement partners' products (Decision C). The $200 all-or-nothing eval items therefore use non-Mexico short trips and repeat trips within 30 days.
+
 ---
 
 ## 4. Agent design (LangGraph)
@@ -264,7 +266,7 @@ data/raw/customs/      downloaded files (gitignored), never executed or imported
 
 Snapshot frozen once counts are in; answers show the snapshot's as-of date. Downloading public government pages is not an upgrad call.
 
-**Built (17 Nov):** 41 sources, **1,258 documents**, snapshot frozen in `manifest.lock.yaml`. Deviations from the table above, with reasons in `pack/corpus/editions.md`: the CBP Info Center is not fetchable (rendered in the browser), so 19 static cbp.gov pages replace it (73 documents); 27 CFR Parts 27 and 41 are indexed whole (they hold the import rate provisions); Illinois uses the ILCC import form because ilga.gov could not be reached. Counts per source: `docs/results/corpus-counts.md`.
+**Built (17 Nov):** 41 sources, **1,261 documents**, snapshot frozen in `manifest.lock.yaml`. Deviations from the table above, with reasons in `pack/corpus/editions.md`: the CBP Info Center is not fetchable (rendered in the browser), so 19 static cbp.gov pages replace it (73 documents); 27 CFR Parts 27 and 41 are indexed whole (they hold the import rate provisions); Illinois uses the ILCC import form because ilga.gov could not be reached. Counts per source: `docs/results/corpus-counts.md`.
 
 ---
 
@@ -425,8 +427,8 @@ No calendar. "STOP (sign-off)" waits for your approval; "STOP (upgrad OK)" waits
 
 1. **Scaffold (offline).** Folder, `AGENTS.md`, `env.sample`, core modules copied and stripped, compose file, offline test harness with fakes, GitHub Actions workflow + `.gitignore` whitelist (§13.1), `COMPENSATIONS.md`, `quota-log.md`.
    **STOP (you):** new Langfuse project; its keys and the upgrad keys in `.env`.
-2. **Corpus (offline, public sites).** Manifest, exclusions, parsers, `download --freeze`, `build_chunks`, counts per source, `editions.md`. *Done 17 Nov: 1,258 documents.*
-3. **Regulatory checks R1–R12** → `docs/regulatory-checks.md`, rule, rate, brand and facts tables.
+2. **Corpus (offline, public sites).** Manifest, exclusions, parsers, `download --freeze`, `build_chunks`, counts per source, `editions.md`. *Done 17 Nov: 1,261 documents.*
+3. **Regulatory checks R1–R12** → `docs/regulatory-checks.md`, rule, rate, brand and facts tables. *Done and signed off 17 Nov (decisions A–G).*
    **STOP (sign-off):** each row.
 4. **SPEC.md**: scope, refusal policy, answer-changing facts, the corpus document unit, tool contracts, what counts as correct, metrics, HITL boundary.
    **STOP (sign-off):** SPEC APPROVED.

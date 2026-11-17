@@ -45,7 +45,7 @@ sources:
 
   hts_general_notes:
     citation_prefix: "HTSUS"
-    pages: [[3, 4], [23, 25], [28, 29]]
+    pages: [[3, 7], [23, 25], [28, 29]] # 3-7: GN 3 incl. (b) Column 2 countries, (c) program symbols
     # each range opens mid-note: GN 3 (rates of duty), GN 6 (civil aircraft), GN 10 (freely
     # associated states); GN 6 and GN 10 are kept as hard negatives
     page_contexts: ["General Note 3", "General Note 6", "General Note 10"]
@@ -93,7 +93,9 @@ sources:
     heading_levels: [h2, h3, h4]
     drop_headings: ['^(contact|campaigns|media|support|external)$'] # site footer blocks
   state_ny: {citation_prefix: "NY Tax Department, Importation for personal consumption", heading_levels: [h2, h3, h4]}
-  state_fl: {citation_prefix: "Fla. Stat. 562.16", heading_levels: [h2, h3, h4]}
+  state_fl:
+    citation_prefix: "Fla. Stat. 562.16"
+    content_selector: "div.Section" # the page has no <main>; the statute sits in div.Section
   state_tx: {citation_prefix: "Texas ABC, Personal Importation and Ports of Entry FAQs", heading_levels: [h2, h3, h4]}
   state_il:
     citation_prefix: "Illinois LCC, Form ILCC-RIA"

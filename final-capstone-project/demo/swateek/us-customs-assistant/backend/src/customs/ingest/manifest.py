@@ -100,6 +100,7 @@ class SplitSpec(BaseModel):
     letter_sequence: bool = False  # units are (a), (b), ...: accept only the next letter
     drop_patterns: list[str] = Field(default_factory=list)  # running headers and footers
     # html_sections
+    content_selector: str | None = None  # CSS selector of the content when the page has no <main>
     drop_headings: list[str] = Field(default_factory=list)  # page furniture (footers, contacts)
     heading_levels: list[str] = Field(default_factory=lambda: ["h2", "h3"])  # html_sections
     hts_prefixes: list[str] = Field(default_factory=list)  # hts_json: headings to keep
