@@ -264,6 +264,8 @@ data/raw/customs/      downloaded files (gitignored), never executed or imported
 
 Snapshot frozen once counts are in; answers show the snapshot's as-of date. Downloading public government pages is not an upgrad call.
 
+**Built (17 Nov):** 41 sources, **1,258 documents**, snapshot frozen in `manifest.lock.yaml`. Deviations from the table above, with reasons in `pack/corpus/editions.md`: the CBP Info Center is not fetchable (rendered in the browser), so 19 static cbp.gov pages replace it (73 documents); 27 CFR Parts 27 and 41 are indexed whole (they hold the import rate provisions); Illinois uses the ILCC import form because ilga.gov could not be reached. Counts per source: `docs/results/corpus-counts.md`.
+
 ---
 
 ## 6. Retrieval
@@ -423,7 +425,7 @@ No calendar. "STOP (sign-off)" waits for your approval; "STOP (upgrad OK)" waits
 
 1. **Scaffold (offline).** Folder, `AGENTS.md`, `env.sample`, core modules copied and stripped, compose file, offline test harness with fakes, GitHub Actions workflow + `.gitignore` whitelist (§13.1), `COMPENSATIONS.md`, `quota-log.md`.
    **STOP (you):** new Langfuse project; its keys and the upgrad keys in `.env`.
-2. **Corpus (offline, public sites).** Manifest, exclusions, parsers, `download --freeze`, `build_chunks`, counts per source, `editions.md`.
+2. **Corpus (offline, public sites).** Manifest, exclusions, parsers, `download --freeze`, `build_chunks`, counts per source, `editions.md`. *Done 17 Nov: 1,258 documents.*
 3. **Regulatory checks R1–R12** → `docs/regulatory-checks.md`, rule, rate, brand and facts tables.
    **STOP (sign-off):** each row.
 4. **SPEC.md**: scope, refusal policy, answer-changing facts, the corpus document unit, tool contracts, what counts as correct, metrics, HITL boundary.

@@ -6,8 +6,12 @@
 #
 # Secrets come from .env only; nothing secret is baked into an image. The course CA certificates
 # are mounted from ./certs. The api calls the upgrad endpoints once questions are asked, so
-# running the stack with real keys needs the user's OK (AGENTS.md). The one-shot `ingest`
-# profile (download -> chunk -> index) is added with the corpus step.
+# running the stack with real keys needs the user's OK (AGENTS.md).
+#
+#   docker compose --profile ingest run --rm ingest   # download (verify vs lock) -> chunk
+#
+# The ingest job fetches public government pages only; indexing (upgrad embeddings) is added
+# in plan step 6 and needs the user's OK.
 
 x-backend: &backend
   build: ./backend
@@ -48,6 +52,16 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+
+  ingest:
+    <<: *backend
+    profiles: ["ingest"]
+    command:
+      - sh
+      - -c
+      - >-
+        python -m customs.ingest.download &&
+        python -m customs.ingest.build_chunks
 
   api:
     <<: *backend

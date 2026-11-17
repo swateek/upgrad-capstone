@@ -9,7 +9,10 @@ Estimates only: the CBP officer's assessment is final.
 
 ## Status
 
-Scaffold (plan §14 step 1): endpoint layer (gate, retry, token budget, chat call with strict JSON), tracing, retrieval core, health API, web skeleton, Docker, CI. Corpus, rules, eval set and the agent graph follow the plan's steps.
+- Step 1, scaffold: endpoint layer (gate, retry, token budget, chat call with strict JSON), tracing, retrieval core, health API, web skeleton, Docker, CI.
+- Step 2, corpus: 41 public sources, 1,258 documents, three chunk sets (`docs/results/corpus-counts.md`, `pack/corpus/editions.md`).
+
+Rules, eval set and the agent graph follow the plan's steps.
 
 ## Run
 
@@ -18,6 +21,9 @@ cp env.sample .env                    # upgrad keys + this app's Langfuse projec
 
 # backend (offline tests never reach the course endpoints)
 cd backend && uv sync && uv run pytest
+
+# corpus: download public sources (verified against the lock), then chunk
+uv run python -m customs.ingest.download && uv run python -m customs.ingest.build_chunks
 uv run uvicorn customs.api.app:app --port 3501
 
 # web
