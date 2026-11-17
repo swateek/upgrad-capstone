@@ -435,7 +435,7 @@ No calendar. "STOP (sign-off)" waits for your approval; "STOP (upgrad OK)" waits
 5. In parallel:
    - **Eval scenarios** (80 + ~6 corrections + 20 dev) and retrieval labels; **gold** by the fresh subagent (D18).
      **STOP (sign-off):** your hand-check of 20 → freeze `eval-v1`. *Done 17 Nov: `eval-v1` frozen (80 + 6 corrections, 20 dev); gold built independently; the hand-check of 20 was done by the main session at the user's request (20/20 OK, finding F1 fixed). See `docs/results/eval-freeze.md`.*
-   - **Calculators and tools (offline)**, unit tests per rule, the four corrected business-case examples.
+   - **Calculators and tools (offline)**, unit tests per rule, the four corrected business-case examples. *Done 17 Nov: `customs/tools/` (tables, models, calc, facts, registry); 151 offline tests green; the calculators match the independent dev gold exactly on all 18 dev scenarios they decide. Note: in v1 the $1,000 flat-rate cap (R7) is never reached first, because any basket over $800 already escalates (R11).*
    - **UI mock-up** of the answer card (offline).
 6. **Index.** **STOP (upgrad OK):** 3 chunking variants (~600 docs → ~1,500–2,500 chunks, ≈100–160 embedding requests per variant; ×2 for the prefix experiment).
 7. **Baselines (the gate).** **STOP (upgrad OK):** ≈850 chat calls (4 strategies, dollar items without calculators, constrained-decoding comparison). → `week1_strategies.csv`, `week1_failures.csv`. Report §1–2 (problem, spec, eval design) and §3 (prompting) drafted.

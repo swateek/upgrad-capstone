@@ -16,7 +16,9 @@ Estimates only: the CBP officer's assessment is final.
 - Step 4, SPEC v1.0 approved (`docs/SPEC.md`).
 - Step 5, eval set: `eval-v1` frozen: 80 scenarios + 6 corrections, 20 dev, independent gold (`docs/results/eval-freeze.md`).
 
-Calculators and tools come next; the agent graph follows the plan's steps.
+- Step 6, calculators and tools (`backend/src/customs/tools/`): every rule as code over the signed-off tables; matches the dev gold exactly.
+
+Next: the index (needs the user's OK for upgrad embedding calls), baselines, then the agent graph.
 
 ## Run
 
