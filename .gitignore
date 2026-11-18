@@ -3,3 +3,4 @@
 !.pre-commit-config.yaml
 chroma
 *.sqlite3
+CLAUDE.md
