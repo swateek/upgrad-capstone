@@ -227,6 +227,19 @@ Reference contract: Pydantic input, dicts out, failures as `{"error", "retryable
 
 ---
 
+### 4.8 Build notes (18 Nov)
+
+Decisions taken while building, within the plan; each is easy to reverse.
+- **The plan-level half of the verifier runs right after the executor** (`executor.audit`), before the writer, so a broken plan never reaches wording. Routing is as planned: plan-level failure → planner once → escalate; wording failure → writer once → escalate.
+- **Caps, flags and citations always run in code after the plan.** They are bookkeeping (notes, seizure risk, Cuba refs, state flag) and the D20 citation step, not choices. So the planner's real choices are which calculators to run (e.g. skipping duty for tobacco only) and on which lines.
+- **`escalate_to_human` is not in the planner's vocabulary.** Escalation is decided by the calculators (caps), the audit, the verifier, missing facts and the budget; the tool builds the hand-off note.
+- **Corrections reuse the last plan when it is still valid** for the corrected facts: no planner call, the calculators re-run, and the delta and stale steps are recorded. The planner is called (with the stale steps) only when the old plan no longer fits, e.g. a new alcohol line into a flagged state.
+- **Numbers outside handles:** the verifier also accepts the traveller's own facts ("your 3 bottles at $22 each") and signed-off rule constants (48 hours, 21, $800), besides figure values. Any other typed number, or any typed regulation number, fails.
+- **Budgets are per turn.** A clarify exchange is two turns (the first uses only the intake).
+- **Search:** one query per rule the answer relies on, embedded in one request per question. Only passages that hold a rule's own clause ids reach the writer, so planted lines elsewhere in the corpus never do.
+- **`tool_calling` mode:** the model types the facts into the tool arguments, and those typed facts drive the calculators. Differences from the intake's facts are counted (`transcription_diffs`). Bad arguments get one retry per tool; repeated identical calls are blocked.
+- **Not built yet:** `whatif_optimise` (stretch). The 4 `whatif` eval items will fail until it exists.
+
 ## 5. Documents and corpus (same handling as the reference)
 
 ### 5.1 Files
@@ -442,7 +455,7 @@ No calendar. "STOP (sign-off)" waits for your approval; "STOP (upgrad OK)" waits
 7. **Baselines (the gate).** **STOP (upgrad OK):** ≈850 chat calls (4 strategies, dollar items without calculators, constrained-decoding comparison). → `week1_strategies.csv`, `week1_failures.csv`. *Done 17 Nov with the user's OK: 924 chat calls in all (smoke 20 + stopped run 15 + resumed run 889, incl. 36 JSON retries), 64 min, no API errors. Turn accuracy 1–13% (few-shot best); amount right on 12–22% of answered turns; see `docs/results/week1-baselines.md` and `docs/COMPENSATIONS.md` #3–7.* Report §1–2 (problem, spec, eval design) and §3 (prompting) drafted.
    **STOP (mentor):** share the gate evidence. *Done 17 Nov: `docs/mentor-check-01.md`.*
 8. **Retrieval experiment.** **STOP (upgrad OK):** listwise rerank ≈ 1 chat call per labelled question per variant (a few hundred). → recall@k, three decisions; report §4 (retrieval) drafted. *Done 18 Nov with the user's OK: 44 embedding requests (query vectors, cached) + 45 listwise chat calls on dev; 63 local variants + listwise; decisions in `docs/results/retrieval-decisions.md` (window200, hybrid, prefix on, question + rule names, topic filter, no reranker). Report §4 not drafted yet.*
-9. **Agent graph (offline first).** All nodes, the four modes, state and corrections, error handling; offline tests; prompt-size measurement.
+9. **Agent graph (offline first).** All nodes, the four modes, state and corrections, error handling; offline tests; prompt-size measurement. *Done 18 Nov, offline (no upgrad call): `customs/agent/` (graph, guard, intake, planner + validator + router, code and tool-calling executors, writer, verifier, single_rag), `customs/retrieval/service.py` (search_regulations with fetch-by-id fallback), prompts in `pack/prompts/`, guard policy in `pack/policy/guard.yaml`. 27 new offline tests (195 in all). Prompt sizes: `docs/results/prompt-sizes.md` (worst answered question 5,519 of 12,000 tokens). Oracle run on dev (perfect scripted replies, sources by id): 23/23 turns correct. Build notes and deviations: §4.8.*
 10. **Dev-set runs.** **STOP (upgrad OK):** 20 questions × ~4 calls per iteration (+ a few corrections). Tune on dev only → **prompt freeze**.
 11. **API, UI, Docker** (offline build); live smoke test **STOP (upgrad OK)**.
 12. **Hardening, safety suite, red-team.** **STOP (upgrad OK)** for the live runs. → CI green → **code freeze** (`v1.0.0-rc`). Report §5 (agent design) and §6 (responsible AI) drafted.

@@ -60,6 +60,7 @@ class Settings(BaseSettings):
     agent_step_limit: int = 10  # model calls per question (listwise rerank calls count)
     agent_tool_limit: int = 10  # tool calls per question
     agent_token_limit: int = 12000  # prompt + completion tokens per question (mentor 2.5)
+    advisory_review: bool = True  # the verifier's model review (recorded, never blocks)
 
     # --- client-side gate and retry (Track B guide) -----------------------------------------
     requests_per_minute: int = 60  # per key

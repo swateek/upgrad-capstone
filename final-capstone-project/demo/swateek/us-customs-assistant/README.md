@@ -22,7 +22,9 @@ Estimates only: the CBP officer's assessment is final.
 - Step 8, baselines (the gate): four prompting strategies on eval-v1 (`docs/results/week1-baselines.md`); mentor check-in `docs/mentor-check-01.md`.
 - Step 9, retrieval experiment: 63 variants + listwise; shipped window200, hybrid, question + rule names, topic filter, no reranker (`docs/results/retrieval-decisions.md`).
 
-Next: the agent graph (offline first).
+- Step 10, agent graph (offline): LangGraph guard → intake → prepare → clarify → plan → execute → audit → write → verify; modes planner / router / tool_calling / single_rag; prompt sizes in `docs/results/prompt-sizes.md`; oracle on dev 23/23 (`uv run python -m eval.oracle_dev`).
+
+Next: dev-set runs (needs the user's OK for upgrad chat calls).
 
 ## Run
 

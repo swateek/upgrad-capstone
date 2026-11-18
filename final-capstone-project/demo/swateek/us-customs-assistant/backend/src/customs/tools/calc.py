@@ -398,7 +398,10 @@ def step_flags(case: Case) -> None:
     if any(c.excess_sticks for c in case.calc.values()):
         case.note("seizure_risk")
     if any(
-        case.calc[nl.index].excess_sticks and nl.line.us_made_export_labelled for nl in case.tobacco
+        nl.index in case.calc
+        and case.calc[nl.index].excess_sticks
+        and nl.line.us_made_export_labelled
+        for nl in case.tobacco
     ):
         case.note("us_export_labelled_relinquish")
     if any(c.fta for c in case.calc.values()):
@@ -424,10 +427,10 @@ def _figures(case: Case) -> list[Figure]:
     def add(name: str, value: str, unit: str) -> None:
         figs.append(Figure(name=name, value=value, unit=unit))
 
-    if not case.admissible:
-        return figs
+    if not case.admissible or case.exemption is None:
+        return figs  # nothing assessable, or the steps did not run (the audit reports that)
     add("exemption_usd", str(case.exemption), "usd")
-    if case.alcohol:
+    if case.alcohol and case.alcohol_allowance_ml is not None:
         add("alcohol_allowance_ml", fmt(case.alcohol_allowance_ml), "ml")
     if case.escalation:
         return figs
@@ -435,7 +438,9 @@ def _figures(case: Case) -> list[Figure]:
     any_dutiable = False
     all_values_known = True
     for nl in case.admissible:
-        c = case.calc[nl.index]
+        c = case.calc.get(nl.index)
+        if c is None:
+            continue
         i = nl.index
         if nl.is_alcohol:
             add(f"exempt_ml_{i}", fmt(c.exempt_ml), "ml")
