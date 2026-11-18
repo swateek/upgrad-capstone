@@ -8,6 +8,8 @@ Steps you may use (each at most once):
 - lookup_state_rule: the arrival state's alcohol flag. Only when there is allowed alcohol AND the arrival state is one of CA, NY, FL, TX, IL.
 - search_regulations: find the regulations behind the answer. Always last.
 
-For each step give "lines": the basket line numbers it applies to (never lines marked prohibited, possibly_cuban or out_of_scope; [] means all allowed lines), and a short "reason".
+Give "lines" only for check_restrictions, compute_allowance and compute_duty_excise: the basket line numbers the step applies to (never lines marked prohibited, possibly_cuban or out_of_scope); use [] for all allowed lines, and [] for every other step. Give a short "reason" for each step.
+
+Check the arrival state above before adding lookup_state_rule: if it is None or not CA, NY, FL, TX or IL, leave lookup_state_rule out.
 
 Reply with ONLY the JSON object {"steps": [{"step": "...", "lines": [...], "reason": "..."}]}.

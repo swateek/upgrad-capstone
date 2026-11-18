@@ -24,7 +24,9 @@ Estimates only: the CBP officer's assessment is final.
 
 - Step 10, agent graph (offline): LangGraph guard → intake → prepare → clarify → plan → execute → audit → write → verify; modes planner / router / tool_calling / single_rag; prompt sizes in `docs/results/prompt-sizes.md`; oracle on dev 23/23 (`uv run python -m eval.oracle_dev`).
 
-Next: dev-set runs (needs the user's OK for upgrad chat calls).
+- Step 11, dev-set runs: 5 runs on dev only, 14/23 → 23/23 turns; agent frozen as v1 (`pack/agent.lock.yaml`); see `docs/results/dev-runs.md`.
+
+Next: API, UI and Docker (offline build), then a live smoke test.
 
 ## Run
 

@@ -94,6 +94,29 @@ def needs(case: Case) -> dict[str, bool]:
     }
 
 
+def repair(plan: Plan, case: Case) -> tuple[Plan, list[str]]:
+    """Drop harmless extras before validation (dev run 1: the 8B model attached `lines` to steps
+    that take none, and added the state lookup with no flagged state, in most plans). Missing,
+    repeated or misordered steps are not repaired: they stay errors."""
+    fixes: list[str] = []
+    steps = []
+    for s in plan.steps:
+        if s.lines and s.step not in LINE_STEPS:
+            s = s.model_copy(update={"lines": []})
+            fixes.append(f"dropped lines on {s.step}")
+        if s.step == "lookup_state_rule" and not needs(case)["state"]:
+            fixes.append("dropped lookup_state_rule (no flagged arrival state)")
+            continue
+        if s.step in CHAIN and not needs(case)["chain"]:
+            fixes.append(f"dropped {s.step} (no line is allowed in)")
+            continue
+        steps.append(s)
+    if steps and all(s.step != "search_regulations" for s in steps):
+        steps.append(PlanStep(step="search_regulations", reason="added: always last"))
+        fixes.append("appended search_regulations (it always runs last)")
+    return Plan(steps=steps), fixes
+
+
 def validate_plan(plan: Plan, case: Case) -> list[str]:
     """Errors in plain words (fed back to the planner); [] = valid. `case` has run restrictions."""
     steps = [s.step for s in plan.steps]

@@ -38,7 +38,7 @@ DV15_T1 = {"profile": {"arrived_directly_from": "IT"},
 DV15 = {"profile": {"age": 44, "arrived_directly_from": "IT", "exemption_used_last_30_days": False,
                     "trip_hours": 144}, "basket": DV15_T1["basket"]}  # fmt: skip
 DV08 = {"profile": {"age": 36, "arrived_directly_from": "TH", "exemption_used_last_30_days": False,
-                    "trip_hours": ">=48"},
+                    "trip_at_least_48_hours": True},  # the intake's shape (gold: ">=48")
         "basket": [{"bought_in": "TH", "item": "cigarettes", "quantity": 3, "unit": "carton"}]}  # fmt: skip
 VAPES = {"profile": {"arrived_directly_from": "CN"},
          "basket": [{"item": "other", "quantity": 5, "other_kind": "vapes_nicotine"}]}  # fmt: skip
@@ -133,7 +133,10 @@ def make_agent(settings):
 
 def handles(facts: dict) -> dict[str, str]:
     """Figure name -> handle, as the card numbers them (same order as the calculators)."""
-    a = assess(Profile.model_validate(facts["profile"]),
+    from customs.agent.intake import IntakeProfile, to_profile
+
+    profile, _ = to_profile(IntakeProfile.model_validate(facts["profile"]), "")
+    a = assess(profile,
                [Line.model_validate(x) for x in facts["basket"]])  # fmt: skip
     return {f.name: f"F{i}" for i, f in enumerate(a.figures, start=1)}
 
@@ -339,7 +342,7 @@ def test_finalise_survives_skipped_steps():
     from customs.agent.executor import audit, finalise
     from customs.tools.calc import new_case, step_normalise, step_restrictions
 
-    for facts in (DV01, DV08):
+    for facts in (DV01, DV15):
         case = new_case(Profile.model_validate(facts["profile"]),
                         [Line.model_validate(x) for x in facts["basket"]])  # fmt: skip
         step_normalise(case)
@@ -359,3 +362,16 @@ def test_oracle_dev_is_perfect():
 
     right, total = run(verbose=False)
     assert (right, total) == (23, 23)
+
+
+def test_prohibited_only_is_templated_without_writer(make_agent):
+    cuban = {"profile": {"age": 50, "trip_hours": 120, "arrived_directly_from": "CA",
+                         "exemption_used_last_30_days": False},
+             "basket": [{"item": "spirits", "quantity": 1, "unit": "bottle", "origin": "CU",
+                         "bought_in": "CA"}]}  # fmt: skip
+    sc = Script(intake=[cuban], planner=[{"steps": [
+        {"step": "check_restrictions", "lines": [], "reason": ""},
+        {"step": "search_regulations", "lines": [], "reason": ""}]}])  # fmt: skip
+    card = make_agent(sc).ask("t15", "Havana Club made in Cuba, bought in Toronto. OK?")
+    assert card["kind"] == "prohibited" and card["bottom_line"].startswith("No:")
+    assert "writer" not in sc.seen and "(cite " in card["bottom_line"]

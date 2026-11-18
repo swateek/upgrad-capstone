@@ -36,8 +36,22 @@ from customs.agent import card as cards
 from customs.agent.context import BudgetExceeded, RunContext, activate, current, deactivate
 from customs.agent.executor import audit, cite, execute, finalise
 from customs.agent.guard import get_guard
-from customs.agent.intake import delta, dump, run_intake, stale_steps
-from customs.agent.planner import Plan, plan_json, router_plan, run_planner, validate_plan
+from customs.agent.intake import (
+    delta,
+    dump,
+    ground,
+    merge_reply_lines,
+    run_intake,
+    stale_steps,
+)
+from customs.agent.planner import (
+    Plan,
+    plan_json,
+    repair,
+    router_plan,
+    run_planner,
+    validate_plan,
+)
 from customs.agent.rag import run_rag
 from customs.agent.tool_calling import execute_tool_calling
 from customs.agent.verifier import advisory_review, check_wording
@@ -56,6 +70,16 @@ from customs.tools.tables import Tables, load_tables
 MODES = ("planner", "router", "tool_calling", "single_rag")
 HARD_FACTS = {AGE, TRIP, USED}
 BASKET_QUESTION = "What alcohol or tobacco are you bringing back, how much, and what did it cost?"
+
+
+def prohibited_line(a, sources) -> str:
+    s = next((x.handle for x in sources if any(r.startswith(("R4", "R12")) for r in x.rules)),
+             sources[0].handle if sources else None)  # fmt: skip
+    cite_ = f" [{s}]" if s else ""
+    if "possibly_cuban_declare" in a.notes and "cuban_prohibited" not in a.notes:
+        return ("No allowance can be given: this brand is also made in Cuba and the origin is "
+                f"unclear, so declare it and tell the officer where it was made{cite_}.")  # fmt: skip
+    return f"No: Cuban-origin alcohol and tobacco can't be brought in, wherever you bought them{cite_}."
 
 
 class State(TypedDict, total=False):
@@ -249,7 +273,16 @@ class CustomsAgent:
     def _intake(self, state: State) -> dict:
         old = state.get("facts")
         f = run_intake(self.chat, state["message"], old, state.get("asked"))
-        new = dump(f)
+        new, dropped = dump(f, self._question(state))
+        if dropped:
+            current().event("unsupported_flag_dropped", flags=dropped)
+        if old and state.get("asked") and "basket" not in (state.get("asked_fields") or []):
+            merged = merge_reply_lines(old, new)
+            if merged:
+                current().event("reply_line_merged", merged=merged)
+        fixes = ground(new, self._question(state), self.tables)
+        if fixes:
+            current().event("facts_grounded", fixes=fixes)
         changed = delta(old, new)
         stale = stale_steps(changed) if state.get("answered") else []
         if changed:
@@ -300,11 +333,13 @@ class CustomsAgent:
                 ctx.event("plan_reused", stale=state.get("stale"))
                 return {"plan": prev, "plan_source": "reused", "route": "execute"}
         try:
-            p = run_planner(self.chat, case, errors=errors or None, stale=state.get("stale"))
+            p = self._repaired(run_planner(self.chat, case, errors=errors or None,
+                                           stale=state.get("stale")), case)  # fmt: skip
             errs = validate_plan(p, case)
             if errs:
-                ctx.event("plan_invalid", errors=errs)
-                p = run_planner(self.chat, case, errors=errs, stale=state.get("stale"))
+                ctx.event("plan_invalid", errors=errs, steps=[s.step for s in p.steps])
+                p = self._repaired(run_planner(self.chat, case, errors=errs,
+                                               stale=state.get("stale")), case)  # fmt: skip
                 errs = validate_plan(p, case)
         except MalformedOutput:
             errs = ["planner reply unreadable"]
@@ -313,6 +348,12 @@ class CustomsAgent:
             return {"plan": plan_json(router_plan(case)), "plan_source": "fallback",
                     "route": "execute"}  # fmt: skip
         return {"plan": plan_json(p), "plan_source": "planner", "route": "execute"}
+
+    def _repaired(self, p: Plan, case: Case) -> Plan:
+        p, fixes = repair(p, case)
+        if fixes:
+            current().event("plan_repaired", fixes=fixes)
+        return p
 
     def _execute(self, state: State) -> dict:
         ctx = current()
@@ -346,6 +387,13 @@ class CustomsAgent:
             return self._end(state, cards.out_of_scope(a.notes, self.tables))
         sources, _ = cite(self.search, self._question(state), a)
         ctx.sources = sources
+        if not a.figures:
+            # nothing to word but a "no" (prohibited only): a code template, no writer call
+            # (dev run 2: with no figures the writer kept inventing [F1] and copying dates)
+            ctx.event("templated_answer", answer_kind=a.kind)
+            c = cards.answered(a, prohibited_line(a, sources), [], sources, case.profile,
+                               self.tables)  # fmt: skip
+            return self._end(state, c, answered=True)
         return {"route": "write"}
 
     def _write(self, state: State) -> dict:

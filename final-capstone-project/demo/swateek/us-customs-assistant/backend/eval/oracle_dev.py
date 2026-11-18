@@ -19,6 +19,7 @@ from langgraph.checkpoint.memory import InMemorySaver
 from openai import OpenAI
 
 from customs.agent.graph import CustomsAgent
+from customs.agent.intake import to_intake
 from customs.agent.planner import plan_json, router_plan
 from customs.config import PROJECT_ROOT, get_settings
 from customs.llm.chat import ChatClient
@@ -55,7 +56,7 @@ class Oracle:
         system = body["messages"][0]["content"]
         user = body["messages"][-1]["content"]
         if "Extract the traveller's facts" in system:
-            return self.facts
+            return {"profile": to_intake(self.facts["profile"]), "basket": self.facts["basket"]}
         if "You plan the calculation" in system:
             f = self.facts
             case = new_case(Profile.model_validate(f["profile"]),
