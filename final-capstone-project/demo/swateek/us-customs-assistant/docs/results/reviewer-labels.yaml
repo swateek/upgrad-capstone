@@ -1,0 +1,51 @@
+# Reference labels for the advisory-reviewer agreement check (plan §10.6, mentor B1.3).
+#
+# Sample: 30 answered turns from planner-1 that the advisory reviewer checked: all 7 wrong
+# ones plus 23 drawn from the correct ones with random.Random(106).sample (see
+# eval/reviewer_agreement.py). planner-2/3 and router produced the same answers.
+#
+# Question per sentence, same as the reviewer's: does the cited source text support it?
+#   S = supported: the cited source states the rule or fact (an amount counts as supported
+#       when the source gives the rate or rule it comes from; the arithmetic is the
+#       calculator's job, not the reviewer's).
+#   U = not supported: the source doesn't say it, says something else, or the sentence states
+#       something about the traveller the source can't back.
+# Judged against the clause text in data/chunks/documents.jsonl. The reviewer may have seen a
+# shorter retrieved passage of the same clause.
+#
+# labels: one letter per working sentence, in order. why: sentence number -> reason (given for
+# every U and where the label could be argued).
+drafted_by: Claude Code
+drafted: 2026-11-18
+reviewed_by: "swateek"   # set to your name once you have read and corrected the labels
+answers:
+  A02-1: {labels: SUSU, why: {2: "148.35(a) is the 48-hour rule; nothing on 1 litre", 4: "26 USC 5051 is the beer tax; this is single malt"}}
+  A04-1: {labels: SUSS, why: {2: "148.35(a) is the 48-hour rule; nothing on 1 litre", 4: "TTB table has the still-wine rate"}}
+  A05-1: {labels: SUSS, why: {2: "148.35(a) is the 48-hour rule; nothing on 1 litre"}}
+  A09-1: {labels: SUS, why: {2: "paying-duties page gives no litre limit", 3: "TTB table has the still-wine rate"}}
+  B01-1: {labels: SSS, why: {2: "types page: two litres with the $800 exemption when one is Caribbean Basin"}}
+  B04-1: {labels: SUSS, why: {2: "paying-duties page gives no litre limit", 4: "TTB table has the distilled-spirits rate"}}
+  C02-1: {labels: SUU, why: {2: "paying-duties page has no 150 ml figure", 3: "5051 is the beer tax; this is wine"}}
+  C04-1: {labels: SUSS, why: {2: "tobacco page; nothing on 150 ml of alcohol", 3: "148.101 sets the flat rate on dutiable articles", 4: "TTB table has the distilled-spirits rate"}}
+  C06-1: {labels: SUSS, why: {2: "this page says one litre is duty-free under the resident exemption, not 150 ml"}}
+  D02-1: {labels: SSS}
+  D03-1: {labels: SSS}
+  D04-1: {labels: SSU, why: {3: "source says 100 cigars, not 50"}}
+  E05-2: {labels: USUU, why: {1: "source prohibits Cuban-origin goods, but nothing makes these cigars Cuban (the traveller said Dominican)", 3: "6 cigars are within the 100; nothing on Cuban cigars here", 4: "148.35(a) is the 48-hour rule"}}
+  E06-1: {labels: SUSU, why: {2: "paying-duties page gives no litre limit", 4: "26 USC 5001 is the distilled-spirits tax; this is wine"}}
+  F01-1: {labels: SSSSS, why: {3: "follows from 148.33(d)(2): no alcohol for under 21", 5: "TTB table has the still-wine rate"}}
+  F03-1: {labels: SSS, why: {1: "148.33(d)(2) says exactly this", 2: "148.33(d)(2)", 3: "5001 is the spirits rate; tequila is a spirit"}}
+  F04-1: {labels: SSSU, why: {4: "5051 is the beer tax; this is wine"}}
+  G01-1: {labels: SUUSS, why: {2: "types page has 2 L (Caribbean), 5 L (insular) and 1 L for cruise-ship shops; no general 1 litre limit for this trip", 3: "contradicts sentence 2; nothing in the source"}}
+  G03-1: {labels: SSS, why: {2: "types page: two litres when one is Caribbean Basin/Andean"}}
+  G09-1: {labels: SUUS, why: {2: "148.35(a) is the 48-hour rule; nothing on 1 litre", 3: "page gives 3 percent; nothing on a free rate"}}
+  H01-1: {labels: SUU, why: {2: "148.35(a) is the 48-hour rule; nothing on 1 litre", 3: "148.35(a) says nothing about duty or excise"}}
+  H02-1: {labels: SUU, why: {2: "paying-duties page gives no litre limit", 3: "page says exemptions are duty-free but has no alcohol limit or excise; rests on sentence 2"}}
+  H03-1: {labels: SU, why: {2: "paying-duties page gives no litre limit"}}
+  I01-2: {labels: SUSS, why: {2: "148.35(a) is the 48-hour rule; nothing on 1 litre"}}
+  I07-1: {labels: SUU, why: {2: "paying-duties page gives no litre limit", 3: "5041(b) is the wine tax; pisco is a spirit"}}
+  I08-1: {labels: SS}
+  I08-2: {labels: SSS, why: {3: "types page: the two litres are part of the duty-free $800 exemption"}}
+  J02-1: {labels: SUUU, why: {2: "148.35(a) is the 48-hour rule; nothing on 1 litre", 3: "page gives 3 percent, not $0.00", 4: "5051 is the beer tax; this is tequila"}}
+  J03-1: {labels: SSUS, why: {3: "the only flat rate on the types page is 1.5% for insular possessions"}}
+  M02-1: {labels: SUSS, why: {2: "148.35(a) is the 48-hour rule; nothing on 1 litre"}}

@@ -5,6 +5,8 @@
 # `auto` is the label eval_report.classify gave when the check was made; `hand` is the label
 # the report uses from now on. eval_report reports the classifier's current agreement.
 checked: 2026-11-18
+drafted_by: Claude Code
+reviewed_by: "swateek"   # set to your name once you have read and corrected the labels
 items:
   - {id: C04, turn: 1, runs: [planner-1, planner-2, planner-3, router], auto: extraction_error, hand: extraction_error,
      cause: "'one pack of 20 cigarettes' read as 20 packs (400 cigarettes), so the $200 exemption was lost and the whisky taxed. The working also says '150 ml duty-free, leaving 100 ml over' for a 100 ml bottle: wrong wording on top."}

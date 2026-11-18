@@ -118,10 +118,12 @@ def quantile(v: list[float], q: float) -> float:
     return v[min(len(v) - 1, round(q * (len(v) - 1)))]
 
 
+def hand_doc(path: Path = HAND) -> dict:
+    return yaml.safe_load(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
 def hand_labels(path: Path = HAND) -> list[dict]:
-    if not path.exists():
-        return []
-    return yaml.safe_load(path.read_text(encoding="utf-8")).get("items", [])
+    return hand_doc(path).get("items", [])
 
 
 def run_metrics(
@@ -306,12 +308,16 @@ def hand_section(hand: list[dict], m: dict) -> list[str]:
     agree_now = sum(a == h["hand"] for a, h in zip(now, hand, strict=True))
     agree_then = sum(h["auto"] == h["hand"] for h in hand)
     n_runs = sum(len(h["runs"]) for h in hand)
+    doc = hand_doc()
+    who = (f"Labels drafted by {doc.get('drafted_by')}, reviewed by {doc['reviewed_by']}."
+           if doc.get("reviewed_by") else
+           f"**Labels drafted by {doc.get('drafted_by')}; not yet reviewed by a person.**")  # fmt: skip
     out = ["", "## Hand-check (plan §10.5)", "",
            (f"{len(hand)} distinct failures checked by hand ({n_runs} wrong turns across the runs "
             "that gave the same answer); the taxonomy above uses the hand label. The automatic "
             f"label agreed on {agree_then}/{len(hand)} when checked; after the two classifier "
             f"fixes the check prompted (refusal misses, missing sources from unread facts) it "
-            f"agrees on {agree_now}/{len(hand)}. Causes: `docs/results/hand-check.yaml`."), "",
+            f"agrees on {agree_now}/{len(hand)}. {who} Causes: `docs/results/hand-check.yaml`."), "",
            "| id | turn | runs | automatic | hand |", "|---|---|---|---|---|"]  # fmt: skip
     out += [f"| {h['id']} | {h['turn']} | {len(h['runs'])} | {a} | {h['hand']} |"
             for a, h in zip(now, hand, strict=True)]  # fmt: skip

@@ -86,3 +86,17 @@ def test_hand_label_replaces_the_automatic_one_for_its_runs():
     assert m["failure_rows"][0]["hand_checked"]
     assert er.run_metrics(recs, None, "router", hand)["failures"] == {"rule_selection_error": 1}
     assert {h["hand"] for h in er.hand_labels()} <= set(er.BUCKETS)
+
+
+def test_reviewer_agreement_labels_cover_the_sample():
+    import yaml
+
+    from eval import reviewer_agreement as ra
+
+    assert ra.kappa(list("SSUU"), list("SSUU")) == 1.0
+    assert round(ra.kappa(list("SSUU"), list("SUSU")), 2) == 0.0
+    answers = ra.sample()
+    assert len(answers) == ra.N
+    doc = yaml.safe_load(ra.LABELS.read_text(encoding="utf-8"))
+    g = ra.agreement(answers, doc["answers"])  # raises if a label count is off
+    assert g["sentences"] == sum(len(a["sentences"]) for a in answers)
