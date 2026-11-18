@@ -66,3 +66,23 @@ def test_metrics_and_buckets():
     assert m["turn_accuracy"] == 0.5 and m["failures"] == {"extraction_error": 1}
     assert m["cost_per_1k_turns_usd"] == 3000 * 0.10 / 1e3
     assert {r["bucket"] for r in m["failure_rows"]} == {"Reasoning error"}
+
+
+def test_classifier_fixes_from_the_hand_check():
+    c = er.classify
+    miss = turn(False, ["wrong_outcome:refused->clarify"], "clarify", "clarify", gold="refused")
+    assert c(rec(miss), miss) == "refusal_miss"
+    t = turn(False, ["missing_citation"])
+    assert c(rec(t, ext=(12, 11, 0)), t) == "extraction_error"
+
+
+def test_hand_label_replaces_the_automatic_one_for_its_runs():
+    recs = [rec(turn(False, ["wrong_amount"]))]
+    hand = [{"id": "X", "turn": 1, "runs": ["planner-1"], "auto": "rule_selection_error",
+             "hand": "unit_error"}]  # fmt: skip
+    m = er.run_metrics(recs, None, "planner-1", hand)
+    assert m["failures"] == {"unit_error": 1}
+    assert m["failure_rows"][0]["auto"] == "rule_selection_error"
+    assert m["failure_rows"][0]["hand_checked"]
+    assert er.run_metrics(recs, None, "router", hand)["failures"] == {"rule_selection_error": 1}
+    assert {h["hand"] for h in er.hand_labels()} <= set(er.BUCKETS)

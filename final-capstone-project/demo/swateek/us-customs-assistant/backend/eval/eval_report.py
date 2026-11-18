@@ -8,7 +8,8 @@ extraction accuracy, clarify precision/recall, task completion, tool calls, toke
 labelled ASSUMED price, p50/p95 latency, plan-fallback and retrieval-miss-recovered rates.
 The three planner runs are reported as mean and range. Every wrong turn gets a fine failure
 label, rolled up into the template's four buckets (+ "not built" for the stretch what-if);
-docs/results/failures-to-check.md lists them for the hand-check (at least 15).
+docs/results/failures-to-check.md lists them for the hand-check (at least 15); the hand labels
+in docs/results/hand-check.yaml replace the automatic ones and the report gives the agreement.
 """
 
 from __future__ import annotations
@@ -19,11 +20,14 @@ import statistics
 from collections import Counter, defaultdict
 from pathlib import Path
 
+import yaml
+
 from customs.config import PROJECT_ROOT
 from eval import run_agent as ra
 from eval.official import RUNS
 
 DOCS = PROJECT_ROOT / "docs"
+HAND = DOCS / "results" / "hand-check.yaml"
 BUCKETS = {
     "retrieval_miss": "Retrieval miss",
     "extraction_error": "Reasoning error",
@@ -78,6 +82,8 @@ def classify(rec: dict, t: dict) -> str:
                 "plan_failed": "plan_invalid"}.get(esc, "extraction_error")  # fmt: skip
     if labels & {"no_clarify", "unnecessary_clarify"}:
         return "clarify_miss" if facts_ok else "extraction_error"
+    if t["gold_outcome"] == "refused" and card["outcome"] != "refused":
+        return "refusal_miss"  # hand-check 18 Nov: these fell through to extraction_error
     if "refusal_miss" in labels or any(lb.endswith("->refused") for lb in labels):
         return "refusal_miss"
     if mode == "single_rag" and labels & {"wrong_amount", "wrong_kind"}:
@@ -93,7 +99,11 @@ def classify(rec: dict, t: dict) -> str:
     if "invented_citation" in labels:
         return "invented_citation"
     if "missing_citation" in labels:
-        return "retrieval_miss" if mode == "single_rag" else "citation_mapping"
+        if mode == "single_rag":
+            return "retrieval_miss"
+        # a missing source because a fact was never read (e.g. the arrival state) is an
+        # extraction error, not a mapping one (hand-check 18 Nov)
+        return "citation_mapping" if facts_ok else "extraction_error"
     return "rule_selection_error"
 
 
@@ -108,7 +118,15 @@ def quantile(v: list[float], q: float) -> float:
     return v[min(len(v) - 1, round(q * (len(v) - 1)))]
 
 
-def run_metrics(recs: list[dict], usd_per_m: float | None) -> dict:
+def hand_labels(path: Path = HAND) -> list[dict]:
+    if not path.exists():
+        return []
+    return yaml.safe_load(path.read_text(encoding="utf-8")).get("items", [])
+
+
+def run_metrics(
+    recs: list[dict], usd_per_m: float | None, run: str = "", hand: list[dict] | None = None
+) -> dict:
     turns = [(r, t) for r in recs for t in r["turns"]]
     n = len(turns)
     metas = [t["card"].get("meta", {}) for _, t in turns]
@@ -125,7 +143,9 @@ def run_metrics(recs: list[dict], usd_per_m: float | None) -> dict:
     planned = [m for m in metas if m.get("plan_source")]
     sources = sum(len(t["card"].get("sources") or []) for _, t in turns)
     recovered = sum(len(m.get("retrieval_miss_recovered") or []) for m in metas)
-    fails = [(r, t, classify(r, t)) for r, t in turns if not t["correct"]]
+    by_hand = {(h["id"], h["turn"]): h["hand"] for h in hand or [] if run in h["runs"]}
+    fails = [(r, t, by_hand.get((r["id"], t["turn"])) or classify(r, t), classify(r, t))
+             for r, t in turns if not t["correct"]]  # fmt: skip
     out = {
         "turns": n,
         "turn_accuracy": sum(t["correct"] for _, t in turns) / n if n else 0,
@@ -164,7 +184,7 @@ def run_metrics(recs: list[dict], usd_per_m: float | None) -> dict:
             sum(m["plan_source"] == "fallback" for m in planned) / len(planned) if planned else None
         ),
         "retrieval_miss_recovered_rate": recovered / sources if sources else None,
-        "failures": Counter(f for _, _, f in fails),
+        "failures": Counter(f for _, _, f, _ in fails),
         "failure_rows": [
             {
                 "id": r["id"],
@@ -175,8 +195,10 @@ def run_metrics(recs: list[dict], usd_per_m: float | None) -> dict:
                 "gold": f"{t['gold_outcome']}/{t['gold_kind']} {t['gold_owe'] or ''}",
                 "got": f"{t['card']['outcome']}/{t['card']['kind']} {t['card'].get('owe_usd') or ''}",
                 "score_labels": t["labels"],
+                "auto": a,
+                "hand_checked": (r["id"], t["turn"]) in by_hand,
             }
-            for r, t, f in fails
+            for r, t, f, a in fails
         ],
     }
     return out
@@ -219,7 +241,8 @@ ROWS = [
 
 
 def build(runs: list[str], usd_per_m: float | None, out_dir: Path) -> str:
-    m = {r: run_metrics(load(r), usd_per_m) for r in runs if load(r)}
+    hand = hand_labels()
+    m = {r: run_metrics(load(r), usd_per_m, r, hand) for r in runs if load(r)}
     groups = defaultdict(list)
     for r in m:
         groups[r.rsplit("-", 1)[0] if r.startswith("planner-") and not r.endswith("corr") else
@@ -252,6 +275,7 @@ def build(runs: list[str], usd_per_m: float | None, out_dir: Path) -> str:
     for f in labels:
         lines.append(f"| {BUCKETS[f]} | {f} | " + " | ".join(
             str(sum(m[r]["failures"].get(f, 0) for r in groups[c])) for c in cols) + " |")  # fmt: skip
+    lines += hand_section(hand, m) + repeat_section(groups)
     text = "\n".join(lines) + "\n"
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "eval-report.md").write_text(text, encoding="utf-8")
@@ -259,16 +283,59 @@ def build(runs: list[str], usd_per_m: float | None, out_dir: Path) -> str:
     res.mkdir(parents=True, exist_ok=True)
     rows = [dict(run=r, **row) for r in m for row in m[r]["failure_rows"]]
     check = ["# Failures to hand-check (plan §10.5: at least 15)", "",
-             "Each wrong turn with its automatic label. Mark `agree` or the right label.", "",
-             "| run | id | turn | category | gold | got | score labels | label | bucket | check |",
-             "|---|---|---|---|---|---|---|---|---|---|"]  # fmt: skip
+             ("Each wrong turn with its label. `hand` = checked; the label is then the hand label "
+              "(docs/results/hand-check.yaml, with the cause) and `auto` is the classifier's."), "",
+             "| run | id | turn | category | gold | got | score labels | label | bucket | auto | check |",
+             "|---|---|---|---|---|---|---|---|---|---|---|"]  # fmt: skip
     check += [f"| {x['run']} | {x['id']} | {x['turn']} | {x['category']} | {x['gold']} | {x['got']} | "
-              f"{', '.join(x['score_labels'])} | {x['label']} | {x['bucket']} | |" for x in rows]  # fmt: skip
+              f"{', '.join(x['score_labels'])} | {x['label']} | {x['bucket']} | {x['auto']} | "
+              f"{'hand' if x['hand_checked'] else ''} |" for x in rows]  # fmt: skip
     (res / "failures-to-check.md").write_text("\n".join(check) + "\n", encoding="utf-8")
     (res / "official.json").write_text(json.dumps(
         {r: {k: v for k, v in x.items() if k != "failure_rows"} for r, x in m.items()},
         indent=1, default=dict) + "\n", encoding="utf-8")  # fmt: skip
     return text
+
+
+def hand_section(hand: list[dict], m: dict) -> list[str]:
+    """Plan §10.5: what was checked, and how often the classifier agrees (now, and when checked)."""
+    if not hand:
+        return []
+    autos = {(r, x["id"], x["turn"]): x["auto"] for r in m for x in m[r]["failure_rows"]}
+    now = [autos.get((h["runs"][0], h["id"], h["turn"])) for h in hand]
+    agree_now = sum(a == h["hand"] for a, h in zip(now, hand, strict=True))
+    agree_then = sum(h["auto"] == h["hand"] for h in hand)
+    n_runs = sum(len(h["runs"]) for h in hand)
+    out = ["", "## Hand-check (plan §10.5)", "",
+           (f"{len(hand)} distinct failures checked by hand ({n_runs} wrong turns across the runs "
+            "that gave the same answer); the taxonomy above uses the hand label. The automatic "
+            f"label agreed on {agree_then}/{len(hand)} when checked; after the two classifier "
+            f"fixes the check prompted (refusal misses, missing sources from unread facts) it "
+            f"agrees on {agree_now}/{len(hand)}. Causes: `docs/results/hand-check.yaml`."), "",
+           "| id | turn | runs | automatic | hand |", "|---|---|---|---|---|"]  # fmt: skip
+    out += [f"| {h['id']} | {h['turn']} | {len(h['runs'])} | {a} | {h['hand']} |"
+            for a, h in zip(now, hand, strict=True)]  # fmt: skip
+    return out
+
+
+def repeat_section(groups: dict) -> list[str]:
+    """How often repeated runs of the same agent gave a different answer (temperature 0)."""
+    out = []
+    for c, runs in groups.items():
+        if len(runs) < 2:
+            continue
+        cards = [{(x["id"], t["turn"]): t["card"].get("bottom_line") for x in load(r)
+                  for t in x["turns"]} for r in runs]  # fmt: skip
+        keys = set.intersection(*(set(k) for k in cards))
+        diff = sum(len({cc[k] for cc in cards}) > 1 for k in keys)
+        out.append(f"- {c}: {diff} of {len(keys)} turns answered differently across "
+                   f"{len(runs)} runs")  # fmt: skip
+    if not out:
+        return []
+    return ["", "## Repeat runs", "",
+            ("Chat runs at temperature 0, so repeat runs mostly measure determinism, not sampling "
+             "variance. A different answer can also come from the endpoint (busy or failing)."),
+            "", *out]  # fmt: skip
 
 
 def main() -> None:

@@ -39,10 +39,11 @@
   "retrieval_miss_recovered_rate": 0.23148148148148148,
   "failures": {
    "extraction_error": 7,
-   "citation_mapping": 3,
    "rule_selection_error": 2,
+   "unit_error": 1,
    "feature_not_built": 4,
-   "clarify_miss": 2
+   "clarify_miss": 2,
+   "refusal_miss": 2
   }
  },
  "planner-1-corr": {
@@ -119,10 +120,11 @@
   "retrieval_miss_recovered_rate": 0.23148148148148148,
   "failures": {
    "extraction_error": 7,
-   "citation_mapping": 3,
    "rule_selection_error": 2,
+   "unit_error": 1,
    "feature_not_built": 4,
-   "clarify_miss": 2
+   "clarify_miss": 2,
+   "refusal_miss": 2
   }
  },
  "planner-2-corr": {
@@ -199,10 +201,11 @@
   "retrieval_miss_recovered_rate": 0.23148148148148148,
   "failures": {
    "extraction_error": 7,
-   "citation_mapping": 3,
    "rule_selection_error": 2,
+   "unit_error": 1,
    "feature_not_built": 4,
-   "clarify_miss": 2
+   "clarify_miss": 2,
+   "refusal_miss": 2
   }
  },
  "planner-3-corr": {
@@ -280,10 +283,11 @@
   "retrieval_miss_recovered_rate": 0.23148148148148148,
   "failures": {
    "extraction_error": 7,
-   "citation_mapping": 3,
    "rule_selection_error": 2,
+   "unit_error": 1,
    "feature_not_built": 4,
-   "clarify_miss": 2
+   "clarify_miss": 2,
+   "refusal_miss": 2
   }
  },
  "tool_calling": {
@@ -326,9 +330,9 @@
   "retrieval_miss_recovered_rate": 0.0,
   "failures": {
    "tool_failure": 59,
-   "extraction_error": 5,
+   "extraction_error": 4,
    "feature_not_built": 4,
-   "rule_selection_error": 1
+   "refusal_miss": 2
   }
  },
  "single_rag": {
