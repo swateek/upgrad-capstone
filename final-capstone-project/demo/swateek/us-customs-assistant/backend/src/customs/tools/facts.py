@@ -57,7 +57,15 @@ def missing_facts(profile: Profile, basket: list[Line], tables: Tables | None = 
     if case.admissible:
         if p.age is None:
             fields.append(AGE)
-        if p.long_trip is None and p.arrived_directly_from not in mexico:
+        # facts.yaml: the trip fact is "trip_hours_or_arrived_from_mexico". A trip under 48 hours
+        # still gets $800 straight from Mexico (R9), so it is missing when the arrival country
+        # is unknown and nothing said rules Mexico out (live smoke test 18 Nov: a Tijuana day
+        # trip with no arrival country got the $200 exemption).
+        visited = set(p.countries_visited)
+        mexico_open = p.arrived_directly_from is None and not (visited and not visited & mexico)
+        if p.arrived_directly_from not in mexico and (
+            p.long_trip is None or (p.long_trip is False and mexico_open)
+        ):
             fields.append(TRIP)
         if p.exemption_used_last_30_days is None:
             fields.append(USED)

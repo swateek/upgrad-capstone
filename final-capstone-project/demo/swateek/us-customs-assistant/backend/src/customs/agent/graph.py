@@ -407,6 +407,7 @@ class CustomsAgent:
             a,
             figures,
             ctx.sources,
+            ctx.case.profile,
             problems=state.get("problems") or None,
             previous=WriterOut.model_validate(prev) if prev else None,
         )

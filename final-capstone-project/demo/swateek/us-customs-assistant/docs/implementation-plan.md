@@ -464,7 +464,7 @@ No calendar. "STOP (sign-off)" waits for your approval; "STOP (upgrad OK)" waits
     - *Docker: the ingest copies the host's verified snapshot (`download --from-snapshot`), because cbp.gov and abc.ca.gov refuse container downloads with HTTP 403. The corpus hash is identical; 0 upgrad calls.*
     - *Checked in the browser against a scripted offline model, including clarify and a fact edit replan (the queued state is covered by a test), and through Docker with a guard refusal.*
     - *218 tests.*
-    - *Live smoke test: pending OK.*
+    - *Live smoke tests (with the user's OK): smoke 1 found 2 wrong answers (a Mexico day trip; a false sentence in the working). Fixed as agent freeze v2 and v3, each confirmed by a full dev run (23/23) and live: 46 smoke chat calls and 10 embedding requests in all. See `docs/results/dev-runs.md` and COMPENSATIONS #14–15.*
 12. **Hardening, safety suite, red-team.** **STOP (upgrad OK)** for the live runs. → CI green → **code freeze** (`v1.0.0-rc`). Report §5 (agent design) and §6 (responsible AI) drafted.
 13. **Official runs.** **STOP (upgrad OK):** ≈2,100 chat calls (3 × planner, router, tool_calling, single_rag, corrections), one request at a time, when no one else in group 031–045 is using the shared key.
 14. **Metrics, taxonomy, reviewer agreement, Langfuse dashboard screenshots, evaluation report.** Report §7 (compensations).

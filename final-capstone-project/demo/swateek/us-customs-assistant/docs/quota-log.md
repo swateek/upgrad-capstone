@@ -15,3 +15,8 @@ One line per run that reaches the course endpoints (group 031–045), made only 
 | 2026-11-18 03:52 | swateek | agent run dev-03 (dev, planner) | 63 | 13 | 57464 | run took 6 min |
 | 2026-11-18 04:02 | swateek | agent run dev-04 (dev, planner) | 77 | 17 | 70946 | run took 7 min |
 | 2026-11-18 04:11 | swateek | agent run dev-05 (dev, planner) | 68 | 17 | 64742 | run took 6 min |
+| 2026-11-18 04:52 | swateek | live smoke test via UI proxy (Docker, 6 turns) | 18 | 5 | 18901 | Italy clarify+answer+fact edit, Cuban, Dubai, Tijuana; 2 wrong (see dev-runs.md) |
+| 2026-11-18 05:01 | swateek | agent run dev-06 (dev, planner) | 72 | 17 | 74509 | run took 6 min |
+| 2026-11-18 05:06 | swateek | live smoke test 2 via UI proxy (Docker, agent v2) | 18 | 4 | 20400 | 6 turns + 2 Tijuana probes; last probe tokens estimated (~960); all answers right; Tijuana still asks (fixed after, offline) |
+| 2026-11-18 05:13 | swateek | agent run dev-07 (dev, planner) | 71 | 17 | 73100 | run took 6 min |
+| 2026-11-18 05:14 | swateek | live smoke: Tijuana question (Docker, agent v3) | 4 | 1 | 3587 | Mexico land crossing: $800, nothing owed (correct) |

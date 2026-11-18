@@ -88,7 +88,7 @@ def measure() -> tuple[dict[str, list[int]], dict[str, int], list[int]]:
         sources, _ = search.search(q, a.rule_refs)
         figs = cards.figure_rows(a.figures, a.lines)
         m_wr = [sys_msg(writer.PROMPT),
-                {"role": "user", "content": writer.writer_input(q, a, figs, sources)}]  # fmt: skip
+                {"role": "user", "content": writer.writer_input(q, a, figs, sources, profile)}]  # fmt: skip
         sizes["writer"].append(n(m_wr))
         srcs = "\n".join(f"{x.handle} {x.citation}: {x.text}" for x in sources)
         m_rv = [{"role": "system", "content": verifier.REVIEW_SYSTEM},

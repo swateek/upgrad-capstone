@@ -158,6 +158,13 @@ def ground(facts: dict, conversation: str, tables: Tables) -> list[str]:
     fixes = []
     conv = _fold(conversation)
     prof = facts["profile"]
+    visited = prof.get("countries_visited") or []
+    if not prof.get("arrived_directly_from") and len(set(visited)) == 1:
+        # a one-country trip comes back from that country (live smoke test 18 Nov: "Tijuana,
+        # Mexico, driving straight back" gave countries_visited [MX] and no arrival country,
+        # so a land crossing from Mexico was asked about again)
+        prof["arrived_directly_from"] = visited[0]
+        fixes.append(f"arrived_directly_from {visited[0]} (the only country visited)")
     st = prof.get("arrival_state")
     if st and str(st).upper() not in US_STATES:
         prof.pop("arrival_state")

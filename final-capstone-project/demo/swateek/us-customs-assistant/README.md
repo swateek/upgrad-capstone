@@ -28,7 +28,9 @@ Estimates only: the CBP officer's assessment is final.
 
 - Step 12, API, UI and Docker (offline): streaming API with queue, rate limits, answer cache and session purge; Next.js Ask / Clarify / Answer card with editable facts; the Docker ingest copies the host snapshot (identical corpus hash) and indexes from the embedding cache. Checked in the browser against a scripted offline model, and through Docker with a guard refusal (0 upgrad calls).
 
-Next: a live smoke test through the UI (needs the user's OK for upgrad calls).
+- Live smoke tests through the UI found 2 wrong answers. They are fixed as agent freeze v3 (dev 23/23, and correct live).
+
+Next: hardening and red-team (plan step 12).
 
 ## Run
 

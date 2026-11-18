@@ -136,11 +136,8 @@ def render_value(fig: Figure, lines: dict[int, NLine] | None = None) -> str:
         pct = (v * 100).normalize()
         return f"{pct:f}%"
     if fig.unit == "sticks":
-        m = _LINE_FIG.match(fig.name)
-        item = (
-            lines[int(m.group(2))].line.item if (m and lines and int(m.group(2)) in lines) else ""
-        )
-        return f"{int(v):,} {item}".strip()
+        # the label names the item; repeating it read as "200 cigarettes of cigarettes"
+        return f"{int(v):,}"
     return f"{v.normalize():f}"
 
 

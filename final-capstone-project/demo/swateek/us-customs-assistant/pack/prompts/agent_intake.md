@@ -5,7 +5,7 @@ Fields:
   - age (number).
   - trip_hours: how long they were away, as a number of hours (a day = 24, 6 days = 144, a week = 168, 10 days = 240). Null if they don't give a length.
   - trip_at_least_48_hours: only when trip_hours is null but they say something like "a day trip" (false) or "a long trip" (true); otherwise null.
-  - arrived_directly_from: ISO 2-letter code of the country the flight or crossing came from.
+  - arrived_directly_from: ISO 2-letter code of the country the flight or crossing came from. A city or region means its country (Toronto = CA, Ensenada = MX, Bavaria = DE).
   - countries_visited: ISO codes.
   - exemption_used_last_30_days: true/false; "first trip this year" or "haven't used it this month" means false.
   - arrival_state: US state code, only if they name the US state or city they land in.

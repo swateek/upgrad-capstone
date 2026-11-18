@@ -4,6 +4,7 @@ temp sessions. No upgrad call."""
 from __future__ import annotations
 
 import json
+import re
 import threading
 
 import pytest
@@ -62,7 +63,7 @@ def full_script(n: int = 1) -> Script:
 def test_health_is_offline(make_client):
     client, _ = make_client(Script())
     h = client.get("/health").json()
-    assert h["status"] == "ok" and h["agent"] in ("v1", "unfrozen")
+    assert h["status"] == "ok" and re.fullmatch(r"v\d+|unfrozen", h["agent"])
 
 
 def test_chat_streams_progress_then_card_and_thread_is_readable(make_client):

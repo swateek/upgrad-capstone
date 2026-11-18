@@ -41,6 +41,10 @@ NEGATIVE = re.compile(
 )
 SEIZURE = re.compile(r"\b(seiz\w*|detain\w*|confiscat\w*|forfeit\w*|over the (allowance|limit)|"
                      r"exceed\w*|too many|more than)\b", re.IGNORECASE)  # fmt: skip
+DENIAL = re.compile(
+    r"(?:\bnot|n't|\bnever)\s+(?:qualify|qualifies|eligible|entitled|apply|applies|get)\b",
+    re.IGNORECASE,
+)
 MONEY_FIGS = ("duty_usd_", "excise_usd_", "duty_total_usd", "excise_total_usd", "total_owed_usd")
 
 
@@ -127,6 +131,12 @@ def check_wording(
         if not re.search(r"\[S\d+\]", w):
             problems.append(f"working sentence without a source handle: {w!r}")
     problems += bottom_line_problems(out.bottom_line, a, figures)
+    ex = next((f for f in figures if f["name"] == "exemption_usd"), None)
+    for t in texts_all:
+        if ex and f"[{ex['handle']}]" in t and DENIAL.search(t):
+            problems.append(
+                f"says the [{ex['handle']}] exemption doesn't apply, but it does: {t!r}"
+            )
     banned = get_guard().banned_in(" ".join(texts_all))
     if banned:
         problems.append(f"banned phrases: {banned}")

@@ -10,7 +10,9 @@ Before the first live run, an **oracle run** (`eval/oracle_dev.py`) gave the pip
 | dev-02 | 19/23 (83%) | 15/17 | 43/45 | 2/3, 2/3 | 2 | 3 | 3 | 84 / 18 | 74,828 |
 | dev-03 | 16/23 (70%) | 12/17 | 31/45 | 3/3, 3/3 | 0 | 1 | 0 | 63 / 13 | 57,464 |
 | dev-04 | 22/23 (96%) | 17/17 | 45/45 | 3/3, 3/3 | 1 | 0 | 0 | 77 / 17 | 70,946 |
-| **dev-05** | **23/23 (100%)** | **17/17** | **45/45** | **3/3, 3/3** | 1 | 0 | 0 | 68 / 17 | 64,742 |
+| **dev-05** (v1) | **23/23 (100%)** | **17/17** | **45/45** | **3/3, 3/3** | 1 | 0 | 0 | 68 / 17 | 64,742 |
+| dev-06 (v2) | 23/23 | 17/17 | 45/45 | 3/3, 3/3 | 1 | 0 | 0 | 72 / 17 | 74,509 |
+| dev-07 (v3) | 23/23 | 17/17 | 45/45 | 3/3, 3/3 | 1 | 0 | 0 | 71 / 17 | 73,100 |
 
 dev-05 per turn: 3.0 model calls on average (max 5), 3.6 tool calls, 2,815 tokens (max 5,508 of the 12,000 budget); latency p50 14.8 s, p95 33.4 s on the shared endpoint.
 
@@ -56,3 +58,26 @@ Known limits carried into the official runs:
 - `whatif_optimise` (stretch) is not built, so the 4 `whatif` items will fail. Building it needs freeze v2.
 - Dev covers 20 scenarios. Several fixes target behaviours seen once or twice (DV07, DV09, DV11), so the frozen set will show how far they generalise.
 - The intake still invents a price now and then (1 field in dev-05). It changes no dev answer, because those lines are within the allowance.
+
+## Live smoke tests and freezes v2–v3 (18 Nov)
+
+The UI's example questions (written for the UI, not eval items) were run through the Docker stack, the path the browser uses. Results: `runs/smoke-01.json`, `runs/smoke-02.json`; calls in `docs/quota-log.md`.
+
+**Smoke 1 (agent v1): 2 of 6 turns wrong.** Neither failure type is scored by the dev set:
+- **Tijuana day trip: $3.34 owed instead of nothing.** Two causes. The intake gave no arrival country. And `tools/facts.py` did not ask about it, even though the signed-off facts table makes "trip length or arrived from Mexico" one fact: a trip under 48 hours still gets $800 when it comes straight from Mexico (R9).
+- **A false sentence in the working.** "You used it within the last 30 days" was written for a traveller who hadn't. The writer saw only figures and sources (one was the 30-day rule), not the traveller's facts. The deterministic verifier checks numbers and handles, not meaning.
+
+**Freeze v2** (confirmed by dev-06, 23/23):
+- **Missing fact:** `facts.py` treats the trip fact as missing when the trip is under 48 hours and the arrival country is unknown, unless the countries named rule Mexico out.
+- **Intake prompt:** a city or region means its country.
+- **Writer:** it gets the traveller's facts ("the only things you may say about them"), and each source carries the rule it supports.
+- **Verifier:** a sentence saying the exemption the calculators gave "doesn't apply / doesn't qualify" is a wording failure. It caught the same hallucination on dev DV12 and DV13, which the dev score never saw, and the rewrite fixed both.
+- **Display:** stick counts no longer repeat the item ("200 cigarettes of cigarettes").
+
+**Smoke 2 (agent v2):** every answer was right and the false sentence was gone. Tijuana was now asked about instead of answered wrongly. But with "Tijuana, Mexico, driving straight back", the intake still put Mexico only in `countries_visited`, so the agent asked again.
+
+**Freeze v3** (confirmed by dev-07, 23/23):
+- **Grounding:** a one-country trip comes back from that country.
+- **Live check:** the Tijuana question then answered "$800 exemption, nothing owed", which is correct.
+
+`pack/agent.lock.yaml` is now version 3.

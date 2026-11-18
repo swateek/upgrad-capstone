@@ -250,3 +250,50 @@ def test_repair_appends_missing_search():
     assert validate_plan(fixed, c) == [] and fixes == [
         "appended search_regulations (it always runs last)"
     ]
+
+
+def test_short_trip_from_unknown_country_asks_about_mexico():
+    from customs.tools.facts import TRIP, missing_facts
+
+    tequila = [Line(item="spirits", quantity=1, unit="bottle", container_ml=750, value_usd=40)]
+    base = {"age": 30, "trip_hours": 24, "exemption_used_last_30_days": False}
+    assert TRIP in missing_facts(Profile(**base), tequila, T)  # could be Mexico: ask
+    assert TRIP not in missing_facts(Profile(**base, arrived_directly_from="MX"), tequila, T)
+    assert TRIP not in missing_facts(Profile(**base, arrived_directly_from="CA"), tequila, T)
+    assert TRIP not in missing_facts(Profile(**base, countries_visited=["CA"]), tequila, T)
+    assert TRIP not in missing_facts(Profile(**{**base, "trip_hours": 240}), tequila, T)
+
+
+def test_verifier_blocks_denying_the_exemption_given():
+    a, figs, h, srcs = _fixture()
+    ex = h["exemption_usd"]
+    bad = WriterOut(bottom_line=f"You'll owe about [{h['total_owed_usd']}].",
+                    working=[f"Your trip does not qualify for the [{ex}] exemption [S1]."])  # fmt: skip
+    assert any("doesn't apply" in p for p in check_wording(bad, a, figs, srcs, P, [WINE], T))
+    ok = WriterOut(bottom_line=f"You'll owe about [{h['total_owed_usd']}].",
+                   working=[f"The [{ex}] exemption applies; wine over the allowance doesn't [S1]."])  # fmt: skip
+    assert check_wording(ok, a, figs, srcs, P, [WINE], T) == []
+
+
+def test_writer_sees_traveller_facts_and_what_sources_support():
+    from customs.agent.writer import writer_input
+
+    a, figs, _, srcs = _fixture()
+    srcs[0].rules = ["R9"]
+    text = writer_input("q", a, figs, srcs, P)
+    assert "exemption used in the last 30 days: no" in text
+    assert "S1 19 CFR 148.35 [supports: which exemption]" in text
+
+
+def test_ground_one_country_trip_sets_arrival_country():
+    from customs.agent.intake import ground
+
+    f = {"profile": {"countries_visited": ["MX"]}, "basket": []}
+    assert ground(f, "Day trip to Tijuana, Mexico, driving back", T)
+    assert f["profile"]["arrived_directly_from"] == "MX"
+    two = {"profile": {"countries_visited": ["FR", "IT"]}, "basket": []}
+    ground(two, "Paris then Rome", T)
+    assert "arrived_directly_from" not in two["profile"]  # several countries: not inferred
+    known = {"profile": {"countries_visited": ["MX"], "arrived_directly_from": "US"}, "basket": []}
+    ground(known, "x", T)
+    assert known["profile"]["arrived_directly_from"] == "US"
