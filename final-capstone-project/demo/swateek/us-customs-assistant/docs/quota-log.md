@@ -25,3 +25,14 @@ One line per run that reaches the course endpoints (group 031–045), made only 
 | 2026-11-18 05:45 | swateek | agent run dev-08 (dev, planner) | 71 | 17 | 73123 | run took 6 min |
 | 2026-11-18 05:49 | swateek | red-team against the live app (Docker) | 7 | 0 | 0 | 22 attacks; tokens not tracked per item; 1 min |
 | 2026-11-18 05:50 | swateek | safety suite live probes | 21 | 8 | 21773 | 8 probes; 1 min |
+| 2026-11-18 07:07 | swateek | agent run planner-1 (frozen, planner), PARTIAL: paused by the user | 263 | 66 | 280917 | 65 of 80 scenarios saved; the scenario in flight at the pause was not saved (its calls are not counted); resumable |
+| 2026-11-18 10:28 | swateek | agent run planner-1 (frozen, planner) | 21 | 4 | 20907 | run took 2 min |
+| 2026-11-18 10:28 | swateek | agent run planner-1-corr, CRASHED (harness bug: second Qdrant client) | 2 | 0 | 0 | estimated: intake + planner of CR01 turn 1 before the crash; tokens unknown; scenario not saved |
+| 2026-11-18 10:33 | swateek | agent run planner-1-corr (corrections, planner) | 40 | 12 | 45731 | run took 4 min |
+| 2026-11-18 10:56 | swateek | agent run planner-2 (frozen, planner) | 284 | 70 | 301685 | run took 23 min |
+| 2026-11-18 10:59 | swateek | agent run planner-2-corr (corrections, planner) | 40 | 0 | 45731 | run took 4 min |
+| 2026-11-18 11:22 | swateek | agent run planner-3 (frozen, planner) | 284 | 0 | 301685 | run took 22 min |
+| 2026-11-18 12:03 | swateek | agent run planner-3-corr (corrections, planner) | 38 | 0 | 42664 | run took 41 min |
+| 2026-11-18 12:20 | swateek | agent run router (frozen, router) | 213 | 0 | 258244 | run took 17 min |
+| 2026-11-18 12:41 | swateek | agent run tool_calling (frozen, tool_calling) | 542 | 0 | 903750 | run took 21 min |
+| 2026-11-18 12:47 | swateek | agent run single_rag (frozen, single_rag) | 87 | 87 | 138414 | run took 6 min |
