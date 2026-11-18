@@ -21,7 +21,7 @@ Status: **draft for review**, revised after the critical review of 17 Nov. Nothi
 | D3 | **Standalone copy** of the reference core modules. No dependency on `procurement-and-vendor-review`. | You |
 | D4 | **upgrad only.** Chat: Qwen3-8B at `:1033` (CA `vm05-ca.crt`). Embeddings: bge-small-en-v1.5 at `:1035` (CA `vm02-ca.crt`, 384 dims). No SiliconFlow code, no `PROVIDER` switch, no LLM judge from another provider. | You |
 | D5 | **Separate Langfuse project** with its own keys in this app's `.env`, and its own dashboards. | You |
-| D6 | Reranker: **measure none vs Qwen3-8B listwise (upgrad chat) vs local `ms-marco-MiniLM-L-6-v2`**, ship the winner. The local model runs in the container (pinned weights baked in at build); it is not an API. | You |
+| D6 | Reranker: **measure none vs Qwen3-8B listwise (upgrad chat) vs local `ms-marco-MiniLM-L-6-v2`**, ship the winner. The local model runs in the container (pinned weights baked in at build); it is not an API. *Measured 18 Nov: **none** ships; the cross-encoder lost on every metric, listwise is switchable (`RERANKER=listwise`). The cross-encoder's dependency (fastembed) stays in the `experiment` group, out of the image.* | You |
 | D7 | Regulatory checks: **I research the official texts and write each finding with its citation; you sign off each one** before eval items are written. | You |
 | D8 | Eval scenarios: **I draft 80 frozen + 20 dev + ~6 corrections scenarios.** Gold answers: see D18. | You |
 | D9 | Front end: **Next.js + Tailwind**, own container, clean minimal design in the spirit of Anthropic's site (§9). | You |
@@ -280,6 +280,7 @@ Snapshot frozen once counts are in; answers show the snapshot's as-of date. Down
   - Topic filter on/off.
 - **Choices are made on dev labels and reported on eval labels.** Labels are clause ids from the gold, so they don't depend on the chunker.
 - Three written decisions (chunking, embedding, reranker) in `docs/results/retrieval-decisions.md`. Recall@k is reported next to end-to-end accuracy.
+- **Done 18 Nov.** Also measured: the query form (question alone vs question + rule names) and recall within a 1,500-token passage budget (R@1.5k), because recall at a fixed k favours whole sections (5 sections ≈ 3,600 tokens). Shipped: `window200`, hybrid, prefix on, question + rule names, topic filter, **no reranker** (the cross-encoder was worse; listwise improved ordering but not R@1.5k, at +1 call and ~4k tokens per search). Dev R@1.5k 0.84 (frozen 0.77). Listwise ran on dev only (`COMPENSATIONS.md` #8).
 
 ---
 
@@ -440,7 +441,7 @@ No calendar. "STOP (sign-off)" waits for your approval; "STOP (upgrad OK)" waits
 6. **Index.** **STOP (upgrad OK):** 3 chunking variants (~600 docs → ~1,500–2,500 chunks, ≈100–160 embedding requests per variant; ×2 for the prefix experiment). *Done 17 Nov with the user's OK: 3,528 distinct texts embedded in 221 requests (logged in `docs/quota-log.md`); three collections built (paragraph 1,413, section 920, window200 1,601 points, 384 dims); vectors cached in `data/embeddings/` so rebuilds, including Docker, need no upgrad calls.*
 7. **Baselines (the gate).** **STOP (upgrad OK):** ≈850 chat calls (4 strategies, dollar items without calculators, constrained-decoding comparison). → `week1_strategies.csv`, `week1_failures.csv`. *Done 17 Nov with the user's OK: 924 chat calls in all (smoke 20 + stopped run 15 + resumed run 889, incl. 36 JSON retries), 64 min, no API errors. Turn accuracy 1–13% (few-shot best); amount right on 12–22% of answered turns; see `docs/results/week1-baselines.md` and `docs/COMPENSATIONS.md` #3–7.* Report §1–2 (problem, spec, eval design) and §3 (prompting) drafted.
    **STOP (mentor):** share the gate evidence. *Done 17 Nov: `docs/mentor-check-01.md`.*
-8. **Retrieval experiment.** **STOP (upgrad OK):** listwise rerank ≈ 1 chat call per labelled question per variant (a few hundred). → recall@k, three decisions; report §4 (retrieval) drafted.
+8. **Retrieval experiment.** **STOP (upgrad OK):** listwise rerank ≈ 1 chat call per labelled question per variant (a few hundred). → recall@k, three decisions; report §4 (retrieval) drafted. *Done 18 Nov with the user's OK: 44 embedding requests (query vectors, cached) + 45 listwise chat calls on dev; 63 local variants + listwise; decisions in `docs/results/retrieval-decisions.md` (window200, hybrid, prefix on, question + rule names, topic filter, no reranker). Report §4 not drafted yet.*
 9. **Agent graph (offline first).** All nodes, the four modes, state and corrections, error handling; offline tests; prompt-size measurement.
 10. **Dev-set runs.** **STOP (upgrad OK):** 20 questions × ~4 calls per iteration (+ a few corrections). Tune on dev only → **prompt freeze**.
 11. **API, UI, Docker** (offline build); live smoke test **STOP (upgrad OK)**.

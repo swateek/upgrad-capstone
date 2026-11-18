@@ -18,7 +18,11 @@ Estimates only: the CBP officer's assessment is final.
 
 - Step 6, calculators and tools (`backend/src/customs/tools/`): every rule as code over the signed-off tables; matches the dev gold exactly.
 
-Next: the index (needs the user's OK for upgrad embedding calls), baselines, then the agent graph.
+- Step 7, index: three Qdrant collections from cached embeddings (221 requests, once).
+- Step 8, baselines (the gate): four prompting strategies on eval-v1 (`docs/results/week1-baselines.md`); mentor check-in `docs/mentor-check-01.md`.
+- Step 9, retrieval experiment: 63 variants + listwise; shipped window200, hybrid, question + rule names, topic filter, no reranker (`docs/results/retrieval-decisions.md`).
+
+Next: the agent graph (offline first).
 
 ## Run
 

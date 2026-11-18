@@ -46,3 +46,6 @@ dev = [
     "pytest>=9.2.0",
     "ruff>=0.17.4",
 ]
+experiment = [
+    "fastembed>=0.7",
+]

@@ -40,8 +40,9 @@ class Settings(BaseSettings):
     upgrad_embed_ca_cert: Path = Path("certs/vm02-ca.crt")
     embedding_model: str = "bge-small-en-v1.5"
 
-    # Reranker under study (plan D6): none | listwise (Qwen3-8B on the course chat endpoint) |
-    # cross_encoder (local ms-marco-MiniLM, added with the retrieval experiment).
+    # Reranker (plan D6, decided in the retrieval experiment): none by default. listwise =
+    # Qwen3-8B on the course chat endpoint (+1 call per search); cross_encoder = local
+    # ms-marco-MiniLM (needs `uv sync --group experiment`).
     reranker: Literal["none", "listwise", "cross_encoder"] = "none"
 
     # Qwen3 thinking mode; off on every default path.
@@ -68,7 +69,11 @@ class Settings(BaseSettings):
     # --- retrieval ------------------------------------------------------------------------
     # Unset: embedded Qdrant under data/qdrant (dev/eval). Docker sets http://qdrant:6333.
     qdrant_url: str | None = None
-    chunker: str = "paragraph"  # the retrieval experiment picks the winner
+    # Retrieval defaults chosen by the experiment (docs/results/retrieval-decisions.md).
+    chunker: Literal["paragraph", "section", "window200"] = "window200"
+    use_query_prefix: bool = True  # bge query instruction
+    topic_filter: bool = True  # search_regulations keeps sources matching the rule's topics
+    passage_budget_tokens: int = 1500  # passages per search, filled best first
     max_corpus_docs: int = Field(default=2000, description="Track B hard cap on documents")
 
     # --- tracing (separate Langfuse project; off unless both keys are set) ------------

@@ -5,7 +5,10 @@ ListwiseReranker  Qwen3-8B on the course chat endpoint orders the candidates in 
                   passage, the fused order stands (counted), so retrieval never fails on it.
                   Its chat call counts toward the question's model-call and token caps
                   (plan §4.6); `observer` receives one record per call for the trace.
-(cross-encoder)   the local ms-marco-MiniLM-L-6-v2 is added with the retrieval experiment.
+CrossEncoderReranker  ms-marco-MiniLM-L-6-v2 run locally (ONNX, via fastembed; no upgrad call).
+                  Scores each (question, passage) pair; passages are cut at 512 tokens.
+                  fastembed is in the `experiment` dependency group (`uv sync --group
+                  experiment`); it joins the main dependencies only if the experiment picks it.
 """
 
 from __future__ import annotations
@@ -122,6 +125,32 @@ class ListwiseReranker:
         return [(i, 1.0 / rank) for rank, i in enumerate(order, start=1)]
 
 
+CROSS_ENCODER_MODEL = "Xenova/ms-marco-MiniLM-L-6-v2"
+
+
+class CrossEncoderReranker:
+    """Local cross-encoder: one forward pass per (question, passage) pair, best first."""
+
+    def __init__(self, settings: Settings, model_name: str = CROSS_ENCODER_MODEL) -> None:
+        try:
+            from fastembed.rerank.cross_encoder import TextCrossEncoder
+        except ImportError as err:  # pragma: no cover - depends on the optional group
+            raise RuntimeError(
+                "the cross-encoder needs fastembed: uv sync --group experiment"
+            ) from err
+        self.model = f"{model_name} (local)"
+        cache = settings.data_dir / "models"
+        cache.mkdir(parents=True, exist_ok=True)
+        self.encoder = TextCrossEncoder(model_name, cache_dir=str(cache))
+
+    def rerank(self, query: str, documents: Sequence[str], top_n: int) -> list[tuple[int, float]]:
+        if not documents:
+            return []
+        scores = [float(x) for x in self.encoder.rerank(query, list(documents), batch_size=32)]
+        order = sorted(range(len(scores)), key=lambda i: (-scores[i], i))
+        return [(i, scores[i]) for i in order[: min(top_n, len(documents))]]
+
+
 def make_reranker(
     settings: Settings, observer: Callable[[dict[str, Any]], None] | None = None
 ) -> Reranker | None:
@@ -129,4 +158,4 @@ def make_reranker(
         return None
     if settings.reranker == "listwise":
         return ListwiseReranker(settings, observer=observer)
-    raise NotImplementedError("the local cross-encoder is added with the retrieval experiment")
+    return CrossEncoderReranker(settings)
