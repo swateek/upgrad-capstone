@@ -20,3 +20,8 @@ One line per run that reaches the course endpoints (group 031–045), made only 
 | 2026-11-18 05:06 | swateek | live smoke test 2 via UI proxy (Docker, agent v2) | 18 | 4 | 20400 | 6 turns + 2 Tijuana probes; last probe tokens estimated (~960); all answers right; Tijuana still asks (fixed after, offline) |
 | 2026-11-18 05:13 | swateek | agent run dev-07 (dev, planner) | 71 | 17 | 73100 | run took 6 min |
 | 2026-11-18 05:14 | swateek | live smoke: Tijuana question (Docker, agent v3) | 4 | 1 | 3587 | Mexico land crossing: $800, nothing owed (correct) |
+| 2026-11-18 05:31 | swateek | red-team against the live app (Docker) | 9 | 0 | 0 | 22 attacks; tokens not tracked per item; 1 min |
+| 2026-11-18 05:33 | swateek | safety suite live probes | 18 | 7 | 18479 | 8 probes; 1 min |
+| 2026-11-18 05:45 | swateek | agent run dev-08 (dev, planner) | 71 | 17 | 73123 | run took 6 min |
+| 2026-11-18 05:49 | swateek | red-team against the live app (Docker) | 7 | 0 | 0 | 22 attacks; tokens not tracked per item; 1 min |
+| 2026-11-18 05:50 | swateek | safety suite live probes | 21 | 8 | 21773 | 8 probes; 1 min |

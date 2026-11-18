@@ -465,7 +465,13 @@ No calendar. "STOP (sign-off)" waits for your approval; "STOP (upgrad OK)" waits
     - *Checked in the browser against a scripted offline model, including clarify and a fact edit replan (the queued state is covered by a test), and through Docker with a guard refusal.*
     - *218 tests.*
     - *Live smoke tests (with the user's OK): smoke 1 found 2 wrong answers (a Mexico day trip; a false sentence in the working). Fixed as agent freeze v2 and v3, each confirmed by a full dev run (23/23) and live: 46 smoke chat calls and 10 embedding requests in all. See `docs/results/dev-runs.md` and COMPENSATIONS #14–15.*
-12. **Hardening, safety suite, red-team.** **STOP (upgrad OK)** for the live runs. → CI green → **code freeze** (`v1.0.0-rc`). Report §5 (agent design) and §6 (responsible AI) drafted.
+12. **Hardening, safety suite, red-team.** **STOP (upgrad OK)** for the live runs. → CI green → **code freeze** (`v1.0.0-rc`). Report §5 (agent design) and §6 (responsible AI) drafted. *Done 18 Nov with the user's OK for each live run:*
+    - *Safety suite `eval/safety.py`: offline checks in CI; live probes `docs/results/safety.md`.*
+    - *Red-team `eval/red_team.py`: 22 attacks, 22/22 (`docs/results/red-team.md`).*
+    - *Hardening: no API docs exposed; questions with personal data are never cached, and the cache never outlives a session; web security headers and CSP; the API serves only planner and router.*
+    - *Agent freeze v4: guard, banned patterns, scope-flag evidence, unsourced-sentence handling. Confirmed by dev-08 at 23/23.*
+    - *CI-equivalent run green without the corpus (259 passed, 7 skipped).*
+    - *Not done: the `v1.0.0-rc` tag (the user tags), and drafting report §5–6.*
 13. **Official runs.** **STOP (upgrad OK):** ≈2,100 chat calls (3 × planner, router, tool_calling, single_rag, corrections), one request at a time, when no one else in group 031–045 is using the shared key.
 14. **Metrics, taxonomy, reviewer agreement, Langfuse dashboard screenshots, evaluation report.** Report §7 (compensations).
 15. **Stretch (if green):** what-if + its 4 items, then the other stretch items (§14.2).

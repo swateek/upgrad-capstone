@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import functools
 import operator
+import re
 import sqlite3
 from collections.abc import Callable
 from typing import Annotated, Any, TypedDict
@@ -70,6 +71,17 @@ from customs.tools.tables import Tables, load_tables
 MODES = ("planner", "router", "tool_calling", "single_rag")
 HARD_FACTS = {AGE, TRIP, USED}
 BASKET_QUESTION = "What alcohol or tobacco are you bringing back, how much, and what did it cost?"
+
+
+def drop_unsourced(out: WriterOut, problems: list[str]) -> tuple[WriterOut, list[str]]:
+    """After the one rewrite, a working sentence whose only fault is a missing source handle is
+    left out instead of escalating a correct answer (red-team 18 Nov: "There is no volume over
+    the allowance [F4]." escalated a nothing-owed answer). Any other problem still escalates."""
+    marker = "working sentence without a source handle: "
+    if not problems or not all(p.startswith(marker) for p in problems):
+        return out, problems
+    kept = [w for w in out.working if re.search(r"\[S\d+\]", w)]
+    return out.model_copy(update={"working": kept}), []
 
 
 def prohibited_line(a, sources) -> str:
@@ -424,7 +436,10 @@ class CustomsAgent:
             ctx.event("verifier_failed", problems=problems)
             if state.get("rewrites", 0) == 0:
                 return {"route": "write", "rewrites": 1, "problems": problems}
-            return self._escalate(state, "verifier_failed", "; ".join(problems))
+            out, problems = drop_unsourced(out, problems)
+            if problems:
+                return self._escalate(state, "verifier_failed", "; ".join(problems))
+            ctx.event("unsourced_sentences_dropped")
         review = (
             advisory_review(self.chat, out.working, ctx.sources)
             if self.settings.advisory_review

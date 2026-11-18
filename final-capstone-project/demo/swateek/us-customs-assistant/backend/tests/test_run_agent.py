@@ -1,6 +1,14 @@
 """The eval run harness, offline: a fake agent, temp output; resume and report."""
 
+import pytest
+
+from customs.config import PROJECT_ROOT
 from eval import run_agent as ra
+
+needs_corpus = pytest.mark.skipif(
+    not (PROJECT_ROOT / "data" / "chunks" / "documents.jsonl").exists(),
+    reason="corpus not built (CI): scoring reads the corpus citations",
+)
 
 
 class FakeAgent:
@@ -17,6 +25,7 @@ class FakeAgent:
         return {"facts": {"profile": {}, "basket": []}}
 
 
+@needs_corpus
 def test_run_resume_and_report(tmp_path, monkeypatch):
     monkeypatch.setattr(ra, "RUNS", tmp_path)
     rows = [r for r in ra.load("dev") if r["id"] in ("DV19", "DV20", "DV01")]

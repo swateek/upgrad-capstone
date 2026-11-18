@@ -79,10 +79,26 @@ def to_profile(ip: IntakeProfile, conversation: str) -> tuple[Profile, list[str]
     grounded = bool(quote) and quote in _norm(conversation)
     dropped = []
     for flag, normal in (("us_resident", True), ("crew", False), ("shipped", False)):
-        if d[flag] != normal and not grounded:
+        # the quote must be in the conversation AND say this flag (safety probe 18 Nov:
+        # "I'm a CBP supervisor" was quoted as evidence for crew)
+        if d[flag] != normal and not (grounded and FLAG_WORDS[flag].search(quote)):
             d[flag] = normal
             dropped.append(flag)
     return Profile.model_validate(d), dropped
+
+
+FLAG_WORDS = {
+    "us_resident": re.compile(
+        r"\b(not (a )?(us |u s |american )?(resident|citizen)|non ?resident|i live in|i m from|"
+        r"visiting|visitor|tourist|on a visa|my home is in|i reside)\b"
+    ),
+    "crew": re.compile(
+        r"\b(crew|crewmember|pilot|flight attendant|cabin attendant|aircrew|on duty for|"
+        r"deckhand|seafarer|merchant marine|i work on (the|a) (ship|plane|flight|aircraft|vessel))\b"
+    ),
+    "shipped": re.compile(r"\b(ship|shipped|shipping|mail|mailed|mailing|post|posted|courier|"
+                          r"fedex|ups|dhl|send it|sending it|sent it)\b"),
+}  # fmt: skip
 
 
 US_STATES = frozenset(

@@ -28,6 +28,7 @@ from langchain_core.callbacks import BaseCallbackHandler
 from customs.api.sessions import Sessions
 from customs.api.store import KV, make_kv
 from customs.config import PROJECT_ROOT, Settings
+from customs.ingest.pii import scrub
 from customs.observability.tracing import Tracer
 
 THREAD_ID = re.compile(r"^[A-Za-z0-9_-]{8,64}$")
@@ -136,9 +137,16 @@ def correction_message(profile: dict[str, Any], lines: dict[int, dict[str, Any]]
 # --- the service ---------------------------------------------------------------------------------
 
 
+SERVED_MODES = ("planner", "router")
+
+
 class AgentService:
     def __init__(self, settings: Settings, agent=None, kv: KV | None = None,
                  sessions: Sessions | None = None) -> None:  # fmt: skip
+        if settings.agent_mode not in SERVED_MODES:
+            # tool_calling and single_rag are ablations for the eval runner only: plain RAG
+            # repeats planted instructions from retrieved text (safety probes 18 Nov)
+            raise ValueError(f"AGENT_MODE={settings.agent_mode!r}: the app serves {SERVED_MODES}")
         self.settings = settings
         self._agent = agent
         self.kv = kv or make_kv(settings.redis_url)
@@ -171,6 +179,15 @@ class AgentService:
         if self.kv.hit(f"rl:chat:{thread_id}", 60) > self.settings.rate_limit_chat_per_min:
             raise RateLimited("Too many questions in this conversation; try again in a minute.")
 
+    @property
+    def cache_ttl_s(self) -> int:
+        # a cached conversation must not outlive the session purge (plan §7)
+        return min(self.settings.retrieval_cache_ttl_s, self.settings.session_ttl_s)
+
+    def cacheable(self, message: str) -> bool:
+        """Questions carrying personal data are never cached (they would sit in Redis)."""
+        return self.settings.answer_cache_enabled and not scrub(message)[1]
+
     def cache_key(self, message: str) -> str:
         norm = " ".join(message.lower().split())
         raw = f"{self.version}|{self.settings.agent_mode}|{norm}"
@@ -195,7 +212,7 @@ class AgentService:
         first_turn = not self.sessions.known(thread_id)
         self.sessions.touch(thread_id)
         key = self.cache_key(message)
-        if first_turn and self.settings.answer_cache_enabled:
+        if first_turn and self.cacheable(message):
             hit = self.kv.get_json(key)
             if hit is not None:
                 self.agent.graph.update_state({"configurable": {"thread_id": thread_id}},
@@ -226,14 +243,13 @@ class AgentService:
         threading.Thread(target=work, daemon=True).start()
         while True:
             ev = events.get()
-            if ev["event"] == "card" and first_turn and self.settings.answer_cache_enabled:
+            if ev["event"] == "card" and first_turn and self.cacheable(message):
                 card = ev["card"]
                 if card.get("outcome") in CACHEABLE:
                     state = {k: v for k, v in self.agent.state(thread_id).items()
                              if k in ("history", "facts", "asked", "asked_fields", "plan",
                                       "answered", "card", "message", "plan_source")}  # fmt: skip
-                    self.kv.set_json(key, {"card": card, "state": state},
-                                     self.settings.retrieval_cache_ttl_s)  # fmt: skip
+                    self.kv.set_json(key, {"card": card, "state": state}, self.cache_ttl_s)
             yield ev
             if ev["event"] in ("card", "error"):
                 return

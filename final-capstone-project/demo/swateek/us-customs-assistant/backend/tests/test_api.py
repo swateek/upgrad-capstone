@@ -176,3 +176,25 @@ def test_memory_kv_ttl_and_windows():
     assert [kv.hit("r", 60) for _ in range(3)] == [1, 2, 3]
     now[0] = 61
     assert kv.hit("r", 60) == 1
+
+
+def test_pii_questions_are_never_cached_and_cache_ttl_is_capped(make_client):
+    sc = full_script(2)
+    client, svc = make_client(sc)
+    q = {"message": "Back from Vienna, what do I owe? Email me at pat@example.com"}
+    events_of(client.post("/chat", json=q))
+    events_of(client.post("/chat", json=q))  # same question again: answered live, not from cache
+    assert sc.seen.count("intake") == 2
+    assert svc.cache_ttl_s <= svc.settings.session_ttl_s
+
+
+def test_no_docs_or_schema_exposed(make_client):
+    client, _ = make_client(Script())
+    for path in ("/docs", "/redoc", "/openapi.json"):
+        assert client.get(path).status_code == 404
+
+
+def test_ablation_modes_are_not_served(settings, tmp_path):
+    for mode in ("single_rag", "tool_calling"):
+        with pytest.raises(ValueError, match="serves"):
+            AgentService(settings.model_copy(update={"agent_mode": mode, "data_dir": tmp_path}))

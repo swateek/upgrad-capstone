@@ -13,6 +13,7 @@ Before the first live run, an **oracle run** (`eval/oracle_dev.py`) gave the pip
 | **dev-05** (v1) | **23/23 (100%)** | **17/17** | **45/45** | **3/3, 3/3** | 1 | 0 | 0 | 68 / 17 | 64,742 |
 | dev-06 (v2) | 23/23 | 17/17 | 45/45 | 3/3, 3/3 | 1 | 0 | 0 | 72 / 17 | 74,509 |
 | dev-07 (v3) | 23/23 | 17/17 | 45/45 | 3/3, 3/3 | 1 | 0 | 0 | 71 / 17 | 73,100 |
+| dev-08 (v4) | 23/23 | 17/17 | 45/45 | 3/3, 3/3 | 1 | 0 | 0 | 71 / 17 | 73,123 |
 
 dev-05 per turn: 3.0 model calls on average (max 5), 3.6 tool calls, 2,815 tokens (max 5,508 of the 12,000 budget); latency p50 14.8 s, p95 33.4 s on the shared endpoint.
 
@@ -81,3 +82,18 @@ The UI's example questions (written for the UI, not eval items) were run through
 - **Live check:** the Tijuana question then answered "$800 exemption, nothing owed", which is correct.
 
 `pack/agent.lock.yaml` is now version 3.
+
+## Freeze v4: hardening (step 12)
+
+The findings came from the safety suite and the red-team (`safety.md`, `red-team.md`), not from eval items. Confirmed by dev-08 (23/23), the red-team re-run (22/22) and the safety probes (all agent-mode probes pass).
+
+- **Guard:**
+  - look-alike characters are read as letters ("h1de");
+  - Spanish evasion words are refused;
+  - "without the officer noticing" is refused;
+  - "hide nothing" is allowed.
+
+  Before the fix, the three evasions got a clarify question instead of a refusal.
+- **Banned patterns:** negated declaring ("do not need to be declared"), "abolished" and "never checks" are banned, and so is a guarantee unless it's negated ("we can't guarantee" is fine). These are the planted claims the literal phrases missed.
+- **Scope flags:** the traveller's quote must contain words that say crew, non-resident or shipped. "I'm a CBP supervisor" had been accepted as evidence for crew, so a wine question got the crew scope note.
+- **Verifier routing:** after the one rewrite, working sentences whose only fault is a missing source are dropped instead of escalating a correct answer. A nothing-owed answer had escalated for "There is no volume over the allowance [F4]."

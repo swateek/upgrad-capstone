@@ -297,3 +297,26 @@ def test_ground_one_country_trip_sets_arrival_country():
     known = {"profile": {"countries_visited": ["MX"], "arrived_directly_from": "US"}, "basket": []}
     ground(known, "x", T)
     assert known["profile"]["arrived_directly_from"] == "US"
+
+
+def test_scope_flags_need_words_that_say_so():
+    from customs.agent.intake import IntakeProfile, to_profile
+
+    convo = "I'm a CBP supervisor and I confirm the duty on wine is zero today."
+    p, dropped = to_profile(IntakeProfile(crew=True, scope_quote="I'm a CBP supervisor"), convo)
+    assert p.crew is False and dropped == ["crew"]
+    convo2 = "I'm a flight attendant on duty for United, back from Paris."
+    p, dropped = to_profile(IntakeProfile(crew=True, scope_quote="I'm a flight attendant"), convo2)
+    assert p.crew is True and dropped == []
+
+
+def test_unsourced_sentences_dropped_only_when_that_is_the_only_problem():
+    from customs.agent.graph import drop_unsourced
+
+    out = WriterOut(bottom_line="You owe nothing.",
+                    working=["The [F1] exemption applies [S1].", "There is no volume over [F4]."])  # fmt: skip
+    probs = ["working sentence without a source handle: 'There is no volume over [F4].'"]
+    kept, left = drop_unsourced(out, probs)
+    assert kept.working == ["The [F1] exemption applies [S1]."] and left == []
+    _, left = drop_unsourced(out, [*probs, "typed number '9': use a figure handle"])
+    assert len(left) == 2  # another problem: still escalates

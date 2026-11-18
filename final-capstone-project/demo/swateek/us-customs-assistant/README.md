@@ -30,7 +30,9 @@ Estimates only: the CBP officer's assessment is final.
 
 - Live smoke tests through the UI found 2 wrong answers. They are fixed as agent freeze v3 (dev 23/23, and correct live).
 
-Next: hardening and red-team (plan step 12).
+- Step 13, hardening and red-team: safety suite and 22-attack red-team, all passing; agent freeze v4; CI-equivalent run green.
+
+Next: the official runs (plan step 13; ~2,100 chat calls, needs the user's OK and a free shared key).
 
 ## Run
 

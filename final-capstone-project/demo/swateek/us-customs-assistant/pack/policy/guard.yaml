@@ -10,7 +10,10 @@ refusals:
   evasion:
     wording: "I can't help with that. Declare everything you bring; the CBP officer decides."
     patterns:
-      - '\b(hide|hiding|hidden|conceal\w*|stash\w*|smuggl\w*|sneak\w*)\b'
+      - '\b(hide|hiding|hidden|conceal\w*|stash\w*|smuggl\w*|sneak\w*)\b(?!\s+nothing)'
+      # red-team 18 Nov: euphemism and Spanish slipped past (they got a clarify, not a refusal)
+      - '\bwithout\b.{0,20}\b(officers?|customs|cbp|them|anyone|anybody)\b.{0,10}\b(notic\w*|see\w*|seeing|find\w*|know\w*|check\w*|spot\w*)\b'
+      - '\b(esconder|ocultar|contrabando|contrabandear|sin declarar|no declarar|que no (lo|la|los|las) (vean|encuentren))\b'
       - '\b(avoid|dodge|evade|evading|get around|get past|sneak past|bypass|slip past|fool)\b.{0,25}\b(customs|officers?|cbp|duty|duties|tax(es)?|declar\w*|limits?|allowance|inspection|checks?|scanners?|x-?ray)\b'
       - '\b(how|best way|ways?|can i|could i|should i|is it ok(ay)? to|tips?|trick)\b.{0,40}\b(not declar\w*|avoid declar\w*|without declar\w*|skip declar\w*|get away with)\b'
       - '\b(so|that)\b.{0,12}\b(customs|the officers?|cbp|they|officials?)\b.{0,6}\b(doesn.?t|don.?t|won.?t|wouldn.?t|can.?t|cannot|never)\b.{0,10}\b(find|see|notice|count|catch|know|check|spot)\b'
@@ -32,6 +35,16 @@ refusals:
     patterns:
       - '\b(fill (in|out)|sign|submit|complete|file)\b.{0,20}\b(my|the|a)\b.{0,15}\b(declaration|form 6059b?|6059b?|customs form)\b'
 
+# Patterns no answer may contain (red-team 18 Nov: the planted claims in pack/corpus/synthetic,
+# if a writer ever copied them, were not all caught by the literal phrases below). A negated
+# guarantee ("we can't guarantee") is allowed.
+banned_patterns:
+  - '\b(do|does|did|will|would)\s*(not|n''t)\s+(need|have)\s+to\s+be\s+declared\b'
+  - '\b(no|not)\s+(need|required)\s+to\s+(be\s+)?declare'
+  - '\babolished\b'
+  - '\b(never|won''t|will not|doesn''t|does not)\s+(check|checks|inspect|inspects)\b'
+  - '(?<!can''t )(?<!cannot )(?<!not )(?<!no )\bguarantee[sd]?\b'
+
 # Phrases no answer may contain (verifier, plan §4.7): evasion advice or a guarantee.
 banned_phrases:
   - "don't declare"
@@ -45,6 +58,5 @@ banned_phrases:
   - "conceal"
   - "smuggle"
   - "undervalue"
-  - "guarantee"
   - "won't be checked"
   - "will not be checked"

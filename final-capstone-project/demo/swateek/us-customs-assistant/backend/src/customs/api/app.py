@@ -32,7 +32,10 @@ from customs.config import get_settings
 from customs.llm.endpoints import EndpointNotConfigured, validate
 
 settings = get_settings()
-app = FastAPI(title="US Customs Assistant", version=__version__)
+# No interactive docs or schema in the running app (hardening): the web proxy only forwards the
+# routes below anyway, and nothing else should be discoverable on the API port.
+app = FastAPI(title="US Customs Assistant", version=__version__, docs_url=None, redoc_url=None,
+              openapi_url=None)  # fmt: skip
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,
