@@ -26,7 +26,9 @@ Estimates only: the CBP officer's assessment is final.
 
 - Step 11, dev-set runs: 5 runs on dev only, 14/23 → 23/23 turns; agent frozen as v1 (`pack/agent.lock.yaml`); see `docs/results/dev-runs.md`.
 
-Next: API, UI and Docker (offline build), then a live smoke test.
+- Step 12, API, UI and Docker (offline): streaming API with queue, rate limits, answer cache and session purge; Next.js Ask / Clarify / Answer card with editable facts; the Docker ingest copies the host snapshot (identical corpus hash) and indexes from the embedding cache. Checked in the browser against a scripted offline model, and through Docker with a guard refusal (0 upgrad calls).
+
+Next: a live smoke test through the UI (needs the user's OK for upgrad calls).
 
 ## Run
 
@@ -43,9 +45,13 @@ uv run uvicorn customs.api.app:app --port 3501
 # web
 cd web && pnpm install && pnpm dev    # http://localhost:3500
 
-# or everything in Docker
-docker compose up -d                  # http://localhost:3500
+# or everything in Docker (needs data/raw and data/embeddings from the host steps above)
+docker compose build
+docker compose --profile ingest run --rm ingest   # copy + verify the snapshot, chunk, index (0 upgrad calls)
+docker compose up -d                              # http://localhost:3500
 ```
+
+API (`backend/src/customs/api/`): `POST /chat` streams progress as server-sent events (`queued`, `node`, then `card`); `GET /threads/{id}`; `POST /threads/{id}/facts` (edits from the card, asked as a correction). One question runs at a time; rate limits are 10 questions a minute per conversation and 60 calls a minute per client. The answer cache covers first turns and is off for evals. Conversations are purged 6 hours after their last message.
 
 Running the stack with real keys reaches the course endpoints once questions are asked; agree it with the group first (one active request per key).
 

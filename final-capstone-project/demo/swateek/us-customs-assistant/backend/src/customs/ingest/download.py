@@ -4,6 +4,7 @@ freeze the hashes.
     uv run python -m customs.ingest.download            # download, verify against the lock
     uv run python -m customs.ingest.download --freeze   # download, (re)write manifest.lock.yaml
     uv run python -m customs.ingest.download --only state_tx,ttb_tax_rates
+    uv run python -m customs.ingest.download --from-snapshot /app/snapshot   # Docker: no fetch
 
 Public government sites only; nothing here calls the upgrad endpoints. Downloaded files are data:
 never executed or imported. Each body must match its declared format (PDF magic bytes, XML,
@@ -97,7 +98,19 @@ def hashes(src: Source, body: bytes) -> tuple[str, str]:
     return raw_sha, hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def run(freeze: bool, only: set[str] | None = None, client: httpx.Client | None = None) -> int:
+def run(
+    freeze: bool,
+    only: set[str] | None = None,
+    client: httpx.Client | None = None,
+    snapshot: Path | None = None,
+) -> int:
+    """With `snapshot` (a raw/ directory, e.g. the host's, mounted read-only in Docker), nothing
+    is fetched; each file is verified exactly like a download (the lock's normalised-text
+    hash), so the rebuilt chunks are the ones the evaluation used, and government sites that
+    block bulk fetches from containers (cbp.gov, abc.ca.gov: HTTP 403) are not hit."""
+    if snapshot is not None and freeze:
+        print("--from-snapshot cannot --freeze", file=sys.stderr)
+        return 2
     cdir = corpus_dir()
     manifest = load_manifest(cdir / "manifest.yaml")
     exclusions = load_exclusions(cdir / "exclusions.yaml")
@@ -116,7 +129,7 @@ def run(freeze: bool, only: set[str] | None = None, client: httpx.Client | None 
     failures: list[str] = []
     now = datetime.now(UTC).isoformat(timespec="seconds")
     own_client = client is None
-    client = client or httpx.Client(
+    client = client or httpx.Client(  # unused with a snapshot
         headers={"User-Agent": USER_AGENT, "Accept-Encoding": "gzip, deflate"},
         follow_redirects=True,
         timeout=120.0,
@@ -133,7 +146,11 @@ def run(freeze: bool, only: set[str] | None = None, client: httpx.Client | None 
                 failures.append(f"{src.id}: {src.url} matches exclusion '{hit}'")
                 continue
             try:
-                body = fetch(client, src)
+                if snapshot is not None:
+                    body = (snapshot / "customs" / f"{src.id}{src.suffix}").read_bytes()
+                    check_format(src, body)
+                else:
+                    body = fetch(client, src)
                 raw_sha, text_sha = hashes(src, body)
             except Exception as err:  # noqa: BLE001 - every source failure is reported, not fatal
                 failures.append(f"{src.id}: {err}")
@@ -156,7 +173,8 @@ def run(freeze: bool, only: set[str] | None = None, client: httpx.Client | None 
                 retrieved_at=now,
             )
             print(f"ok   {src.id:32s} {len(body):>10,d} B  text {text_sha[:12]}…")
-            time.sleep(PAUSE_S)
+            if snapshot is None:
+                time.sleep(PAUSE_S)
     finally:
         if own_client:
             client.close()
@@ -185,9 +203,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--freeze", action="store_true", help="write manifest.lock.yaml")
     parser.add_argument("--only", help="comma-separated source ids")
+    parser.add_argument("--from-snapshot", type=Path, help="copy and verify a raw/ dir; no fetch")
     args = parser.parse_args()
     only = set(args.only.split(",")) if args.only else None
-    sys.exit(run(freeze=args.freeze, only=only))
+    sys.exit(run(freeze=args.freeze, only=only, snapshot=args.from_snapshot))
 
 
 if __name__ == "__main__":

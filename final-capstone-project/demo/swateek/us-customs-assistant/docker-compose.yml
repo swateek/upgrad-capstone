@@ -8,11 +8,13 @@
 # are mounted from ./certs. The api calls the upgrad endpoints once questions are asked, so
 # running the stack with real keys needs the user's OK (AGENTS.md).
 #
-#   docker compose --profile ingest run --rm ingest   # download (verify vs lock) -> chunk -> index
+#   docker compose --profile ingest run --rm ingest   # snapshot (verify vs lock) -> chunk -> index
 #
-# The ingest job fetches public government pages only and indexes FROM THE EMBEDDING CACHE
-# (./data/embeddings, built on the host by `customs.ingest.index` with the user's OK), so it never
-# calls the upgrad endpoints; it fails if a text is missing from the cache.
+# The ingest job fetches nothing: it copies the host's downloaded snapshot (./data/raw, built by
+# `customs.ingest.download` on the host) and verifies every file against the lock, then indexes
+# FROM THE EMBEDDING CACHE (./data/embeddings, built on the host with the user's OK). It never
+# calls the upgrad endpoints, and fails if a file or a text is missing. (A fresh download from a
+# container is refused by cbp.gov and abc.ca.gov with HTTP 403.)
 
 x-backend: &backend
   build: ./backend
@@ -65,11 +67,12 @@ services:
       - ./certs:/app/certs:ro
       - customs-data:/app/data
       - ./data/embeddings:/app/data/embeddings:ro
+      - ./data/raw:/app/snapshot:ro
     command:
       - sh
       - -c
       - >-
-        python -m customs.ingest.download &&
+        python -m customs.ingest.download --from-snapshot /app/snapshot &&
         python -m customs.ingest.build_chunks &&
         python -m customs.ingest.index --from-cache
 

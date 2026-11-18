@@ -349,3 +349,22 @@ def test_wrong_format_is_refused_and_lock_not_written(corpus_tmp):
     bodies = {"https://example.gov/page": HTML_V1, "https://example.gov/doc.pdf": b"<html>oops"}
     assert dl.run(freeze=True, client=_client(bodies)) == 1
     assert not (corpus_tmp / LOCK_NAME).exists()
+
+
+def test_snapshot_mode_copies_and_verifies_text_hash(corpus_tmp, tmp_path):
+    bodies = {"https://example.gov/page": HTML_V1, "https://example.gov/doc.pdf": b"%PDF-1.4 x"}
+    assert dl.run(freeze=True, client=_client(bodies)) == 0
+    snap = tmp_path / "snap" / "customs"
+    snap.mkdir(parents=True)
+    (snap / "page.html").write_bytes(HTML_V1)
+    (snap / "doc.pdf").write_bytes(b"%PDF-1.4 x")
+
+    def no_network(request):
+        raise AssertionError("snapshot mode must not fetch")
+
+    client = httpx.Client(transport=httpx.MockTransport(no_network))
+    assert dl.run(freeze=False, client=client, snapshot=tmp_path / "snap") == 0
+    (snap / "page.html").write_bytes(HTML_V1.replace(b"<html>", b"<html lang=en>"))
+    assert dl.run(freeze=False, client=client, snapshot=tmp_path / "snap") == 0  # markup only
+    (snap / "page.html").write_bytes(HTML_V1.replace(b"one", b"two"))  # the rule text changed
+    assert dl.run(freeze=False, client=client, snapshot=tmp_path / "snap") == 1
