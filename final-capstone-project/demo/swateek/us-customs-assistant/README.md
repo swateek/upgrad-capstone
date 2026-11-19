@@ -32,7 +32,11 @@ Estimates only: the CBP officer's assessment is final.
 
 - Step 13, hardening and red-team: safety suite and 22-attack red-team, all passing; agent freeze v4; CI-equivalent run green.
 
-Next: the official runs (plan step 13; ~2,100 chat calls, needs the user's OK and a free shared key).
+- Step 13, official runs: frozen agent v4 on `eval-v1`: planner 80.2% of turns (3 identical runs), router 80.2%, tool_calling 24.2%, plain RAG 5.5% (`docs/eval-report.md`).
+- Step 14, failure taxonomy with a hand-check of 20, advisory-reviewer agreement on 30 answers (kappa 0.45), Langfuse scores and dashboards (`docs/demo/traces/`).
+- Step 16, technical report `docs/report/report.pdf` and demo script `docs/demo/demo-script.md`.
+
+Open: the backup demo video and a rehearsal (need a live run, ~25 chat calls), and the `v1.0.0` tag.
 
 ## Run
 

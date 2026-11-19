@@ -474,8 +474,10 @@ No calendar. "STOP (sign-off)" waits for your approval; "STOP (upgrad OK)" waits
     - *Not done: the `v1.0.0-rc` tag (the user tags), and drafting report §5–6.*
 13. **Official runs.** **STOP (upgrad OK):** ≈2,100 chat calls (3 × planner, router, tool_calling, single_rag, corrections), one request at a time, when no one else in group 031–045 is using the shared key.
 14. **Metrics, taxonomy, reviewer agreement, Langfuse dashboard screenshots, evaluation report.** Report §7 (compensations).
+    *Done 18–19 Nov: `docs/eval-report.md`; hand-check of 20 failures (`docs/results/hand-check.yaml`, 12/20 → 16/20 after two classifier fixes); reviewer agreement on 30 answers / 106 sentences, kappa 0.45, stays advisory (`docs/results/reviewer-agreement.md`); 3,994 scores attached to the official traces and two dashboards (`eval/langfuse_scores.py`, `eval/langfuse_dashboard.py`, screenshots in `docs/demo/traces/`). Labels drafted by Claude Code, reviewed by the user.*
 15. **Stretch (if green):** what-if + its 4 items, then the other stretch items (§14.2).
 16. **Report (12 pages) and demo**: demo script (four corrected example conversations, one refusal, one correction), demo cache, recorded backup video, rehearsal; final check for keys in Git and masked logs; tag `v1.0.0`.
+    *Done 19 Nov: `docs/report/report.md` → `report.pdf` (14 pages, body ≈ 11), figures from `docs/report/make_figures.py`; `docs/demo/demo-script.md`. Not done: the labelled demo cache (not built; the backup video covers an endpoint outage), the backup video and rehearsal (need a live run, ~25 chat calls), the final key check and the `v1.0.0` tag (the user's).*
 
 ### 14.2 Must-have vs stretch, and slip rules
 
