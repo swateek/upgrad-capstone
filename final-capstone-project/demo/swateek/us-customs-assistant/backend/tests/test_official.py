@@ -100,3 +100,14 @@ def test_reviewer_agreement_labels_cover_the_sample():
     doc = yaml.safe_load(ra.LABELS.read_text(encoding="utf-8"))
     g = ra.agreement(answers, doc["answers"])  # raises if a label count is off
     assert g["sentences"] == sum(len(a["sentences"]) for a in answers)
+
+
+def test_langfuse_scores_from_a_turn():
+    from eval import langfuse_scores as ls
+
+    t = turn(True, [], events=[{"event": "verifier_failed"}])
+    t["card"]["meta"].update({"plan_source": "planner", "retrieval_miss_recovered": ["R9"]})
+    got = {n: v for n, v, _ in ls.scores_for("planner-1", "planner", t)}
+    assert got["correct"] == 1.0 and got["verifier_passed"] == 1.0 and got["revisions"] == 1.0
+    assert got["plan_fallback"] == 0.0 and got["retrieval_miss_recovered"] == 1.0
+    assert "verifier_passed" not in {n for n, _, _ in ls.scores_for("x", "single_rag", t)}
