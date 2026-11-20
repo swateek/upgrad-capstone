@@ -137,10 +137,24 @@ def check_wording(
             problems.append(
                 f"says the [{ex['handle']}] exemption doesn't apply, but it does: {t!r}"
             )
+    for w in tobacco_taxed_sentences(out.working):
+        problems.append(f"tobacco is never taxed here, so this sentence is dropped: {w!r}")
     banned = get_guard().banned_in(" ".join(texts_all))
     if banned:
         problems.append(f"banned phrases: {banned}")
     return list(dict.fromkeys(problems))
+
+
+TOBACCO_WORD = re.compile(r"\b(tobacco|cigarettes?|cigars?)\b", re.IGNORECASE)
+TAX_WORD = re.compile(r"\b(duty|duties|excise|tax|taxed|taxable)\b", re.IGNORECASE)
+NOT_TAXED = re.compile(r"\b(not|no|nothing|free|exempt\w*|without|never)\b|n't", re.IGNORECASE)
+
+
+def tobacco_taxed_sentences(working: list[str]) -> list[str]:
+    """Tobacco over the allowance is never taxed (R5): it may be detained or seized. A working
+    sentence that puts duty, excise or tax on tobacco is wrong, whatever its source says."""
+    return [w for w in working
+            if TOBACCO_WORD.search(w) and TAX_WORD.search(w) and not NOT_TAXED.search(w)]  # fmt: skip
 
 
 def bottom_line_problems(bl: str, a: Assessment, figures: list[dict]) -> list[str]:

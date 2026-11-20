@@ -53,6 +53,17 @@ Trade-off accepted: a window can cut a clause in two. The chunk carries every cl
 
 On dev, the prefix gives +0.09 at R@5 and +0.04 at R@1.5k. Frozen shows a tie, so the effect is small. Prefix on is bge's documented use for retrieval queries, so we keep it on. Hybrid beats either retriever alone: BM25 alone reaches 0.69 at R@1.5k on dev, dense alone 0.69, hybrid 0.84. BM25 catches exact terms ("9816.00.20", "proof gallon") and dense catches paraphrase.
 
+## Decision 3 (revised 20 Nov 2026): reranker → option A, shipped
+
+Shipped: Qwen3-8B listwise over the fused top 10, with 120-token passages (`RERANKER=listwise`). The brief requires a reranker, so the decision is to ship one and report the trade-off.
+
+| split | recall@1 none → A | recall@3 | recall@5 | recall within 1,500-token budget |
+|---|---|---|---|---|
+| dev (45) | 0.22 → 0.40 | 0.49 → 0.62 | 0.67 → 0.69 | 0.84 → 0.80 |
+| frozen (220) | 0.24 → 0.38 | 0.55 → 0.59 | 0.69 → 0.63 | 0.77 → 0.75 |
+
+The gain is at rank 1; the loss is inside the writer's budget, which is the measure that decides what the writer sees. Cost: about 1,340 tokens and one call per search. Figures: `docs/results/retrieval/rerank_a.json`. The earlier rejection (none, below) is kept as the record of the first two configurations.
+
 ## Decision 3: reranker → **none**
 
 | window200, hybrid, prefix on, qr + topic | R@1 | R@3 | R@5 | R@10 | R@1.5k | cost per search |

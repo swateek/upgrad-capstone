@@ -134,8 +134,36 @@ class RegulationSearch:
     def source_topics(self) -> dict[str, str]:
         return {d["source_id"]: d["topic"] for d in self.corpus.docs.values()}
 
+    @cached_property
+    def _reranker(self):
+        """Option A (listwise, Qwen3-8B) by default; none or the local cross-encoder if configured."""
+        from customs.retrieval.rerank import CrossEncoderReranker, ListwiseReranker
+
+        if self.settings.reranker == "listwise":
+            return ListwiseReranker(
+                self.settings,
+                observer=self._observe_rerank,
+                passage_tokens=self.settings.reranker_passage_tokens,
+            )
+        if self.settings.reranker == "cross_encoder":
+            return CrossEncoderReranker(self.settings)
+        return None
+
+    def _observe_rerank(self, rec: dict) -> None:
+        """Each rerank call counts toward the question's model-call and token caps (plan 4.6)."""
+        from types import SimpleNamespace
+
+        from customs.agent import context
+
+        try:
+            ctx = context.current()
+        except RuntimeError:  # outside a question (offline tools): nothing to count against
+            return
+        ctx.after_model_call("rerank", SimpleNamespace(
+            total_tokens=rec["tokens"], seconds=rec["seconds"], calls=1))  # fmt: skip
+
     def _real_rankings(
-        self, queries: list[str], filters: list[set[str] | None]
+        self, queries: list[str], filters: list[set[str] | None], rerank: bool = False
     ) -> list[list[dict]]:
         retr = self._retriever
         missing = [q for q in dict.fromkeys(queries) if q not in self._vectors]
@@ -146,8 +174,24 @@ class RegulationSearch:
                 self._vectors[q] = v
             self.embed_requests += self._embedder.requests - before
         out = []
+        rerank = rerank and self._reranker is not None
         for q, flt in zip(queries, filters, strict=True):
-            hits = retr.search(q, k=20, doc_ids=flt, mode="hybrid")
+            if not rerank:
+                hits = retr.search(q, k=20, doc_ids=flt, mode="hybrid")
+            else:
+                import logging
+
+                import openai
+
+                retr.reranker = self._reranker
+                retr.candidates = self.settings.reranker_pool
+                try:
+                    hits = retr.search(q, k=20, doc_ids=flt, mode="hybrid_rerank")
+                except (openai.APIStatusError, openai.APIConnectionError) as err:
+                    logging.getLogger(__name__).warning("rerank failed, fused order kept: %s", err)
+                    hits = retr.search(q, k=20, doc_ids=flt, mode="hybrid")
+                finally:
+                    retr.candidates = 20
             out.append([retr.by_id[h.chunk_id] for h in hits])
         return out
 
@@ -165,7 +209,11 @@ class RegulationSearch:
             for k in keys
         ]
         before = self.embed_requests
-        rankings = (self._rankings or self._real_rankings)(queries, [f or None for f in filters])
+        flts = [f or None for f in filters]
+        if self._rankings:
+            rankings = self._rankings(queries, flts)
+        else:
+            rankings = self._real_rankings(queries, flts, rerank=True)
         stats["embed_requests"] = self.embed_requests - before
         by_clause: dict[str, Source] = {}
         for ref, ranking in zip(refs, rankings, strict=True):

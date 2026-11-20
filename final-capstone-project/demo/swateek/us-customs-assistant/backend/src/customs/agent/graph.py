@@ -55,7 +55,7 @@ from customs.agent.planner import (
 )
 from customs.agent.rag import run_rag
 from customs.agent.tool_calling import execute_tool_calling
-from customs.agent.verifier import advisory_review, check_wording
+from customs.agent.verifier import advisory_review, check_wording, tobacco_taxed_sentences
 from customs.agent.writer import WriterOut, run_writer
 from customs.config import Settings, get_settings
 from customs.llm.budget import TokenBudgetExceeded
@@ -77,10 +77,12 @@ def drop_unsourced(out: WriterOut, problems: list[str]) -> tuple[WriterOut, list
     """After the one rewrite, a working sentence whose only fault is a missing source handle is
     left out instead of escalating a correct answer (red-team 18 Nov: "There is no volume over
     the allowance [F4]." escalated a nothing-owed answer). Any other problem still escalates."""
-    marker = "working sentence without a source handle: "
-    if not problems or not all(p.startswith(marker) for p in problems):
+    markers = ("working sentence without a source handle: ",
+               "tobacco is never taxed here, so this sentence is dropped: ")  # fmt: skip
+    if not problems or not all(p.startswith(markers) for p in problems):
         return out, problems
-    kept = [w for w in out.working if re.search(r"\[S\d+\]", w)]
+    taxed = tobacco_taxed_sentences(out.working)  # R5: tobacco over the allowance is never taxed
+    kept = [w for w in out.working if re.search(r"\[S\d+\]", w) and w not in taxed]
     return out.model_copy(update={"working": kept}), []
 
 

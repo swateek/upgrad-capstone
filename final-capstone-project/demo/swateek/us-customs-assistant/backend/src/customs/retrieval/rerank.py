@@ -50,8 +50,10 @@ class ListwiseReranker:
         settings: Settings,
         chat: ChatClient | None = None,
         observer: Callable[[dict[str, Any]], None] | None = None,
+        passage_tokens: int = PASSAGE_TOKENS,
     ) -> None:
         self.settings = settings
+        self.passage_tokens = passage_tokens  # per passage, cut to this many tokens at most
         self.chat = chat or ChatClient(settings)
         self.model = f"{self.chat.endpoint.model} (listwise)"
         self.tok = self.chat.tok
@@ -68,7 +70,7 @@ class ListwiseReranker:
     def messages(self, query: str, documents: Sequence[str], top_n: int) -> list[dict]:
         """The prompt, with passages cut until it fits the window with room for the reply."""
         limit = self.settings.context_window_tokens - REPLY_TOKENS
-        per = PASSAGE_TOKENS
+        per = self.passage_tokens
         while True:
             blocks = "\n\n".join(
                 f"[{i}] {self._cut(d, per)}" for i, d in enumerate(documents, start=1)

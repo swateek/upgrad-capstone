@@ -97,3 +97,15 @@ The findings came from the safety suite and the red-team (`safety.md`, `red-team
 - **Banned patterns:** negated declaring ("do not need to be declared"), "abolished" and "never checks" are banned, and so is a guarantee unless it's negated ("we can't guarantee" is fine). These are the planted claims the literal phrases missed.
 - **Scope flags:** the traveller's quote must contain words that say crew, non-resident or shipped. "I'm a CBP supervisor" had been accepted as evidence for crew, so a wine question got the crew scope note.
 - **Verifier routing:** after the one rewrite, working sentences whose only fault is a missing source are dropped instead of escalating a correct answer. A nothing-owed answer had escalated for "There is no volume over the allowance [F4]."
+
+## Freeze v5: tobacco over the allowance is never taxed (20 Nov)
+
+- **Found:** a live answer for the Dubai cigarettes (demo script, question 3) said the over-limit cigarettes "may be subject to duty and excise". R5 says tobacco over the allowance is not taxed (`tobacco_excess_outcome: seizure_risk`), and the card's bottom line and notes already said "seized". The verifier checked only the bottom line, so the wrong working sentence passed.
+- **Changed:** `verifier.py` flags any working sentence that puts duty, excise or tax on tobacco without a negation or "duty-free" (`tobacco_taxed_sentences`). `graph.py` `drop_unsourced` drops those sentences, as it already drops unsourced ones, and nothing else changes. The bottom line, notes and sources are unchanged.
+- **Checked:** `tests/test_tobacco_wording.py` (4 offline tests). The full offline suite is run with this freeze. **Not yet checked:** a dev-set rerun and a live question; both need the user's OK because they call the endpoint.
+
+## Freeze v6: option A reranker shipped (20 Nov)
+
+- **Change:** the search reranks the fused top 10 with Qwen3-8B (listwise) and cuts each passage to 120 tokens (`RERANKER=listwise`, `RERANKER_POOL=10`, `RERANKER_PASSAGE_TOKENS=120`). It is the reranker the Track B brief requires. Each rerank call counts toward the question's model-call and token caps.
+- **Measured before the freeze:** docs/results/retrieval/rerank_a.json. Recall@1 rises (dev 0.22 -> 0.40, frozen 0.24 -> 0.38). Recall within the 1,500-token budget falls (dev 0.84 -> 0.80, frozen 0.77 -> 0.75). Hard negatives in the top 5 rise (dev 4% -> 9%, frozen 6% -> 11%). No fallbacks or errors. About 1,340 tokens per call, so a typical turn stays under the 12,000-token cap.
+- **Checked:** offline tests (`tests/test_reranker_shipped.py`). **Not yet checked:** a dev agent run and the official reruns. Both need the user's OK and the endpoint.

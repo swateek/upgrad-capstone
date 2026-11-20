@@ -43,7 +43,12 @@ class Settings(BaseSettings):
     # Reranker (plan D6, decided in the retrieval experiment): none by default. listwise =
     # Qwen3-8B on the course chat endpoint (+1 call per search); cross_encoder = local
     # ms-marco-MiniLM (needs `uv sync --group experiment`).
-    reranker: Literal["none", "listwise", "cross_encoder"] = "none"
+    reranker: Literal["none", "listwise", "cross_encoder"] = "listwise"
+    # Option A (measured 20 Nov 2026, docs/results/retrieval/rerank_a.json): the reranker sees the
+    # fused top 10 and each passage is cut to 120 tokens. Recall within the 1,500-token budget
+    # falls (dev 0.84 -> 0.80, frozen 0.77 -> 0.75); recall@1 rises (0.22 -> 0.40 dev).
+    reranker_pool: int = 10
+    reranker_passage_tokens: int = 120
 
     # Qwen3 thinking mode; off on every default path.
     enable_thinking: bool = False
