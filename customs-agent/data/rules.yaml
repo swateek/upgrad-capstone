@@ -1,0 +1,174 @@
+# Customs rules for DeclareRight v1: returning US residents, alcohol and tobacco.
+#
+# The calculators and check_restrictions read this file; no rule lives in code.
+# A regulatory fix is a change here plus a re-run (CLAUDE.md rule 3).
+#
+# status:
+#   confirmed - read in the regulation text (local copy in data/rag-corpus/corpus/primary/)
+#   checked   - researched in docs/regulatory_checks.md; agreed by the project owner
+#   open      - unresolved; the agent escalates instead of answering
+#   project_decision - no legal number exists; value chosen and justified in docs/SPEC.md 5.4
+#   accepted  - used as published in official agency guidance, not checked against the primary legal text (docs/SPEC.md 5.5)
+#
+# Citations use the short ids the retriever returns; full text and links are in
+# docs/regulatory_checks.md and the corpus.
+
+meta:
+  version: 1
+  as_of: "2026-11-21"
+  scope: "Returning US residents; wine, beer, spirits, cigarettes, cigars; personal use"
+  sources_doc: docs/regulatory_checks.md
+
+# ---------------------------------------------------------------- exemptions
+exemptions:
+  standard_800:
+    value_usd: 800
+    applies_when:
+      min_hours_abroad: 48                      # computed exactly (148.35(c))
+      min_hours_waived_for_direct_arrival_from: [MX]   # 148.35(a): Mexico, any trip length
+      not_used_within_days: 30                  # used on/after (arrival date - 30 days) disqualifies; arrival day excluded (148.36(b))
+      arrival_from_insular_possession: false    # $1,600 variant is out of scope
+    applied_to: highest_rate_articles_first     # duty + internal revenue tax combined (148.33(b))
+    alcohol:
+      min_age: 21                               # 148.33(d)(2)
+      max_liters: 1.0                           # 148.33(d)(3)
+      beneficiary_country_direct_arrival:       # 148.33(d)(3)(ii); country list in rates.yaml
+        max_liters: 2.0
+        min_liters_produced_in_beneficiary_countries: 1.0
+    tobacco:
+      min_age: 21                               # CBP guidance (148.33 sets no tobacco age)
+      max_cigarettes: 200                       # 148.33(d)(1)
+      max_cigars: 100                           # 148.33(d)(1)
+    not_carried_forward: true                   # unused amount does not roll over (148.33(f))
+    citations: [19cfr148.33, 19cfr148.35, 19cfr148.36, htsus9804.00.65, cbp-duty-info]
+    status: confirmed
+
+  short_trip_200:
+    value_usd: 200
+    applies_when:
+      not_entitled_to: standard_800             # 148.51(a)(2)
+    all_or_nothing: true                        # 148.51(b): if any limit is exceeded, nothing is exempt
+    max_aggregate_value_usd: 200                # 148.51(b)(1)
+    max_cigarettes: 50                          # 148.51(b)(2)(i)
+    max_cigars: 10                              # 148.51(b)(2)(ii)
+    max_alcohol_ml: 150                         # 148.51(b)(2)(iii)
+    family_grouping: false                      # 148.51(c)
+    citations: [19cfr148.51, cbp-types-of-exemptions]
+    status: confirmed
+
+  family_grouping_800:
+    description: "Family members in one household travelling together may pool their $800 exemptions (148.34)."
+    v1: out_of_scope                            # single traveller only; scope note if asked
+    citations: [19cfr148.34]
+    status: confirmed
+
+# -------------------------------------------------------------- restrictions
+# check_restrictions applies these in order, before any calculation (CLAUDE.md rule 4).
+restrictions:
+  - id: cuban_origin_alcohol_tobacco
+    when: {category: [alcohol, tobacco], origin: [CU]}
+    outcome: prohibited                         # wherever bought; allowances do not apply
+    message: "Cuban-origin alcohol and tobacco cannot be brought into the US as personal baggage, wherever they were bought."
+    citations: [31cfr515.204, 31cfr515.585, ofac-faq-719, cbp-info-1389]
+    status: checked
+
+  - id: russian_origin_alcohol
+    when: {category: [alcohol], origin: [RU]}
+    outcome: escalate
+    message: "Russian-origin alcohol is subject to a US import ban; whether it applies to personal baggage is not settled. Declare it; an officer decides."
+    citations: [eo-14068, ofac-faq-1024, ofac-faq-1182]
+    status: open
+
+  - id: under_21_alcohol
+    when: {category: [alcohol], max_age: 20}
+    outcome: exclude_from_exemption             # all alcohol is dutiable; flag state minimum-age law
+    flags: [state_minimum_drinking_age]
+    citations: [19cfr148.33]
+    status: confirmed
+    note: "Whether CBP admits it at all under state law is not settled; the answer tells the traveller to declare it."
+
+  - id: under_21_tobacco
+    when: {category: [tobacco], max_age: 20}
+    outcome: exclude_from_exemption             # all tobacco is over the allowance -> tobacco_over_allowance
+    citations: [cbp-duty-info]
+    status: checked
+
+  - id: export_labelled_us_cigarettes_over_allowance
+    when: {category: [tobacco], export_labelled_us: true, over_allowance: true}
+    outcome: relinquish_excess                  # hand the excess to CBP at entry: no penalty
+    penalty_if_not_relinquished: {forfeiture: true, penalty: "greater of $1,000 or 5 x tax"}
+    message: "US-made cigarettes labelled for export can come back only up to your allowance. Hand the excess to CBP at entry to avoid a penalty."
+    citations: [26usc5754, 26usc5761]
+    status: checked
+
+  - id: agr_claim_over_allowance
+    when: {category: [tobacco], claims_american_goods_returned: true, over_allowance: true}
+    outcome: escalate
+    message: "Returning US-made tobacco above your allowance depends on how it was labelled and documented. Declare it; an officer decides."
+    citations: [26usc5754, 26usc5761, cbp-duty-info]
+    status: checked
+
+  - id: tobacco_over_allowance
+    when: {category: [tobacco], over_allowance: true}
+    outcome: declare_detention_risk             # no duty or excise is calculated for the excess
+    message: "Tobacco above your allowance is not simply taxed: declare it; the excess may be detained, seized or abandoned, and penalties can apply."
+    citations: [cbp-duty-info, 19usc1681a]
+    status: checked
+
+  - id: commercial_quantity
+    when: {commercial_quantity: true}
+    outcome: escalate
+    threshold:                                  # PROJECT DECISION (docs/SPEC.md), not a legal limit
+      alcohol_total_liters_gt: 9.0              # more than one case (12 x 750 ml)
+      same_product_units_gt: 12
+    message: "This looks like more than personal use. Commercial imports need formal entry; an officer decides."
+    citations: [19cfr148.33, cbp-duty-info]
+    status: project_decision                    # adopted, docs/SPEC.md 5.4
+
+  - id: over_flat_rate_band
+    when: {dutiable_value_over_exemption_usd_gt: 1000}
+    outcome: escalate                           # regular HTSUS rates apply beyond the flat-rate band; out of scope
+    citations: [htsus9816.00.20]
+    status: confirmed
+
+# ------------------------------------------------------------------- flags
+flags:
+  state_alcohol_limits:
+    description: "Some states limit alcohol brought in without a licence; CBP enforces the state rule."
+    outcome: flag_only                          # no state amounts are calculated
+    states:                                     # the 5 arrival states chosen in docs/SPEC.md; agent shows the note + source, no amounts
+      NY:
+        name: New York
+        note: "Small amounts under the traveller's exemption are exempt from state excise; larger personal imports owe New York excise tax, and over 90 liters of liquor needs a temporary licence."
+        source: https://www.tax.ny.gov/bus/bev/abt-importperscons.htm
+      FL:
+        name: Florida
+        note: "Florida tax liability does not apply to a person possessing up to 1 gallon bought outside the state; above that, Florida beverage tax can apply."
+        source: https://www.flsenate.gov/Laws/Statutes/2026/Chapter562/All
+      CA:
+        name: California
+        note: "By air or sea from abroad: a reasonable amount, not more than 60 liters. From Mexico: limited to the federal duty-free quantity, for everyone regardless of residence."
+        source: https://www.abc.ca.gov/importing-alcoholic-beverages-for-personal-or-household-use
+      TX:
+        name: Texas
+        note: "Per traveller at ports of entry: 1 gallon of spirits, 3 gallons of wine, 288 oz of beer; Texas tax and a fee are collected; excess is destroyed; no alcohol or cigarettes for under-21s."
+        source: https://www.tabc.texas.gov/faqs/personal-importation-ports-of-entry-faqs
+      NJ:
+        name: New Jersey
+        note: "No permit is needed for personal use, but New Jersey alcoholic beverage tax applies to imported alcohol."
+        source: https://nj.gov/treasury/taxation/importalcolbev.shtml
+    general_note: "CBP: most state limits apply to residents of that state; travellers in transit are usually not subject to them."
+    citations: [cbp-duty-info]
+    status: checked
+
+# ------------------------------------------------------------ out of scope
+out_of_scope:
+  - other_goods                                 # noted; warn that they share the same $800
+  - vapes_and_nicotine_products
+  - food_and_agriculture
+  - currency
+  - non_residents
+  - crew                                        # 19 CFR 148 Subpart G
+  - insular_possession_arrivals                 # $1,600 exemption
+  - shipped_goods
+  - family_grouping                             # 148.34

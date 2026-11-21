@@ -8,3 +8,6 @@ __pycache__/
 certs
 # Usage log, response cache and queue lock files written by src/llm.py
 logs/
+
+# Local work log (not committed)
+WORKLOG.md

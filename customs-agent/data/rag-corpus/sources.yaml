@@ -1,0 +1,145 @@
+# Source manifest for the alcohol & tobacco customs RAG corpus (v1).
+# fetch_corpus.py reads this file, downloads each source, and writes
+# corpus/primary/<id>.md with YAML front matter.
+#
+# authority:
+#   primary_regulation  - binding text (CFR, HTSUS). Cite these first.
+#   agency_guidance     - CBP / OFAC / TTB explanations of the rules.
+#   tax_rates           - TTB excise rate tables (also copied into rule tables).
+#
+# kind:
+#   ecfr  - eCFR versioner API; only the listed sections are kept
+#   hts   - USITC HTS REST API (tariff lines)
+#   html  - web page converted to markdown
+
+sources:
+
+  # ---------------------------------------------------------------- CFR
+  - id: 19cfr148_returning_residents
+    title: "19 CFR Part 148, Subpart D - Exemptions for returning residents ($800 exemption, alcohol and tobacco limits)"
+    kind: ecfr
+    title_number: 19
+    part: "148"
+    sections: {from: "148.31", to: "148.39"}
+    authority: primary_regulation
+    tags: [exemption_800, alcohol_allowance, tobacco_allowance, family, 30_day_rule, 48_hour_rule]
+    url: https://www.ecfr.gov/current/title-19/chapter-I/part-148
+
+  - id: 19cfr148_51_200_exemption
+    title: "19 CFR 148.51 - $200 exemption for returning residents not entitled to $800 (short trips)"
+    kind: ecfr
+    title_number: 19
+    part: "148"
+    sections: {from: "148.51", to: "148.51"}
+    authority: primary_regulation
+    tags: [exemption_200, short_trip, alcohol_150ml, cigarettes_50, cigars_10]
+    url: https://www.ecfr.gov/current/title-19/chapter-I/part-148
+
+  - id: 19cfr148_flat_rate
+    title: "19 CFR 148.101 and following - Flat rate of duty on articles over the exemption"
+    kind: ecfr
+    title_number: 19
+    part: "148"
+    sections: {from: "148.101", to: "148.110"}
+    authority: primary_regulation
+    tags: [flat_rate, excess_alcohol]
+    url: https://www.ecfr.gov/current/title-19/chapter-I/part-148
+
+  - id: 31cfr515_cuba_alcohol_tobacco
+    title: "31 CFR Part 515 (Cuban Assets Control Regulations) - 515.204, 515.560, 515.585"
+    kind: ecfr
+    title_number: 31
+    part: "515"
+    sections: {list: ["515.204", "515.560", "515.585"]}
+    authority: primary_regulation
+    tags: [cuba, prohibited, alcohol, tobacco]
+    url: https://www.ecfr.gov/current/title-31/subtitle-B/chapter-V/part-515
+
+  # -------------------------------------------------------------- HTSUS
+  - id: htsus_9804_personal_exemptions
+    title: "HTSUS 9804.00.65 / .70 / .72 - Returning resident personal exemptions"
+    kind: hts
+    from: "9804.00.65"
+    to: "9804.00.72"
+    authority: primary_regulation
+    tags: [exemption_800, alcohol_allowance, tobacco_allowance]
+    url: https://hts.usitc.gov/
+    note: "The alcohol and tobacco quantity limits sit in the U.S. Notes to Chapter 98, Subchapter IV. Download the Chapter 98 PDF from hts.usitc.gov into corpus/raw/ and the script will extract it (see README)."
+
+  - id: htsus_9816_flat_rate
+    title: "HTSUS 9816.00.20 - Flat 3% rate on the next $1,000 over the exemption"
+    kind: hts
+    from: "9816.00.20"
+    to: "9816.00.40"
+    authority: primary_regulation
+    tags: [flat_rate, excess_alcohol]
+    url: https://hts.usitc.gov/
+
+  # ------------------------------------------------------- CBP guidance
+  - id: cbp_customs_duty_information
+    title: "CBP - Customs duty information (alcohol, tobacco, flat rate, personal exemptions)"
+    kind: html
+    authority: agency_guidance
+    tags: [alcohol_allowance, tobacco_allowance, excess_alcohol, excess_tobacco, state_limits, agr_cigarettes, flat_rate]
+    url: https://cbp.gov/travel/international-visitors/know-before-you-visit/customs-duty-information
+
+  - id: cbp_types_of_exemptions
+    title: "CBP - Types of exemptions ($200, $800, $1,600; Caribbean Basin 2-liter rule)"
+    kind: html
+    authority: agency_guidance
+    tags: [exemption_200, exemption_800, short_trip, caribbean_basin, cruise]
+    url: https://www.cbp.gov/travel/international-visitors/kbyg/types-exemptions
+
+  - id: cbp_prohibited_restricted
+    title: "CBP - Prohibited and restricted items"
+    kind: html
+    authority: agency_guidance
+    tags: [prohibited, cuba]
+    url: https://www.cbp.gov/travel/us-citizens/know-before-you-go/prohibited-and-restricted-items
+
+  - id: cbp_info_cuban_cigars
+    title: "CBP Info Center - Importing Cuban cigars"
+    kind: html
+    authority: agency_guidance
+    tags: [cuba, cigars, prohibited]
+    url: https://www.help.cbp.gov/s/article/Article-1389?language=en_US
+    note: "JavaScript-rendered page: the script cannot read it. Save it from a browser to corpus/raw/cbp_info_cuban_cigars.html (see README)."
+
+  # ------------------------------------------------------------- OFAC
+  - id: ofac_faq_719
+    title: "OFAC FAQ 719 - Cuban-origin cigars and alcohol bought while in Cuba"
+    kind: html
+    authority: agency_guidance
+    tags: [cuba, prohibited, alcohol, tobacco]
+    url: https://ofac.treasury.gov/faqs/719
+
+  - id: ofac_faq_769
+    title: "OFAC FAQ 769 - Cuban-origin goods authorized for import (alcohol and tobacco excluded)"
+    kind: html
+    authority: agency_guidance
+    tags: [cuba, prohibited, alcohol, tobacco]
+    url: https://ofac.treasury.gov/faqs/769
+
+  # -------------------------------------------------------------- TTB
+  - id: ttb_alcohol_tax_rates
+    title: "TTB - Excise tax rates (beer, wine, distilled spirits, cigarettes, cigars)"
+    kind: html
+    authority: tax_rates
+    tags: [excise, wine, spirits, beer, cigarettes, cigars]
+    url: https://www.ttb.gov/what-we-do/taxes-and-filing/tax-rates
+
+  # ---------------------------------------------------- hard negatives
+  - id: 19cfr148_crew_hard_negative
+    title: "19 CFR Part 148, Subpart G - Crewmembers (HARD NEGATIVE: never cite for travellers)"
+    kind: ecfr
+    title_number: 19
+    part: "148"
+    sections: {from: "148.61", to: "148.69"}
+    authority: hard_negative
+    tags: [crew, hard_negative]
+    url: https://www.ecfr.gov/current/title-19/chapter-I/part-148
+    note: "Same 50 cigarettes / 10 cigars / 150 ml limits as 148.51; tests whether retrieval picks the resident rule."
+
+# Not in the corpus (see README, "Hard negatives and exclusions"):
+#   Non-resident and insular-possession ($1,600) rules - out of scope for v1.
+#   Third-party travel sites and HTS mirrors - not authoritative.

@@ -4,13 +4,20 @@ version = "0.1.0"
 description = "DeclareRight: US customs assistant for alcohol and tobacco (Track B capstone)"
 requires-python = ">=3.12"
 dependencies = [
+    "beautifulsoup4>=4.15.0",
+    "lxml>=6.1.3",
+    "markdownify>=1.2.4",
     "openai>=3.57.0",
     "python-dotenv>=1.2.4",
+    "pyyaml>=6.0.4",
+    "requests>=2.34.2",
 ]
 
 [dependency-groups]
 dev = [
+    "openpyxl>=3.1.5",
     "pytest>=9.2.0",
+    "pyyaml>=6.0.4",
 ]
 
 [tool.pytest.ini_options]

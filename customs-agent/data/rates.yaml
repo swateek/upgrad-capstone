@@ -1,0 +1,112 @@
+# Duty and excise rates for DeclareRight v1. Read by compute_duty_excise.
+#
+# Every number comes from an official page; local copies are in
+# data/rag-corpus/corpus/primary/ with their fetch date. Status legend as in rules.yaml.
+
+meta:
+  version: 1
+  as_of: "2026-11-21"
+
+# ------------------------------------------------------------ flat-rate duty
+# HTSUS 9816.00.20: the next $1,000 (fair retail value) over the exemption.
+flat_rate:
+  band_usd: 1000
+  rate_by_origin:
+    general: 0.03                               # 3% of fair retail value
+    free_program: 0.00                          # goods originating in a country with a listed programme
+    column2: 0.04                               # countries without normal trade relations
+  rate_depends_on: origin                       # where made, not where bought
+  not_used_within_days: 30                      # flat rate itself is once per 30 days
+  value_rounding: nearest_dollar                # CBP: purchase totals rounded to the nearest dollar
+  surcharges: none                              # 2026 Section 122 surcharge not applied to Chapter 98 entries
+  citations: [htsus9816.00.20, 19cfr148.101, cbp-duty-info, cbp-csms-section122]
+  status: confirmed
+
+# Programme codes listed as "Free" for 9816.00.20, and the countries they cover.
+free_programs:
+  S:  {name: USMCA, countries: [MX, CA], status: confirmed}
+  P:  {name: CAFTA-DR, countries: [CR, DO, SV, GT, HN, NI], status: checked}   # codes other than S not checked against HTSUS GN 3(c)(i); accepted (SPEC 5.5)
+  BH: {name: US-Bahrain FTA, countries: [BH], status: checked}
+  CL: {name: US-Chile FTA, countries: [CL], status: checked}
+  CO: {name: US-Colombia TPA, countries: [CO], status: checked}
+  IL: {name: US-Israel FTA, countries: [IL], status: checked}
+  JO: {name: US-Jordan FTA, countries: [JO], status: checked}
+  KR: {name: US-Korea FTA, countries: [KR], status: checked}
+  MA: {name: US-Morocco FTA, countries: [MA], status: checked}
+  OM: {name: US-Oman FTA, countries: [OM], status: checked}
+  PA: {name: US-Panama TPA, countries: [PA], status: checked}
+  PE: {name: US-Peru TPA, countries: [PE], status: checked}
+  SG: {name: US-Singapore FTA, countries: [SG], status: checked}
+
+column2_countries: [BY, CU, KP, RU]            # Belarus, Cuba, North Korea, Russia
+
+# Beneficiary countries for the 2-liter alcohol allowance (HTSUS Chapter 98, U.S. Note 4).
+# Source (accepted, SPEC 5.5): CBP "Types of exemptions" (last modified 2024-03-06),
+# local copy data/rag-corpus/corpus/primary/cbp_types_of_exemptions.md.
+beneficiary_countries_2l:
+  countries:
+    AG: Antigua and Barbuda
+    AW: Aruba
+    BS: Bahamas
+    BB: Barbados
+    BZ: Belize
+    BO: Bolivia
+    VG: British Virgin Islands
+    CO: Colombia
+    CR: Costa Rica
+    DM: Dominica
+    DO: Dominican Republic
+    EC: Ecuador
+    SV: El Salvador
+    GD: Grenada
+    GT: Guatemala
+    GY: Guyana
+    HT: Haiti
+    HN: Honduras
+    JM: Jamaica
+    MS: Montserrat
+    NI: Nicaragua
+    PA: Panama
+    PE: Peru
+    KN: Saint Kitts and Nevis
+    LC: Saint Lucia
+    VC: Saint Vincent and the Grenadines
+    TT: Trinidad and Tobago
+    CW: Curacao                                 # CW, SX, BQ: CBP lists "Netherlands Antilles" (dissolved 2010); read as its successors (SPEC 5.5)
+    SX: Sint Maarten
+    BQ: Caribbean Netherlands (Bonaire, Sint Eustatius, Saba)
+  not_eligible: [AI, KY, GP, MQ, TC]            # Anguilla, Cayman Islands, Guadeloupe, Martinique, Turks and Caicos (CBP footnote)
+  requires: direct_arrival                      # 148.33(d)(3)(ii): returning directly from a beneficiary country
+  cruise_duty_free: "1 liter, or 2 liters if at least one bottle is the product of an eligible country (CBP)"
+  citations: [19cfr148.33, cbp-types-of-exemptions]
+  status: accepted                              # CBP list used as published; not checked against HTSUS GN 7/11 or ch. 98 (SPEC 5.5)
+
+# ---------------------------------------------------------------- excise
+# Federal excise (CBP collects it as "internal revenue tax"). General rates only:
+# reduced rates and credits are for producers and assigned importers, not travellers.
+excise:
+  source: https://www.ttb.gov/what-we-do/taxes-and-filing/tax-rates   # fetched 2026-11-21
+  wine_per_wine_gallon:
+    still_up_to_16_abv: 1.07
+    still_over_16_to_21_abv: 1.57
+    still_over_21_to_24_abv: 3.15
+    artificially_carbonated: 3.30
+    sparkling: 3.40
+    hard_cider: 0.226
+    mead_and_low_abv_wine: 1.07
+  spirits_per_proof_gallon: 13.50
+  beer_per_barrel: 18.00                        # 31 US gallons per barrel
+  tobacco:                                      # not used in v1 calculations: excess tobacco is not taxed (rules.yaml)
+    small_cigarettes_per_1000: 50.33
+    large_cigarettes_per_1000: 105.69
+    small_cigars_per_1000: 50.33
+    large_cigars: {rate_of_sale_price: 0.5275, max_per_1000: 402.60}
+  citations: [ttb-tax-rates, 26usc5001, 26usc5041, 26usc5051, 26usc5701]
+  status: confirmed
+
+# ----------------------------------------------------------- conversions
+conversions:
+  liters_per_us_gallon: 3.785411784
+  proof_per_abv_percent: 2                      # 40% ABV = 80 proof
+  us_gallons_per_beer_barrel: 31
+  ml_per_liter: 1000
