@@ -26,7 +26,9 @@ def main() -> int:
         print(f"not found / not citable: {', '.join(out.not_found)}")
     for c in out.clauses:
         how = "by id" if c.found_by == "citation_id" else f"search #{c.rank}"
-        print(f"\n[{c.citation_id}] {how}, {c.tokens} tokens, {c.authority}, as of {c.as_of}\n  {c.heading}")
+        print(
+            f"\n[{c.citation_id}] {how}, {c.tokens} tokens, {c.authority}, as of {c.as_of}\n  {c.heading}"
+        )
         print("  " + " ".join(c.text.split())[:240] + " ...")
     return 0
 

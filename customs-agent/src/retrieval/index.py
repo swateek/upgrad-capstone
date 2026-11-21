@@ -125,7 +125,7 @@ def main() -> int:
 
     chunks = load_chunks()
     llm = LLM.from_env(run_name="build_index")
-    embed = lambda texts: llm.embed(texts, stage="retrieval_index")  # noqa: E731
+    embed = lambda texts: llm.embed(texts, stage="retrieval_index")
     t0 = time.perf_counter()
     if args.rebuild:
         build_index(chunks, embed, llm.embed_model)

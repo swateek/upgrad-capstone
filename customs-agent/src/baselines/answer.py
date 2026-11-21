@@ -12,7 +12,16 @@ Outcome = Literal["answered", "clarify", "refused", "escalated"]
 LineType = Literal[
     "owe", "nothing_to_pay", "prohibited", "declare_detention_risk", "relinquish_excess"
 ]
-Fact = Literal["age", "trip_length", "exemption_used_last_30_days", "origin", "abv"]
+Fact = Literal[
+    "age",
+    "trip_length",
+    "exemption_used_last_30_days",
+    "origin",
+    "abv",
+    "size",
+    "unit_price",
+    "count",
+]  # the last three only come from the agent's tools (baseline prompts list the first five)
 
 MAX_CITATIONS = 6  # a real answer needs a few; this stops runaway repetition ("10.115(a)(1)", "(a)(2)", ...)
 Citations = Annotated[

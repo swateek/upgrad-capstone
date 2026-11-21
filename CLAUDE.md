@@ -34,6 +34,37 @@ It asks one clarifying question only when a missing fact changes the answer, ref
 **In scope:** returning US residents; wine, beer, spirits, cigarettes, cigars; $800 and $200 exemptions; age; 1 L / 2 L (Caribbean Basin) alcohol; 200 cigarettes / 100 cigars; flat-rate duty; TTB excise; Cuban-origin ban; arrival-state flag (5 states).
 **Out of scope (scope note, no assessment):** other goods, vapes/nicotine pouches, food, cash, non-residents, crew, US insular-possession arrivals ($1,600), commercial quantities, shipped goods.
 
+## Course rubric (upGrad, Track B)
+
+### Deliverables
+
+- Git repository with the full agent stack
+- Trace dashboard showing real query executions
+- Evaluation report including the failure taxonomy
+- 12-page technical report
+- 10-minute live demo
+
+### Guardrails that keep it doable in four weeks
+
+- The endpoint, an API key with a per-team token quota, and a starter agent skeleton will be provided.
+- Corpus capped at 2,000 documents; agent capped at 10 steps per query.
+- Evaluation set frozen and baseline numbers recorded before any agent code is written. This is the single most common failure mode: teams that build first and evaluate later have nothing to report.
+- The weakness of the 8B model is an explicit learning objective, not a complaint. "What did we do to compensate for a small model?" is a graded section.
+
+### Where each item stands
+
+| Rubric item | How we meet it | Status |
+| --- | --- | --- |
+| Git repository, full agent stack | `customs-agent/` on branch `customs-agent-main`; `SETUP.md` rebuilds everything | In progress |
+| Trace dashboard | Langfuse (Docker), one trace per question; fallback `trace.jsonl` | Not started (agent records a step trace per item already) |
+| Evaluation report + failure taxonomy | `eval/score.py`, official runs Day 10, failure taxonomy Days 11–14 | Baselines done (`docs/BASELINES.md`) |
+| 12-page technical report | Days 11–14 | Not started |
+| 10-minute live demo | Streamlit in Docker + backup video, Days 11–14 | Not started |
+| Corpus ≤ 2,000 documents | 742 documents (`corpus-v1`) | Met |
+| ≤ 10 steps per query | Plan validator caps at 10; the code router runs at most 8 tool steps (7, plus `whatif_optimise` for what-if questions) | Met by design; hard cap (≤ 10 steps counting tool + model calls, ≤ 12,000 tokens, escalate if exceeded) to add with the planner |
+| Eval frozen and baselines recorded before agent code | `eval-v2` tagged, `results/week1_*.csv` committed, gate `gate-day4` before any `src/agent/` code | Met |
+| Small-model compensations (graded) | `docs/COMPENSATIONS.md`: symptom, fix, before/after metric per row | Ongoing |
+
 ## Non-negotiable rules for any code in this repo
 
 1. **The model never does arithmetic.** Every dollar, volume and count comes from a calculator in `src/tools/`. The verifier rejects any number not present in tool outputs.

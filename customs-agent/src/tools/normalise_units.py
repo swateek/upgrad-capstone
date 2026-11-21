@@ -52,6 +52,30 @@ def _unit(text: str) -> str:
     }.get(u, u)
 
 
+PIECE_UNITS = {
+    "cigar",
+    "cigars",
+    "cigarette",
+    "cigarettes",
+    "piece",
+    "pieces",
+    "stick",
+    "sticks",
+}
+CONTAINER_WORDS = {
+    "box",
+    "boxes",
+    "pack",
+    "packs",
+    "tin",
+    "tins",
+    "case",
+    "cases",
+    "carton",
+    "cartons",
+}
+
+
 def size_ml(amount_value: float, unit: str) -> Decimal | None:
     conv = rates()["conversions"]
     u = _unit(unit)
@@ -92,7 +116,15 @@ def normalise_line(index: int, line: BasketLine) -> NormalisedLine:
     if line.category == "alcohol":
         unit = _unit(q.unit)
         direct = size_ml(1, unit) if unit in conv["volume_units_ml"] else None
-        if direct is not None:  # "500 ml of gin": one container of the stated volume
+        per = (
+            size_ml(line.size.value, line.size.unit) if line.size is not None else None
+        )
+        whole = (
+            dec(q.value) * direct / per if direct is not None and per else None
+        )  # "2 litres" of "1-litre bottles": 2 containers of the stated size
+        if whole is not None and whole == whole.to_integral_value() and whole >= 1:
+            out["units"], ml = whole.to_integral_value(), per
+        elif direct is not None:  # "500 ml of gin": one container of the stated volume
             out["units"], ml = Decimal(1), dec(q.value) * direct
         elif line.size is not None:
             ml = size_ml(line.size.value, line.size.unit)
@@ -118,10 +150,20 @@ def normalise_line(index: int, line: BasketLine) -> NormalisedLine:
         unit = _unit(q.unit)
         table = conv["tobacco_units"].get(line.type, {})
         m = re.fullmatch(r"(?:box|pack|tin|case) of (\d+)", unit)
+        piece_size = (
+            line.size is not None
+            and _unit(line.size.unit) in PIECE_UNITS
+            and float(line.size.value).is_integer()
+            and line.size.value >= 1
+        )
         if m:
             per = int(m.group(1))
         elif unit in table:
             per = table[unit]
+        elif (
+            piece_size and unit in CONTAINER_WORDS
+        ):  # 1 "box", size "10 cigars": a box of 10
+            per = int(line.size.value)
         else:
             raise ToolError(
                 "missing_fact",

@@ -75,6 +75,20 @@ def smokes(
             Decimal("1.000"),
         ),
         (Amount(value=500, unit="ml"), None, Decimal(500), Decimal("0.500")),
+        # quantity given as a volume of containers of a stated size: 2 litres of 1-litre bottles
+        (
+            Amount(value=2, unit="litre"),
+            Amount(value=1, unit="litre"),
+            Decimal(1000),
+            Decimal("2.000"),
+        ),
+        # not a whole number of containers: one container of the stated volume, as before
+        (
+            Amount(value=2, unit="litre"),
+            Amount(value=750, unit="ml"),
+            Decimal(2000),
+            Decimal("2.000"),
+        ),
     ],
 )
 def test_normalise_alcohol_volumes(qty, size, ml, total_l) -> None:
@@ -83,6 +97,7 @@ def test_normalise_alcohol_volumes(qty, size, ml, total_l) -> None:
     )
     n = normalise_units(NArgs(basket=[line]))[0]
     assert (n.unit_ml, n.total_l) == (ml, total_l)
+    assert n.units * n.unit_ml == total_l * 1000
     assert n.proof == Decimal(80)
 
 
@@ -437,3 +452,26 @@ def test_rule_match_reports_missing_facts() -> None:
         == "unknown"
     )
     assert match({"over_allowance": True}, {"category": "alcohol"}) == "n/a"
+
+
+def test_box_with_a_piece_count_as_size_is_a_box_of_n() -> None:
+    # intake sometimes writes "a box of 10 cigars" as quantity {1, box}, size {10, cigars}
+    line = BasketLine(
+        item="cigars",
+        category="tobacco",
+        type="cigars",
+        quantity=Amount(value=1, unit="box"),
+        size=Amount(value=10, unit="cigars"),
+    )
+    assert normalise_units(NArgs(basket=[line]))[0].count == 10
+
+
+def test_known_tobacco_units_ignore_a_size() -> None:
+    line = BasketLine(
+        item="cigarettes",
+        category="tobacco",
+        type="cigarettes",
+        quantity=Amount(value=2, unit="cartons"),
+        size=Amount(value=400, unit="pieces"),  # a total, not per carton
+    )
+    assert normalise_units(NArgs(basket=[line]))[0].count == 400

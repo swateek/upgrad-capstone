@@ -58,14 +58,28 @@ def test_by_id_takes_the_rule_the_tools_applied() -> None:
 
 def test_by_id_picks_the_chunk_of_the_section_that_matches_the_query() -> None:
     s = search()
-    alcohol = s(Args(query="150 milliliters alcoholic beverages", citation_ids=["19cfr148.51"], k=1))
-    tobacco = s(Args(query="cigarettes over the limit whole exemption unavailable", citation_ids=["19cfr148.51"], k=1))
+    alcohol = s(
+        Args(
+            query="150 milliliters alcoholic beverages",
+            citation_ids=["19cfr148.51"],
+            k=1,
+        )
+    )
+    tobacco = s(
+        Args(
+            query="cigarettes over the limit whole exemption unavailable",
+            citation_ids=["19cfr148.51"],
+            k=1,
+        )
+    )
     assert alcohol.clauses[0].chunk_id == "a#01"
     assert tobacco.clauses[0].chunk_id == "a#02"
 
 
 def test_ids_are_normalised_and_unknown_ids_reported() -> None:
-    out = search()(Args(query="duty", citation_ids=[" 19CFR148.51 ", "19cfr999.1"], k=2))
+    out = search()(
+        Args(query="duty", citation_ids=[" 19CFR148.51 ", "19cfr999.1"], k=2)
+    )
     assert out.clauses[0].citation_id == "19cfr148.51"
     assert out.not_found == ["19cfr999.1"]
 
@@ -113,7 +127,9 @@ def test_reranker_is_used_and_named() -> None:
     s = search(reranker=FakeReranker(), reranker_name="fake-reranker")
     out = s(Args(query="duty rates spirits wine", k=1))
     assert out.method == "hybrid+fake-reranker"
-    assert out.clauses[0].citation_id == "ttb-tax-rates"  # the fake reranker prefers "proof"
+    assert (
+        out.clauses[0].citation_id == "ttb-tax-rates"
+    )  # the fake reranker prefers "proof"
     assert search().method == "hybrid"
 
 

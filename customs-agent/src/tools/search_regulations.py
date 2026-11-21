@@ -43,7 +43,9 @@ EmbedFn = Callable[[Sequence[str]], list[list[float]]]
 
 
 class Args(BaseModel):
-    query: str = Field(min_length=1, description="The traveller's question, or a sub-question")
+    query: str = Field(
+        min_length=1, description="The traveller's question, or a sub-question"
+    )
     citation_ids: list[str] = Field(
         [], description="citation_ids of the rules the tools applied; fetched by id"
     )
@@ -67,7 +69,11 @@ class RegulationSearch:
         self.chunks = chunks
         method = "hybrid_rerank" if reranker is not None else "hybrid"
         self.retriever = Retriever(
-            chunks, method=method, filter="no_hard_negatives", embed=embed, reranker=reranker
+            chunks,
+            method=method,
+            filter="no_hard_negatives",
+            embed=embed,
+            reranker=reranker,
         )
         if matrix is not None:
             self.retriever.set_matrix(matrix)
@@ -87,8 +93,8 @@ class RegulationSearch:
         log: Callable[[str], None] = print,
     ) -> RegulationSearch:
         chunks = chunks if chunks is not None else load_chunks()
-        embed = lambda texts: llm.embed(texts, stage="search_regulations")  # noqa: E731
-        index_embed = lambda texts: llm.embed(texts, stage="retrieval_index")  # noqa: E731
+        embed = lambda texts: llm.embed(texts, stage="search_regulations")
+        index_embed = lambda texts: llm.embed(texts, stage="retrieval_index")
         matrix = load_or_build(chunks, index_embed, llm.embed_model, index_dir, log=log)
         name = reranker_name or os.environ.get("RERANKER", DEFAULT_RERANKER)
         reranker = None
@@ -97,8 +103,10 @@ class RegulationSearch:
                 from sentence_transformers import CrossEncoder
 
                 reranker = CrossEncoder(name)
-            except Exception as e:  # model download or load failure: plain hybrid
-                log(f"reranker {name} not loaded ({e.__class__.__name__}: {e}); using plain hybrid")
+            except Exception as e:  # noqa: BLE001 - model download or load failure: plain hybrid
+                log(
+                    f"reranker {name} not loaded ({e.__class__.__name__}: {e}); using plain hybrid"
+                )
                 reranker = None
         return cls(chunks, embed, matrix=matrix, reranker=reranker, reranker_name=name)
 
@@ -172,4 +180,3 @@ class RegulationSearch:
 
 def search_regulations(args: Args, search: RegulationSearch) -> Clauses:
     return search(args)
-

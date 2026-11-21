@@ -132,9 +132,20 @@ uv run python -m src.retrieval.search "4 bottles of wine after 10 days in Italy,
 
 If `chunks.jsonl` changes, the saved index no longer matches it (fingerprint in `meta.json`) and is rebuilt automatically the next time search starts. The reranker (`BAAI/bge-reranker-v2-m3`, ~2 GB) downloads on first use; set `RERANKER=none` to run without it.
 
+## 10. Agent (code router) on the dev set
+
+One question end to end: guard → intake (LLM) → tools in a fixed order → `search_regulations` → writer (LLM) → verifier (code + LLM). About 3 model calls per answered question.
+
+```bash
+uv run python eval/run_agent.py --set dev --limit 3              # smoke test
+uv run python eval/run_agent.py --set dev --run-name day5-router  # all 20 dev scenarios, scored
+```
+
+Writes `results/runs/<run>/router.jsonl` (answer, answer card, trace of every step), `scores_router.csv` and `summary_router.json`. Re-running the same command resumes; delete the run folder to start again. Never run `--set eval` until the Day 10 official runs.
+
 ## Coming next (add steps here as they land)
 
-- Agent, code router, verifier, Streamlit app, Docker.
+- LLM planner + plan validator, single_rag baseline, corrections across turns, Streamlit app, Docker.
 
 ## Reference
 
