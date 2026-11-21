@@ -79,7 +79,7 @@ Within one message the facts are listed in this order: age → trip length → 3
 | --- | --- | --- |
 | Age | Always, if not stated (alcohol and tobacco allowances need 21+) | None: answer for both "21 or over" and "under 21" |
 | Trip length | Unless arriving directly from Mexico, or the basket fits inside the $200 limits anyway | Under 48 hours ($200 rules) |
-| Exemption used in last 30 days | Trip ≥ 48 h (or direct from Mexico) and the answer differs between $800 and $200 | Used ($200 rules) |
+| Exemption used in last 30 days | Trip ≥ 48 h (or direct from Mexico) and the answer differs between $800 and $200; or something is dutiable (the flat rate has its own 30-day rule) | Used ($200 rules; flat rate treated as used, so escalate) |
 | Origin | Something is owed and origin changes the rate; or the item could be Cuban or Russian | 3% general rate; if it could be Cuban or Russian, the answer also says what applies if it is |
 | ABV | Spirits with an excess; wine possibly over 16% | Spirits 40%; table wine ≤ 16%; fortified wine (port, sherry) 16–21% |
 

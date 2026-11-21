@@ -28,6 +28,7 @@ exemptions:
       min_hours_waived_for_direct_arrival_from: [MX]   # 148.35(a): Mexico, any trip length
       not_used_within_days: 30                  # used on/after (arrival date - 30 days) disqualifies; arrival day excluded (148.36(b))
       arrival_from_insular_possession: false    # $1,600 variant is out of scope
+    insular_possessions: [VI, GU, AS, MP]       # US Virgin Islands, Guam, American Samoa, Northern Mariana Islands (148.33(c))
     applied_to: highest_rate_articles_first     # duty + internal revenue tax combined (148.33(b))
     alcohol:
       min_age: 21                               # 148.33(d)(2)
@@ -69,6 +70,7 @@ restrictions:
     when: {category: [alcohol, tobacco], origin: [CU]}
     outcome: prohibited                         # wherever bought; allowances do not apply
     message: "Cuban-origin alcohol and tobacco cannot be brought into the US as personal baggage, wherever they were bought."
+    ask_origin_when: {types: [cigars], item_keywords: [rum, ron, cigar, habano]}   # SPEC 5.2 stage 1
     citations: [31cfr515.204, 31cfr515.585, ofac-faq-719, cbp-info-1389]
     status: checked
 
@@ -76,6 +78,7 @@ restrictions:
     when: {category: [alcohol], origin: [RU]}
     outcome: escalate
     message: "Russian-origin alcohol is subject to a US import ban; whether it applies to personal baggage is not settled. Declare it; an officer decides."
+    ask_origin_when: {item_keywords: [vodka]}                                     # SPEC 5.2 stage 1
     citations: [eo-14068, ofac-faq-1024, ofac-faq-1182]
     status: open
 
@@ -120,7 +123,7 @@ restrictions:
     outcome: escalate
     threshold:                                  # PROJECT DECISION (docs/SPEC.md), not a legal limit
       alcohol_total_liters_gt: 9.0              # more than one case (12 x 750 ml)
-      same_product_units_gt: 12
+      same_product_units_gt: 12                 # bottles or containers of one alcohol product
     message: "This looks like more than personal use. Commercial imports need formal entry; an officer decides."
     citations: [19cfr148.33, cbp-duty-info]
     status: project_decision                    # adopted, docs/SPEC.md 5.4

@@ -239,7 +239,9 @@ If behind at Day 9: drop `whatif_optimise` first, then UI extras. Never drop the
 - [ ] Not blocking: check SPEC 5.5 data against HTSUS General Notes 3, 7, 11 if time allows.
 - [x] Eval sets written: `eval/scenarios.yaml` → `eval/gold.xlsx` (formula gold, independent of `src/tools`; readable working in `eval/gold.md`) → `eval/eval_set.jsonl` (80, SPEC 7 counts) and `eval/dev_set.jsonl` (20). Cross-checked with a separate decimal calculation: 61 priced lines and 5 what-ifs agree. Format and gaps in `eval/README.md`.
 - [x] Hand check of the eval gold done by the project owner: all match.
-- [ ] Commit, merge and tag `eval-v1` (freezes the 80 eval scenarios).
+- [x] `eval-v1` tagged locally on `customs-agent-main` (not pushed).
+- [x] Calculators: `src/schemas.py` and `src/tools/` (normalise_units, check_restrictions, determine_exemption, compute_allowance, compute_duty_excise, lookup_state_rule, whatif_optimise, escalate_to_human), reading `rules.yaml` / `rates.yaml`. Tests: `tests/test_tools.py` (rule tests with clause references) and `tests/test_dev_set.py` (all calculable dev scenarios match gold). All 94 tests pass on the Mac (73 tool + 21 llm).
+- [ ] Corpus to 500+ documents and freeze (Day 3). Then `eval/score.py` and the four baselines (Day 4 gate).
 - [ ] `uv add --dev pyyaml openpyxl` (needed by `eval/build_eval.py`).
 - [ ] Add the newly cited sources to the corpus: 19 USC 1681a, 26 USC 5754/5761, HTSUS General Note 3 and ch. 98 U.S. Note 4, OFAC Russia FAQs.
 

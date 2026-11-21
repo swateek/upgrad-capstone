@@ -110,3 +110,20 @@ conversions:
   proof_per_abv_percent: 2                      # 40% ABV = 80 proof
   us_gallons_per_beer_barrel: 31
   ml_per_liter: 1000
+  volume_units_ml:                              # stated size unit -> ml per unit
+    ml: 1
+    cl: 10
+    l: 1000
+    liter: 1000
+    litre: 1000
+    fl oz: 29.5735295625                        # US fluid ounce
+  containers_ml:                                # container words that imply a size when none is stated
+    fifth: 750                                  # 1/5 US gallon, by trade usage
+    magnum: 1500
+    half bottle: 375
+    split: 187.5
+    miniature: 50
+    nip: 50
+  tobacco_units:                                # stated unit -> pieces
+    cigarettes: {cigarette: 1, pack: 20, carton: 200}
+    cigars: {cigar: 1}                          # "box of N" -> N
