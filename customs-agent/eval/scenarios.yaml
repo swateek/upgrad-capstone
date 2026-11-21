@@ -13,7 +13,8 @@
 #            excise_class (alcohol), gold_exempt_l (hand allocation: litres of this line inside
 #            the exemption, highest duty + excise per litre first, 19 CFR 148.33(b))
 #   gold: outcome (answered | clarify | refused | escalated), reason, exemption,
-#         bottom_line (one type per basket line, same order), clarify_fact, state_flag,
+#         bottom_line (one type per basket line, same order), clarify_facts (all asked in one
+#         message, SPEC 5.2), state_flag,
 #         citations (short ids; all must be cited), must_not_contain
 #
 # excise_class: wine_still_le16 | wine_still_16_21 | sparkling | spirits | beer
@@ -164,12 +165,12 @@ scenarios:
 - id: E15
   set: eval
   type: alcohol_cbi_2L
-  note: beneficiary country that is also a free programme (P, CAFTA-DR)
+  note: "Dominican Republic is not a beneficiary country for the 2 L rule (HTSUS ch. 98 Note 4, GN 7(a)): 1 L; duty Free (P, CAFTA-DR)"
   question: "Direct flight back from Punta Cana after 10 days in the Dominican Republic. I'm 45 and haven't been abroad in months. I bought 3 one-litre bottles of Dominican rum, 40%, $20 each. What do I pay?"
   profile: {age: 45, trip: {value: 10, unit: days}, direct_arrival_from: DO, exemption_used_last_30_days: false}
   basket:
-    - {item: Dominican rum, category: alcohol, type: spirits, quantity: {value: 3, unit: bottle}, unit_ml: 1000, abv: 40, unit_price_usd: 20, origin: DO, bought_where: DO, excise_class: spirits, gold_exempt_l: 2.0}
-  gold: {outcome: answered, exemption: standard_800_beneficiary_2l, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+    - {item: Dominican rum, category: alcohol, type: spirits, quantity: {value: 3, unit: bottle}, unit_ml: 1000, abv: 40, unit_price_usd: 20, origin: DO, bought_where: DO, excise_class: spirits, gold_exempt_l: 1.0}
+  gold: {outcome: answered, exemption: standard_800, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
 
 - id: E16
   set: eval
@@ -491,13 +492,13 @@ scenarios:
 - id: E48
   set: eval
   type: mixed_basket
-  note: beneficiary 2 L (PE) plus free programme duty
+  note: "Peru is not a beneficiary country for the 2 L rule (GN 7(a); GN 11 no longer exists): 1 L; duty Free (PE)"
   question: "Direct flight home from Lima after 2 weeks in Peru, first trip this year. I'm 43. 3 bottles of Peruvian pisco (750 ml, 40%, $25 each) and a box of 10 Nicaraguan cigars ($60). What do I owe?"
   profile: {age: 43, trip: {value: 2, unit: weeks}, direct_arrival_from: PE, exemption_used_last_30_days: false}
   basket:
-    - {item: pisco, category: alcohol, type: spirits, quantity: {value: 3, unit: bottle}, unit_ml: 750, abv: 40, unit_price_usd: 25, origin: PE, bought_where: PE, excise_class: spirits, gold_exempt_l: 2.0}
+    - {item: pisco, category: alcohol, type: spirits, quantity: {value: 3, unit: bottle}, unit_ml: 750, abv: 40, unit_price_usd: 25, origin: PE, bought_where: PE, excise_class: spirits, gold_exempt_l: 1.0}
     - {item: Nicaraguan cigars, category: tobacco, type: cigars, quantity: {value: 1, unit: box of 10}, count: 10, unit_price_usd: 60, origin: NI, bought_where: PE}
-  gold: {outcome: answered, exemption: standard_800_beneficiary_2l, bottom_line: [owe, nothing_to_pay], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+  gold: {outcome: answered, exemption: standard_800, bottom_line: [owe, nothing_to_pay], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
 
 - id: E49
   set: eval
@@ -578,58 +579,61 @@ scenarios:
 - id: E57
   set: eval
   type: clarify
-  question: "Just back from 2 weeks in Italy, first trip this year, with 3 bottles of Chianti (750 ml, 13%, $20 each). Do I owe anything?"
-  profile: {trip: {value: 2, unit: weeks}, exemption_used_last_30_days: false}
-  gold: {outcome: clarify, clarify_fact: age, citations: []}
+  note: several facts missing; all stage-1 facts asked in one message (SPEC 5.2)
+  question: "One bottle of wine, 750 ml, $15, as a present for my parents. Is that duty-free?"
+  profile: {}
+  basket:
+    - {item: wine, category: alcohol, type: wine, quantity: {value: 1, unit: bottle}, unit_ml: 750, unit_price_usd: 15}
+  gold: {outcome: clarify, clarify_facts: [age, trip_length, exemption_used_last_30_days], citations: []}
 
 - id: E58
   set: eval
   type: clarify
   question: "I'm 35, back from Paris with 2 bottles of Champagne, 750 ml, 12%, $50 each. I hadn't been abroad for months before this. Do I owe duty?"
   profile: {age: 35, exemption_used_last_30_days: false}
-  gold: {outcome: clarify, clarify_fact: trip_length, citations: []}
+  gold: {outcome: clarify, clarify_facts: [trip_length], citations: []}
 
 - id: E59
   set: eval
   type: clarify
   question: "I'm 50 and spent 5 days in Spain. I'm bringing 2 bottles of Rioja, 750 ml, 14%, $25 each. What will I owe?"
   profile: {age: 50, trip: {value: 5, unit: days}}
-  gold: {outcome: clarify, clarify_fact: exemption_used_last_30_days, citations: []}
+  gold: {outcome: clarify, clarify_facts: [exemption_used_last_30_days], citations: []}
 
 - id: E60
   set: eval
   type: clarify
   question: "I'm 42, flying home after a week in Cancún, first trip this year. I bought 3 bottles of whisky at the Cancún airport duty-free, 750 ml, 40%, $40 each. What do I owe?"
   profile: {age: 42, trip: {value: 1, unit: weeks}, direct_arrival_from: MX, exemption_used_last_30_days: false}
-  gold: {outcome: clarify, clarify_fact: origin, citations: []}
+  gold: {outcome: clarify, clarify_facts: [origin], citations: []}
 
 - id: E61
   set: eval
   type: clarify
   question: "I'm 30, back from 2 weeks in Scotland, first trip this year. I have 3 bottles of Scotch whisky, 70 cl, $65 each. How much tax?"
   profile: {age: 30, trip: {value: 2, unit: weeks}, exemption_used_last_30_days: false}
-  gold: {outcome: clarify, clarify_fact: abv, citations: []}
+  gold: {outcome: clarify, clarify_facts: [abv], citations: []}
 
 - id: E62
   set: eval
   type: clarify
   question: "I'm 60, spent 2 weeks in Portugal, first trip in a year. I have 3 bottles of port, 750 ml, $30 each. What do I owe?"
   profile: {age: 60, trip: {value: 2, unit: weeks}, exemption_used_last_30_days: false}
-  gold: {outcome: clarify, clarify_fact: abv, citations: []}
+  gold: {outcome: clarify, clarify_facts: [abv], citations: []}
 
 - id: E63
   set: eval
   type: clarify
   question: "Back from 10 days in the Dominican Republic with a box of 25 Dominican cigars for my dad, $90. First trip this year. Any duty?"
   profile: {trip: {value: 10, unit: days}, direct_arrival_from: DO, exemption_used_last_30_days: false}
-  gold: {outcome: clarify, clarify_fact: age, citations: []}
+  gold: {outcome: clarify, clarify_facts: [age], citations: []}
 
 - id: E64
   set: eval
   type: clarify
   question: "I'm 45 and drove back from Canada with one 750 ml bottle of Canadian whisky, 40%, $30. Haven't crossed the border in months. Do I owe anything?"
   profile: {age: 45, direct_arrival_from: CA, exemption_used_last_30_days: false}
-  gold: {outcome: clarify, clarify_fact: trip_length, citations: []}
+  gold: {outcome: clarify, clarify_facts: [trip_length], citations: []}
 
 # ----------------------------------------------------------------- state_flag (3)
 - id: E65
@@ -868,16 +872,19 @@ scenarios:
 - id: D13
   set: dev
   type: clarify
-  question: "Coming back from a week in Lisbon, first trip this year, with 2 bottles of Portuguese red wine, 750 ml, 13%, $18 each. Do I owe duty?"
-  profile: {trip: {value: 1, unit: weeks}, exemption_used_last_30_days: false}
-  gold: {outcome: clarify, clarify_fact: age, citations: []}
+  note: several facts missing; all stage-1 facts asked in one message (SPEC 5.2)
+  question: "Bringing back 2 bottles of Portuguese red wine, 750 ml, 13%, $18 each. Do I owe duty?"
+  profile: {}
+  basket:
+    - {item: Portuguese red wine, category: alcohol, type: wine, quantity: {value: 2, unit: bottle}, unit_ml: 750, abv: 13, unit_price_usd: 18, origin: PT}
+  gold: {outcome: clarify, clarify_facts: [age, trip_length, exemption_used_last_30_days], citations: []}
 
 - id: D14
   set: dev
   type: clarify
   question: "I'm 41, back from 4 days in London with 2 bottles of gin, 70 cl, 40%, $30 each. Anything to pay?"
   profile: {age: 41, trip: {value: 4, unit: days}}
-  gold: {outcome: clarify, clarify_fact: exemption_used_last_30_days, citations: []}
+  gold: {outcome: clarify, clarify_facts: [exemption_used_last_30_days], citations: []}
 
 - id: D15
   set: dev

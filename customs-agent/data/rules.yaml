@@ -8,7 +8,7 @@
 #   checked   - researched in docs/regulatory_checks.md; agreed by the project owner
 #   open      - unresolved; the agent escalates instead of answering
 #   project_decision - no legal number exists; value chosen and justified in docs/SPEC.md 5.4
-#   accepted  - used as published in official agency guidance, not checked against the primary legal text (docs/SPEC.md 5.5)
+#   accepted  - used as published in official agency guidance, not checked against the primary legal text (none at present; see docs/SPEC.md 5.5)
 #
 # Citations use the short ids the retriever returns; full text and links are in
 # docs/regulatory_checks.md and the corpus.

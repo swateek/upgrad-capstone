@@ -253,7 +253,7 @@ x rate (x proof factor for spirits), to the cent.
 
 > Direct flight back from Punta Cana after 10 days in the Dominican Republic. I'm 45 and haven't been abroad in months. I bought 3 one-litre bottles of Dominican rum, 40%, $20 each. What do I pay?
 
-**Outcome:** answered · **Exemption:** standard_800_beneficiary_2l
+**Outcome:** answered · **Exemption:** standard_800
 
 **Bottom line:** 1. Dominican rum: **owe**
 
@@ -261,10 +261,10 @@ x rate (x proof factor for spirits), to the cent.
 
 | Line | Total L | Exempt L | Excess L | Dutiable value | Duty | Excise |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1. Dominican rum (DO, spirits) | 3.000 | 2.000 | 1.000 | $20.00 × 1.000 / 1.000 = $20.00 → **$20** | 0% × $20 = **$0.00** | 0.2642 gal × $13.5000 × 0.80 proof = $2.8531 → **$2.85** |
-| **Total** | | | | | **$0.00** | **$2.85** |
+| 1. Dominican rum (DO, spirits) | 3.000 | 1.000 | 2.000 | $20.00 × 2.000 / 1.000 = $40.00 → **$40** | 0% × $40 = **$0.00** | 0.5283 gal × $13.5000 × 0.80 proof = $5.7061 → **$5.71** |
+| **Total** | | | | | **$0.00** | **$5.71** |
 
-**Total owed: $2.85**
+**Total owed: $5.71**
 
 ### E16 · alcohol_cbi_2L
 
@@ -724,7 +724,7 @@ x rate (x proof factor for spirits), to the cent.
 
 > Direct flight home from Lima after 2 weeks in Peru, first trip this year. I'm 43. 3 bottles of Peruvian pisco (750 ml, 40%, $25 each) and a box of 10 Nicaraguan cigars ($60). What do I owe?
 
-**Outcome:** answered · **Exemption:** standard_800_beneficiary_2l
+**Outcome:** answered · **Exemption:** standard_800
 
 **Bottom line:** 1. pisco: **owe**; 2. Nicaraguan cigars: **nothing_to_pay**
 
@@ -732,10 +732,10 @@ x rate (x proof factor for spirits), to the cent.
 
 | Line | Total L | Exempt L | Excess L | Dutiable value | Duty | Excise |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1. pisco (PE, spirits) | 2.250 | 2.000 | 0.250 | $25.00 × 0.250 / 0.750 = $8.33 → **$8** | 0% × $8 = **$0.00** | 0.0660 gal × $13.5000 × 0.80 proof = $0.7133 → **$0.71** |
-| **Total** | | | | | **$0.00** | **$0.71** |
+| 1. pisco (PE, spirits) | 2.250 | 1.000 | 1.250 | $25.00 × 1.250 / 0.750 = $41.67 → **$42** | 0% × $42 = **$0.00** | 0.3302 gal × $13.5000 × 0.80 proof = $3.5663 → **$3.57** |
+| **Total** | | | | | **$0.00** | **$3.57** |
 
-**Total owed: $0.71**
+**Total owed: $3.57**
 
 ### E49 · mixed_basket
 

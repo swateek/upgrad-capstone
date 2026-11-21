@@ -108,16 +108,16 @@ Federal law sets no personal-use quantity for alcohol: TTB says the CBP port dir
 | State flag content | Note + official source; no state amounts calculated | State rules vary and mostly apply to residents (CBP) |
 | "Highest rate" ranking (148.33(b)) | Rank alcohol lines by duty + excise **per litre** | The regulation says to combine duty and tax but not on what basis. The 1 L cap is the limit that binds, so per litre is the natural unit, and it gives the traveller the lower bill in the eval cases. Ranking per dollar of value would change E44 and E46 (`eval/README.md`). |
 
-### 5.5 Data accepted without checking the primary legal text
+### 5.5 Country lists: confirmed against the HTSUS
 
-Decision at approval: the lists below are used as published in official agency guidance, without confirming them against the tariff schedule (HTSUS) itself. Each row carries status `accepted` in the data files. If one is later found wrong, the fix is a data change plus a re-run (CLAUDE.md rule 3).
+At approval (Day 1) these lists were taken from CBP guidance without checking the tariff schedule. The Day 3 corpus fetch brought in the HTSUS text (2026, Revision 23), which settled both:
 
-| Data | Taken from | Not checked against | Known risk |
-| --- | --- | --- | --- |
-| 2 L beneficiary countries (`rates.yaml → beneficiary_countries_2l`): 27 countries plus Curaçao, Sint Maarten and Caribbean Netherlands | CBP "Types of exemptions" page (in the corpus) | HTSUS General Notes 7 (CBERA) and 11 (ATPA); Chapter 98 | ATPA expired in 2013, so Bolivia and Ecuador may no longer qualify; countries that joined a trade agreement (CAFTA-DR, Colombia, Panama, Peru) are "former beneficiary countries" in the HTSUS; CBP lists "Netherlands Antilles" (dissolved 2010), which we read as its three successors |
-| Trade-programme codes for the Free flat rate (`rates.yaml → free_programs`) | CBP guidance and the programme pages researched in `docs/regulatory_checks.md` | HTSUS General Note 3(c)(i) | Only `S` (USMCA) was read in the text; a wrong code changes 3% to Free or back |
+| Data | Source now | Result |
+| --- | --- | --- |
+| 2 L beneficiary countries (`rates.yaml → beneficiary_countries_2l`) | HTSUS 9804.00.72; Chapter 98, Subchapter IV, U.S. Note 4 ("beneficiary country" = General Note 7(a) or 11(a)); General Note 7(a). General Note 11 (ATPA) is no longer in the HTSUS | **Corrected** to the 17 countries in GN 7(a). CBP's older list had 13 more (Bolivia, Colombia, Costa Rica, Dominican Republic, Ecuador, El Salvador, Guatemala, Honduras, Nicaragua, Panama, Peru, Sint Maarten, Caribbean Netherlands): kept in `not_eligible` |
+| Trade-programme symbols for the Free flat rate (`rates.yaml → free_programs`) | HTSUS General Note 3(c)(i); 9816.00.20 Special column: Free (BH, CL, CO, IL, JO, KR, MA, OM, P, PA, PE, S, SG) | **Confirmed** as used |
 
-The answer cites the CBP page for these rows. Eval gold uses the same lists, so these scenarios test the assistant against the data we chose, not the HTSUS itself.
+Effect on the eval: E15 (Dominican Republic) and E48 (Peru) now get 1 L, not 2 L; the set was re-tagged `eval-v2` (no run had used `eval-v1`). Answers cite the HTSUS notes (`htsus-ch98-iv-usnote-4`, `htsus-gn-7`) for the 2 L rule.
 
 ## 6. What counts as correct
 
@@ -172,9 +172,9 @@ Change from the mentor's table (adopted at approval): the mentor's 7 `cuban_orig
 
 | Item | Decision |
 | --- | --- |
-| 2 L country list and programme codes | Used as published by CBP, not confirmed against the HTSUS (5.5) |
+| 2 L country list and programme codes | Used as published by CBP at approval; confirmed against the HTSUS on Day 3: 2 L list corrected, programme symbols confirmed (5.5); eval re-tagged `eval-v2` |
 | Commercial-quantity threshold | Adopted: > 9 L total or > 12 units of one product (5.4) |
 | The five states | Adopted: NY, FL, CA, TX, NJ; note and source only (5.4) |
 | Evaluation table | Adopted: one `cuban_origin` scenario becomes `sanctions_escalate` (7) |
 
-Not blocking, revisit if time allows: check 5.5 against HTSUS General Notes 3, 7 and 11; resolve Russian-origin alcohol (currently escalated).
+Not blocking, revisit if time allows: resolve Russian-origin alcohol (currently escalated).

@@ -25,24 +25,25 @@ flat_rate:
 # Programme codes listed as "Free" for 9816.00.20, and the countries they cover.
 free_programs:
   S:  {name: USMCA, countries: [MX, CA], status: confirmed}
-  P:  {name: CAFTA-DR, countries: [CR, DO, SV, GT, HN, NI], status: checked}   # codes other than S not checked against HTSUS GN 3(c)(i); accepted (SPEC 5.5)
-  BH: {name: US-Bahrain FTA, countries: [BH], status: checked}
-  CL: {name: US-Chile FTA, countries: [CL], status: checked}
-  CO: {name: US-Colombia TPA, countries: [CO], status: checked}
-  IL: {name: US-Israel FTA, countries: [IL], status: checked}
-  JO: {name: US-Jordan FTA, countries: [JO], status: checked}
-  KR: {name: US-Korea FTA, countries: [KR], status: checked}
-  MA: {name: US-Morocco FTA, countries: [MA], status: checked}
-  OM: {name: US-Oman FTA, countries: [OM], status: checked}
-  PA: {name: US-Panama TPA, countries: [PA], status: checked}
-  PE: {name: US-Peru TPA, countries: [PE], status: checked}
-  SG: {name: US-Singapore FTA, countries: [SG], status: checked}
+  P:  {name: CAFTA-DR, countries: [CR, DO, SV, GT, HN, NI], status: confirmed}   # programme symbols confirmed in HTSUS GN 3(c)(i) and the 9816.00.20 Special column
+  BH: {name: US-Bahrain FTA, countries: [BH], status: confirmed}
+  CL: {name: US-Chile FTA, countries: [CL], status: confirmed}
+  CO: {name: US-Colombia TPA, countries: [CO], status: confirmed}
+  IL: {name: US-Israel FTA, countries: [IL], status: confirmed}
+  JO: {name: US-Jordan FTA, countries: [JO], status: confirmed}
+  KR: {name: US-Korea FTA, countries: [KR], status: confirmed}
+  MA: {name: US-Morocco FTA, countries: [MA], status: confirmed}
+  OM: {name: US-Oman FTA, countries: [OM], status: confirmed}
+  PA: {name: US-Panama TPA, countries: [PA], status: confirmed}
+  PE: {name: US-Peru TPA, countries: [PE], status: confirmed}
+  SG: {name: US-Singapore FTA, countries: [SG], status: confirmed}
 
 column2_countries: [BY, CU, KP, RU]            # Belarus, Cuba, North Korea, Russia
 
-# Beneficiary countries for the 2-liter alcohol allowance (HTSUS Chapter 98, U.S. Note 4).
-# Source (accepted, SPEC 5.5): CBP "Types of exemptions" (last modified 2024-03-06),
-# local copy data/rag-corpus/corpus/primary/cbp_types_of_exemptions.md.
+# Beneficiary countries for the 2-liter alcohol allowance (HTSUS 9804.00.72).
+# Chapter 98, Subchapter IV, U.S. Note 4: "beneficiary country" means a country listed in
+# General Note 7(a) (CBERA) or 11(a) (ATPA). General Note 11 is no longer in the 2026 HTSUS
+# (Revision 23), so the list is General Note 7(a). Corpus: htsus-ch98-iv-usnote-4, htsus-gn-7.
 beneficiary_countries_2l:
   countries:
     AG: Antigua and Barbuda
@@ -50,36 +51,28 @@ beneficiary_countries_2l:
     BS: Bahamas
     BB: Barbados
     BZ: Belize
-    BO: Bolivia
-    VG: British Virgin Islands
-    CO: Colombia
-    CR: Costa Rica
+    CW: Curacao
     DM: Dominica
-    DO: Dominican Republic
-    EC: Ecuador
-    SV: El Salvador
     GD: Grenada
-    GT: Guatemala
     GY: Guyana
     HT: Haiti
-    HN: Honduras
     JM: Jamaica
     MS: Montserrat
-    NI: Nicaragua
-    PA: Panama
-    PE: Peru
     KN: Saint Kitts and Nevis
     LC: Saint Lucia
     VC: Saint Vincent and the Grenadines
     TT: Trinidad and Tobago
-    CW: Curacao                                 # CW, SX, BQ: CBP lists "Netherlands Antilles" (dissolved 2010); read as its successors (SPEC 5.5)
-    SX: Sint Maarten
-    BQ: Caribbean Netherlands (Bonaire, Sint Eustatius, Saba)
-  not_eligible: [AI, KY, GP, MQ, TC]            # Anguilla, Cayman Islands, Guadeloupe, Martinique, Turks and Caicos (CBP footnote)
-  requires: direct_arrival                      # 148.33(d)(3)(ii): returning directly from a beneficiary country
+    VG: British Virgin Islands
+  not_eligible:                                 # listed by CBP's older guidance, not in GN 7(a)
+    former_cbera_trade_agreement: [CR, DO, SV, GT, HN, NI, PA]   # "former beneficiary countries" (CAFTA-DR, Panama TPA)
+    andean_atpa_expired: [BO, CO, EC, PE]
+    netherlands_antilles_successors: [SX, BQ]   # GN 7(a): Netherlands Antilles listed, eligibility ended; Curacao listed separately
+    cbp_footnote: [AI, KY, GP, MQ, TC]          # Anguilla, Cayman Islands, Guadeloupe, Martinique, Turks and Caicos
+  requires: direct_arrival                      # 148.33(d)(3)(ii); 9804.00.72: "arrives directly from a beneficiary country"
+  min_liters_produced_in_beneficiary_countries: 1.0
   cruise_duty_free: "1 liter, or 2 liters if at least one bottle is the product of an eligible country (CBP)"
-  citations: [19cfr148.33, cbp-types-of-exemptions]
-  status: accepted                              # CBP list used as published; not checked against HTSUS GN 7/11 or ch. 98 (SPEC 5.5)
+  citations: [19cfr148.33, htsus9804.00.72, htsus-ch98-iv-usnote-4, htsus-gn-7]
+  status: confirmed                             # read in the HTSUS text (2026 Revision 23); replaces the accepted CBP list (SPEC 5.5)
 
 # ---------------------------------------------------------------- excise
 # Federal excise (CBP collects it as "internal revenue tax"). General rates only:

@@ -5,7 +5,7 @@
 | `scenarios.yaml` | Source of truth: every question, the facts it states, and the non-dollar gold (outcome, bottom line per line, clarify fact, state flag, citations) |
 | `gold.xlsx` | Independent gold calculation: rates typed in from TTB and HTSUS 9816.00.20, one formula row per priced alcohol line, what-if tables |
 | `gold.md` | Readable copy of the gold with the working for every priced line and what-if, exported from the workbook values. For review and git diffs; do not edit by hand |
-| `eval_set.jsonl` | 80 scenarios. Frozen as git tag `eval-v1`. **Never tune against it** (CLAUDE.md rule 6) |
+| `eval_set.jsonl` | 80 scenarios. Frozen as git tag `eval-v2` (v1 had the old 2 L country list). **Never tune against it** (CLAUDE.md rule 6) |
 | `dev_set.jsonl` | 20 separate scenarios for prompt and design work. Includes the CLAUDE.md worked examples (D01, D05, D08, D10) |
 | `build_eval.py` | Copies inputs into `gold.xlsx` and exports the JSONL after the workbook is recalculated. It does no customs arithmetic |
 
@@ -20,7 +20,7 @@ soffice --headless --convert-to xlsx --outdir /tmp eval/gold.xlsx && cp /tmp/gol
 uv run python eval/build_eval.py export     # writes eval_set.jsonl, dev_set.jsonl, gold.md
 ```
 
-After `eval-v1` is tagged, a change to `eval_set.jsonl` means a new tag (`eval-v2`) and a note in the report.
+After the tag, a change to `eval_set.jsonl` means a new tag (`eval-v3`, …) and a note in the report. History: `eval-v1` → `eval-v2` corrected the 2 L country list (E15, E48).
 
 ## Record format (one JSON object per line)
 
@@ -33,7 +33,7 @@ After `eval-v1` is tagged, a change to `eval_set.jsonl` means a new tag (`eval-v
             "basket": [{"item": "Chianti", "category": "alcohol", "type": "wine", "quantity": {"value": 3, "unit": "bottle"},
                         "unit_ml": 750, "abv": 13, "unit_price_usd": 25, "origin": "IT", "bought_where": "IT"}]},
   "inject_into_retrieval": null,
-  "gold": {"outcome": "answered", "reason": null, "exemption": "standard_800", "clarify_fact": null,
+  "gold": {"outcome": "answered", "reason": null, "exemption": "standard_800", "clarify_facts": null,
            "bottom_line": [{"line": 1, "type": "owe"}], "state_flag": null,
            "citations": ["19cfr148.33", "htsus9816.00.20", "ttb-tax-rates"], "must_not_contain": [],
            "lines": [{"line": 1, "excess_l": 1.25, "dutiable_value_usd": 42, "duty_rate": 0.03, "duty_usd": 1.26, "excise_usd": 0.35}],
@@ -51,7 +51,7 @@ After `eval-v1` is tagged, a change to `eval_set.jsonl` means a new tag (`eval-v
 
 ## Scoring (docs/SPEC.md 6)
 
-Correct = outcome and every bottom-line type match; every dollar figure within $0.01; gold citations ⊆ cited ids, and no cited id outside the retrieved set; clarify asked exactly when gold says so (and for the gold fact).
+Correct = outcome and every bottom-line type match; every dollar figure within $0.01; gold citations ⊆ cited ids, and no cited id outside the retrieved set; clarify asked exactly when gold says so, in one message that asks for every fact in `clarify_facts` and nothing outside the current stage (SPEC 5.2).
 
 ## Coverage
 
@@ -61,8 +61,10 @@ Eval types and counts follow docs/SPEC.md 7. Cases worth knowing:
 - Highest-rate-first allocation across lines: E06, E43–E47, E51, E52.
 - Excise classes: still wine ≤ 16% (most), 16–21% (E08), sparkling (E09, E45), beer (E10, E51), spirits incl. low ABV (E12) and cream liqueur (E52), sake as wine (E07, E47).
 - Free programmes other than USMCA: E12 (KR), E15 (DO), E48 (PE), D20 (CL).
+- 2 L trap: E15 (Dominican Republic) and E48 (Peru) arrive directly from countries on CBP's old list that are not beneficiary countries under HTSUS ch. 98 Note 4 / General Note 7(a), so 1 L applies (eval-v2).
 - $200 limits at and over the edge: E21 (exactly 150 ml), E22 (200 ml), E24 (under 150 ml but over $200).
 - Escalations: E38 (Russian vodka), E49 (over the $1,000 flat-rate band), E50 (over 9 L).
+- Several facts missing at once: E57 and D13 (age, trip length and 30-day use asked together).
 - `flat_rate_used_last_30_days`: E20 and E24 state that no duty was paid on the earlier trip, so the flat rate is available.
 
 ## Answers that rest on a project choice
@@ -72,13 +74,12 @@ These follow the approved SPEC, but the regulation alone does not settle them. I
 | Scenarios | Depends on | If it went the other way |
 | --- | --- | --- |
 | Every multi-line allocation (E06, E43–E47, E51, E52) | SPEC 5.4: "highest rate" in 148.33(b) ranked by duty + excise **per litre**, because the 1 L cap is the binding limit | Ranking per dollar of value flips E44 ($3.57 → $3.84) and E46 ($1.58 → $2.16) |
-| E15 (DO), E48 (PE) | SPEC 5.5: CBP's 2 L country list used as published. Both countries joined trade agreements, so the HTSUS may treat them as former beneficiary countries | 1 L allowance instead of 2 L; both answers change |
 
 ## Not covered (spec gaps, decide before v2)
 
 - Tobacco that loses its exemption because the $200 exemption fails on another item (e.g. 5 cigars plus a 750 ml bottle on a day trip). The rules treat the tobacco as over the allowance (declare, detention risk), which is probably harsher than CBP practice.
 - Baskets where tobacco within the count limits uses up the $800 value, so part of it is dutiable.
-- Two-turn clarify: the follow-up answer and the final answer after it.
+- Two-turn clarify: the follow-up answer, the final answer after it, and the defaults after two unanswered rounds (SPEC 5.2).
 - Corrections across turns ("actually it was 3 days").
 
 ## Hand re-check (solo gold protocol)

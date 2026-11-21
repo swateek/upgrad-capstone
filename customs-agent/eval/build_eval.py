@@ -280,7 +280,7 @@ def build_workbook(items: list[dict]) -> None:
     for i, cc in enumerate(COLUMN2, 2):
         rates.cell(row=i, column=8, value=cc).font = BLUE
     rates["F1"].comment = Comment(
-        "Only S (USMCA) was read in the HTSUS text; the rest are accepted from CBP guidance (docs/SPEC.md 5.5).",
+        "Programme symbols confirmed in HTSUS General Note 3(c)(i) and the 9816.00.20 Special column (docs/SPEC.md 5.5).",
         "eval",
     )
 
