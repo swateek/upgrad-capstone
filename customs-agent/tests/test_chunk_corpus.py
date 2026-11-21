@@ -35,3 +35,10 @@ def test_long_table_repeats_header_in_every_piece() -> None:
 
 def test_small_block_is_unchanged() -> None:
     assert cc.split_oversized("short text", 350) == ["short text"]
+
+
+def test_words_run_together_by_dots_are_split_under_budget() -> None:
+    # PDF text like "documentation.that.proves.you.left..." is one "word" but many tokens
+    text = "documentation.that.proves.you.left.the.United.States,.to:." * 60
+    pieces = cc.split_oversized(text, 200)
+    assert len(pieces) > 1 and all(cc.ntok(p) <= 200 for p in pieces)

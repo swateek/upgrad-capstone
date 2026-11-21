@@ -96,6 +96,18 @@ LLM_CACHE=0 uv run python eval/run_baselines.py --set eval --run-name week1     
 - Score any answers file again: `uv run python eval/score.py --gold eval/dev_set.jsonl --pred results/runs/<run>/<strategy>.jsonl`.
 - Tune prompts on `--set dev` only. Run `--set eval` once the prompts are fixed.
 
+## 8. Retrieval experiment (Days 5–7)
+
+Compares BM25, dense (endpoint embeddings), hybrid (RRF, k=60) and hybrid + reranker, with and without the hard-negative filter, at chunk sizes 200 / 350 / 450 tokens, on 60 retrieval queries (`eval/retrieval_queries.yaml`, separate from the eval set).
+
+```bash
+uv add rank-bm25 numpy sentence-transformers      # once; sentence-transformers brings PyTorch (a few hundred MB)
+uv run python eval/retrieval_experiment.py --methods bm25    # keyword only: quick, no endpoint
+uv run python eval/retrieval_experiment.py                   # full grid: embeds ~4,000 chunks once (cached), downloads the reranker once
+```
+
+Writes `results/retrieval_experiment.csv` (recall@1/3/5/10, MRR, hard negatives in the top 3, per configuration) and `results/retrieval_per_query.csv`.
+
 ## Coming next (add steps here as they land)
 
 - Retrieval index and experiment (Days 5–7).

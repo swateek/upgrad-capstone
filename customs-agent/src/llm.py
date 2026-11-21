@@ -259,7 +259,7 @@ class LLM:
     max_attempts: int = 6
     base_delay: float = 1.0
     max_delay: float = 30.0
-    embed_batch_size: int = 32
+    embed_batch_size: int = 16  # the course embeddings endpoint rejects batches over 16 (HTTP 422)
     chat_client: Any = None  # injected in tests; built from the endpoint otherwise
     embed_client: Any = None
     sleep: Callable[[float], None] = time.sleep

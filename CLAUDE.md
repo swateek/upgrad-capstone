@@ -55,7 +55,7 @@ Two separate OpenAI-compatible endpoints, each with its own URL, API key and CA 
 | --- | --- | --- |
 | Model | `Qwen/Qwen3-8B` | `bge-small-en-v1.5` (set via `EMBED_MODEL`: the server has no `/v1/models`, returns 404) |
 | Settings (`.env`) | `CHAT_BASE_URL`, `CHAT_API_KEY`, `CHAT_CA_CERT`, `CHAT_MODEL` | `EMBED_BASE_URL`, `EMBED_API_KEY`, `EMBED_CA_CERT`, `EMBED_MODEL` |
-| Verified | Native tool calls 3/3; `response_format` `json_schema` and `json_object` both work; `usage` reported | `POST /v1/embeddings` works; **384 dimensions**; **max 512 tokens per input** |
+| Verified | Native tool calls 3/3; `response_format` `json_schema` and `json_object` both work; `usage` reported | `POST /v1/embeddings` works; **384 dimensions**; **max 512 tokens per input**; **max 16 inputs per call** (422 above; `src/llm.py` batches by 16) |
 | Limits | 8,192 tokens per call total, max 1,024 output; 1 request in flight | 1 request in flight |
 
 - Certificates live in `certs/` (git-ignored). TLS setup lives in `src/endpoints.py` (`Endpoint`, `resolve_file()`, `load_ca()`, `make_client()`); application code imports from there, never from `prechecks/`. `CA_RELAX_STRICT=1` only if Python 3.13+ rejects a CA for missing key-usage extensions.
@@ -247,7 +247,8 @@ If behind at Day 9: drop `whatif_optimise` first, then UI extras. Never drop the
 - [x] Corpus committed as manifest + hand-saved pages; tag `corpus-v1`.
 - [x] Day 4 code: `eval/score.py` (deterministic scorer, SPEC 6), `src/baselines/` (closed_book, fewshot_json with 4 dev examples, cot_sc 3 samples, decompose 3 steps; closed book, model does all arithmetic), `eval/run_baselines.py` (resumable; writes `results/week1_*.csv` for the eval set). 124 offline tests.
 - [x] Baselines run: dev v1/v2 (prompt fixes logged), official `week1` on eval-v2 -> `results/week1_strategies.csv`, `results/week1_failures.csv`; write-up `docs/BASELINES.md`. Best accuracy 0.175 (fewshot_json); dollars ≤ 0.07; clarify ≤ 1/8.
-- [ ] **Gate (end of Day 4):** SPEC approved ✓, `eval-v2` tagged ✓, baselines committed (commit `results/`). Then Days 5–7: retrieval experiment, agent v0, code router.
+- [x] **Gate passed (end of Day 4):** SPEC approved, `eval-v2` tagged, baselines committed (commit 5615aa7, tag `gate-day4`). Agent code now allowed.
+- [ ] Days 5–7: retrieval experiment -> `results/retrieval_experiment.csv` + three decisions; agent v0 end to end on dev; code router.
 - [ ] `uv add --dev pyyaml openpyxl` (needed by `eval/build_eval.py`).
 - [ ] Add the newly cited sources to the corpus: 19 USC 1681a, 26 USC 5754/5761, HTSUS General Note 3 and ch. 98 U.S. Note 4, OFAC Russia FAQs.
 
