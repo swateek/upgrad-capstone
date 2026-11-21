@@ -238,7 +238,8 @@ If behind at Day 9: drop `whatif_optimise` first, then UI extras. Never drop the
 - [x] `docs/SPEC.md` **APPROVED (Day 1)**: commercial threshold and 5 states adopted (5.4); 2 L list (now 30, incl. Curaçao, Sint Maarten, Caribbean Netherlands) and programme codes used from CBP without HTSUS check, status `accepted` (5.5); eval table has 6 `cuban_origin` + 1 `sanctions_escalate`.
 - [ ] Not blocking: check SPEC 5.5 data against HTSUS General Notes 3, 7, 11 if time allows.
 - [x] Eval sets written: `eval/scenarios.yaml` → `eval/gold.xlsx` (formula gold, independent of `src/tools`; readable working in `eval/gold.md`) → `eval/eval_set.jsonl` (80, SPEC 7 counts) and `eval/dev_set.jsonl` (20). Cross-checked with a separate decimal calculation: 61 priced lines and 5 what-ifs agree. Format and gaps in `eval/README.md`.
-- [ ] Hand re-check the 20 scenarios listed in `eval/README.md` (next day), then tag `eval-v1`.
+- [x] Hand check of the eval gold done by the project owner: all match.
+- [ ] Commit, merge and tag `eval-v1` (freezes the 80 eval scenarios).
 - [ ] `uv add --dev pyyaml openpyxl` (needed by `eval/build_eval.py`).
 - [ ] Add the newly cited sources to the corpus: 19 USC 1681a, 26 USC 5754/5761, HTSUS General Note 3 and ch. 98 U.S. Note 4, OFAC Russia FAQs.
 
