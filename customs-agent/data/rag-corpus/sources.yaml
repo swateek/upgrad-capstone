@@ -1,145 +1,405 @@
-# Source manifest for the alcohol & tobacco customs RAG corpus (v1).
-# fetch_corpus.py reads this file, downloads each source, and writes
-# corpus/primary/<id>.md with YAML front matter.
+# Source manifest for the DeclareRight RAG corpus (v2: one document per unit).
+# fetch_corpus.py reads this file and writes corpus/docs/<doc_id>.md, corpus/MANIFEST.json
+# and gzipped raw snapshots in corpus/raw/.
 #
-# authority:
-#   primary_regulation  - binding text (CFR, HTSUS). Cite these first.
-#   agency_guidance     - CBP / OFAC / TTB explanations of the rules.
-#   tax_rates           - TTB excise rate tables (also copied into rule tables).
+# authority (copied onto every document and chunk):
+#   primary_regulation - binding text (CFR, U.S. Code, HTSUS, Executive Order). Cite these first.
+#   agency_guidance    - CBP / OFAC / TTB explanations of the rules.
+#   tax_rates          - TTB excise rate tables.
+#   state_guidance     - the five arrival states' own pages (flag only, no amounts).
+#   hard_negative      - looks similar but must never be cited to a traveller (crew rules,
+#                        food, currency, visitors...). Kept to test retrieval.
 #
-# kind:
-#   ecfr  - eCFR versioner API; only the listed sections are kept
-#   hts   - USITC HTS REST API (tariff lines)
-#   html  - web page converted to markdown
+# kind: ecfr | usc | hts_lines | hts_ch98 | hts_general_notes | ofac_faqs | federal_register | html | pdf
+# citation_id: the id rules.yaml and the eval gold cite; CFR, USC and HTSUS ids are built per unit.
+# heading_rules: if the unit's heading contains any keyword, add tags / set authority.
+# off_topic_unless: units whose heading has none of these keywords become hard negatives.
+# start / end: regexes that cut a page's main text (first line matching start, up to the first end);
+#   start_last: use the last line matching start (pages with a table of contents first).
+# flatten_tables: treat layout tables as plain text (e-mail bulletins).
+
+# eCFR point-in-time date for every CFR source (corpus-v1). Change it only to refresh the corpus on purpose.
+ecfr_as_of: "2026-11-19"
 
 sources:
 
-  # ---------------------------------------------------------------- CFR
-  - id: 19cfr148_returning_residents
-    title: "19 CFR Part 148, Subpart D - Exemptions for returning residents ($800 exemption, alcohol and tobacco limits)"
+  # ================================================================ CFR (eCFR API, one doc per section)
+  - id: 19cfr148
+    title: "19 CFR Part 148 - Personal declarations and exemptions"
     kind: ecfr
     title_number: 19
     part: "148"
-    sections: {from: "148.31", to: "148.39"}
     authority: primary_regulation
-    tags: [exemption_800, alcohol_allowance, tobacco_allowance, family, 30_day_rule, 48_hour_rule]
-    url: https://www.ecfr.gov/current/title-19/chapter-I/part-148
+    tags: [cfr19_148]
+    heading_rules:
+      - {if_any: [crewmember, crew], tags: [crew, hard_negative], authority: hard_negative}   # same 50/10/150 ml limits as 148.51
+      - {if_any: [nonresident, non-resident, foreign officials, diplomatic], tags: [non_resident, out_of_scope]}
+      - {if_any: [returning resident], tags: [returning_resident]}
+      - {if_any: [insular possession, virgin islands, guam, american samoa], tags: [insular_possession, out_of_scope]}
+      - {if_any: [flat rate], tags: [flat_rate]}
+      - {if_any: [alcoholic, liquor, beverage], tags: [alcohol]}
+      - {if_any: [cigar, tobacco], tags: [tobacco]}
+      - {if_any: [declaration], tags: [declaration]}
 
-  - id: 19cfr148_51_200_exemption
-    title: "19 CFR 148.51 - $200 exemption for returning residents not entitled to $800 (short trips)"
-    kind: ecfr
-    title_number: 19
-    part: "148"
-    sections: {from: "148.51", to: "148.51"}
-    authority: primary_regulation
-    tags: [exemption_200, short_trip, alcohol_150ml, cigarettes_50, cigars_10]
-    url: https://www.ecfr.gov/current/title-19/chapter-I/part-148
-
-  - id: 19cfr148_flat_rate
-    title: "19 CFR 148.101 and following - Flat rate of duty on articles over the exemption"
-    kind: ecfr
-    title_number: 19
-    part: "148"
-    sections: {from: "148.101", to: "148.110"}
-    authority: primary_regulation
-    tags: [flat_rate, excess_alcohol]
-    url: https://www.ecfr.gov/current/title-19/chapter-I/part-148
-
-  - id: 31cfr515_cuba_alcohol_tobacco
-    title: "31 CFR Part 515 (Cuban Assets Control Regulations) - 515.204, 515.560, 515.585"
+  - id: 31cfr515
+    title: "31 CFR Part 515 - Cuban Assets Control Regulations"
     kind: ecfr
     title_number: 31
     part: "515"
-    sections: {list: ["515.204", "515.560", "515.585"]}
     authority: primary_regulation
-    tags: [cuba, prohibited, alcohol, tobacco]
-    url: https://www.ecfr.gov/current/title-31/subtitle-B/chapter-V/part-515
+    tags: [cuba]
+    heading_rules:
+      - {if_any: [importation, merchandise, imports], tags: [cuba_import]}
+      - {if_any: [travel], tags: [cuba_travel]}
+      - {if_any: [alcohol, tobacco], tags: [alcohol, tobacco]}
 
-  # -------------------------------------------------------------- HTSUS
-  - id: htsus_9804_personal_exemptions
-    title: "HTSUS 9804.00.65 / .70 / .72 - Returning resident personal exemptions"
-    kind: hts
-    from: "9804.00.65"
-    to: "9804.00.72"
+  - id: 27cfr27
+    title: "27 CFR Part 27 - Importation of distilled spirits, wines, and beer (TTB)"
+    kind: ecfr
+    title_number: 27
+    part: "27"
     authority: primary_regulation
-    tags: [exemption_800, alcohol_allowance, tobacco_allowance]
-    url: https://hts.usitc.gov/
-    note: "The alcohol and tobacco quantity limits sit in the U.S. Notes to Chapter 98, Subchapter IV. Download the Chapter 98 PDF from hts.usitc.gov into corpus/raw/ and the script will extract it (see README)."
+    tags: [ttb, alcohol, commercial_import]
+    heading_rules:
+      - {if_any: [rate, tax], tags: [excise]}
+      - {if_any: [personal, samples, exemption], tags: [personal_use]}
 
-  - id: htsus_9816_flat_rate
-    title: "HTSUS 9816.00.20 - Flat 3% rate on the next $1,000 over the exemption"
-    kind: hts
+  - id: 27cfr41
+    title: "27 CFR Part 41 - Importation of tobacco products, cigarette papers and tubes (TTB)"
+    kind: ecfr
+    title_number: 27
+    part: "41"
+    authority: primary_regulation
+    tags: [ttb, tobacco, commercial_import]
+    heading_rules:
+      - {if_any: [rate, tax], tags: [excise]}
+      - {if_any: [personal, exemption, returning], tags: [personal_use]}
+      - {if_any: [labeled for export, previously exported, reimport], tags: [export_labelled]}
+
+  - id: 31cfr1010_currency
+    title: "31 CFR 1010.340 - Reports of transportation of currency or monetary instruments (HARD NEGATIVE)"
+    kind: ecfr
+    title_number: 31
+    part: "1010"
+    sections: {list: ["1010.340"]}
+    authority: hard_negative
+    tags: [currency, hard_negative]
+
+  # ================================================================ U.S. Code (OLRC, one doc per subsection)
+  - id: 26usc_excise
+    title: "26 U.S.C. (Internal Revenue Code) - alcohol and tobacco excise, export-labelled tobacco"
+    kind: usc
+    title_number: 26
+    sections: ["5001", "5041", "5051", "5701", "5704", "5754", "5761"]
+    authority: primary_regulation
+    tags: [usc26, excise]
+    heading_rules:
+      - {if_any: [tobacco, cigarette], tags: [tobacco]}
+      - {if_any: [spirits, wine, beer], tags: [alcohol]}
+      - {if_any: [previously exported, export], tags: [export_labelled]}
+
+  - id: 19usc_customs
+    title: "19 U.S.C. - imported cigarettes (1681-1681b) and penalties for undeclared baggage (1497)"
+    kind: usc
+    title_number: 19
+    sections: ["1497", "1681", "1681a", "1681b"]
+    authority: primary_regulation
+    tags: [usc19]
+    heading_rules:
+      - {if_any: [cigarette], tags: [tobacco]}
+      - {if_any: [declare, baggage, penalt], tags: [declaration, penalty]}
+
+  # ================================================================ HTSUS (USITC)
+  - id: htsus_lines_9804
+    title: "HTSUS 9804 - Personal exemptions (tariff lines)"
+    kind: hts_lines
+    from: "9804.00.05"
+    to: "9804.00.80"
+    authority: primary_regulation
+    tags: [htsus, exemption]
+
+  - id: htsus_lines_9816
+    title: "HTSUS 9816 - Flat rate for personal-use articles (tariff lines)"
+    kind: hts_lines
     from: "9816.00.20"
     to: "9816.00.40"
     authority: primary_regulation
-    tags: [flat_rate, excess_alcohol]
-    url: https://hts.usitc.gov/
+    tags: [htsus, flat_rate]
 
-  # ------------------------------------------------------- CBP guidance
-  - id: cbp_customs_duty_information
-    title: "CBP - Customs duty information (alcohol, tobacco, flat rate, personal exemptions)"
-    kind: html
+  - id: htsus_ch98_notes
+    title: "HTSUS Chapter 98 - U.S. Notes (Subchapters IV and XVI)"
+    kind: hts_ch98
+    urls:
+      - "https://hts.usitc.gov/reststop/file?release=currentRelease&filename=Chapter%2098"
+    subchapters: [IV, XVI]
+    authority: primary_regulation
+    tags: [htsus, chapter98]
+    heading_rules:
+      - {if_any: [alcohol, beverage, liter], tags: [alcohol]}
+      - {if_any: [cigar, tobacco], tags: [tobacco]}
+      - {if_any: [beneficiary, caribbean], tags: [beneficiary_2l]}
+
+  - id: htsus_general_notes
+    title: "HTSUS General Notes 3 (rates of duty, programme codes) and 7 (CBERA beneficiary countries)"
+    kind: hts_general_notes
+    urls:
+      - "https://hts.usitc.gov/reststop/file?release=currentRelease&filename=General%20Notes"
+    notes: {3: "General Note 3", 7: "CBERA"}       # note number -> running page label in the PDF
+    # General Note 11 (ATPA, Andean countries) is no longer in the 2026 HTSUS (Revision 23).
+    authority: primary_regulation
+    tags: [htsus, general_notes]
+    heading_rules:
+      - {if_any: [rates of duty], tags: [programme_codes, column2]}
+      - {if_any: [caribbean, andean, beneficiary], tags: [beneficiary_2l]}
+
+  # ================================================================ Executive Order (Russia)
+  - id: eo14068
+    title: "Executive Order 14068 - Prohibiting certain imports (incl. Russian-origin alcoholic beverages)"
+    kind: html                                    # GovInfo copy: federalregister.gov blocks scripts, API text included
+    citation_id: eo-14068
+    url: https://www.govinfo.gov/content/pkg/FR-2022-03-15/html/2022-05554.htm
+    start: "Executive Order 14068"
+    end: ["^\\[FR Doc", "FR Doc\\. 2022"]
+    authority: primary_regulation
+    tags: [russia, sanctions, alcohol]
+
+  # ================================================================ OFAC FAQs (one doc per FAQ)
+  - id: ofac_cuba_faqs
+    title: "OFAC - Cuba Sanctions FAQs"
+    kind: ofac_faqs
+    listing: "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page={page}"
+    max_pages: 30
+    ids: [718, 719, 720, 769, 837]
     authority: agency_guidance
-    tags: [alcohol_allowance, tobacco_allowance, excess_alcohol, excess_tobacco, state_limits, agr_cigarettes, flat_rate]
+    tags: [ofac, cuba]
+    heading_rules:
+      - {if_any: [cigar, rum, alcohol, tobacco], tags: [alcohol, tobacco, cuba_import]}
+      - {if_any: [import], tags: [cuba_import]}
+      - {if_any: [travel], tags: [cuba_travel]}
+
+  - id: ofac_russia_faqs
+    title: "OFAC - Russia import-ban FAQs (alcoholic beverages)"
+    kind: ofac_faqs
+    ids: [1024, 1027, 1182]
+    authority: agency_guidance
+    tags: [ofac, russia, sanctions]
+
+  # ================================================================ CBP guidance (one doc per section)
+  - id: cbp_customs_duty_information
+    title: "CBP - Customs Duty Information"
+    kind: html
+    citation_id: cbp-duty-info
     url: https://cbp.gov/travel/international-visitors/know-before-you-visit/customs-duty-information
+    split: h2
+    start: "^#\\s+"
+    end: &cbp_end ["^\\**Last Modified", "Was this page helpful", "^#+\\s*Related"]
+    authority: agency_guidance
+    tags: [cbp]
+    heading_rules: &cbp_rules
+      - {if_any: [alcohol, liquor, beverage], tags: [alcohol]}
+      - {if_any: [tobacco, cigar, cigarette], tags: [tobacco]}
+      - {if_any: [cuba, embargo], tags: [cuba]}
+      - {if_any: [exemption, duty free], tags: [exemption]}
+      - {if_any: [flat, duty], tags: [duty]}
 
   - id: cbp_types_of_exemptions
-    title: "CBP - Types of exemptions ($200, $800, $1,600; Caribbean Basin 2-liter rule)"
+    title: "CBP - Types of Exemptions"
     kind: html
-    authority: agency_guidance
-    tags: [exemption_200, exemption_800, short_trip, caribbean_basin, cruise]
+    citation_id: cbp-types-of-exemptions
     url: https://www.cbp.gov/travel/international-visitors/kbyg/types-exemptions
+    split: h2
+    start: "^#\\s+"
+    end: *cbp_end
+    authority: agency_guidance
+    tags: [cbp, exemption]
+    heading_rules: *cbp_rules
 
   - id: cbp_prohibited_restricted
-    title: "CBP - Prohibited and restricted items"
+    title: "CBP - Prohibited and Restricted Items"
     kind: html
-    authority: agency_guidance
-    tags: [prohibited, cuba]
+    citation_id: cbp-prohibited-restricted
     url: https://www.cbp.gov/travel/us-citizens/know-before-you-go/prohibited-and-restricted-items
+    split: h2
+    start: "^#\\s+"
+    end: *cbp_end
+    authority: agency_guidance
+    tags: [cbp]
+    heading_rules: *cbp_rules
+    off_topic_unless: [alcohol, absinthe, tobacco, cigar, cigarette, embargo, cuba, prohibited and restricted]
+
+  - id: cbp_kbyg_traveling_abroad
+    title: "CBP - Know Before You Go: Traveling Abroad"
+    kind: html
+    citation_id: cbp-kbyg
+    url: https://www.cbp.gov/travel/us-citizens/know-before-you-go/know-you-go-traveling-abroad
+    split: h2
+    start: "^#\\s+"
+    end: *cbp_end
+    authority: agency_guidance
+    tags: [cbp]
+    heading_rules: *cbp_rules
+    off_topic_unless: [duty, exemption, alcohol, tobacco, gift, shop, declar, know before]
+
+  - id: cbp_shopping_abroad
+    title: "CBP - Shopping Abroad: Duty Free, Gifts, Household Items"
+    kind: html
+    citation_id: cbp-shopping-abroad
+    url: https://www.cbp.gov/travel/us-citizens/know-before-you-go/shopping-abroad-duty-free-gifts-household-items
+    split: h2
+    start: "^#\\s+"
+    end: *cbp_end
+    authority: agency_guidance
+    tags: [cbp, duty_free, gifts]
+    heading_rules: *cbp_rules
+    off_topic_unless: [duty, gift, shop, alcohol, tobacco]
+
+  - id: cbp_canada_mexico_travel
+    title: "CBP - Canada and Mexico Travel"
+    kind: html
+    citation_id: cbp-canada-mexico
+    url: https://www.cbp.gov/travel/us-citizens/canada-mexico-travel
+    start: "^#\\s+"
+    end: *cbp_end
+    authority: agency_guidance
+    tags: [cbp, mexico, canada, land_border]
 
   - id: cbp_info_cuban_cigars
     title: "CBP Info Center - Importing Cuban cigars"
     kind: html
-    authority: agency_guidance
-    tags: [cuba, cigars, prohibited]
+    citation_id: cbp-info-1389
     url: https://www.help.cbp.gov/s/article/Article-1389?language=en_US
-    note: "JavaScript-rendered page: the script cannot read it. Save it from a browser to corpus/raw/cbp_info_cuban_cigars.html (see README)."
-
-  # ------------------------------------------------------------- OFAC
-  - id: ofac_faq_719
-    title: "OFAC FAQ 719 - Cuban-origin cigars and alcohol bought while in Cuba"
-    kind: html
+    note: "JavaScript page: save it from a browser as corpus/raw/cbp_info_cuban_cigars.html (already saved)."
     authority: agency_guidance
-    tags: [cuba, prohibited, alcohol, tobacco]
-    url: https://ofac.treasury.gov/faqs/719
+    tags: [cbp, cuba, cigars, prohibited]
 
-  - id: ofac_faq_769
-    title: "OFAC FAQ 769 - Cuban-origin goods authorized for import (alcohol and tobacco excluded)"
+  - id: cbp_csms_section122
+    title: "CBP CSMS - Section 122 surcharge not applied to Chapter 98 entries"
     kind: html
+    citation_id: cbp-csms-section122
+    url: https://content.govdelivery.com/accounts/usdhscbp/bulletins/40b3b7b
+    flatten_tables: true
     authority: agency_guidance
-    tags: [cuba, prohibited, alcohol, tobacco]
-    url: https://ofac.treasury.gov/faqs/769
+    tags: [cbp, surcharge, chapter98]
 
-  # -------------------------------------------------------------- TTB
-  - id: ttb_alcohol_tax_rates
-    title: "TTB - Excise tax rates (beer, wine, distilled spirits, cigarettes, cigars)"
+  - id: cbp_form_6059b
+    title: "CBP Form 6059B - Customs Declaration"
+    kind: pdf
+    citation_id: cbp-form-6059b
+    url: https://www.cbp.gov/sites/default/files/2024-07/cbp_form_6059b_english.pdf
+    authority: agency_guidance
+    tags: [cbp, declaration]
+
+  - id: cbp_icp_spirits
+    title: "CBP Informed Compliance - Classification and Entry Requirements of Alcoholic Beverages and Spirits"
+    kind: pdf
+    citation_id: cbp-icp-spirits
+    url: https://www.cbp.gov/sites/default/files/documents/icp_spirits_3.pdf
+    split: pages
+    authority: agency_guidance
+    tags: [cbp, alcohol, commercial_import, proof]
+
+  # ================================================================ TTB
+  - id: ttb_tax_rates
+    title: "TTB - Tax Rates"
     kind: html
-    authority: tax_rates
-    tags: [excise, wine, spirits, beer, cigarettes, cigars]
+    citation_id: ttb-tax-rates
     url: https://www.ttb.gov/what-we-do/taxes-and-filing/tax-rates
+    split: h2
+    start: "^#\\s+"
+    authority: tax_rates
+    tags: [ttb, excise]
+    heading_rules: *cbp_rules
+    off_topic_unless: [alcohol, tobacco, tax rates]
 
-  # ---------------------------------------------------- hard negatives
-  - id: 19cfr148_crew_hard_negative
-    title: "19 CFR Part 148, Subpart G - Crewmembers (HARD NEGATIVE: never cite for travellers)"
-    kind: ecfr
-    title_number: 19
-    part: "148"
-    sections: {from: "148.61", to: "148.69"}
+  - id: ttb_personal_importation
+    title: "TTB - Personal Importation of Alcohol Beverage Products"
+    kind: html
+    citation_id: ttb-personal-importation
+    url: https://www.ttb.gov/regulated-commodities/beverage-alcohol/importers/personal-importation-of-alcohol-beverage-products
+    start: "^#\\s+"
+    authority: agency_guidance
+    tags: [ttb, alcohol, personal_use, state_limits]
+
+  # ================================================================ State pages (flag only)
+  - id: state_ny
+    title: "New York - Importing alcoholic beverages for personal consumption"
+    kind: html
+    citation_id: state-ny
+    url: https://www.tax.ny.gov/bus/bev/abt-importperscons.htm
+    authority: state_guidance
+    tags: [state, ny]
+  - id: state_fl
+    title: "Florida Statutes Chapter 562 (562.16: possession of untaxed beverages)"
+    kind: html
+    citation_id: state-fl
+    url: https://www.flsenate.gov/Laws/Statutes/2026/Chapter562/All
+    start: "^\\W*562\\.16\\s+Possession"
+    start_last: true                              # the chapter page lists every section first
+    end: ["^\\W*562\\.16[1-9]", "^\\W*562\\.17\\s"]
+    authority: state_guidance
+    tags: [state, fl]
+  - id: state_ca
+    title: "California ABC - Importing alcoholic beverages for personal or household use"
+    kind: html
+    citation_id: state-ca
+    url: https://www.abc.ca.gov/importing-alcoholic-beverages-for-personal-or-household-use
+    authority: state_guidance
+    tags: [state, ca]
+  - id: state_tx
+    title: "Texas TABC - Personal importation at ports of entry (FAQs)"
+    kind: html
+    citation_id: state-tx
+    url: https://www.tabc.texas.gov/faqs/personal-importation-ports-of-entry-faqs
+    authority: state_guidance
+    tags: [state, tx]
+  - id: state_nj
+    title: "New Jersey Treasury - Importing alcoholic beverages"
+    kind: html
+    citation_id: state-nj
+    url: https://nj.gov/treasury/taxation/importalcolbev.shtml
+    authority: state_guidance
+    tags: [state, nj]
+
+  # ================================================================ Hard negatives (never cite to a traveller)
+  - id: cbp_agriculture
+    title: "CBP - Bringing Agricultural Products Into the United States (HARD NEGATIVE)"
+    kind: html
+    citation_id: cbp-agriculture
+    url: https://www.cbp.gov/travel/clearing-cbp/bringing-agricultural-products-united-states
+    split: h2
+    start: "^#\\s+"
+    end: *cbp_end
     authority: hard_negative
-    tags: [crew, hard_negative]
-    url: https://www.ecfr.gov/current/title-19/chapter-I/part-148
-    note: "Same 50 cigarettes / 10 cigars / 150 ml limits as 148.51; tests whether retrieval picks the resident rule."
+    tags: [food, agriculture, hard_negative]
 
-# Not in the corpus (see README, "Hard negatives and exclusions"):
-#   Non-resident and insular-possession ($1,600) rules - out of scope for v1.
-#   Third-party travel sites and HTS mirrors - not authoritative.
+  - id: cbp_money
+    title: "CBP - Money and Other Monetary Instruments (HARD NEGATIVE)"
+    kind: html
+    citation_id: cbp-money
+    url: https://www.cbp.gov/travel/international-visitors/money-monetary-instruments
+    start: "^#\\s+"
+    end: *cbp_end
+    authority: hard_negative
+    tags: [currency, hard_negative]
+
+  - id: cbp_admission_visitors
+    title: "CBP - Admission into United States (international visitors) (HARD NEGATIVE)"
+    kind: html
+    citation_id: cbp-admission-visitors
+    url: https://www.cbp.gov/travel/international-visitors/applying-admission-united-states
+    split: h2
+    start: "^#\\s+"
+    end: *cbp_end
+    authority: hard_negative
+    tags: [non_resident, hard_negative]
+
+  - id: cbp_welcome_visitors
+    title: "CBP - Welcome to the United States: A Guide for International Visitors (HARD NEGATIVE)"
+    kind: pdf
+    citation_id: cbp-welcome-visitors
+    url: https://www.cbp.gov/sites/default/files/documents/WelcomeToTheUS.pdf
+    split: pages
+    authority: hard_negative
+    tags: [non_resident, hard_negative]
+
+# Not in the corpus: third-party sites (LII, Justia, travel blogs) and HTS mirrors - not authoritative.

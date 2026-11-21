@@ -1,7 +1,7 @@
 # Duty and excise rates for DeclareRight v1. Read by compute_duty_excise.
 #
 # Every number comes from an official page; local copies are in
-# data/rag-corpus/corpus/primary/ with their fetch date. Status legend as in rules.yaml.
+# data/rag-corpus/corpus/docs/ with their fetch date. Status legend as in rules.yaml.
 
 meta:
   version: 1

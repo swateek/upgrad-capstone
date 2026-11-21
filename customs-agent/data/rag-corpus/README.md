@@ -1,91 +1,64 @@
-# Customs assistant RAG corpus: alcohol & tobacco (v1)
+# DeclareRight RAG corpus (v2)
 
-The source documents for the assistant's `retrieve` tool, plus the scripts that download, check and chunk them.
+Official text only, one document per regulatory unit: a CFR section, a U.S. Code subsection, an HTSUS tariff line or note, an OFAC FAQ, or a section of a CBP / TTB / state page. Target 500–840 documents (CLAUDE.md, corpus); frozen as git tag `corpus-v1`.
 
 ```
 rag-corpus/
-├── sources.yaml            # the 14 sources (13 + 1 hard negative): URL, authority, tags, sections
-├── fetch_corpus.py         # downloads official text -> corpus/primary/*.md
-├── chunk_corpus.py         # corpus/**/*.md -> corpus/chunks.jsonl
+├── sources.yaml        # 35 sources: kind, URL, authority, tags, split rules
+├── fetch_corpus.py     # downloads -> corpus/docs/*.md, corpus/raw/*.gz, corpus/MANIFEST.json
+├── chunk_corpus.py     # corpus/docs/*.md -> corpus/chunks.jsonl (350-token chunks)
 └── corpus/
-    ├── primary/            # filled by fetch_corpus.py (commit the output)
-    └── raw/                # optional: manually saved HTML/PDF used before the network
+    ├── docs/           # one markdown file per unit, with front matter (commit)
+    ├── raw/            # gzipped downloads + INDEX.json with SHA-256 (commit), and hand-saved pages
+    ├── MANIFEST.json   # every doc and raw file with its hash, counts by source and authority (commit)
+    └── fetch_report.json
 ```
 
-## Quick start
-
-Run from `customs-agent/` (dependencies are managed with uv there; add them once):
+## Run (from `customs-agent/`, on the Mac: government sites block the cloud workspace)
 
 ```bash
-uv add requests pyyaml beautifulsoup4 lxml markdownify
-uv add --optional pdf pdfplumber      # only for the HTSUS Chapter 98 PDF
-uv run python data/rag-corpus/fetch_corpus.py   # writes corpus/primary/ and corpus/fetch_report.json
-uv run python data/rag-corpus/chunk_corpus.py   # writes corpus/chunks.jsonl (350-token chunks)
+uv add pdfplumber                                        # once, for the HTSUS and CBP PDFs
+uv run python data/rag-corpus/fetch_corpus.py            # about 10 minutes (1 s pause per request)
+uv run python data/rag-corpus/fetch_corpus.py --check    # every doc and raw file matches MANIFEST.json
+uv run python data/rag-corpus/chunk_corpus.py
 ```
 
-Commit `corpus/primary/` so everyone indexes the same snapshot. Re-run `fetch_corpus.py` weekly and review the git diff: a changed line in a regulation is the signal to update the rule tables.
+- Re-running uses the cached raw files in `corpus/raw/`; `--refresh` downloads again; `--offline` never touches the network; `--only <source id> ...` rebuilds some sources.
+- A failed source is listed in `corpus/fetch_report.json`; the rest still build.
+- **Large raw files:** pre-commit refuses files over 500 KB. If a gzipped PDF is over that, add it to `customs-agent/.gitignore`; its hash stays in `MANIFEST.json`, and `--check` reports it as not committed rather than failing.
+- **Freeze (Day 3):** when the counts look right, commit `corpus/` and tag `corpus-v1`. After that, a change to the corpus is a new tag and a re-run of the retrieval experiment.
 
-## What goes in, and why
+## Front matter on every document
 
-| Group | Sources | Authority | Used for |
-| --- | --- | --- | --- |
-| Regulations | 19 CFR 148.31-148.39 ($800 exemption), 148.51 ($200), 148.101+ (flat rate); 31 CFR 515.204, 515.560, 515.585 (Cuba) | `primary_regulation` | The citation shown to the traveller |
-| Tariff schedule | HTSUS 9804.00.65-.72, 9816.00.20-.40, Chapter 98 Subchapter IV U.S. Notes | `primary_regulation` | Exemption headings, flat rate, quantity limits |
-| CBP guidance | Customs duty information; Types of exemptions; Prohibited and restricted items; Info Center: Cuban cigars | `agency_guidance` | Plain-language explanations, examples, state-law and seizure rules |
-| OFAC | FAQ 719, FAQ 769 | `agency_guidance` | Cuban alcohol and tobacco ban since 24 Sep 2020 |
-| TTB | Excise tax rates page (alcohol and tobacco on one page) | `tax_rates` | Citations for excise; the numbers themselves live in the rule tables |
+| Field | Meaning |
+| --- | --- |
+| `doc_id` | Unique id: `19cfr148.33`, `26usc5754-a`, `htsus9816.00.20`, `ofac-faq-719`, `cbp-duty-info--cuba` |
+| `citation_id` | What the writer cites and the eval gold checks: `19cfr148.33`, `26usc5754`, `cbp-duty-info` (several docs can share one) |
+| `authority` | `primary_regulation`, `agency_guidance`, `tax_rates`, `state_guidance` or `hard_negative` |
+| `tags` | Topic tags for metadata filters (`alcohol`, `tobacco`, `cuba`, `crew`, `non_resident`, `off_topic`…) |
+| `heading`, `title`, `source_id`, `source_url`, `as_of` | Where it came from and its effective or retrieval date |
+| `raw_file`, `raw_sha256`, `text_sha256` | The snapshot it was cut from, and hashes for the freeze |
 
-## Hard negatives and exclusions
+## Hard negatives
 
-- **19 CFR 148 Subpart G (crew members), including 148.64: kept as a hard negative.** It has the same 50 cigarettes / 10 cigars / 150 ml limits as the $200 resident rule, so it tests whether retrieval picks the right section. It is tagged `crew` with authority `hard_negative`: filter it out for travellers and never cite it.
-- **Insular-possession ($1,600) and non-resident rules.** Out of scope for v1.
-- **Third-party sites and HTS mirrors.** Not authoritative.
+Kept so the retrieval experiment can measure confusion; filtered out before the writer and never cited:
 
-## When a fetch fails
+- **19 CFR 148 Subpart G (crew members), incl. 148.64:** same 50 cigarettes / 10 cigars / 150 ml limits as the resident rule 148.51.
+- **Off-topic sections of CBP pages** (pets, firearms, food, medication…): authority `hard_negative`, tag `off_topic`.
+- **Food, currency (31 CFR 1010.340, FinCEN 105), visitors' rules:** whole pages marked `hard_negative`.
+- Non-resident and insular-possession sections of 19 CFR 148 stay `primary_regulation` but carry `out_of_scope`.
 
-The script keeps going and lists failures in `corpus/fetch_report.json`.
+## When a source fails
 
-- **cbp.gov blocks scripts** (common): open the page in a browser, save it as HTML to `corpus/raw/<id>.html` (id from `sources.yaml`), and re-run. Saved files are used before the network.
-- **HTSUS Chapter 98 notes:** download the Chapter 98 PDF from hts.usitc.gov, save it as `corpus/raw/htsus_chapter98.pdf`, and re-run. The script extracts Subchapter IV into `corpus/primary/htsus_ch98_subchapter4_notes.md`.
-- **HTS API shape changed:** the `exportList` endpoint is the one the USITC site uses; if it errors, save the 9804 and 9816 lines from the website as text into `corpus/primary/` with the same front matter.
+- **A page needs JavaScript or blocks scripts:** save it from a browser as `corpus/raw/<source id>.html` (or `.pdf`) and re-run; hand-saved files are used before the network. `cbp_info_cuban_cigars.html` is already saved this way.
+- **HTSUS PDFs** (Chapter 98, General Notes): if the USITC file URL in `sources.yaml` fails, download the PDF from hts.usitc.gov and save it as `corpus/raw/htsus_ch98_notes.pdf` / `corpus/raw/htsus_general_notes.pdf`.
+- **A parser finds nothing** (page layout changed): the error names the source; adjust its `start` / `end` / `split` in `sources.yaml`.
 
-## Chunk format
-
-One JSON object per line in `corpus/chunks.jsonl`:
+## Chunks (`corpus/chunks.jsonl`)
 
 ```json
-{
-  "chunk_id": "19cfr148_51_200_exemption#002",
-  "doc_id": "19cfr148_51_200_exemption",
-  "heading_path": "19 CFR 148.51 ... > § 148.51 Special exemption for personal or household articles.",
-  "text": "<heading path>\n\n<chunk text>",
-  "tokens": 212,
-  "metadata": {"authority": "primary_regulation", "source_url": "...", "tags": ["exemption_200", "..."], "effective_as_of": "2026-10-08", "fetched_at": "..."}
-}
+{"chunk_id": "19cfr148.51#01", "doc_id": "19cfr148.51", "citation_id": "19cfr148.51", "authority": "primary_regulation",
+ "heading_path": "<subpart> > § 148.51 ...", "text": "<heading path>\n\n<text>", "tokens": 212, "metadata": {...}}
 ```
 
-Rules the chunker follows: split on headings first, so a chunk never spans two CFR sections; pack paragraphs up to 350 tokens; never split a table; prefix the heading path so a chunk makes sense alone.
-
-## How `retrieve` should use it
-
-- Return the top 3 chunks, 350 tokens each, so a stage's prompt stays well under the 8,192-token call limit.
-- Filter by `tags` from the traveller profile (for example `short_trip` → `exemption_200`) before ranking.
-- Rank `primary_regulation` above `agency_guidance` on ties.
-- Never return `hard_negative` chunks to the writer; they exist to measure whether retrieval confuses the crew rule (148.64) with the resident rule (148.51).
-- The writer may cite only `primary_regulation`, `agency_guidance` or `tax_rates` chunks. The corpus is official text only.
-
-## Spot-check after the first fetch (domain spec owner)
-
-Search the fetched files and confirm each figure appears in a primary or agency source:
-
-- [ ] 1 liter of alcohol inside the $800 exemption, age 21+
-- [ ] 200 cigarettes and 100 cigars inside the $800 exemption
-- [ ] $200 exemption: 50 cigarettes, 10 cigars, 150 ml alcohol; no family pooling
-- [ ] 48 hours abroad; not used in the previous 30 days
-- [ ] Flat rate 3% under 9816.00.20
-- [ ] Extra alcohol: flat rate plus excise, even under $800
-- [ ] Extra tobacco: detention, seizure, penalties
-- [ ] Caribbean Basin / Andean: 2 liters if 1 liter produced there
-- [ ] Cuban alcohol and tobacco barred as baggage since 24 Sep 2020
-- [ ] TTB: spirits $13.50 per proof gallon; wine up to 16% ABV $1.07 per gallon; cigarettes $50.33 per 1,000
-
+Split on headings first (a chunk never spans two units), pack paragraphs up to 350 tokens (the embedding model takes 512), never split a table, prefix the heading path.

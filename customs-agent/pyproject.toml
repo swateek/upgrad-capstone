@@ -14,6 +14,11 @@ dependencies = [
     "requests>=2.34.2",
 ]
 
+[project.optional-dependencies]
+pdf = [
+    "pdfplumber>=0.11.11",
+]
+
 [dependency-groups]
 dev = [
     "openpyxl>=3.1.5",

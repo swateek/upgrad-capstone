@@ -1,5 +1,7 @@
 # customs-agent (DeclareRight)
 
+**New here? Follow [SETUP.md](SETUP.md)**: install, endpoint settings, tests, building the corpus.
+
 Python environment for the customs assistant is managed with [uv](https://docs.astral.sh/uv/).
 uv is used only inside this folder; the rest of the repository is unaffected.
 

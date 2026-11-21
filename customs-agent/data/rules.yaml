@@ -4,7 +4,7 @@
 # A regulatory fix is a change here plus a re-run (CLAUDE.md rule 3).
 #
 # status:
-#   confirmed - read in the regulation text (local copy in data/rag-corpus/corpus/primary/)
+#   confirmed - read in the regulation text (local copy in data/rag-corpus/corpus/docs/)
 #   checked   - researched in docs/regulatory_checks.md; agreed by the project owner
 #   open      - unresolved; the agent escalates instead of answering
 #   project_decision - no legal number exists; value chosen and justified in docs/SPEC.md 5.4

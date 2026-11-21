@@ -25,7 +25,7 @@ New findings (not VERIFY rows): **the flat rate has its own 30-day rule** (check
 
 **Governing text.**
 
-- CBP, "Customs duty information", section *Tobacco Products*: quantities not permitted by a personal exemption are *"subject to detention, seizure, penalties, abandonment, and destruction."* Also: returning residents *"may import tobacco products only in quantities not exceeding"* the exemption amounts. [CBP](https://cbp.gov/travel/international-visitors/know-before-you-visit/customs-duty-information) · local: `data/rag-corpus/corpus/primary/cbp_customs_duty_information.md`
+- CBP, "Customs duty information", section *Tobacco Products*: quantities not permitted by a personal exemption are *"subject to detention, seizure, penalties, abandonment, and destruction."* Also: returning residents *"may import tobacco products only in quantities not exceeding"* the exemption amounts. [CBP](https://cbp.gov/travel/international-visitors/know-before-you-visit/customs-duty-information) · local: `data/rag-corpus/corpus/docs/cbp-duty-info--tobacco-products.md`
 - 19 U.S.C. 1681a: imported cigarettes must meet labelling and certification requirements; the exemption covers only personal-use quantities allowed free under HTSUS chapter 98 subchapter IV. [uscode.house.gov](https://uscode.house.gov/us/usc/119-120/t19/s1681a/)
 
 **Conclusion.** Treat tobacco over the allowance as **not dutiable by the traveller**: the answer is "declare all of it; the excess may be detained, seized or abandoned, and penalties are possible." No duty or excise figure is computed for the excess. For cigarettes the statute supports this (foreign cigarettes over the personal-use quantity fail the 1681a entry requirements). For cigars the basis is the CBP guidance, which covers all tobacco products.
@@ -58,7 +58,7 @@ New findings (not VERIFY rows): **the flat rate has its own 30-day rule** (check
 
 **Question.** Cuban cigars or rum bought in Mexico or Europe, not in Cuba.
 
-**Governing text.** (Full text in `data/rag-corpus/corpus/primary/31cfr515_cuba_alcohol_tobacco.md`.)
+**Governing text.** (Full text in `data/rag-corpus/corpus/docs/31cfr515.204.md` and `31cfr515.585.md`.)
 
 - 31 CFR 515.204(a): persons subject to US jurisdiction may not *"purchase, transport, import, or otherwise deal in"* merchandise of Cuban origin, unless authorised.
 - 31 CFR 515.585(c): US persons in a third country may buy Cuban-origin goods there.
@@ -79,7 +79,7 @@ New findings (not VERIFY rows): **the flat rate has its own 30-day rule** (check
 
 **Governing text.**
 
-- HTSUS 9816.00.20 (fetched from the USITC API; local `htsus_9816_flat_rate.md`):
+- HTSUS 9816.00.20 (fetched from the USITC API; local `corpus/docs/htsus9816.00.20.md`):
   - General: 3 percent of fair retail value
   - Special: **Free (BH, CL, CO, IL, JO, KR, MA, OM, P, PA, PE, S, SG)**
   - Column 2: **4 percent**
@@ -124,7 +124,7 @@ New findings (not VERIFY rows): **the flat rate has its own 30-day rule** (check
 
 **Question.** The earlier worked example sent a same-day Tijuana trip to the $200 exemption because the trip was under 48 hours. Is that right?
 
-**Governing text.** 19 CFR 148.35(a): the $800 exemption needs 48 hours abroad, but it *"may be allowed"* on a direct arrival from Mexico without regard to the time spent outside the US. local: `data/rag-corpus/corpus/primary/19cfr148_returning_residents.md`
+**Governing text.** 19 CFR 148.35(a): the $800 exemption needs 48 hours abroad, but it *"may be allowed"* on a direct arrival from Mexico without regard to the time spent outside the US. local: `data/rag-corpus/corpus/docs/19cfr148.35.md`
 
 **Conclusion.** A returning resident arriving **directly from Mexico** gets the $800 exemption (and its 1 L alcohol allowance) whatever the trip length, subject to the 30-day rule. The 48-hour rule still applies to Canada and all other countries. The earlier Tijuana example was wrong: one 750 ml bottle of tequila after a day trip to Mexico owes **$0**. The all-or-nothing $200 example now uses a day trip to Canada.
 

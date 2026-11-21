@@ -77,7 +77,7 @@ FREE_ORIGINS = {  # HTSUS 9816.00.20 special column; country lists as in docs/SP
 }
 COLUMN2 = ["BY", "CU", "KP", "RU"]
 TTB = "TTB tax rates, https://www.ttb.gov/what-we-do/taxes-and-filing/tax-rates (fetched 2026-11-21)"
-HTS = "HTSUS 9816.00.20 (corpus: htsus_9816_flat_rate.md)"
+HTS = "HTSUS 9816.00.20 (corpus: docs/htsus9816.00.20.md)"
 
 LINE_HEADERS = [
     "scenario",
