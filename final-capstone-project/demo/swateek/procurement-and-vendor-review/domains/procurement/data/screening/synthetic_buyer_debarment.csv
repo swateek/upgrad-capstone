@@ -1,0 +1,4 @@
+row_id,supplier_name,brand,category,normalized_supplier,normalized_brand,source_list,list_section_date,page,in_latest_version,debarring_entity,period_from,period_to
+SYN-001,Kestrel Facility Services Pvt Ltd,,Security and housekeeping services,KESTREL FACILITY SERVICES,,synthetic_buyer_debarment,2026-10-01,,true,Directorate of Estates (SYNTHETIC),2026-03-01,2028-02-29
+SYN-002,Meridian Civil Constructions,,Civil works,MERIDIAN CIVIL CONSTRUCTIONS,,synthetic_buyer_debarment,2026-10-01,,true,Directorate of Estates (SYNTHETIC),2025-11-15,2027-11-14
+SYN-003,Apex Lab Instruments Co,,Laboratory equipment,APEX LAB INSTRUMENTS,,synthetic_buyer_debarment,2026-10-01,,true,Directorate of Estates (SYNTHETIC),2026-06-01,2027-05-31

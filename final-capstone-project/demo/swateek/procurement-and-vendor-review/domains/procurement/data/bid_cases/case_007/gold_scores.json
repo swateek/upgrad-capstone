@@ -1,0 +1,41 @@
+{
+  "case_id": "case_007",
+  "synthetic": true,
+  "is_draft": true,
+  "rows": [
+    {"bidder": "B1", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "We enclose the signed Bid Securing Declaration in the prescribed form.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "The OEM authorisation for the offered laptop model is attached as Annex B.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Our average annual turnover over the last three financial years is Rs 1.25 crore.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "S1", "kind": "scored", "weight": 35, "quoted_evidence": "We completed two supply orders of 30 or more laptops each in the last three years.", "score": 20, "gap": null},
+    {"bidder": "B1", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "We offer a three-year comprehensive onsite warranty.", "score": 25, "gap": null},
+    {"bidder": "B1", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "The offered model comes with 8 GB of RAM.", "score": 10, "gap": null},
+    {"bidder": "B1", "requirement_id": "S4", "kind": "scored", "weight": 20, "quoted_evidence": "Delivery will be completed within 30 days of the contract.", "score": 20, "gap": null},
+
+    {"bidder": "B2", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "A signed Bid Securing Declaration is submitted with this bid.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "We are the OEM for the offered laptop model; our OEM declaration is attached.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Average annual turnover for the last three financial years: Rs 2.50 crore.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "S1", "kind": "scored", "weight": 35, "quoted_evidence": "Three similar orders, each for more than 30 laptops, were completed in the last three years.", "score": 35, "gap": null},
+    {"bidder": "B2", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "Warranty: three years comprehensive, onsite.", "score": 25, "gap": null},
+    {"bidder": "B2", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "The quoted model has 16 GB of RAM.", "score": 20, "gap": null},
+    {"bidder": "B2", "requirement_id": "S4", "kind": "scored", "weight": 20, "quoted_evidence": "We will deliver within 50 days from the date of the contract.", "score": 0, "gap": null},
+
+    {"bidder": "B3", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "Bid Securing Declaration (signed) is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "OEM authorisation for the offered laptops is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Our average turnover in the last three financial years is Rs 68 lakh per year.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "S1", "kind": "scored", "weight": 35, "quoted_evidence": "We have completed three orders of 30 or more laptops each in the last three years.", "score": 35, "gap": null},
+    {"bidder": "B3", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "We provide three years of comprehensive onsite warranty.", "score": 25, "gap": null},
+    {"bidder": "B3", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "Each offered laptop has 16 GB RAM.", "score": 20, "gap": null},
+    {"bidder": "B3", "requirement_id": "S4", "kind": "scored", "weight": 20, "quoted_evidence": "We will deliver all 60 laptops in 35 days from the contract date.", "score": 10, "gap": null}
+  ],
+  "bidders": [
+    {"bidder": "B1", "name": "Lava International Ltd", "status": "responsive", "technical_total": 75, "quoted_price_inr": 3960000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": ["2024-01-31"], "possible_matches": []}},
+    {"bidder": "B2", "name": "Lenovo India Pvt Ltd", "status": "responsive", "technical_total": 80, "quoted_price_inr": 4350000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": ["LENOVO"]}},
+    {"bidder": "B3", "name": "Coralreef Computers Pvt Ltd", "status": "responsive", "technical_total": 90, "quoted_price_inr": 4120000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}}
+  ],
+  "ranking_eligible": ["B3", "B2", "B1"],
+  "withheld_bidders": [],
+  "notes": "Neither B1 nor B2 is withheld. B1's name matches an entry only in the older 31 Jan 2024 version of the GeM delist list, not the latest (3 Sep 2024) version; this is reported as history, with no claim about why the entry changed. B2's name contains the listed brand 'LENOVO', so screen() reports it as a possible match for a human to verify; a brand appearing in a name is not a finding about the bidder. Draft ranking for the committee; not an award."
+}

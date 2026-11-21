@@ -1,0 +1,31 @@
+# Arrival-state flags (flag + source only; no state tax amounts). Research: docs/regulatory-checks.md.
+status: signed_off
+signed_off_on: 2026-11-17
+states:
+  CA:
+    flag: >-
+      California: by air or sea from abroad, up to 60 L for personal use. From Mexico on foot
+      (anyone) or by private vehicle (California residents): only the federal duty-free amount.
+      No alcohol under 21.
+    cites: [state_ca:travel-by-steamship-or-airplane, state_ca:returning-from-mexico]
+  NY:
+    flag: >-
+      New York: 1 quart (1 L if not subject to US duty) is exempt from NY alcohol tax when bought
+      during the trip for personal use; above that, Form MT-39 and NY tax; more than 90 L of liquor
+      a year needs a temporary licence.
+    cites: [state_ny:traveler-s-exemption, state_ny:overview]
+  FL:
+    flag: >-
+      Florida: up to 1 gallon bought out of state and brought in by the possessor is not subject
+      to the Florida tax.
+    cites: [state_fl:overview]
+  TX:
+    flag: >-
+      Texas: per person 1 gal spirits, 3 gal wine or 24 x 12 oz beer, once per 30 days; Texas tax
+      and a $3 fee at the port; excess destroyed; nothing under 21.
+    cites: [state_tx:bringing-alcohol-into-texas]
+  IL:
+    flag: >-
+      Illinois: personal imports need Illinois Liquor Control Commission authorisation and Illinois
+      Use Tax.
+    cites: [state_il:general-information]

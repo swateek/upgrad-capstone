@@ -1,0 +1,24 @@
+# Sources that must never enter any index. Ingest fails if a manifest URL matches a pattern.
+# Patterns are shell-style (fnmatch) and matched against the full URL.
+
+url_patterns:
+  - "*Updated%20June%2C%202022*" # all June 2022 manuals (goods, works, consultancy)
+  - "*Updated June, 2022*"
+  - "*Manual_for_Procurement_of_Goods_2017*"
+  - "*draft-works-manual*" # DGMA draft, not the issued edition
+  - "*Hindi*"
+  - "*hindi*"
+  - "*democppp.nic.in*"
+  - "*eprocure.gov.in*" # tender notices and portal pages: no rule text, no scraping
+  - "*gem.gov.in/cppp*"
+
+reasons:
+  "*Updated%20June%2C%202022*": Superseded by the 2024/2025 editions on doe.gov.in/manuals.
+  "*Updated June, 2022*": Same, unescaped form.
+  "*Manual_for_Procurement_of_Goods_2017*": Superseded by the 2024 goods manual.
+  "*draft-works-manual*": A draft; the issued Second Edition 2025 is indexed instead.
+  "*Hindi*": English documents only.
+  "*hindi*": English documents only.
+  "*democppp.nic.in*": Demo host, not an official source.
+  "*eprocure.gov.in*": Tender notices carry no rule text; the portal is not scraped.
+  "*gem.gov.in/cppp*": Portal pages, not rule text.

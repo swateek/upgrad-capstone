@@ -1,0 +1,49 @@
+name: procurement
+display_name: Procurement & vendor-review assistant
+ui_modes: [policy, vendor, bid]
+
+corpus:
+  manifest: corpus/manifest.yaml
+  exclusions: corpus/exclusions.yaml
+  splitting: corpus/splitting.yaml
+  synthetic_dir: corpus/synthetic
+  parser: pdf_by_heading
+  chunkers: [by_rule, fixed_512, recursive_800]
+  default_chunker: by_rule # replace with the winner of the chunking experiment
+  metadata_fields: [doc_id, rule_id, instrument, edition_date, synthetic]
+  target_docs: [500, 1200]
+
+retrieval:
+  # The embedding and reranker models come with the provider (PROVIDER in .env; see
+  # backend/src/copilot/llm/providers.py), not the domain. On siliconflow: Qwen3-Embedding-0.6B and
+  # Qwen3-Reranker-8B (chosen 13 Nov 2026 on recall: by_rule 0.76/0.97/1.00 at k=1/5/10 vs
+  # 0.60/0.95/0.97 for the 0.6B reranker). On upgrad: bge-small-en-v1.5 and UPGRAD_RERANKER.
+  # The task line below is used by the instruction-aware Qwen3 embedder and reranker.
+  query_instruction: Given a question about procurement rules, retrieve the rule text that answers it
+  top_k_fused: 20
+  top_k_final: 5
+
+tools:
+  core: [search_docs]
+  aliases: {search_docs: search_policy}
+  module: tools.py
+
+state_fields: [active_vendor, active_case_id, last_tool_payload]
+
+prompts:
+  answer: prompts/answer.md
+  planner: prompts/planner.md
+  executor: prompts/executor.md
+  critic: prompts/critic.md
+  harness: prompts/harness.yaml
+
+refusals:
+  rules: refusals.yaml
+  patterns: refusal_patterns.yaml
+
+eval:
+  queries: eval/queries.jsonl
+  dev: eval/dev.jsonl
+  retrieval_labels: eval/retrieval_labels.jsonl
+  baseline_jobs: [policy]
+  baseline_prompt: prompts/baseline.md

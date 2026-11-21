@@ -1,0 +1,147 @@
+{
+  "meta": {
+    "run_at": "2026-11-14T07:27:09+00:00",
+    "eval_version": 3,
+    "eval_commit": "0e3d764 + v2 (P-015) + v3 (P-011, P-012) also_accept changes",
+    "code_commit": "4fbf7fa",
+    "provider": "upgrad",
+    "chat_host": "103.42.50.41:1033",
+    "model": "Qwen/Qwen3-8B",
+    "chunker": "by_rule",
+    "embedding_model": "bge-small-en-v1.5",
+    "collection": "procurement__by_rule__bge-small-en-v1-5",
+    "reranker": "Qwen/Qwen3-8B (listwise)",
+    "queries": 3,
+    "budgets": {
+      "steps": 10,
+      "tool_calls": 10,
+      "tokens": 40000
+    },
+    "prices_usd_per_m_tokens": {
+      "chat": 0.0,
+      "embedding": 0.0,
+      "rerank": 0.0
+    },
+    "retrieval_cache": {
+      "hits": 0,
+      "misses": 2
+    },
+    "subset": true,
+    "label": "smoke"
+  },
+  "rows": [
+    {
+      "id": "P-001",
+      "job": "policy",
+      "must_refuse": false,
+      "query": "Up to what value can a Ministry buy directly on GeM from any available supplier, without comparing sellers?",
+      "correct": true,
+      "failure": null,
+      "notes": [],
+      "answer": "The maximum value limit for direct purchases on GeM without comparing sellers is up to Rs. 50,000/-, as per the rules [goods_manual_2024:4.17.2][ncs_manual_2025:4.6.3][gem_gtc_4_0:C4][gfr_2017:R149]. This limit applies to purchases made through GeM, and it is subject to the procuring authorities certifying the reasonability of rates [gem_gtc_4_0:C4].",
+      "citations": [
+        "goods_manual_2024:4.17.2",
+        "ncs_manual_2025:4.6.3",
+        "gem_gtc_4_0:C4",
+        "gfr_2017:R149"
+      ],
+      "complete": true,
+      "partial": false,
+      "critic_passed": true,
+      "revisions": 0,
+      "refusal_rules": [],
+      "steps": 4,
+      "tool_calls": 1,
+      "chat_tokens": 7269,
+      "embedding_tokens": 51,
+      "rerank_tokens": 12207,
+      "cost_usd": 0.0,
+      "latency_s": 14.62,
+      "stopped": null,
+      "error": null,
+      "trace_url": "https://us.cloud.langfuse.com/project/cmwdtui5s007yad0f22kb589c/traces/d4cfb920b4c4bbcb3838eadf7cb6b4b3",
+      "tools": [
+        {
+          "tool": "search_policy",
+          "args": {
+            "query": "maximum value limit for direct purchases on GeM without comparing sellers"
+          },
+          "ok": true
+        }
+      ],
+      "guard_events": []
+    },
+    {
+      "id": "S-001",
+      "job": "screening",
+      "must_refuse": false,
+      "query": "Is Prama Hikvision India Pvt. Ltd. on any list we have loaded?",
+      "correct": true,
+      "failure": null,
+      "notes": [],
+      "answer": "Prama Hikvision India Pvt. Ltd. is present on the GeM list of sellers, brands and catalogues removed for non-compliance with GFR Rule 144(xi) as of 2024-09-03. It is not present on the Buyer-specific debarment list of the Directorate of Estates.",
+      "citations": [],
+      "complete": true,
+      "partial": false,
+      "critic_passed": true,
+      "revisions": 0,
+      "refusal_rules": [],
+      "steps": 3,
+      "tool_calls": 1,
+      "chat_tokens": 2816,
+      "embedding_tokens": 0,
+      "rerank_tokens": 0,
+      "cost_usd": 0.0,
+      "latency_s": 5.11,
+      "stopped": null,
+      "error": null,
+      "trace_url": "https://us.cloud.langfuse.com/project/cmwdtui5s007yad0f22kb589c/traces/40b99fd8b780ee131773738ec79545ae",
+      "tools": [
+        {
+          "tool": "screen_vendor",
+          "args": {
+            "name": "Prama Hikvision India Pvt. Ltd."
+          },
+          "ok": true
+        }
+      ],
+      "guard_events": []
+    },
+    {
+      "id": "B-001",
+      "job": "bid",
+      "must_refuse": false,
+      "query": "Score case_001 against its evaluation sheet.",
+      "correct": true,
+      "failure": null,
+      "notes": [],
+      "answer": "The draft score sheet for case_001 is as follows:\n\n- **B1 (Northwind Computing Pvt Ltd)**: Responsive, with a technical total of 93. It scored well in all scored criteria, with the lowest score in S4 (8 out of 15) due to a longer delivery time. The firm is not present in any screening lists, which does not affect its eligibility.\n- **B2 (Saraswati Infotech Solutions)**: Responsive, with a technical total of 75. It scored moderately across all criteria, with the lowest score in S1 (25 out of 40) due to fewer supply orders. The firm is not present in any screening lists, which does not affect its eligibility.\n- **B3 (Orbit Systems & Services LLP)**: Responsive, with a technical total of 35. It scored poorly in S3 (0 out of 20) due to service location being in a neighboring district and had a gap in S4 (no response). The firm is not present in any screening lists, which does not affect its eligibility.\n\nThe draft ranking of eligible bidders is: B1, B2, B3. No bidders were withheld. This is a draft for the evaluation committee and not an award.",
+      "citations": [],
+      "complete": true,
+      "partial": false,
+      "critic_passed": true,
+      "revisions": 0,
+      "refusal_rules": [],
+      "steps": 3,
+      "tool_calls": 1,
+      "chat_tokens": 3962,
+      "embedding_tokens": 0,
+      "rerank_tokens": 0,
+      "cost_usd": 0.0,
+      "latency_s": 9.39,
+      "stopped": null,
+      "error": null,
+      "trace_url": "https://us.cloud.langfuse.com/project/cmwdtui5s007yad0f22kb589c/traces/c94635a6fcecf8aa68d3f7725313e2e9",
+      "tools": [
+        {
+          "tool": "score_bids",
+          "args": {
+            "case_id": "case_001"
+          },
+          "ok": true
+        }
+      ],
+      "guard_events": []
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+[project]
+name = "endpoint-capability-check"
+version = "0.1.0"
+description = "Day-0 check of the upgrad course endpoints (mentor note), built on the demo's copilot package"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "copilot",
+    "openai>=3.49.0",
+]
+
+[dependency-groups]
+dev = ["ruff>=0.14"]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+copilot = { path = "../procurement-and-vendor-review/backend", editable = true }
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["copilot"]

@@ -1,0 +1,43 @@
+{
+  "case_id": "case_008",
+  "synthetic": true,
+  "is_draft": true,
+  "rows": [
+    {"bidder": "B1", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "We hold a valid PSARA licence for this State; a copy is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "Copies of our valid EPF and ESIC registration certificates are enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Our average annual turnover over the last three financial years is Rs 84 lakh.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "S1", "kind": "scored", "weight": 35, "quoted_evidence": "We completed three 24x7 guarding contracts of 10 or more guards each at Government premises in the last three years.", "score": 35, "gap": null},
+    {"bidder": "B1", "requirement_id": "S2", "kind": "scored", "weight": 20, "quoted_evidence": "Thirty per cent of the guards proposed for deployment are ex-servicemen.", "score": 10, "gap": null},
+    {"bidder": "B1", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "Our 24x7 control room carries out supervisory checks at the site every night.", "score": 20, "gap": null},
+    {"bidder": "B1", "requirement_id": "S4", "kind": "scored", "weight": 25, "quoted_evidence": "We have eleven years of experience in security guarding services.", "score": 25, "gap": null},
+
+    {"bidder": "B2", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "Our PSARA licence for the State is valid and a copy is attached.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "We hold valid EPF and ESIC registrations (copies attached).", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Average annual turnover for the last three financial years: Rs 52 lakh.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "S1", "kind": "scored", "weight": 35, "quoted_evidence": "Two similar 24x7 guarding contracts at PSU premises, each with more than 10 guards, were completed in the last three years.", "score": 20, "gap": null},
+    {"bidder": "B2", "requirement_id": "S2", "kind": "scored", "weight": 20, "quoted_evidence": "Sixty per cent of the proposed guards are ex-servicemen.", "score": 20, "gap": null},
+    {"bidder": "B2", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "A 24x7 control room monitors the site and supervisors make surprise checks.", "score": 20, "gap": null},
+    {"bidder": "B2", "requirement_id": "S4", "kind": "scored", "weight": 25, "quoted_evidence": "We have been providing security guarding services for eight years.", "score": 15, "gap": null},
+
+    {"bidder": "B3", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "PSARA licence (valid for this State) is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "EPF and ESIC registration certificates, both valid, are enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Our average turnover in the last three financial years is Rs 34 lakh per year.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "S1", "kind": "scored", "weight": 35, "quoted_evidence": "We have completed one 24x7 guarding contract with 12 guards at a Government office in the last three years.", "score": 10, "gap": null},
+    {"bidder": "B3", "requirement_id": "S2", "kind": "scored", "weight": 20, "quoted_evidence": "Half of the guards we propose to deploy are ex-servicemen.", "score": 20, "gap": null},
+    {"bidder": "B3", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "Supervision will be done by a day-shift supervisor; we do not run a separate control room.", "score": 0, "gap": null},
+    {"bidder": "B3", "requirement_id": "S4", "kind": "scored", "weight": 25, "quoted_evidence": "We have six years of experience in security guarding.", "score": 15, "gap": null}
+  ],
+  "bidders": [
+    {"bidder": "B1", "name": "Vigilant Owl Security Services Pvt Ltd", "status": "responsive", "technical_total": 90, "quoted_price_inr": 3480000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}},
+    {"bidder": "B2", "name": "Kestrel Facility Services Pvt Ltd", "status": "withheld_screening", "technical_total": 75, "quoted_price_inr": 3320000,
+     "screening": {"status": "present", "snapshot_date": "2026-10-01", "history_versions": [], "possible_matches": []}},
+    {"bidder": "B3", "name": "Aravalli Guard Force LLP", "status": "responsive", "technical_total": 45, "quoted_price_inr": 3150000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}}
+  ],
+  "ranking_eligible": ["B1", "B3"],
+  "withheld_bidders": [
+    {"bidder": "B2", "reason": "Bidder name is present (exact normalized match, KESTREL FACILITY SERVICES) on the SYNTHETIC buyer-specific debarment list of the Directorate of Estates (GFR Rule 151; applies to that buyer's procurements only).", "list": "synthetic_buyer_debarment", "snapshot_date": "2026-10-01"}
+  ],
+  "notes": "B2 is withheld on screening against the SYNTHETIC buyer-specific debarment list (a labelled sample; the firm is fictitious). Its rows are computed and shown (75, which would rank second), but it is excluded from the ranking and cannot be recommended. B1 and B3 are clean on both the GeM snapshot and the synthetic list. Draft ranking for the committee; not an award."
+}

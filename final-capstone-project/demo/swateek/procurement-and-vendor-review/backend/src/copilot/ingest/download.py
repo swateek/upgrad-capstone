@@ -1,0 +1,166 @@
+"""Download every file in a domain's manifest into data/raw/<domain>/ and verify or freeze hashes.
+
+    uv run python -m copilot.ingest.download            # download, verify against manifest.lock.yaml
+    uv run python -m copilot.ingest.download --freeze   # download, (re)write manifest.lock.yaml
+
+Downloaded files are data only: they are never executed or imported. Each one must start with
+the PDF magic bytes. A hash mismatch against the lock fails the run.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import sys
+import time
+from datetime import UTC, datetime
+from pathlib import Path
+
+import httpx
+import yaml
+
+from copilot.config import get_settings
+from copilot.domains.loader import load_domain
+from copilot.domains.manifest import (
+    LOCK_NAME,
+    LockEntry,
+    ManifestLock,
+    load_exclusions,
+    load_lock,
+    load_manifest,
+)
+
+# Generic UA: dpiit.gov.in answers 403 to non-browser-looking agents.
+USER_AGENT = "Mozilla/5.0"
+
+
+class DownloadError(RuntimeError):
+    pass
+
+
+RETRY_DELAYS_S = (2.0, 5.0, 10.0)  # government hosts drop TLS connections now and then
+
+
+def fetch_with_retry(client: httpx.Client, url: str, dest: Path) -> tuple[str, int]:
+    """Network errors are retried; a bad status or a non-PDF body is not."""
+    for attempt, delay in enumerate((*RETRY_DELAYS_S, None), start=1):
+        try:
+            return fetch(client, url, dest)
+        except httpx.TransportError as err:
+            if delay is None:
+                raise
+            print(f"     retry {attempt}/{len(RETRY_DELAYS_S)} after {delay:.0f}s: {url} ({err})")
+            time.sleep(delay)
+    raise AssertionError("unreachable")
+
+
+def fetch(client: httpx.Client, url: str, dest: Path) -> tuple[str, int]:
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    tmp = dest.with_suffix(dest.suffix + ".part")
+    digest = hashlib.sha256()
+    size = 0
+    with client.stream("GET", url) as resp:
+        if resp.status_code != 200:
+            raise DownloadError(f"{url}: HTTP {resp.status_code}")
+        with tmp.open("wb") as fh:
+            for chunk in resp.iter_bytes():
+                digest.update(chunk)
+                size += len(chunk)
+                fh.write(chunk)
+    with tmp.open("rb") as fh:
+        if fh.read(5) != b"%PDF-":
+            tmp.unlink()
+            raise DownloadError(f"{url}: not a PDF (magic bytes missing)")
+    tmp.replace(dest)
+    return digest.hexdigest(), size
+
+
+def run(freeze: bool) -> int:
+    settings = get_settings()
+    domain = load_domain(settings.domain_dir)
+    manifest_path = domain.path(domain.corpus.manifest)
+    manifest = load_manifest(manifest_path)
+    exclusions = load_exclusions(domain.path(domain.corpus.exclusions))
+    lock_path = manifest_path.parent / LOCK_NAME
+    lock = load_lock(lock_path)
+    if lock is None and not freeze:
+        print(f"No {LOCK_NAME} yet. Run with --freeze to create it.", file=sys.stderr)
+        return 2
+
+    raw_dir = settings.data_dir / "raw" / domain.name
+    entries: dict[str, LockEntry] = {}
+    failures: list[str] = []
+    now = datetime.now(UTC).isoformat(timespec="seconds")
+
+    with httpx.Client(
+        headers={"User-Agent": USER_AGENT}, follow_redirects=True, timeout=120.0
+    ) as client:
+        for src in manifest.sources:
+            if src.language != "en":
+                failures.append(f"{src.id}: language '{src.language}' is not allowed")
+                continue
+            for url in [src.url, *src.alt_urls]:
+                hit = exclusions.match(url)
+                if hit:
+                    failures.append(f"{src.id}: {url} matches exclusion '{hit}'")
+            if any(f.startswith(f"{src.id}:") for f in failures):
+                continue
+            dest = raw_dir / f"{src.id}.pdf"
+            try:
+                sha, size = fetch_with_retry(client, src.url, dest)
+            except (DownloadError, httpx.HTTPError) as err:
+                failures.append(f"{src.id}: {err}")
+                continue
+
+            alt_same: dict[str, bool] = {}
+            for i, alt in enumerate(src.alt_urls):
+                alt_dest = raw_dir / "_alt" / f"{src.id}.{i}.pdf"
+                try:
+                    alt_sha, _ = fetch_with_retry(client, alt, alt_dest)
+                    alt_same[alt] = alt_sha == sha
+                except (DownloadError, httpx.HTTPError) as err:
+                    failures.append(f"{src.id}: alt {alt}: {err}")
+
+            if lock is not None and not freeze:
+                expected = lock.files.get(src.id)
+                if expected is None:
+                    failures.append(f"{src.id}: missing from {LOCK_NAME}")
+                elif expected.sha256 != sha:
+                    failures.append(
+                        f"{src.id}: sha256 changed (lock {expected.sha256[:12]}…, got {sha[:12]}…)"
+                    )
+            entries[src.id] = LockEntry(
+                url=src.url,
+                sha256=sha,
+                bytes=size,
+                retrieved_at=now,
+                alt_urls_same_file=alt_same,
+            )
+            print(f"ok   {src.id:34s} {size:>10,d} B  {sha[:16]}…")
+
+    if freeze:
+        new_lock = ManifestLock(domain=domain.name, files=entries)
+        header = (
+            "# Generated by `python -m copilot.ingest.download --freeze`. Do not hand-edit.\n"
+            "# sha256 and size of each file in manifest.yaml, as downloaded.\n"
+        )
+        lock_path.write_text(
+            header + yaml.safe_dump(new_lock.model_dump(), sort_keys=False, allow_unicode=True),
+            encoding="utf-8",
+        )
+        print(f"wrote {lock_path}")
+
+    for f in failures:
+        print(f"FAIL {f}", file=sys.stderr)
+    return 1 if failures else 0
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--freeze", action="store_true", help="write manifest.lock.yaml")
+    args = parser.parse_args()
+    sys.exit(run(freeze=args.freeze))
+
+
+if __name__ == "__main__":
+    main()

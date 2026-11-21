@@ -1,0 +1,9 @@
+case_id: case_006
+synthetic: true
+title: Supply and installation of IP surveillance cameras for the campus (SYNTHETIC)
+procurement_type: goods
+estimated_value_inr: 2200000
+method: GeM bid, two-packet; evaluated on the sheet stored with this case
+requirement_sheet: requirements.yaml
+bidders: [B1, B2, B3]
+purpose: Screening near-miss. B1's name is similar to a listed seller but not an exact match, so it is not withheld; the possible matches are noted for a human to verify.

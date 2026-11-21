@@ -1,0 +1,9 @@
+case_id: case_005
+synthetic: true
+title: Minor civil renovation of the third floor of the office building (SYNTHETIC)
+procurement_type: works
+estimated_value_inr: 1800000
+method: Open e-tender for works, two-packet; technical evaluation on the sheet stored with this case
+requirement_sheet: requirements.yaml
+bidders: [B1, B2, B3]
+purpose: Gaps. B2 gives no price (price gap, still scored) and B1 leaves one scored criterion unanswered (no response, counts 0).

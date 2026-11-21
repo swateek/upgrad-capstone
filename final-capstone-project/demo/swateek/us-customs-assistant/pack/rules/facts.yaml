@@ -1,0 +1,39 @@
+# Answer-changing facts (plan §3 table): when to ask, and what happens if still missing after the
+# one clarifying exchange. Several missing facts are asked in ONE short question.
+status: signed_off
+signed_off_on: 2026-11-17
+facts:
+  age_21_plus:
+    ask_when: basket has alcohol or tobacco
+    if_missing: escalate
+  trip_hours_or_arrived_from_mexico:
+    ask_when: always, for an allowance (Mexico arrivals need no hours, R9)
+    if_missing: escalate
+  exemption_used_last_30_days:
+    ask_when: always, for an allowance
+    if_missing: escalate
+  origin_country_of_line:
+    ask_when: >-
+      an ambiguous brand (R12); a 2 L Caribbean Basin claim (R2); or a dutiable line that may be a
+      trade-agreement partner's product (R7, Decision C)
+    if_missing: >-
+      ambiguous brand: treat as possibly Cuban (no allowance, declare) (Decision E); otherwise
+      apply the 3% rate and the 1 L allowance
+  family_group:
+    ask_when: never; when the question mentions travelling as a family
+    if_missing: answer per traveller with the family scope note (Decision F)
+  value_usd_of_line:
+    ask_when: the line is dutiable
+    if_missing: show excise only; duty stated as "3% of the value"
+  abv:
+    ask_when: never by default
+    if_missing: default from units.yaml, stated in facts relied on
+  arrival_state:
+    ask_when: alcohol in the basket; only bundled into the one clarifying question, never alone (plan §3)
+    if_missing: generic note that states may set their own limits
+  us_resident:
+    ask_when: never; act only when the traveller says otherwise
+    if_missing: assume returning resident
+  arriving_directly_from_beneficiary_country:
+    ask_when: a 2 L claim is possible (R2)
+    if_missing: 1 L

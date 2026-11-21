@@ -1,0 +1,6 @@
+# Short descriptions for the Deep Agents building blocks. The library defaults cost ~1,400
+# prompt tokens on the planner's first call; these keep it near ~470 (phase0-deepagents-prompt-size).
+todo_system: "Plan with write_todos (1-3 items). Mark each done. Answer after the last one."
+todo_tool: "Create or update the todo list. Each item: content, status (pending|in_progress|completed)."
+task_tool: "Delegate the work to a subagent. Pass the full question and any case id or firm name. Available agents:\n{available_agents}"
+executor_description: "Runs search_policy, screen_vendor and score_bids, then writes the cited draft answer."

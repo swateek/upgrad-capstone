@@ -1,0 +1,55 @@
+case_id: case_004
+synthetic: true
+mandatory:
+  - id: M1
+    text: The consultant is a legal entity registered in India; a copy of the certificate of incorporation or registration is submitted.
+    field: registered_in_india
+    pass_if: true
+  - id: M2
+    text: Average annual turnover of the consultant from consultancy services in the last three financial years is at least Rs 50 lakh.
+    field: avg_turnover_inr
+    pass_if: {min: 5000000}
+  - id: M3
+    text: The consultant submits a declaration that it has no conflict of interest in this assignment.
+    field: no_conflict_of_interest
+    pass_if: true
+scored:
+  - id: S1
+    text: Number of similar assignments (IT assessment or IT roadmap for a Government or PSU client) completed in the last five years.
+    field: similar_assignments
+    weight: 30
+    rubric:
+      - {min: 4, marks: 30}
+      - {min: 2, marks: 18}
+      - {min: 1, marks: 8}
+      - {min: 0, marks: 0}
+  - id: S2
+    text: Experience of the proposed Team Leader (key expert) in IT advisory, in years.
+    field: team_lead_experience_years
+    weight: 30
+    rubric:
+      - {min: 15, marks: 30}
+      - {min: 10, marks: 20}
+      - {min: 5, marks: 10}
+      - {min: 0, marks: 0}
+  - id: S3
+    text: Methodology and work plan; number of the five tasks in the Terms of Reference that the work plan addresses with deliverables and timelines.
+    field: tor_tasks_covered
+    weight: 25
+    rubric:
+      - {min: 5, marks: 25}
+      - {min: 4, marks: 15}
+      - {min: 3, marks: 8}
+      - {min: 0, marks: 0}
+  - id: S4
+    text: Number of proposed key experts holding a recognised professional certification (TOGAF, PMP or CISA).
+    field: certified_experts
+    weight: 15
+    rubric:
+      - {min: 3, marks: 15}
+      - {min: 2, marks: 10}
+      - {min: 1, marks: 5}
+      - {min: 0, marks: 0}
+price:
+  field: quoted_price_inr
+  basis: Total consultancy fee for the assessment and the roadmap, including GST and out-of-pocket expenses (financial proposal; recorded, not scored here).

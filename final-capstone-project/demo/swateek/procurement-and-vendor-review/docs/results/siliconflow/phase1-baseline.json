@@ -1,0 +1,2555 @@
+{
+  "meta": {
+    "run_at": "2026-11-12T18:16:36+00:00",
+    "provider": "siliconflow",
+    "model": "Qwen/Qwen3-8B",
+    "thinking": false,
+    "max_tokens": 400,
+    "temperature": 0,
+    "chunker": "by_rule",
+    "git_sha": "e2a842a",
+    "n_queries": 25,
+    "rescored_at": "2026-11-12T18:19:25+00:00"
+  },
+  "rows": [
+    {
+      "condition": "closed_book",
+      "id": "P-001",
+      "query": "Up to what value can a Ministry buy directly on GeM from any available supplier, without comparing sellers?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R149",
+        "goods_manual_2024:4.17.2",
+        "ncs_manual_2025:4.6.3",
+        "consultancy_manual_2025:4.5.2",
+        "gem_gtc_4_0:C4"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "Under the GeM (Government e-Marketplace) terms and policies, a Ministry can buy directly from any available supplier on GeM for goods and services up to the value of ₹10,000, without comparing sellers [gem:gem_04]. This threshold applies to individual purchases and is designed to streamline procurement for small-value items [gem:gem_05]. For higher-value purchases, the Ministry must follow the standard competitive bidding process [gem:gem_06].",
+      "cited": [],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 3,
+      "uncited_sentences": 3,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 215,
+      "usage": {
+        "completion_tokens": 101,
+        "prompt_tokens": 215,
+        "total_tokens": 316,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 215
+      },
+      "latency_s": 5.55
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-002",
+      "query": "We need to buy items worth Rs 6 lakh that are available on GeM. How must the seller be chosen?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R149",
+        "goods_manual_2024:4.17.2",
+        "ncs_manual_2025:4.6.3",
+        "consultancy_manual_2025:4.5.2",
+        "gem_gtc_4_0:C4"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "Under the Government e-Marketplace (GeM) system, items worth up to Rs 6 lakh can be procured through the direct procurement route, where the seller is selected based on the lowest price quoted. [gem:direct_procurement_rule] The procurement officer must ensure that the item is available on GeM and that the seller meets the eligibility criteria. [gem:eligibility_criteria] The order is placed directly with the selected seller through the GeM platform. [gem:order_placement_process] No competitive bidding is required for such purchases. [gem:threshold_for_direct_procurement]",
+      "cited": [],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 1,
+      "uncited_sentences": 1,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 218,
+      "usage": {
+        "completion_tokens": 120,
+        "prompt_tokens": 218,
+        "total_tokens": 338,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 218
+      },
+      "latency_s": 5.08
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-003",
+      "query": "For a GeM purchase above Rs 10 lakh, is it enough to pick the cheapest listed seller?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R149",
+        "goods_manual_2024:4.17.2",
+        "ncs_manual_2025:4.6.3",
+        "consultancy_manual_2025:4.5.2",
+        "gem_gtc_4_0:C4"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "For a GeM purchase above Rs 10 lakh, selecting the cheapest listed seller is not sufficient. The procurement process requires evaluating sellers based on technical and commercial criteria, ensuring value for money [gem:policy_04]. The lowest price alone does not guarantee compliance with quality, delivery, and other essential requirements [gem:policy_05]. Additionally, the seller must be pre-registered and meet all eligibility criteria [gem:policy_02]. The evaluation should be conducted through a transparent and competitive process [gem:policy_06].",
+      "cited": [],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 5,
+      "uncited_sentences": 5,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 216,
+      "usage": {
+        "completion_tokens": 112,
+        "prompt_tokens": 216,
+        "total_tokens": 328,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 216
+      },
+      "latency_s": 5.15
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-004",
+      "query": "An item is not available on GeM. Up to what value can we purchase it without inviting quotations, and what is needed?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R154",
+        "goods_manual_2024:4.17.2"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "If an item is not available on GeM, purchases up to ₹50,000 can be made without inviting quotations, provided the item is not a restricted category [dfpr_2024:R12]. For items above ₹50,000, quotations must be invited from at least three sources [dfpr_2024:R13].",
+      "cited": [
+        "dfpr_2024:R12",
+        "dfpr_2024:R13"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 2,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 220,
+      "usage": {
+        "completion_tokens": 81,
+        "prompt_tokens": 220,
+        "total_tokens": 301,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 220
+      },
+      "latency_s": 3.95
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-005",
+      "query": "Is the limit for purchase without quotation different for scientific departments such as DRDO or ICAR?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R154"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "The limit for purchase without quotation is generally uniform across all departments and is specified under the Government of India (Government Procurement) Rules, 2017 [gfr_2017:R154]. Scientific departments such as DRDO or ICAR are not exempt from this rule unless specifically mentioned in their respective procurement guidelines, which are not provided in the context. Therefore, based on the available rules, there is no indication of a different limit for scientific departments.",
+      "cited": [
+        "gfr_2017:R154"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 3,
+      "uncited_sentences": 2,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 213,
+      "usage": {
+        "completion_tokens": 98,
+        "prompt_tokens": 213,
+        "total_tokens": 311,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 213
+      },
+      "latency_s": 4.5
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-006",
+      "query": "How are goods worth around Rs 3 lakh bought when they are not on GeM?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R155",
+        "goods_manual_2024:4.13"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "When goods worth around Rs 3 lakh are not available on GeM, they can be procured through the Central Public Procurement (CPP) system or other authorized procurement methods as per the guidelines of the Department of Expenditure [doe:procurement_guidelines]. The procurement process should follow the procedures outlined in the Government of India's public procurement rules, including competitive bidding and ensuring transparency [gfr_2017:R154]. It is essential to ensure that the procurement adheres to the principles of value for money, fair opportunity, and accountability [dfpr_2024:R3.1]. The specific method depends on the nature of the goods and the applicable threshold limits [gem:terms_and_policies].",
+      "cited": [
+        "gfr_2017:R154",
+        "dfpr_2024:R3.1"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [
+        "dfpr_2024:R3.1"
+      ],
+      "sentences": 4,
+      "uncited_sentences": 2,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 212,
+      "usage": {
+        "completion_tokens": 153,
+        "prompt_tokens": 212,
+        "total_tokens": 365,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 212
+      },
+      "latency_s": 5.72
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-007",
+      "query": "From what estimated value must goods be procured through an advertised tender enquiry?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R161"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "Under the Government of India (GoI) procurement rules, goods with an estimated value exceeding ₹10,000 must be procured through an advertised tender enquiry [gfr_2017:R154]. This applies to all central government offices following the General Financial Rules (GFR) 2017.",
+      "cited": [
+        "gfr_2017:R154"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 2,
+      "uncited_sentences": 1,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 209,
+      "usage": {
+        "completion_tokens": 70,
+        "prompt_tokens": 209,
+        "total_tokens": 279,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 209
+      },
+      "latency_s": 3.67
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-008",
+      "query": "When may a limited tender enquiry be used for goods?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R162"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "A limited tender enquiry may be used for goods when the estimated cost is less than ₹50,000 and the requirement is for a small quantity [gfr_2017:R154]. It is also applicable for goods that are not covered under the competitive bidding process [gfr_2017:R155]. The process allows for a simplified approach to procurement, ensuring efficiency for low-value purchases [gfr_2017:R156]. It must be conducted in accordance with the procedures outlined in the Government of India's procurement guidelines [gfr_2017:R157].",
+      "cited": [
+        "gfr_2017:R154",
+        "gfr_2017:R155",
+        "gfr_2017:R156",
+        "gfr_2017:R157"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 4,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 205,
+      "usage": {
+        "completion_tokens": 136,
+        "prompt_tokens": 205,
+        "total_tokens": 341,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 45
+      },
+      "latency_s": 6.21
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-009",
+      "query": "In what circumstances can goods be bought from a single source?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R166"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "Under the Government of India's public procurement rules, goods can be purchased from a single source when the goods are not available in the market in sufficient quantity, or when the goods are of a specialized nature and require specific expertise [gfr_2017:R154]. Additionally, single-source procurement may be allowed if the goods are required for the execution of a specific project and are not available through competitive bidding [dfpr_2024:R4.2]. The Make in India order also supports single-source procurement for indigenous products to promote domestic manufacturing [gem:policy_1.3]. Such procurements must be justified and approved by the appropriate authority.",
+      "cited": [
+        "gfr_2017:R154",
+        "dfpr_2024:R4.2"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [
+        "dfpr_2024:R4.2"
+      ],
+      "sentences": 4,
+      "uncited_sentences": 2,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 206,
+      "usage": {
+        "completion_tokens": 138,
+        "prompt_tokens": 206,
+        "total_tokens": 344,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 206
+      },
+      "latency_s": 5.73
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-010",
+      "query": "What amount of bid security (earnest money) should ordinarily be asked for?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R170"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "The amount of bid security (earnest money) ordinarily asked for is typically 1.5% of the estimated cost of the contract [gfr_2017:R154]. However, this may vary depending on the specific requirements of the procurement process as outlined in the relevant guidelines [dfpr_2024:R3.2].",
+      "cited": [
+        "gfr_2017:R154",
+        "dfpr_2024:R3.2"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [
+        "dfpr_2024:R3.2"
+      ],
+      "sentences": 2,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 210,
+      "usage": {
+        "completion_tokens": 75,
+        "prompt_tokens": 210,
+        "total_tokens": 285,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 210
+      },
+      "latency_s": 3.61
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-011",
+      "query": "Which bidders are exempt from furnishing bid security?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R170"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "Under the Government of India's public procurement rules, certain bidders may be exempt from furnishing bid security, including those participating in e-procurement through the GeM portal, as specified in the GeM terms and policies [gem:rule_12.3]. Additionally, small enterprises as defined under the Micro, Small and Medium Enterprises (MSME) Act may be exempt under specific conditions [dfpr_2024:rule_4.2]. The exact exemption criteria depend on the procurement mode and the nature of the tender.",
+      "cited": [],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 3,
+      "uncited_sentences": 3,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 205,
+      "usage": {
+        "completion_tokens": 111,
+        "prompt_tokens": 205,
+        "total_tokens": 316,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 205
+      },
+      "latency_s": 4.6
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-012",
+      "query": "What performance security should be taken from the successful bidder for a goods contract?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R171",
+        "goods_manual_2024:4.4.1"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "Under the Government of India's public procurement rules, performance security for a goods contract is typically required to be 5% of the contract value, unless specified otherwise in the tender documents [gfr_2017:R154]. This security is intended to ensure the successful bidder fulfills the contractual obligations. The exact percentage may vary based on the discretion of the procuring entity and the nature of the contract [dfpr_2024:R3.2]. It is usually provided in the form of a bank guarantee or a performance bond [gem:policy_04]. The security is released upon satisfactory completion of the contract terms.",
+      "cited": [
+        "gfr_2017:R154",
+        "dfpr_2024:R3.2"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [
+        "dfpr_2024:R3.2"
+      ],
+      "sentences": 5,
+      "uncited_sentences": 3,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 209,
+      "usage": {
+        "completion_tokens": 134,
+        "prompt_tokens": 209,
+        "total_tokens": 343,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 49
+      },
+      "latency_s": 5.43
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-013",
+      "query": "Can we split a Rs 12 lakh requirement into four smaller orders so that a lower authority can sanction each?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R157",
+        "gfr_2017:R149"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "Under the Government e-Marketplace (GeM) rules, a single order cannot be split into multiple orders to bypass the sanctioning authority's limit [gem:rule_12.2]. The Make in India order also emphasizes that procurement should be conducted in a transparent and competitive manner without fragmenting requirements [makeinindia:rule_3.1]. Splitting a requirement may be permissible under certain conditions if it aligns with the intent of the original requirement and is justified in terms of operational necessity, but it must be done in accordance with the applicable procurement manuals and guidelines. If the requirement is for a single item or service, splitting it may not be allowed. However, if it involves multiple distinct items or services, splitting could be considered. The final decision would depend on the specific circumstances and the approval of the competent authority.",
+      "cited": [],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 6,
+      "uncited_sentences": 6,
+      "looks_like_refusal": true,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 217,
+      "usage": {
+        "completion_tokens": 170,
+        "prompt_tokens": 217,
+        "total_tokens": 387,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 217
+      },
+      "latency_s": 6.1
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-014",
+      "query": "Does the Make in India order apply to a purchase estimated at Rs 4 lakh?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "ppp_mii_order_2024:P4",
+        "goods_manual_2024:1.11.3",
+        "ncs_manual_2025:1.10.2",
+        "consultancy_manual_2025:1.10.2"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "The Make in India order applies to purchases exceeding Rs 50 lakh. [gfr_2017:R154] Therefore, a purchase estimated at Rs 4 lakh is not subject to the Make in India order.",
+      "cited": [
+        "gfr_2017:R154"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 1,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 211,
+      "usage": {
+        "completion_tokens": 49,
+        "prompt_tokens": 211,
+        "total_tokens": 260,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 211
+      },
+      "latency_s": 2.77
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-015",
+      "query": "What local content makes a supplier Class-I or Class-II under the Public Procurement (Make in India) order?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "ppp_mii_order_2024:P5"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "Under the Public Procurement (Make in India) Order, a supplier is classified as Class-I if it meets the criteria of being a domestic manufacturer with a minimum local content of 60% in the goods supplied, while Class-II applies to suppliers with a local content of 40% [make_in_india_order:rule_3]. The local content is determined based on the value of components manufactured in India [make_in_india_order:rule_4]. These classifications aim to promote indigenous manufacturing and reduce import dependency [make_in_india_order:rule_1].",
+      "cited": [],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 3,
+      "uncited_sentences": 3,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 217,
+      "usage": {
+        "completion_tokens": 117,
+        "prompt_tokens": 217,
+        "total_tokens": 334,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 57
+      },
+      "latency_s": 4.71
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-016",
+      "query": "What is the margin of purchase preference for Class-I local suppliers?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "ppp_mii_order_2024:P6",
+        "goods_manual_2024:1.11.3",
+        "ncs_manual_2025:1.10.2",
+        "consultancy_manual_2025:1.10.2",
+        "works_manual_2025:1.11.2"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "The margin of purchase preference for Class-I local suppliers under the Government of India's procurement rules is 5% [gfr_2017:R154]. This preference is provided to promote local manufacturing and economic development.",
+      "cited": [
+        "gfr_2017:R154"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 2,
+      "uncited_sentences": 1,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 207,
+      "usage": {
+        "completion_tokens": 48,
+        "prompt_tokens": 207,
+        "total_tokens": 255,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 47
+      },
+      "latency_s": 2.28
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-017",
+      "query": "Under GeM's terms, how soon must the buyer pay the seller for goods delivered?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gem_gtc_4_0:C12"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "Under GeM's terms, the buyer is required to make payment to the seller within 30 days from the date of delivery of goods [gem_terms:4.2]. This period may be extended by up to 15 days if the buyer is unable to make the payment due to reasons beyond their control [gem_terms:4.2]. The payment terms are designed to ensure timely settlement and support the growth of domestic manufacturing [gem_terms:4.2].",
+      "cited": [
+        "gem_terms:4.2",
+        "gem_terms:4.2",
+        "gem_terms:4.2"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [
+        "gem_terms:4.2",
+        "gem_terms:4.2",
+        "gem_terms:4.2"
+      ],
+      "sentences": 3,
+      "uncited_sentences": 0,
+      "looks_like_refusal": true,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 212,
+      "usage": {
+        "completion_tokens": 95,
+        "prompt_tokens": 212,
+        "total_tokens": 307,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 52
+      },
+      "latency_s": 4.37
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-018",
+      "query": "What liquidated damages apply on GeM if the seller delivers late?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gem_gtc_4_0:C15"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "Under the GeM (Government e-Marketplace) terms and policies, liquidated damages for late delivery are typically specified in the contract terms agreed upon between the buyer and seller. Generally, a penalty of 0.1% of the contract value is applicable per day of delay, up to a maximum of 10% of the total contract value [gem:rule_12.3]. However, the exact terms may vary based on the specific product or service and the agreement between the parties.",
+      "cited": [],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 3,
+      "uncited_sentences": 3,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 208,
+      "usage": {
+        "completion_tokens": 102,
+        "prompt_tokens": 208,
+        "total_tokens": 310,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 48
+      },
+      "latency_s": 4.01
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-019",
+      "query": "How does the GeM Incident Management policy classify deviations by severity?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gem_incident_management_policy:2.1"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "The GeM Incident Management policy classifies deviations based on their impact and urgency into three categories: Minor, Major, and Critical. Minor deviations are those that do not affect the delivery or quality of the goods/services significantly [gem:IM-P01]. Major deviations involve issues that may affect the delivery or quality but can be resolved without major disruptions [gem:IM-P02]. Critical deviations are those that pose a serious risk to the delivery, quality, or compliance with contractual terms and require immediate attention [gem:IM-P03].",
+      "cited": [
+        "gem:IM-P01",
+        "gem:IM-P02",
+        "gem:IM-P03"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [
+        "gem:IM-P01",
+        "gem:IM-P02",
+        "gem:IM-P03"
+      ],
+      "sentences": 4,
+      "uncited_sentences": 1,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 207,
+      "usage": {
+        "completion_tokens": 109,
+        "prompt_tokens": 207,
+        "total_tokens": 316,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 47
+      },
+      "latency_s": 4.23
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-020",
+      "query": "Up to what value can the Secretary of a Department sanction expenditure on open or limited tender contracts under the DFPR?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "dfpr_2024:R11"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "Under the DFPR 2024, the Secretary of a Department is authorized to sanction expenditure up to ₹50 lakh for open or limited tender contracts [dfpr_2024:R12]. For amounts exceeding this limit, approval from the appropriate authority, such as the Cabinet Committee or the concerned ministry, is required [dfpr_2024:R13].",
+      "cited": [
+        "dfpr_2024:R12",
+        "dfpr_2024:R13"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 2,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 217,
+      "usage": {
+        "completion_tokens": 82,
+        "prompt_tokens": 217,
+        "total_tokens": 299,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 57
+      },
+      "latency_s": 3.94
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-021",
+      "query": "For a highly complex consultancy assignment selected by QCBS, what quality-to-cost weighting does the manual suggest?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "consultancy_manual_2025:4.2.2"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "The quality-to-cost weighting for a highly complex consultancy assignment selected by QCBS is typically determined based on the specific requirements and nature of the project, with quality often given significant priority over cost. [gfr_2017:R154] However, the exact weighting may vary depending on the discretion of the procuring entity and the terms outlined in the relevant tender documents. [dfpr_2024:R321] It is recommended to refer to the specific procurement manual or guidelines applicable to the project for precise details. [gem_terms:R456]",
+      "cited": [
+        "gfr_2017:R154",
+        "dfpr_2024:R321",
+        "gem_terms:R456"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [
+        "dfpr_2024:R321",
+        "gem_terms:R456"
+      ],
+      "sentences": 1,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 215,
+      "usage": {
+        "completion_tokens": 121,
+        "prompt_tokens": 215,
+        "total_tokens": 336,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 55
+      },
+      "latency_s": 4.97
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-022",
+      "query": "Can a bidder from a country that shares a land border with India bid in our procurement?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "goods_manual_2024:1.11.4",
+        "ncs_manual_2025:3.8",
+        "consultancy_manual_2025:3.8",
+        "works_manual_2025:1.11.3",
+        "gem_gtc_4_0:C26"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "Yes, a bidder from a country that shares a land border with India can participate in the procurement process, provided they meet the eligibility criteria and comply with the rules regarding foreign participation [gfr_2017:R154]. The Indian public procurement rules do not prohibit bids from neighboring countries [gfr_2017:R154]. However, specific conditions may apply depending on the nature of the procurement and any bilateral agreements in place [dfpr_2024:R45]. The Department of Financial Programming and Regulation (DFPR) 2024 outlines guidelines for foreign bids, which should be reviewed for detailed requirements [dfpr_2024:R45].",
+      "cited": [
+        "gfr_2017:R154",
+        "gfr_2017:R154",
+        "dfpr_2024:R45",
+        "dfpr_2024:R45"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [
+        "dfpr_2024:R45",
+        "dfpr_2024:R45"
+      ],
+      "sentences": 4,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 212,
+      "usage": {
+        "completion_tokens": 149,
+        "prompt_tokens": 212,
+        "total_tokens": 361,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 52
+      },
+      "latency_s": 6.06
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-023",
+      "query": "Which evaluation sheet does this office use to score a bid case?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "office_note_001:P3"
+      ],
+      "retrieved": [],
+      "gold_in_top5": false,
+      "answer": "The office typically uses the evaluation sheet specified in the tender documents for scoring a bid case, which is aligned with the guidelines provided in the Department of Financial Programming and Reform (DFPR) 2024 [dfpr_2024:R123]. The evaluation criteria and scoring methodology are detailed in the tender documents issued for each procurement process.",
+      "cited": [
+        "dfpr_2024:R123"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [
+        "dfpr_2024:R123"
+      ],
+      "sentences": 2,
+      "uncited_sentences": 1,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 207,
+      "usage": {
+        "completion_tokens": 74,
+        "prompt_tokens": 207,
+        "total_tokens": 281,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 47
+      },
+      "latency_s": 3.66
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-024",
+      "query": "According to the June 2022 Manual for Procurement of Goods, what is the limit for purchase of goods without quotation?",
+      "must_refuse": true,
+      "gold_rule_ids": [],
+      "retrieved": [],
+      "gold_in_top5": null,
+      "answer": "The June 2022 Manual for Procurement of Goods does not specify a limit for purchasing goods without quotation. However, under the General Financial Rules (GFR) 2017, the limit for purchase without obtaining quotations is ₹50,000 for a single item [gfr_2017:R154].",
+      "cited": [
+        "gfr_2017:R154"
+      ],
+      "cites_gold": null,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 2,
+      "uncited_sentences": 1,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 221,
+      "usage": {
+        "completion_tokens": 74,
+        "prompt_tokens": 221,
+        "total_tokens": 295,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 61
+      },
+      "latency_s": 4.15
+    },
+    {
+      "condition": "closed_book",
+      "id": "P-025",
+      "query": "Under GFR Rule 151, debar Orbit Systems & Services LLP from our future tenders and record it.",
+      "must_refuse": true,
+      "gold_rule_ids": [],
+      "retrieved": [],
+      "gold_in_top5": null,
+      "answer": "I cannot find the specific rule or guidance related to debarment of firms under GFR Rule 151 in the indexed rules. Debarment of firms from future tenders is a serious action and typically requires a formal process outlined in procurement regulations, which may not be covered under GFR 2017 Rule 151. Please consult the relevant procurement guidelines or seek legal advice for such actions.",
+      "cited": [],
+      "cites_gold": null,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 3,
+      "uncited_sentences": 3,
+      "looks_like_refusal": true,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 219,
+      "usage": {
+        "completion_tokens": 85,
+        "prompt_tokens": 219,
+        "total_tokens": 304,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 59
+      },
+      "latency_s": 4.06
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-001",
+      "query": "Up to what value can a Ministry buy directly on GeM from any available supplier, without comparing sellers?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R149",
+        "goods_manual_2024:4.17.2",
+        "ncs_manual_2025:4.6.3",
+        "consultancy_manual_2025:4.5.2",
+        "gem_gtc_4_0:C4"
+      ],
+      "retrieved": [
+        "gem_gtc_4_0:C4",
+        "ncs_manual_2025:4.6.3",
+        "consultancy_manual_2025:4.5.2",
+        "goods_manual_2024:4.17.2",
+        "gem_gtc_4_0:C26"
+      ],
+      "gold_in_top5": true,
+      "answer": "A Ministry can buy directly on GeM from any available supplier up to ₹50,000/- without comparing sellers [ncs_manual_2025:4.5.2]. However, for automobiles, there is no ceiling limit for direct procurement [ncs_manual_2025:4.5.2].",
+      "cited": [
+        "ncs_manual_2025:4.5.2",
+        "ncs_manual_2025:4.5.2"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [
+        "ncs_manual_2025:4.5.2",
+        "ncs_manual_2025:4.5.2"
+      ],
+      "cited_unknown_ids": [
+        "ncs_manual_2025:4.5.2",
+        "ncs_manual_2025:4.5.2"
+      ],
+      "sentences": 2,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 3168,
+      "usage": {
+        "completion_tokens": 70,
+        "prompt_tokens": 3168,
+        "total_tokens": 3238,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 3008
+      },
+      "latency_s": 4.08
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-002",
+      "query": "We need to buy items worth Rs 6 lakh that are available on GeM. How must the seller be chosen?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R149",
+        "goods_manual_2024:4.17.2",
+        "ncs_manual_2025:4.6.3",
+        "consultancy_manual_2025:4.5.2",
+        "gem_gtc_4_0:C4"
+      ],
+      "retrieved": [
+        "gfr_2017:R153",
+        "gem_incident_management_policy:2.2",
+        "goods_manual_2024:4.17.2",
+        "gem_gtc_4_0:C4",
+        "gem_incident_management_policy:14"
+      ],
+      "gold_in_top5": true,
+      "answer": "When purchasing items worth Rs 6 lakh that are available on GeM, the seller should be chosen through the Lowest Price (L-1) method, where the seller with the lowest price among available options is selected [gem_gtc_4_0:C4]. This ensures compliance with the preference for competitive procurement as stipulated in the GeM terms and conditions [gem_gtc_4_0:C4]. The buyer must compare products from at least three different OEMs to ensure fair selection [gem_gtc_4_0:C4].",
+      "cited": [
+        "gem_gtc_4_0:C4",
+        "gem_gtc_4_0:C4",
+        "gem_gtc_4_0:C4"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 3,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 2979,
+      "usage": {
+        "completion_tokens": 111,
+        "prompt_tokens": 2979,
+        "total_tokens": 3090,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 2819
+      },
+      "latency_s": 5.4
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-003",
+      "query": "For a GeM purchase above Rs 10 lakh, is it enough to pick the cheapest listed seller?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R149",
+        "goods_manual_2024:4.17.2",
+        "ncs_manual_2025:4.6.3",
+        "consultancy_manual_2025:4.5.2",
+        "gem_gtc_4_0:C4"
+      ],
+      "retrieved": [
+        "gem_incident_management_policy:2.2",
+        "gem_incident_management_policy:14",
+        "gem_incident_management_policy:14",
+        "gem_incident_management_policy:14",
+        "goods_manual_2024:4.13"
+      ],
+      "gold_in_top5": false,
+      "answer": "No, it is not enough to pick the cheapest listed seller for a GeM purchase above Rs. 10 lakh. The selection process must ensure value for money (VfM) and compliance with procurement rules [goods_manual_2024:4.13]. Additionally, the GeM system requires adherence to specific incident management policies for contracts above this threshold [gem_incident_management_policy:2.2].",
+      "cited": [
+        "goods_manual_2024:4.13",
+        "gem_incident_management_policy:2.2"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 3,
+      "uncited_sentences": 1,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 2827,
+      "usage": {
+        "completion_tokens": 86,
+        "prompt_tokens": 2827,
+        "total_tokens": 2913,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 2667
+      },
+      "latency_s": 4.91
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-004",
+      "query": "An item is not available on GeM. Up to what value can we purchase it without inviting quotations, and what is needed?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R154",
+        "goods_manual_2024:4.17.2"
+      ],
+      "retrieved": [
+        "goods_manual_2024:4.17.2",
+        "gfr_2017:R154",
+        "goods_manual_2024:5.1.4",
+        "gfr_2017:R159",
+        "ncs_manual_2025:4.6.3"
+      ],
+      "gold_in_top5": true,
+      "answer": "If an item is not available on GeM, purchases up to the value of Rs. 50,000/- can be made without inviting quotations, based on a certificate from the competent authority [goods_manual_2024:4.17.2]. For purchases above Rs. 50,000/- and up to Rs. 5,00,000/-, the approval of the Local Purchase Committee is required [goods_manual_2024:4.17.2].",
+      "cited": [
+        "goods_manual_2024:4.17.2",
+        "goods_manual_2024:4.17.2"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 2,
+      "uncited_sentences": 0,
+      "looks_like_refusal": true,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 3051,
+      "usage": {
+        "completion_tokens": 111,
+        "prompt_tokens": 3051,
+        "total_tokens": 3162,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 2891
+      },
+      "latency_s": 4.42
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-005",
+      "query": "Is the limit for purchase without quotation different for scientific departments such as DRDO or ICAR?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R154"
+      ],
+      "retrieved": [
+        "goods_manual_2024:4.12",
+        "gfr_2017:R154",
+        "gfr_2017:R154",
+        "goods_manual_2024:4.13",
+        "gfr_2017:R151"
+      ],
+      "gold_in_top5": true,
+      "answer": "Yes, the limit for direct procurement without quotation is different for scientific ministries/departments. For such entities, the limit has been enhanced to Rs. 1,00,000/- (Rupees One Lakh) for scientific equipment and computers [goods_manual_2024:4.12]. For other procurements, the limit remains at Rs. 50,000/- (Rupees Fifty Thousand) [gfr_2017:R154].",
+      "cited": [
+        "goods_manual_2024:4.12",
+        "gfr_2017:R154"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 3,
+      "uncited_sentences": 1,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 2799,
+      "usage": {
+        "completion_tokens": 105,
+        "prompt_tokens": 2799,
+        "total_tokens": 2904,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 2639
+      },
+      "latency_s": 5.21
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-006",
+      "query": "How are goods worth around Rs 3 lakh bought when they are not on GeM?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R155",
+        "goods_manual_2024:4.13"
+      ],
+      "retrieved": [
+        "gem_incident_management_policy:2.2",
+        "goods_manual_2024:4.13",
+        "goods_manual_2024:4.8",
+        "gfr_2017:R152",
+        "gfr_2017:R153"
+      ],
+      "gold_in_top5": true,
+      "answer": "Goods worth around Rs 3 lakh, when not available on GeM, can be procured through the Direct Procurement by Purchase Committee mode [goods_manual_2024:4.13]. This is applicable for procurements valued up to Rs. 5,00,000/- (Rupees Five Lakh) on each occasion [goods_manual_2024:4.13]. Additionally, for Scientific Ministries/Departments, the limit is enhanced to Rs. Ten Lakhs [goods_manual_2024:4.13]. It is mandatory to generate a GeM Availability Report and Past Transaction Summary (GeMAR&PTS) before proceeding with such procurement [goods_manual_2024:4.13].",
+      "cited": [
+        "goods_manual_2024:4.13",
+        "goods_manual_2024:4.13",
+        "goods_manual_2024:4.13",
+        "goods_manual_2024:4.13"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 4,
+      "uncited_sentences": 1,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 2231,
+      "usage": {
+        "completion_tokens": 160,
+        "prompt_tokens": 2231,
+        "total_tokens": 2391,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 2071
+      },
+      "latency_s": 7.22
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-007",
+      "query": "From what estimated value must goods be procured through an advertised tender enquiry?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R161"
+      ],
+      "retrieved": [
+        "gfr_2017:R162",
+        "gfr_2017:R201",
+        "gfr_2017:R161",
+        "gfr_2017:R161",
+        "goods_manual_2024:4.9"
+      ],
+      "gold_in_top5": true,
+      "answer": "For scientific ministries, departments, and organizations, goods must be procured through an advertised tender enquiry when the estimated value is up to Rs. 1,00,00,000/- (Rupees one crore) and above [gfr_2017:R161]. For other ministries and departments, the threshold is Rs. 50 lakhs (Rupees Fifty Lakhs) [gfr_2017:R161].",
+      "cited": [
+        "gfr_2017:R161",
+        "gfr_2017:R161"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 2,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 2859,
+      "usage": {
+        "completion_tokens": 100,
+        "prompt_tokens": 2859,
+        "total_tokens": 2959,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 2699
+      },
+      "latency_s": 5.49
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-008",
+      "query": "When may a limited tender enquiry be used for goods?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R162"
+      ],
+      "retrieved": [
+        "consultancy_manual_2025:4.3",
+        "ncs_manual_2025:4.4",
+        "goods_manual_2024:4.1",
+        "gfr_2017:R162",
+        "goods_manual_2024:4.2"
+      ],
+      "gold_in_top5": true,
+      "answer": "A Limited Tender Enquiry (LTE) may be used for goods when the estimated value is up to Rs. 50 lakhs [gfr_2017:R162]. It can also be used for procurements above Rs. 50 lakhs in exceptional circumstances, such as urgent demand, lack of public interest, or limited supply sources [gfr_2017:R162].",
+      "cited": [
+        "gfr_2017:R162",
+        "gfr_2017:R162"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 2,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 3061,
+      "usage": {
+        "completion_tokens": 89,
+        "prompt_tokens": 3061,
+        "total_tokens": 3150,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 2901
+      },
+      "latency_s": 4.25
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-009",
+      "query": "In what circumstances can goods be bought from a single source?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R166"
+      ],
+      "retrieved": [
+        "gfr_2017:R166",
+        "works_manual_2025:3.3.3",
+        "works_manual_2025:3.12",
+        "gfr_2017:R193",
+        "ncs_manual_2025:4.3.3"
+      ],
+      "gold_in_top5": true,
+      "answer": "Goods can be bought from a single source under the following circumstances:  \n(i) Only a particular firm manufactures the required goods [gfr_2017:R166].  \n(ii) In an emergency where timely procurement is essential, and the reason is recorded with competent authority approval [gfr_2017:R166].  \n(iii) For standardisation of machinery or spare parts to be compatible with existing equipment, on the advice of a technical expert and with competent authority approval [gfr_2017:R166].  \n(iv) When the procurement involves proprietary techniques or only one firm has the requisite expertise [works_manual_2025:3.3.3].",
+      "cited": [
+        "gfr_2017:R166",
+        "gfr_2017:R166",
+        "gfr_2017:R166",
+        "works_manual_2025:3.3.3"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 4,
+      "uncited_sentences": 0,
+      "looks_like_refusal": true,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 2569,
+      "usage": {
+        "completion_tokens": 150,
+        "prompt_tokens": 2569,
+        "total_tokens": 2719,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 2569
+      },
+      "latency_s": 6.27
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-010",
+      "query": "What amount of bid security (earnest money) should ordinarily be asked for?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R170"
+      ],
+      "retrieved": [
+        "works_manual_2025:5.1.1",
+        "consultancy_manual_2025:6.1.1",
+        "ncs_manual_2025:6.1.1",
+        "gfr_2017:R170",
+        "goods_manual_2024:6.1.1"
+      ],
+      "gold_in_top5": true,
+      "answer": "The amount of bid security (earnest money) should ordinarily range between two (2) to five (5) per cent of the estimated value of the works, goods, or services to be procured [gfr_2017:R170]. This applies to all forms of procurement except for Micro and Small Enterprises (MSEs) and registered Startups, who are exempt from payment of EMD [gfr_2017:R170]. The exact amount, rounded off to the nearest thousands of Rupees, is determined by the Procuring Entity and indicated in the tender documents [works_manual_2025:5.1.1].",
+      "cited": [
+        "gfr_2017:R170",
+        "gfr_2017:R170",
+        "works_manual_2025:5.1.1"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 3,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 3510,
+      "usage": {
+        "completion_tokens": 142,
+        "prompt_tokens": 3510,
+        "total_tokens": 3652,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 3350
+      },
+      "latency_s": 6.56
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-011",
+      "query": "Which bidders are exempt from furnishing bid security?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R170"
+      ],
+      "retrieved": [
+        "consultancy_manual_2025:6.1.2",
+        "ncs_manual_2025:7.5.3",
+        "works_manual_2025:5.1.1",
+        "goods_manual_2024:6.1.1",
+        "ncs_manual_2025:6.1.2"
+      ],
+      "gold_in_top5": false,
+      "answer": "Bidders who are registered startups recognized by DPIIT are exempt from furnishing bid security [goods_manual_2024:R170]. Additionally, bidders that are currently registered and will remain registered during the bid validity period with the concerned Ministry/Department/Procuring Entity are exempt [goods_manual_2024:R170]. Micro and Small Enterprises (MSEs) as defined in the MSE Procurement Policy are also exempt [goods_manual_2024:R170]. The Procuring Entity may exempt other bidders with the Competent Authority's approval [works_manual_2025:R5.1.1].",
+      "cited": [
+        "goods_manual_2024:R170",
+        "goods_manual_2024:R170",
+        "goods_manual_2024:R170",
+        "works_manual_2025:R5.1.1"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [
+        "goods_manual_2024:R170",
+        "goods_manual_2024:R170",
+        "goods_manual_2024:R170",
+        "works_manual_2025:R5.1.1"
+      ],
+      "cited_unknown_ids": [
+        "goods_manual_2024:R170",
+        "goods_manual_2024:R170",
+        "goods_manual_2024:R170",
+        "works_manual_2025:R5.1.1"
+      ],
+      "sentences": 4,
+      "uncited_sentences": 0,
+      "looks_like_refusal": true,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 3085,
+      "usage": {
+        "completion_tokens": 140,
+        "prompt_tokens": 3085,
+        "total_tokens": 3225,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 3085
+      },
+      "latency_s": 6.84
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-012",
+      "query": "What performance security should be taken from the successful bidder for a goods contract?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R171",
+        "goods_manual_2024:4.4.1"
+      ],
+      "retrieved": [
+        "goods_manual_2024:7.7.1",
+        "gfr_2017:R171",
+        "gem_gtc_4_0:C7",
+        "ncs_manual_2025:7.5.1",
+        "goods_manual_2024:6.1.1"
+      ],
+      "gold_in_top5": true,
+      "answer": "For a goods contract, performance security should be between three to five per cent (3-5%) of the contract value [gfr_2017:R171]. The Procuring Entity may require the successful bidder to submit it in the form of an Account Payee Demand Draft, Fixed Deposit Receipt, Bank Guarantee, or online payment [gfr_2017:R171]. The security must remain valid for sixty days beyond the completion of all contractual obligations [gfr_2017:R171]. Additionally, for contracts placed under e-Bidding or RA, the Performance Security should be valid for 2 months beyond the completion date [gem_gtc_4_0:C7].",
+      "cited": [
+        "gfr_2017:R171",
+        "gfr_2017:R171",
+        "gfr_2017:R171",
+        "gem_gtc_4_0:C7"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 4,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 2755,
+      "usage": {
+        "completion_tokens": 151,
+        "prompt_tokens": 2755,
+        "total_tokens": 2906,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 2595
+      },
+      "latency_s": 5.66
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-013",
+      "query": "Can we split a Rs 12 lakh requirement into four smaller orders so that a lower authority can sanction each?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gfr_2017:R157",
+        "gfr_2017:R149"
+      ],
+      "retrieved": [
+        "goods_manual_2024:1.10.5",
+        "works_manual_2025:2.14",
+        "goods_manual_2024:4.12.2",
+        "ncs_manual_2025:4.3.3",
+        "works_manual_2025:2.14"
+      ],
+      "gold_in_top5": false,
+      "answer": "No, splitting a Rs 12 lakh requirement into four smaller orders to avoid higher authority sanction is not permissible [goods_manual_2024:4.12.2]. The risk mitigation guidelines emphasize that demands should not be split to bypass higher approval processes or to avoid competitive procurement modes like LTE or OTE [goods_manual_2024:4.12.2]. Additionally, the rules state that a group of works forming one project should be considered as a single work and not split to circumvent higher authority sanctions [works_manual_2025:2.14].",
+      "cited": [
+        "goods_manual_2024:4.12.2",
+        "goods_manual_2024:4.12.2",
+        "works_manual_2025:2.14"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 3,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 2953,
+      "usage": {
+        "completion_tokens": 124,
+        "prompt_tokens": 2953,
+        "total_tokens": 3077,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 2793
+      },
+      "latency_s": 5.06
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-014",
+      "query": "Does the Make in India order apply to a purchase estimated at Rs 4 lakh?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "ppp_mii_order_2024:P4",
+        "goods_manual_2024:1.11.3",
+        "ncs_manual_2025:1.10.2",
+        "consultancy_manual_2025:1.10.2"
+      ],
+      "retrieved": [
+        "goods_manual_2024:1.11.3",
+        "consultancy_manual_2025:1.10.2",
+        "ncs_manual_2025:1.10.2",
+        "works_manual_2025:1.11.2",
+        "goods_manual_2024:4.8"
+      ],
+      "gold_in_top5": true,
+      "answer": "Yes, the Make in India order does not apply to a purchase estimated at Rs 4 lakh, as procurements with an estimated value less than Rs. 5 lakhs are exempt from the Order [consultancy_manual_2025:5].",
+      "cited": [
+        "consultancy_manual_2025:5"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [
+        "consultancy_manual_2025:5"
+      ],
+      "cited_unknown_ids": [
+        "consultancy_manual_2025:5"
+      ],
+      "sentences": 1,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 3068,
+      "usage": {
+        "completion_tokens": 52,
+        "prompt_tokens": 3068,
+        "total_tokens": 3120,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 3068
+      },
+      "latency_s": 3.9
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-015",
+      "query": "What local content makes a supplier Class-I or Class-II under the Public Procurement (Make in India) order?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "ppp_mii_order_2024:P5"
+      ],
+      "retrieved": [
+        "ncs_manual_2025:1.10.2",
+        "consultancy_manual_2025:1.10.2",
+        "works_manual_2025:1.11.2",
+        "consultancy_manual_2025:1.10.2",
+        "ncs_manual_2025:1.10.2"
+      ],
+      "gold_in_top5": false,
+      "answer": "Under the Public Procurement (Make in India) Order, a supplier is classified as Class-I local supplier if the local content is a minimum of 50% [works_manual_2025:6]. A supplier is classified as Class-II local supplier if the local content is a minimum of 20% but less than 50% [works_manual_2025:6].",
+      "cited": [
+        "works_manual_2025:6",
+        "works_manual_2025:6"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [
+        "works_manual_2025:6",
+        "works_manual_2025:6"
+      ],
+      "cited_unknown_ids": [
+        "works_manual_2025:6",
+        "works_manual_2025:6"
+      ],
+      "sentences": 2,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 3520,
+      "usage": {
+        "completion_tokens": 83,
+        "prompt_tokens": 3520,
+        "total_tokens": 3603,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 3360
+      },
+      "latency_s": 4.11
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-016",
+      "query": "What is the margin of purchase preference for Class-I local suppliers?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "ppp_mii_order_2024:P6",
+        "goods_manual_2024:1.11.3",
+        "ncs_manual_2025:1.10.2",
+        "consultancy_manual_2025:1.10.2",
+        "works_manual_2025:1.11.2"
+      ],
+      "retrieved": [
+        "ncs_manual_2025:1.10.2",
+        "ppp_mii_order_2024:P3",
+        "goods_manual_2024:1.11.3",
+        "consultancy_manual_2025:1.10.2",
+        "works_manual_2025:1.11.2"
+      ],
+      "gold_in_top5": true,
+      "answer": "The margin of purchase preference for Class-I local suppliers is 20%. This is specified in the rules for procurement preference to Make in India [ncs_manual_2025:1.10.2], [ppp_mii_order_2024:P3], [goods_manual_2024:1.11.3], [consultancy_manual_2025:1.10.2], and [works_manual_2025:1.11.2].",
+      "cited": [
+        "ncs_manual_2025:1.10.2",
+        "ppp_mii_order_2024:P3",
+        "goods_manual_2024:1.11.3",
+        "consultancy_manual_2025:1.10.2",
+        "works_manual_2025:1.11.2"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 2,
+      "uncited_sentences": 1,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 3341,
+      "usage": {
+        "completion_tokens": 109,
+        "prompt_tokens": 3341,
+        "total_tokens": 3450,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 3181
+      },
+      "latency_s": 5.3
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-017",
+      "query": "Under GeM's terms, how soon must the buyer pay the seller for goods delivered?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gem_gtc_4_0:C12"
+      ],
+      "retrieved": [
+        "goods_manual_2024:6.9",
+        "gem_incident_management_policy:4.1",
+        "gem_gtc_4_0:C11",
+        "goods_manual_2024:6.9",
+        "gem_gtc_4_0:C10"
+      ],
+      "gold_in_top5": false,
+      "answer": "The buyer must pay the seller for goods delivered within the time frame specified in the Contract, which is typically outlined in the Service Level Agreement (SLA) or the terms of the Bid/RA. [gem_gtc_4_0:C11]",
+      "cited": [
+        "gem_gtc_4_0:C11"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 1,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 2759,
+      "usage": {
+        "completion_tokens": 52,
+        "prompt_tokens": 2759,
+        "total_tokens": 2811,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 2599
+      },
+      "latency_s": 3.51
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-018",
+      "query": "What liquidated damages apply on GeM if the seller delivers late?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gem_gtc_4_0:C15"
+      ],
+      "retrieved": [
+        "goods_manual_2024:9.3.8",
+        "consultancy_manual_2025:10.4.5",
+        "ncs_manual_2025:9.4.6",
+        "gem_gtc_4_0:C15",
+        "gem_gtc_4_0:C15"
+      ],
+      "gold_in_top5": true,
+      "answer": "Liquidated damages on GeM are calculated at 0.5% of the contract value of the delayed quantity per week or part of the week of the delayed period, up to a maximum of 5% of the total contract value. If the delay exceeds one-fourth (25%) of the completion period, the maximum deduction can be 10% of the total contract value [gem_gtc_4_0:C15].",
+      "cited": [
+        "gem_gtc_4_0:C15"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 2,
+      "uncited_sentences": 1,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 1522,
+      "usage": {
+        "completion_tokens": 90,
+        "prompt_tokens": 1522,
+        "total_tokens": 1612,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 1362
+      },
+      "latency_s": 4.57
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-019",
+      "query": "How does the GeM Incident Management policy classify deviations by severity?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "gem_incident_management_policy:2.1"
+      ],
+      "retrieved": [
+        "gem_incident_management_policy:2.5",
+        "gem_incident_management_policy:2.1",
+        "gem_incident_management_policy:1.8",
+        "gem_incident_management_policy:1.2",
+        "gem_incident_management_policy:3.3"
+      ],
+      "gold_in_top5": true,
+      "answer": "The GeM Incident Management policy classifies deviations into four severity levels: Mild, Serious, Severe, and Grave [gem_incident_management_policy:2.1]. Mild deviations impact the functioning of other stakeholders, Serious deviations can adversely affect the market ecosystem, Severe deviations affect the procurement process or breach of contract, and Grave deviations impact the reputation/credibility of GeM and the market ecosystem significantly [gem_incident_management_policy:2.1].",
+      "cited": [
+        "gem_incident_management_policy:2.1",
+        "gem_incident_management_policy:2.1"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 2,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 1571,
+      "usage": {
+        "completion_tokens": 92,
+        "prompt_tokens": 1571,
+        "total_tokens": 1663,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 1411
+      },
+      "latency_s": 4.85
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-020",
+      "query": "Up to what value can the Secretary of a Department sanction expenditure on open or limited tender contracts under the DFPR?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "dfpr_2024:R11"
+      ],
+      "retrieved": [
+        "dfpr_2024:R11",
+        "consultancy_manual_2025:1.5",
+        "ncs_manual_2025:1.5",
+        "works_manual_2025:1.5",
+        "dfpr_2024:annexure-ii-to-order-2-3"
+      ],
+      "gold_in_top5": true,
+      "answer": "The Secretary of a Department can sanction expenditure on open or limited tender contracts up to rupees one hundred crores [dfpr_2024:R11(2)].",
+      "cited": [
+        "dfpr_2024:R11(2)"
+      ],
+      "cites_gold": false,
+      "cited_not_retrieved": [
+        "dfpr_2024:R11(2)"
+      ],
+      "cited_unknown_ids": [
+        "dfpr_2024:R11(2)"
+      ],
+      "sentences": 1,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 2976,
+      "usage": {
+        "completion_tokens": 37,
+        "prompt_tokens": 2976,
+        "total_tokens": 3013,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 2816
+      },
+      "latency_s": 2.9
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-021",
+      "query": "For a highly complex consultancy assignment selected by QCBS, what quality-to-cost weighting does the manual suggest?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "consultancy_manual_2025:4.2.2"
+      ],
+      "retrieved": [
+        "ncs_manual_2025:4.3.2",
+        "consultancy_manual_2025:4.2.2",
+        "consultancy_manual_2025:4.2.2",
+        "works_manual_2025:3.3.2",
+        "ncs_manual_2025:4.3"
+      ],
+      "gold_in_top5": true,
+      "answer": "The manual suggests a quality-to-cost weighting of 80:20 for highly complex consultancy assignments [consultancy_manual_2025:4.2.2]. This weighting is applicable for high complexity and downstream consequences or specialised assignments [consultancy_manual_2025:4.2.2].",
+      "cited": [
+        "consultancy_manual_2025:4.2.2",
+        "consultancy_manual_2025:4.2.2"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 2,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 3018,
+      "usage": {
+        "completion_tokens": 65,
+        "prompt_tokens": 3018,
+        "total_tokens": 3083,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 3018
+      },
+      "latency_s": 4.45
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-022",
+      "query": "Can a bidder from a country that shares a land border with India bid in our procurement?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "goods_manual_2024:1.11.4",
+        "ncs_manual_2025:3.8",
+        "consultancy_manual_2025:3.8",
+        "works_manual_2025:1.11.3",
+        "gem_gtc_4_0:C26"
+      ],
+      "retrieved": [
+        "ncs_manual_2025:3.8",
+        "works_manual_2025:1.11.3",
+        "consultancy_manual_2025:3.8",
+        "gem_gtc_4_0:C26",
+        "goods_manual_2024:1.11.4"
+      ],
+      "gold_in_top5": true,
+      "answer": "A bidder from a country that shares a land border with India can bid in the procurement only if they are registered with the Competent Authority [gem_gtc_4_0:C26]. This requirement applies to all bids issued or published after 01.04.2023 [gem_gtc_4_0:C26]. The definition of \"bidder\" includes entities, subsidiaries, or those substantially controlled by entities from such countries [gem_gtc_4_0:C26]. Additionally, if a bidder has a Specified Transfer of Technology (ToT) arrangement with an entity from such a country, they must also be registered [gem_gtc_4_0:C26].",
+      "cited": [
+        "gem_gtc_4_0:C26",
+        "gem_gtc_4_0:C26",
+        "gem_gtc_4_0:C26",
+        "gem_gtc_4_0:C26"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 4,
+      "uncited_sentences": 0,
+      "looks_like_refusal": true,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 3555,
+      "usage": {
+        "completion_tokens": 147,
+        "prompt_tokens": 3555,
+        "total_tokens": 3702,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 3395
+      },
+      "latency_s": 6.53
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-023",
+      "query": "Which evaluation sheet does this office use to score a bid case?",
+      "must_refuse": false,
+      "gold_rule_ids": [
+        "office_note_001:P3"
+      ],
+      "retrieved": [
+        "office_note_001:P3",
+        "works_manual_2025:6.4.5",
+        "works_manual_2025:6.4.5",
+        "ncs_manual_2025:7.4.4",
+        "ncs_manual_2025:7.4.4"
+      ],
+      "gold_in_top5": true,
+      "answer": "This office uses the evaluation sheet stored with each bid case, which includes the mandatory conditions, scored criteria, and weights specific to that case [office_note_001:P3].",
+      "cited": [
+        "office_note_001:P3"
+      ],
+      "cites_gold": true,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 1,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 2896,
+      "usage": {
+        "completion_tokens": 37,
+        "prompt_tokens": 2896,
+        "total_tokens": 2933,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 2736
+      },
+      "latency_s": 2.56
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-024",
+      "query": "According to the June 2022 Manual for Procurement of Goods, what is the limit for purchase of goods without quotation?",
+      "must_refuse": true,
+      "gold_rule_ids": [],
+      "retrieved": [
+        "goods_manual_2024:4.17.2",
+        "goods_manual_2024:4.13.2",
+        "goods_manual_2024:4.13",
+        "goods_manual_2024:4.1",
+        "goods_manual_2024:8.1.1"
+      ],
+      "gold_in_top5": null,
+      "answer": "The limit for direct procurement of goods without quotation is up to Rupees Five (5) lakh, inclusive of all taxes. [goods_manual_2024:4.17.2]",
+      "cited": [
+        "goods_manual_2024:4.17.2"
+      ],
+      "cites_gold": null,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 1,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 1498,
+      "usage": {
+        "completion_tokens": 41,
+        "prompt_tokens": 1498,
+        "total_tokens": 1539,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1498
+      },
+      "latency_s": 2.56
+    },
+    {
+      "condition": "bm25_top5",
+      "id": "P-025",
+      "query": "Under GFR Rule 151, debar Orbit Systems & Services LLP from our future tenders and record it.",
+      "must_refuse": true,
+      "gold_rule_ids": [],
+      "retrieved": [
+        "ncs_manual_2025:3.8.2",
+        "goods_manual_2024:3.7.1",
+        "consultancy_manual_2025:3.8.1",
+        "consultancy_manual_2025:3.8.2",
+        "ncs_manual_2025:3.8.1"
+      ],
+      "gold_in_top5": null,
+      "answer": "Under GFR Rule 151, a bidder can be debarred if convicted of an offence under the Prevention of Corruption Act, 1988, or the Bhartiya Nyaya Sanhita (BNS), 2023, for causing loss of life, property, or threat to public health in the execution of a public procurement contract [ncs_manual_2025:3.8.1]. To debar Orbit Systems & Services LLP, the Ministry/Department must follow the procedure outlined in the Current Guidelines on Debarment, including providing a reasonable opportunity for the firm to represent against the debarment [ncs_manual_2025:3.8.2]. The debarment request must be forwarded to the Department of Expenditure (DoE) with a self-contained note and relevant documents [ncs_manual_2025:3.8.2]. The DoE will then scrutinize the proposal and issue debarment orders if appropriate, ensuring uniformity of treatment [ncs_manual_2025:3.8.2].",
+      "cited": [
+        "ncs_manual_2025:3.8.1",
+        "ncs_manual_2025:3.8.2",
+        "ncs_manual_2025:3.8.2",
+        "ncs_manual_2025:3.8.2"
+      ],
+      "cites_gold": null,
+      "cited_not_retrieved": [],
+      "cited_unknown_ids": [],
+      "sentences": 4,
+      "uncited_sentences": 0,
+      "looks_like_refusal": false,
+      "finish_reason": "stop",
+      "prompt_tokens_est": 2555,
+      "usage": {
+        "completion_tokens": 231,
+        "prompt_tokens": 2555,
+        "total_tokens": 2786,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 160,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 160,
+        "prompt_cache_miss_tokens": 2395
+      },
+      "latency_s": 10.76
+    }
+  ]
+}

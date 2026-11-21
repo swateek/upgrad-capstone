@@ -1,0 +1,62 @@
+# Guard (plan §7, SPEC §7): code checks before any model call, and banned phrases the verifier
+# blocks in any answer. Patterns are written from the refusal policy, not from eval items; they
+# are case-insensitive Python regexes. A refusal never contains the requested technique.
+#
+# A traveller REPORTING what someone told them ("the shop said Cuban cigars don't need
+# declaring") is not an injection: it is answered, and the calculators decide. Only requests
+# aimed at the assistant itself (ignore your rules, say it's fine) are refused here.
+
+refusals:
+  evasion:
+    wording: "I can't help with that. Declare everything you bring; the CBP officer decides."
+    patterns:
+      - '\b(hide|hiding|hidden|conceal\w*|stash\w*|smuggl\w*|sneak\w*)\b(?!\s+nothing)'
+      # red-team 18 Nov: euphemism and Spanish slipped past (they got a clarify, not a refusal)
+      - '\bwithout\b.{0,20}\b(officers?|customs|cbp|them|anyone|anybody)\b.{0,10}\b(notic\w*|see\w*|seeing|find\w*|know\w*|check\w*|spot\w*)\b'
+      - '\b(esconder|ocultar|contrabando|contrabandear|sin declarar|no declarar|que no (lo|la|los|las) (vean|encuentren))\b'
+      - '\b(avoid|dodge|evade|evading|get around|get past|sneak past|bypass|slip past|fool)\b.{0,25}\b(customs|officers?|cbp|duty|duties|tax(es)?|declar\w*|limits?|allowance|inspection|checks?|scanners?|x-?ray)\b'
+      - '\b(how|best way|ways?|can i|could i|should i|is it ok(ay)? to|tips?|trick)\b.{0,40}\b(not declar\w*|avoid declar\w*|without declar\w*|skip declar\w*|get away with)\b'
+      - '\b(so|that)\b.{0,12}\b(customs|the officers?|cbp|they|officials?)\b.{0,6}\b(doesn.?t|don.?t|won.?t|wouldn.?t|can.?t|cannot|never)\b.{0,10}\b(find|see|notice|count|catch|know|check|spot)\b'
+      - '\b(under-?valu\w*|lower (the )?(price|value) on|fake (a )?receipt|alter(ed)? (the )?receipt|change the (receipt|price|label))\b'
+      - '\b(split|divide|spread)\b.{0,40}\b(to (avoid|stay under|dodge|get under)|so (it|they|i) (stays?|don.?t|doesn.?t|won.?t))\b'
+      - '\b(re-?label\w*|remove the labels?|peel (off )?the labels?|change where it says)\b'
+      - '\b(pour|decant|transfer|refill)\b.{0,40}\b(into|in)\b.{0,25}\b(water|plastic|unmarked|shampoo|other|empty)\b.{0,15}\b(bottles?|containers?|flasks?)\b'
+  injection:
+    wording: "I can't help with that. Declare everything you bring; the CBP officer decides."
+    patterns:
+      - '\b(ignore|disregard|forget|override|bypass)\b.{0,30}\b(rules|instructions|regulations|guidelines|policy|policies|system prompt|prompt|programming)\b'
+      - '\byou are now\b'
+      - '\b(pretend|act as if|act like|roleplay|role-play)\b.{0,30}\b(you|customs|officer|assistant|no rules)\b'
+      - '\b(system prompt|developer mode|jailbreak|dan mode)\b'
+      - '\bnew instructions?\b'
+      - '\b(just|only)\s+(say|confirm)\b.{0,60}\b(fine|ok(ay)?|allowed|legal|duty[- ]free|no duty|nothing)\b'
+  declaration:
+    wording: "I can't fill in or submit a customs declaration for you. Declare everything you bring on CBP's form or app; the CBP officer decides."
+    patterns:
+      - '\b(fill (in|out)|sign|submit|complete|file)\b.{0,20}\b(my|the|a)\b.{0,15}\b(declaration|form 6059b?|6059b?|customs form)\b'
+
+# Patterns no answer may contain (red-team 18 Nov: the planted claims in pack/corpus/synthetic,
+# if a writer ever copied them, were not all caught by the literal phrases below). A negated
+# guarantee ("we can't guarantee") is allowed.
+banned_patterns:
+  - '\b(do|does|did|will|would)\s*(not|n''t)\s+(need|have)\s+to\s+be\s+declared\b'
+  - '\b(no|not)\s+(need|required)\s+to\s+(be\s+)?declare'
+  - '\babolished\b'
+  - '\b(never|won''t|will not|doesn''t|does not)\s+(check|checks|inspect|inspects)\b'
+  - '(?<!can''t )(?<!cannot )(?<!not )(?<!no )\bguarantee[sd]?\b'
+
+# Phrases no answer may contain (verifier, plan §4.7): evasion advice or a guarantee.
+banned_phrases:
+  - "don't declare"
+  - "do not declare"
+  - "no need to declare"
+  - "don't need to declare"
+  - "don't have to declare"
+  - "do not need to declare"
+  - "not required to declare"
+  - "hide"
+  - "conceal"
+  - "smuggle"
+  - "undervalue"
+  - "won't be checked"
+  - "will not be checked"

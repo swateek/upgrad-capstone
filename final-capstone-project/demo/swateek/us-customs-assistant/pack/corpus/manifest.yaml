@@ -1,0 +1,495 @@
+# Source manifest for the US Customs Assistant corpus.
+#
+# Hand-edited. Lists every external file the corpus uses, where it came from, and which edition
+# it is. Hashes are NOT kept here: `python -m customs.ingest.download --freeze` writes them to
+# manifest.lock.yaml next to this file. Both files are committed; the downloaded files stay in the
+# gitignored data/ folder. Edition decisions are explained in editions.md.
+#
+# Fields
+#   id            stable id, used as the doc_id prefix in citations
+#   format        xml | html | pdf | json (the downloader checks the body matches)
+#   parser        how the file becomes documents (customs.ingest.parsers); rules in splitting.yaml
+#   topic         exemptions | rates | sanctions | state | declaring | other_goods
+#   role          core | hard_negative (neighbouring rules that test retrieval precision) | flag
+#   url           the exact file downloaded; versioned URLs wherever the publisher offers them
+#   source_page   the official page the url was found from (checked 17 Nov 2026)
+#   edition_date  ISO date of the edition, or null for a live page (the lock records retrieval)
+
+checked_on: 2026-11-17
+
+sources:
+  # --- eCFR, fixed point-in-time snapshot (versioner API, 2026-11-13) ----------------------------
+  - id: cfr19_p148
+    title: "19 CFR Part 148: Personal Declarations and Exemptions"
+    publisher: eCFR (Office of the Federal Register)
+    url: https://www.ecfr.gov/api/versioner/v1/full/2026-11-13/title-19.xml?part=148
+    source_page: https://www.ecfr.gov/current/title-19/chapter-I/part-148
+    format: xml
+    parser: ecfr_xml
+    topic: exemptions
+    edition: eCFR point-in-time, up to date as of 2026-11-13
+    edition_date: 2026-11-13
+    index_scope: whole part
+
+  - id: cfr31_p515
+    title: "31 CFR Part 515: Cuban Assets Control Regulations"
+    publisher: eCFR (Office of the Federal Register)
+    url: https://www.ecfr.gov/api/versioner/v1/full/2026-11-13/title-31.xml?part=515
+    source_page: https://www.ecfr.gov/current/title-31/subtitle-B/chapter-V/part-515
+    format: xml
+    parser: ecfr_xml
+    topic: sanctions
+    edition: eCFR point-in-time, up to date as of 2026-11-13
+    edition_date: 2026-11-13
+    index_scope: whole part (most sections are hard negatives about other Cuba rules)
+
+  - id: cfr27_p27
+    title: "27 CFR Part 27: Importation of Distilled Spirits, Wines, and Beer"
+    publisher: eCFR (Office of the Federal Register)
+    url: https://www.ecfr.gov/api/versioner/v1/full/2026-11-13/title-27.xml?part=27
+    source_page: https://www.ecfr.gov/current/title-27/chapter-I/subchapter-A/part-27
+    format: xml
+    parser: ecfr_xml
+    topic: rates
+    edition: eCFR point-in-time, up to date as of 2026-11-13
+    edition_date: 2026-11-13
+    index_scope: whole part
+
+  - id: cfr27_p41
+    title: "27 CFR Part 41: Importation of Tobacco Products, Cigarette Papers and Tubes, and Processed Tobacco"
+    publisher: eCFR (Office of the Federal Register)
+    url: https://www.ecfr.gov/api/versioner/v1/full/2026-11-13/title-27.xml?part=41
+    source_page: https://www.ecfr.gov/current/title-27/chapter-I/subchapter-A/part-41
+    format: xml
+    parser: ecfr_xml
+    topic: rates
+    edition: eCFR point-in-time, up to date as of 2026-11-13
+    edition_date: 2026-11-13
+    index_scope: whole part
+
+  # --- US Code, Title 26 (govinfo, 2024 main edition) -------------------------------------------
+  - id: usc26_5001
+    title: "26 USC 5001: Imposition, rate, and attachment of tax (distilled spirits)"
+    publisher: govinfo (US Government Publishing Office)
+    url: https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleE-chap51-subchapA-partI-subpartA-sec5001.htm
+    source_page: https://www.govinfo.gov/app/collection/uscode
+    format: html
+    parser: usc_html
+    topic: rates
+    edition: United States Code, 2024 edition
+    edition_date: null
+
+  - id: usc26_5041
+    title: "26 USC 5041: Imposition and rate of tax (wines)"
+    publisher: govinfo (US Government Publishing Office)
+    url: https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleE-chap51-subchapA-partI-subpartC-sec5041.htm
+    source_page: https://www.govinfo.gov/app/collection/uscode
+    format: html
+    parser: usc_html
+    topic: rates
+    edition: United States Code, 2024 edition
+    edition_date: null
+
+  - id: usc26_5051
+    title: "26 USC 5051: Imposition and rate of tax (beer)"
+    publisher: govinfo (US Government Publishing Office)
+    url: https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleE-chap51-subchapA-partI-subpartD-sec5051.htm
+    source_page: https://www.govinfo.gov/app/collection/uscode
+    format: html
+    parser: usc_html
+    topic: rates
+    edition: United States Code, 2024 edition
+    edition_date: null
+
+  - id: usc26_5701
+    title: "26 USC 5701: Rate of tax (tobacco products)"
+    publisher: govinfo (US Government Publishing Office)
+    url: https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleE-chap52-subchapA-sec5701.htm
+    source_page: https://www.govinfo.gov/app/collection/uscode
+    format: html
+    parser: usc_html
+    topic: rates
+    edition: United States Code, 2024 edition
+    edition_date: null
+
+  - id: usc26_5754
+    title: "26 USC 5754: Restriction on importation of previously exported tobacco products"
+    publisher: govinfo (US Government Publishing Office)
+    url: https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleE-chap52-subchapF-sec5754.htm
+    source_page: https://www.govinfo.gov/app/collection/uscode
+    format: html
+    parser: usc_html
+    topic: rates
+    edition: United States Code, 2024 edition
+    edition_date: null
+
+  - id: usc26_5761
+    title: "26 USC 5761: Civil penalties (tobacco products)"
+    publisher: govinfo (US Government Publishing Office)
+    url: https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleE-chap52-subchapG-sec5761.htm
+    source_page: https://www.govinfo.gov/app/collection/uscode
+    format: html
+    parser: usc_html
+    topic: rates
+    edition: United States Code, 2024 edition
+    edition_date: null
+
+  # --- HTSUS (USITC). PDFs pinned to 2026 Revision 23; the JSON rows come from the current release.
+  - id: hts_ch98_pdf
+    title: "HTSUS Chapter 98: Special Classification Provisions (Subchapters IV and XVI)"
+    publisher: US International Trade Commission
+    url: https://hts.usitc.gov/reststop/file?release=2026HTSRev23&filename=Chapter%2098
+    source_page: https://hts.usitc.gov/
+    format: pdf
+    parser: pdf_blocks
+    topic: exemptions
+    edition: 2026 HTS Revision 23
+    edition_date: 2026-11-10
+    index_scope: pages 21-25 (Subchapter IV, personal exemptions) and 55-56 (Subchapter XVI, 9816.00.20 flat rate)
+
+  - id: hts_general_notes
+    title: "HTSUS General Notes 3, 7 and 11"
+    publisher: US International Trade Commission
+    url: https://hts.usitc.gov/reststop/file?release=2026HTSRev23&filename=General%20Notes
+    source_page: https://hts.usitc.gov/
+    format: pdf
+    parser: pdf_blocks
+    topic: exemptions
+    edition: 2026 HTS Revision 23
+    edition_date: 2026-11-10
+    index_scope: pages 3-7 (GN 3, rates, insular possessions, Column 2 countries, special-program symbols), 23-25 (GN 7, Caribbean Basin), 28-29 (GN 11 general provisions, USMCA)
+
+  - id: hts_9804_rows
+    title: "HTSUS headings 9804.00 (personal exemptions)"
+    publisher: US International Trade Commission
+    url: https://hts.usitc.gov/reststop/exportList?from=9804&to=9805&format=JSON&styles=false
+    source_page: https://hts.usitc.gov/
+    format: json
+    parser: hts_json
+    topic: exemptions
+    edition: current HTS release (2026 Revision 23 on 2026-11-17)
+    edition_date: 2026-11-10
+
+  - id: hts_9816_rows
+    title: "HTSUS headings 9816.00 (flat rate on articles not over $1,000)"
+    publisher: US International Trade Commission
+    url: https://hts.usitc.gov/reststop/exportList?from=9816&to=9817&format=JSON&styles=false
+    source_page: https://hts.usitc.gov/
+    format: json
+    parser: hts_json
+    topic: rates
+    edition: current HTS release (2026 Revision 23 on 2026-11-17)
+    edition_date: 2026-11-10
+
+  # --- OFAC ---------------------------------------------------------------------------------------
+  - id: ofac_cuba_faqs
+    title: "OFAC Frequently Asked Questions: Cuba Sanctions"
+    publisher: Treasury, Office of Foreign Assets Control
+    url: https://ofac.treasury.gov/faqs/topic/1541
+    source_page: https://ofac.treasury.gov/faqs
+    format: html
+    parser: ofac_faqs
+    topic: sanctions
+    edition: live page (each FAQ carries its release date)
+    edition_date: null
+    index_scope: every FAQ on the topic page (most are hard negatives about other Cuba rules)
+
+  # --- TTB ----------------------------------------------------------------------------------------
+  - id: ttb_tax_rates
+    title: "TTB Tax Rates"
+    publisher: Treasury, Alcohol and Tobacco Tax and Trade Bureau
+    url: https://www.ttb.gov/taxes/tax-audit/tax-and-fee-rates
+    source_page: https://www.ttb.gov/taxes/tax-audit/tax-and-fee-rates
+    format: html
+    parser: html_sections
+    topic: rates
+    edition: live page (rates for calendar years 2018 to present)
+    edition_date: null
+
+  - id: ttb_cbma_imports
+    title: "TTB ACE CBMA Tax Rates Table (imports)"
+    publisher: Treasury, Alcohol and Tobacco Tax and Trade Bureau
+    url: https://www.ttb.gov/regulated-commodities/beverage-alcohol/cbma-imports-acetaxrates
+    source_page: https://www.ttb.gov/taxes/tax-audit/tax-and-fee-rates
+    format: html
+    parser: html_sections
+    topic: rates
+    edition: live page
+    edition_date: null
+
+  # --- CBP traveller guidance (cbp.gov static pages; the CBP Info Center is not fetchable) -------
+  - id: cbp_customs_duty_info
+    title: "CBP: Customs Duty Information"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/international-visitors/know-before-you-visit/customs-duty-information
+    source_page: https://www.cbp.gov/travel/us-citizens/know-before-you-go
+    format: html
+    parser: html_sections
+    topic: exemptions
+    edition: live page
+    edition_date: null
+
+  - id: cbp_types_exemptions
+    title: "CBP: Types of Exemptions"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/international-visitors/kbyg/types-exemptions
+    source_page: https://www.cbp.gov/travel/us-citizens/know-before-you-go
+    format: html
+    parser: html_sections
+    topic: exemptions
+    edition: live page
+    edition_date: null
+
+  - id: cbp_frequent_travelers
+    title: "CBP: For Frequent Travelers"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/international-visitors/kbyg/frequent-travelers
+    source_page: https://www.cbp.gov/travel/us-citizens/know-before-you-go
+    format: html
+    parser: html_sections
+    topic: exemptions
+    edition: live page
+    edition_date: null
+
+  - id: cbp_prohibited_restricted
+    title: "CBP: Prohibited and Restricted Items"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/us-citizens/know-before-you-go/prohibited-and-restricted-items
+    source_page: https://www.cbp.gov/travel/us-citizens/know-before-you-go
+    format: html
+    parser: html_sections
+    topic: declaring
+    edition: live page
+    edition_date: null
+
+  - id: cbp_shopping_abroad
+    title: "CBP: Shopping Abroad: Duty Free, Gifts, Household Items"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/us-citizens/know-before-you-go/shopping-abroad-duty-free-gifts-household-items
+    source_page: https://www.cbp.gov/travel/us-citizens/know-before-you-go
+    format: html
+    parser: html_sections
+    topic: exemptions
+    edition: live page
+    edition_date: null
+
+  - id: cbp_gifts
+    title: "CBP: Gifts"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/us-citizens/know-before-you-go/gifts
+    source_page: https://www.cbp.gov/travel/us-citizens/know-before-you-go
+    format: html
+    parser: html_sections
+    topic: exemptions
+    edition: live page
+    edition_date: null
+
+  - id: cbp_what_to_expect
+    title: "CBP: What to Expect When You Return"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/us-citizens/know-before-you-go/what-expect-when-you-return
+    source_page: https://www.cbp.gov/travel/us-citizens/know-before-you-go
+    format: html
+    parser: html_sections
+    topic: declaring
+    edition: live page
+    edition_date: null
+
+  - id: cbp_your_trip
+    title: "CBP: Your Trip"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/us-citizens/know-before-you-go/your-trip
+    source_page: https://www.cbp.gov/travel/us-citizens/know-before-you-go
+    format: html
+    parser: html_sections
+    topic: declaring
+    edition: live page
+    edition_date: null
+
+  - id: cbp_top_ten_tips
+    title: "CBP: U.S. Travelers' Top Ten Travel Tips"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/us-citizens/know-before-you-go/us-travelers-top-ten-travel-tips
+    source_page: https://www.cbp.gov/travel/us-citizens/know-before-you-go
+    format: html
+    parser: html_sections
+    topic: declaring
+    edition: live page
+    edition_date: null
+
+  - id: cbp_traveling_abroad
+    title: "CBP: Know Before You Go: Traveling Abroad"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/us-citizens/know-before-you-go/know-you-go-traveling-abroad
+    source_page: https://www.cbp.gov/travel/us-citizens/know-before-you-go
+    format: html
+    parser: html_sections
+    topic: declaring
+    edition: live page
+    edition_date: null
+
+  - id: cbp_canada_mexico
+    title: "CBP: Canada and Mexico Travel"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/us-citizens/canada-mexico-travel
+    source_page: https://www.cbp.gov/travel/us-citizens
+    format: html
+    parser: html_sections
+    topic: exemptions
+    edition: live page
+    edition_date: null
+
+  - id: cbp_mexico_trip
+    title: "CBP: Are You Planning a Trip to Mexico from the United States?"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/us-citizens/cbp-reqs-mexico
+    source_page: https://www.cbp.gov/travel/us-citizens
+    format: html
+    parser: html_sections
+    topic: exemptions
+    edition: live page
+    edition_date: null
+
+  - id: cbp_cuba_import_notice
+    title: "CBP Public Notice on Process for Imports from Cuba"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/trade/basic-import-export/cbp-public-notice-process-imports-cuba
+    source_page: https://www.cbp.gov/trade/basic-import-export
+    format: html
+    parser: html_sections
+    topic: sanctions
+    role: hard_negative
+    edition: live page
+    edition_date: null
+
+  - id: cbp_clearing_customs
+    title: "CBP: Clearing Customs"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/clearing-customs
+    source_page: https://www.cbp.gov/travel
+    format: html
+    parser: html_sections
+    topic: declaring
+    edition: live page
+    edition_date: null
+
+  - id: cbp_sending_items_back
+    title: "CBP: Sending Items Back to the U.S."
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/us-citizens/know-before-you-go/sending-items-back-to-us
+    source_page: https://www.cbp.gov/travel/us-citizens/know-before-you-go
+    format: html
+    parser: html_sections
+    topic: other_goods
+    role: hard_negative
+    edition: live page
+    edition_date: null
+
+  - id: cbp_government_crew_exemptions
+    title: "CBP: U.S. Government/Military Personnel or Crew Member Exemptions"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/clearing-customs/business-government-exemptions
+    source_page: https://www.cbp.gov/travel/clearing-customs
+    format: html
+    parser: html_sections
+    topic: other_goods
+    role: hard_negative
+    edition: live page
+    edition_date: null
+
+  - id: cbp_money
+    title: "CBP: Money and Other Monetary Instruments"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/international-visitors/money-monetary-instruments
+    source_page: https://www.cbp.gov/travel/international-visitors
+    format: html
+    parser: html_sections
+    topic: other_goods
+    role: hard_negative
+    edition: live page
+    edition_date: null
+
+  - id: cbp_agricultural_items
+    title: "CBP: Agricultural Items"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/international-visitors/agricultural-items
+    source_page: https://www.cbp.gov/travel/international-visitors
+    format: html
+    parser: html_sections
+    topic: other_goods
+    role: hard_negative
+    edition: live page
+    edition_date: null
+
+  - id: cbp_agricultural_products
+    title: "CBP: Bringing Agricultural Products Into the United States"
+    publisher: US Customs and Border Protection
+    url: https://www.cbp.gov/travel/clearing-cbp/bringing-agricultural-products-united-states
+    source_page: https://www.cbp.gov/travel
+    format: html
+    parser: html_sections
+    topic: other_goods
+    role: hard_negative
+    edition: live page
+    edition_date: null
+
+  # --- Arrival-state alcohol rules (flag + source only) ------------------------------------------
+  - id: state_ca
+    title: "California ABC: Importing Alcoholic Beverages for Personal or Household Use"
+    publisher: California Department of Alcoholic Beverage Control
+    url: https://www.abc.ca.gov/importing-alcoholic-beverages-for-personal-or-household-use/
+    source_page: https://www.abc.ca.gov/
+    format: html
+    parser: html_sections
+    topic: state
+    role: flag
+    edition: live page
+    edition_date: null
+
+  - id: state_ny
+    title: "New York Department of Taxation and Finance: Importation for personal consumption"
+    publisher: New York State Department of Taxation and Finance
+    url: https://www.tax.ny.gov/bus/bev/abt-importperscons.htm
+    source_page: https://www.tax.ny.gov/bus/bev/abt.htm
+    format: html
+    parser: html_sections
+    topic: state
+    role: flag
+    edition: live page
+    edition_date: null
+
+  - id: state_fl
+    title: "Florida Statutes 562.16: Possession of untaxed beverages"
+    publisher: The Florida Senate
+    url: https://www.flsenate.gov/Laws/Statutes/2025/562.16
+    source_page: https://www.flsenate.gov/Laws/Statutes
+    format: html
+    parser: html_sections
+    topic: state
+    role: flag
+    edition: 2025 Florida Statutes
+    edition_date: null
+
+  - id: state_tx
+    title: "Texas ABC: Personal Importation and Ports of Entry FAQs"
+    publisher: Texas Alcoholic Beverage Commission
+    url: https://www.tabc.texas.gov/faqs/personal-importation-ports-of-entry-faqs/
+    source_page: https://www.tabc.texas.gov/services/texas-ports-of-entry/
+    format: html
+    parser: html_sections
+    topic: state
+    role: flag
+    edition: live page
+    edition_date: null
+
+  - id: state_il
+    title: "Illinois Liquor Control Commission: Request for Import Authorization (Form ILCC-RIA)"
+    publisher: Illinois Liquor Control Commission
+    url: https://ilcc.illinois.gov/content/dam/soi/en/web/ilcc/sitecollectiondocuments/request-for-import-authorization.pdf
+    source_page: https://ilcc.illinois.gov/
+    format: pdf
+    parser: pdf_blocks
+    topic: state
+    role: flag
+    edition: form as published
+    edition_date: null

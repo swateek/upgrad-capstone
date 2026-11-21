@@ -1,0 +1,41 @@
+{
+  "case_id": "case_006",
+  "synthetic": true,
+  "is_draft": true,
+  "rows": [
+    {"bidder": "B1", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "We enclose the signed Bid Securing Declaration in the prescribed form.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "The OEM authorisation for the offered camera models is attached as Annex A.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Valid STQC test certificates for the offered camera models are enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "S1", "kind": "scored", "weight": 30, "quoted_evidence": "We completed two supply orders of 25 or more IP cameras each in the last three years.", "score": 20, "gap": null},
+    {"bidder": "B1", "requirement_id": "S2", "kind": "scored", "weight": 30, "quoted_evidence": "We offer a three-year comprehensive onsite warranty.", "score": 20, "gap": null},
+    {"bidder": "B1", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "Our authorised service centre is located in the consignee's city.", "score": 20, "gap": null},
+    {"bidder": "B1", "requirement_id": "S4", "kind": "scored", "weight": 20, "quoted_evidence": "Delivery and installation will be completed within 30 days of the contract.", "score": 20, "gap": null},
+
+    {"bidder": "B2", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "A signed Bid Securing Declaration is submitted with this bid.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "We attach the manufacturer's authorisation for the quoted cameras.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "The quoted camera models are STQC certified and the certificates are attached.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "S1", "kind": "scored", "weight": 30, "quoted_evidence": "One similar order, for 40 IP cameras, was completed in the last three years.", "score": 10, "gap": null},
+    {"bidder": "B2", "requirement_id": "S2", "kind": "scored", "weight": 30, "quoted_evidence": "Warranty: five years comprehensive, onsite.", "score": 30, "gap": null},
+    {"bidder": "B2", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "Service will be provided by our engineers travelling from the regional office.", "score": 0, "gap": null},
+    {"bidder": "B2", "requirement_id": "S4", "kind": "scored", "weight": 20, "quoted_evidence": "We will deliver and install within 40 days from the date of the contract.", "score": 10, "gap": null},
+
+    {"bidder": "B3", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "Bid Securing Declaration (signed) is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "OEM authorisation for the offered cameras is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "STQC test certificates for all offered camera models are at Annex 3.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "S1", "kind": "scored", "weight": 30, "quoted_evidence": "We have completed three orders of more than 25 IP cameras each in the last three years.", "score": 30, "gap": null},
+    {"bidder": "B3", "requirement_id": "S2", "kind": "scored", "weight": 30, "quoted_evidence": "We provide five years of comprehensive onsite warranty.", "score": 30, "gap": null},
+    {"bidder": "B3", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "We run an authorised service centre in the consignee's city.", "score": 20, "gap": null},
+    {"bidder": "B3", "requirement_id": "S4", "kind": "scored", "weight": 20, "quoted_evidence": "Supply and installation will be completed in 45 days from the contract date.", "score": 10, "gap": null}
+  ],
+  "bidders": [
+    {"bidder": "B1", "name": "Dahua Technologies India Pvt Ltd", "status": "responsive", "technical_total": 80, "quoted_price_inr": 2050000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": ["DAHUA", "DAHUA TECHNOLOGY INDIA"]}},
+    {"bidder": "B2", "name": "Falconeye Surveillance Pvt Ltd", "status": "responsive", "technical_total": 50, "quoted_price_inr": 1980000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}},
+    {"bidder": "B3", "name": "Indus Watchtower Systems LLP", "status": "responsive", "technical_total": 90, "quoted_price_inr": 2140000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}}
+  ],
+  "ranking_eligible": ["B3", "B1", "B2"],
+  "withheld_bidders": [],
+  "notes": "B1's name normalizes to 'DAHUA TECHNOLOGIES INDIA', which is not an exact match for any entry in the latest GeM delist snapshot, so screening is not_present and B1 is not withheld. screen() reports possible matches 'DAHUA TECHNOLOGY INDIA' (similar name) and the listed brand 'DAHUA' (name contains a listed brand); a human must verify whether this is the same entity before any recommendation. Possible matches do not withhold. Draft ranking for the committee; not an award."
+}

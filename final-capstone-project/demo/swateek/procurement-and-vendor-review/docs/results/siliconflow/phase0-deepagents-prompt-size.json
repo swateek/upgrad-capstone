@@ -1,0 +1,51 @@
+{
+  "run_at": "2026-11-12T17:37:00+00:00",
+  "window_tokens": 8192,
+  "configs": [
+    {
+      "label": "A_default_deep_agent",
+      "ok": true,
+      "tool_names": [
+        "ls",
+        "read_file",
+        "write_file",
+        "edit_file",
+        "delete",
+        "glob",
+        "grep",
+        "task",
+        "search_policy",
+        "screen_vendor",
+        "score_bids"
+      ],
+      "system_prompt_tokens": 42,
+      "tool_schema_tokens": 2830,
+      "first_call_prompt_tokens": 2889,
+      "system_prompt_chars": 139
+    },
+    {
+      "label": "B_trimmed_todo_plus_subagents",
+      "ok": true,
+      "tool_names": [
+        "write_todos",
+        "task"
+      ],
+      "system_prompt_tokens": 328,
+      "tool_schema_tokens": 1445,
+      "first_call_prompt_tokens": 1790,
+      "system_prompt_chars": 1512
+    },
+    {
+      "label": "C_trimmed_short_descriptions",
+      "ok": true,
+      "tool_names": [
+        "write_todos",
+        "task"
+      ],
+      "system_prompt_tokens": 63,
+      "tool_schema_tokens": 391,
+      "first_call_prompt_tokens": 471,
+      "system_prompt_chars": 224
+    }
+  ]
+}

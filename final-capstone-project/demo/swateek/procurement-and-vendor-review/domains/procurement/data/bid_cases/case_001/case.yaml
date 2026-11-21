@@ -1,0 +1,9 @@
+case_id: case_001
+synthetic: true
+title: Supply of 40 desktop computers for the Directorate office (SYNTHETIC)
+procurement_type: goods
+estimated_value_inr: 2400000
+method: GeM bid, two-packet; evaluated on the sheet stored with this case (see office note)
+requirement_sheet: requirements.yaml
+bidders: [B1, B2, B3]
+purpose: Demo case. Clean comparison; one scored criterion unanswered (gap) for B3.

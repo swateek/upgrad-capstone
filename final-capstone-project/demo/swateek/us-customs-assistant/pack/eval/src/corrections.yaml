@@ -1,0 +1,64 @@
+# Corrections suite: 6 multi-turn scenarios (plan D17). The traveller corrects one fact after the
+# first answer; the agent must replan only the affected steps. Scored separately; frozen with eval-v1.
+# `facts` = the facts after the correction. Gold covers both answers.
+
+- id: CR01
+  category: correction_trip_length
+  turns:
+    - "I'm 34, back from Italy, first trip this year. I was there 10 days and bought four 750 ml bottles of wine at $30 each. What do I owe?"
+    - "Sorry, I got that wrong: I was only away for 36 hours, a quick stopover."
+  facts:
+    profile: {age: 34, trip_hours: 36, arrived_directly_from: IT, exemption_used_last_30_days: false}
+    basket:
+      - {item: wine, quantity: 4, unit: bottle, container_ml: 750, value_usd: 120, origin: IT, bought_in: IT}
+
+- id: CR02
+  category: correction_age
+  turns:
+    - "I'm 22, back from 8 days in Lisbon, first trip this year. I have one 750 ml bottle of Portuguese wine (12%) at $20. Do I owe anything?"
+    - "Actually I'm 20, I turn 21 next year."
+  facts:
+    profile: {age: 20, trip_hours: 192, arrived_directly_from: PT, exemption_used_last_30_days: false}
+    basket:
+      - {item: wine, quantity: 1, unit: bottle, container_ml: 750, abv: 12, value_usd: 20, origin: PT, bought_in: PT}
+
+- id: CR03
+  category: correction_quantity
+  turns:
+    - "Back from 6 days in Scotland, I'm 45, first trip this year. I have two 700 ml bottles of whisky (40%) at $50 each. What do I owe?"
+    - "Wait, I miscounted, it's four bottles, same price each."
+  facts:
+    profile: {age: 45, trip_hours: 144, arrived_directly_from: GB, exemption_used_last_30_days: false}
+    basket:
+      - {item: spirits, quantity: 4, unit: bottle, container_ml: 700, abv: 40, value_usd: 200, origin: GB, bought_in: GB}
+
+- id: CR04
+  category: correction_origin
+  turns:
+    - "Flying direct from Montego Bay after a week. I'm 38, first trip this year. I have one 1 liter bottle of rum (40%, $30) made in Jamaica and one 1 liter bottle of Scotch ($45). What do I owe?"
+    - "Correction: the rum isn't Jamaican, it's Cuban rum I bought at the airport shop."
+  facts:
+    profile: {age: 38, trip_hours: 168, arrived_directly_from: JM, exemption_used_last_30_days: false}
+    basket:
+      - {item: spirits, quantity: 1, unit: bottle, container_ml: 1000, abv: 40, value_usd: 30, origin: CU, bought_in: JM}
+      - {item: spirits, quantity: 1, unit: bottle, container_ml: 1000, value_usd: 45, origin: GB, bought_in: JM}
+
+- id: CR05
+  category: correction_30_day
+  turns:
+    - "Back from 5 days in Toronto, I'm 41 and I haven't used my exemption this month. I bought one 750 ml bottle of Canadian whisky (40%) for $35. What do I owe?"
+    - "Oh wait, I did use it, I came back from Vancouver last week with a few things."
+  facts:
+    profile: {age: 41, trip_hours: 120, arrived_directly_from: CA, exemption_used_last_30_days: true}
+    basket:
+      - {item: spirits, quantity: 1, unit: bottle, container_ml: 750, abv: 40, value_usd: 35, origin: CA, bought_in: CA}
+
+- id: CR06
+  category: correction_state
+  turns:
+    - "Coming home from Cancún after 5 days, landing in New York. I'm 36, first trip this year. I have three 750 ml bottles of Mexican tequila (40%, $30 each). What do I owe?"
+    - "My mistake, the flight lands in Dallas, Texas, not New York."
+  facts:
+    profile: {age: 36, trip_hours: 120, arrived_directly_from: MX, exemption_used_last_30_days: false, arrival_state: TX}
+    basket:
+      - {item: spirits, quantity: 3, unit: bottle, container_ml: 750, abv: 40, value_usd: 90, origin: MX, bought_in: MX}

@@ -1,0 +1,106 @@
+# How each source becomes documents. One document = one citable unit (plan §5, SPEC):
+#   CFR      one top-level paragraph of a section ("19 CFR 148.33(a)"); a section without
+#            lettered paragraphs is one document
+#   US Code  one subsection ("26 USC 5001(a)")
+#   HTSUS    one 8-digit subheading (JSON rows) or one note subdivision (PDF)
+#   OFAC     one FAQ
+#   web page one heading block of the main content
+# A document longer than max_tokens (bge tokens) is split into parts that share its citation.
+# Parsers: backend/src/customs/ingest/parsers.py. Keys are manifest ids.
+
+defaults:
+  max_tokens: 450
+  min_chars: 40
+
+sources:
+  cfr19_p148: {citation_prefix: "19 CFR"}
+  cfr31_p515: {citation_prefix: "31 CFR"}
+  cfr27_p27: {citation_prefix: "27 CFR"}
+  cfr27_p41: {citation_prefix: "27 CFR"}
+
+  usc26_5001: {citation_prefix: "26 USC"}
+  usc26_5041: {citation_prefix: "26 USC"}
+  usc26_5051: {citation_prefix: "26 USC"}
+  usc26_5701: {citation_prefix: "26 USC"}
+  usc26_5754: {citation_prefix: "26 USC"}
+  usc26_5761: {citation_prefix: "26 USC"}
+
+  hts_9804_rows: {citation_prefix: "HTSUS", hts_prefixes: ["9804."]}
+  hts_9816_rows: {citation_prefix: "HTSUS", hts_prefixes: ["9816."]}
+
+  hts_ch98_pdf:
+    citation_prefix: "HTSUS Chapter 98,"
+    pages: [[21, 21], [55, 55]]
+    page_contexts: ["Subchapter IV", "Subchapter XVI"]
+    unit_pattern: '^(?P<id>\d{1,2})\.\s'
+    unit_template: ", U.S. Note {id}"
+    drop_patterns:
+      - '^SUBCHAPTER [IVXL]+$'
+      - '^(PERSONAL EXEMPTIONS|NONCOMMERCIAL IMPORTATIONS|AND NONRESIDENTS)'
+      - '^XXII$'
+      - '^98-[IVXL]+-\d+$'
+      - '^U\.S\. Notes?$'
+      - '^Harmonized Tariff Schedule of the United States'
+      - '^Annotated for Statistical Reporting Purposes'
+
+  hts_general_notes:
+    citation_prefix: "HTSUS"
+    pages: [[3, 7], [23, 25], [28, 29]] # 3-7: GN 3 incl. (b) Column 2 countries, (c) program symbols
+    # each range opens mid-note: GN 3 (rates of duty), GN 6 (civil aircraft), GN 10 (freely
+    # associated states); GN 6 and GN 10 are kept as hard negatives
+    page_contexts: ["General Note 3", "General Note 6", "General Note 10"]
+    context_pattern: '^(?P<id>3|7|11)\.?\s+(?:Rates of Duty|Products of Countries Designated|United States-Mexico-Canada)'
+    context_template: "General Note {id}"
+    unit_pattern: '^\((?P<id>[a-z])\)\s'
+    unit_template: "({id})"
+    letter_sequence: true
+    drop_patterns:
+      - '^Harmonized Tariff Schedule of the United States'
+      - '^Annotated for Statistical Reporting Purposes'
+      - '^GN p\.\d+'
+      - '^General Notes?$'
+
+  ofac_cuba_faqs: {citation_prefix: "OFAC FAQ"}
+
+  ttb_tax_rates:
+    citation_prefix: "TTB Tax Rates"
+    heading_levels: [h2, h3, h4]
+    drop_headings: ['^contact us$']
+  ttb_cbma_imports: {citation_prefix: "TTB ACE CBMA Tax Rates Table", heading_levels: [h2, h3, h4]}
+
+  cbp_customs_duty_info: {citation_prefix: "CBP, Customs Duty Information"}
+  cbp_types_exemptions: {citation_prefix: "CBP, Types of Exemptions", heading_levels: [h2, h3, h4]}
+  cbp_frequent_travelers: {citation_prefix: "CBP, For Frequent Travelers"}
+  cbp_prohibited_restricted: {citation_prefix: "CBP, Prohibited and Restricted Items"}
+  cbp_shopping_abroad: {citation_prefix: "CBP, Shopping Abroad"}
+  cbp_gifts: {citation_prefix: "CBP, Gifts"}
+  cbp_what_to_expect: {citation_prefix: "CBP, What to Expect When You Return"}
+  cbp_your_trip: {citation_prefix: "CBP, Your Trip"}
+  cbp_top_ten_tips: {citation_prefix: "CBP, U.S. Travelers' Top Ten Travel Tips"}
+  cbp_traveling_abroad: {citation_prefix: "CBP, Know Before You Go: Traveling Abroad"}
+  cbp_canada_mexico: {citation_prefix: "CBP, Canada and Mexico Travel"}
+  cbp_mexico_trip: {citation_prefix: "CBP, Planning a Trip to Mexico"}
+  cbp_cuba_import_notice: {citation_prefix: "CBP, Public Notice on Imports from Cuba"}
+  cbp_clearing_customs: {citation_prefix: "CBP, Clearing Customs"}
+  cbp_sending_items_back: {citation_prefix: "CBP, Sending Items Back to the U.S."}
+  cbp_government_crew_exemptions: {citation_prefix: "CBP, Government/Military Personnel or Crew Member Exemptions"}
+  cbp_money: {citation_prefix: "CBP, Money and Other Monetary Instruments"}
+  cbp_agricultural_items: {citation_prefix: "CBP, Agricultural Items"}
+  cbp_agricultural_products: {citation_prefix: "CBP, Bringing Agricultural Products Into the United States"}
+
+  state_ca:
+    citation_prefix: "California ABC, Importing Alcoholic Beverages for Personal Use"
+    heading_levels: [h2, h3, h4]
+    drop_headings: ['^(contact|campaigns|media|support|external)$'] # site footer blocks
+  state_ny: {citation_prefix: "NY Tax Department, Importation for personal consumption", heading_levels: [h2, h3, h4]}
+  state_fl:
+    citation_prefix: "Fla. Stat. 562.16"
+    content_selector: "div.Section" # the page has no <main>; the statute sits in div.Section
+  state_tx: {citation_prefix: "Texas ABC, Personal Importation and Ports of Entry FAQs", heading_levels: [h2, h3, h4]}
+  state_il:
+    citation_prefix: "Illinois LCC, Form ILCC-RIA"
+    context_pattern: '^(?P<id>General Information|Application Procedures|Request for Import Authorization Form|Use Tax Liability and Form ST-44.*|Disclaimer)\s*$'
+    context_template: "— {id}"
+
+synthetic:
+  citation_prefix: "Synthetic fixture"

@@ -1,0 +1,94 @@
+# How each source is split into one-document-per-rule/heading chunks (the "by_rule" chunker).
+# Keys are manifest ids (or synthetic doc_ids). The core splitter is generic; everything
+# instrument-specific lives here. See backend/src/copilot/ingest/split.py for the semantics.
+#
+# Citations are "<doc_id>:<rule_id>", e.g. gfr_2017:R154, goods_manual_2024:4.2.1.
+
+defaults:
+  max_tokens: 650
+  max_jump: 5
+  min_body_chars: 40
+
+# Numbered paragraph headings used by all four DoE manuals: "4.2", "4.2.1", "9.8.3 Title".
+_manual_patterns: &manual_patterns
+  - regex: '^(?P<num>\d{1,2}\.\d{1,2}(?:\.\d{1,2}){0,2})\.?(?:\s+(?P<title>\S.*))?$'
+    id_template: "{num}"
+  - regex: '^(?P<num>(?:Annex(?:ure)?|ANNEX(?:URE)?|Appendix|APPENDIX)\s*[-–]?\s*[0-9IVX]+[A-Z]?)\b'
+    id_template: "{slug}"
+    reset: true
+
+sources:
+  gfr_2017:
+    # Chapter 6 only (Rules 142-206). Amendments are footnotes; they stay with their rules.
+    patterns:
+      # "Ru1e 153" (digit one for the letter l) appears in the PDF.
+      - regex: '^Ru[l1]e\s+(?P<num>\d{3})(?:\s*(?P<sub>\(\d+\)))?(?=[\s.]|$)'
+        id_template: "R{num}{sub}"
+    keep_range: [142, 206]
+    # Footnotes (amendment history) are set ~2pt smaller than the 9.3pt body text.
+    footnote_font_delta: 1.0
+
+  goods_manual_2024:
+    body_start_page: 25
+    annex_start_page: 275
+    exclude_annexures: true # forms/templates; decided 12 Nov (corpus cap)
+    patterns: *manual_patterns
+
+  ncs_manual_2025:
+    body_start_page: 21
+    annex_start_page: 217
+    exclude_annexures: true # forms/templates; decided 12 Nov (corpus cap)
+    patterns: *manual_patterns
+
+  consultancy_manual_2025:
+    body_start_page: 20
+    annex_start_page: 216
+    exclude_annexures: true # forms/templates; decided 12 Nov (corpus cap)
+    patterns: *manual_patterns
+
+  works_manual_2025:
+    body_start_page: 26
+    annex_start_page: 240
+    exclude_annexures: true # forms/templates; decided 12 Nov (corpus cap)
+    patterns: *manual_patterns
+
+  dfpr_2024:
+    body_start_page: 9
+    patterns:
+      - regex: '^Rule\s+(?P<num>\d{1,2})\s*[:\-–]\s*(?P<title>.*)$'
+        id_template: "R{num}"
+      - regex: '^(?P<num>(?:Annexure|ANNEXURE|Appendix|APPENDIX|Schedule|SCHEDULE)\s*[-–‘''"]?\s*[0-9IVX]+[A-Z]?(?:\s+to\s+(?:Appendix|Order)\s*[-–]?\s*[0-9IVX&\s]+)?)'
+        id_template: "{slug}"
+        reset: true
+
+  gem_gtc_4_0:
+    max_jump: 3
+    patterns:
+      - regex: '^(?P<num>\d{1,2})\.\s+(?P<title>[A-Z].*)$'
+        id_template: "C{num}"
+      - regex: '^(?P<num>\d{1,2})\.\s*$'
+        id_template: "C{num}"
+
+  gem_incident_management_policy:
+    body_start_page: 3 # page 2 is a metadata table numbered 1-4
+    patterns:
+      - regex: '^(?P<num>\d{1,2}(?:\.\d{1,2}){0,2})\.\s+(?P<title>\S.*)$'
+        id_template: "{num}"
+
+  ppp_mii_order_2024:
+    max_jump: 3
+    patterns:
+      # paragraphs 13+ are printed "13 . Title" (space before the period)
+      - regex: '^(?P<num>\d{1,2})\s?\.\s+(?P<title>\S.*)$'
+        id_template: "P{num}"
+
+  # Indexed only if the policy split is under the domain's target minimum (brief: < 500 docs).
+  model_tender_consultancy_2023:
+    body_start_page: 1
+    patterns: *manual_patterns
+
+  # Synthetic markdown documents (corpus/synthetic/*.md), keyed by front-matter doc_id.
+  office_note_001:
+    patterns:
+      - regex: '^(?P<num>\d{1,2})\.\s+(?P<title>\S.*)$'
+        id_template: "P{num}"

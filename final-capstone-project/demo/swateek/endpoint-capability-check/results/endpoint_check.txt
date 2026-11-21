@@ -1,0 +1,43 @@
+Endpoint capability check (mentor note: Day 0, checking what the capstone endpoint supports)
+run at: 2026-11-17T08:10:04+00:00   by: swateek
+chat:   103.42.50.41:1033   embeddings: 103.42.50.41:1035
+usage:  27 requests; chat 1683 prompt + 364 completion tokens; embeddings 73 tokens
+
+== A. Mentor's checks ==
+models: ['Qwen/Qwen3-8B']
+using: Qwen/Qwen3-8B   max_model_len: {'Qwen/Qwen3-8B': 8192}
+tools: OK -> get_weather({"city": "Pune"})   [called 5/5, valid arguments 5/5]
+json_schema: OK -> {'city': 'Mumbai', 'state': 'Maharashtra'}
+json_object: OK -> {'city': 'Mumbai', 'state': 'Maharashtra'}
+embeddings: OK -> model=bge-small-en-v1.5, dimension=384   [served: not published (/models 404)]
+usage reported: {'completion_tokens': 3, 'prompt_tokens': 15, 'total_tokens': 18, 'completion_tokens_details': None, 'prompt_tokens_details': None}
+
+== B. Added checks ==
+OK   B1 chat: tool_choice=required                0.51s  {"tool_calls": ["get_weather"], "arguments": {"city": "New York"}, "text": null}
+OK   B1 chat: tool_choice=named                   0.24s  {"tool_calls": ["get_weather"], "arguments": {"city": "New York"}, "text": null}
+OK   B2 embed: /info (TEI)                        0.14s  {"available": false, "status": 404}
+
+== C. Known behaviour (copilot.llm.probe, unchanged) ==
+OK   embed: 1 text                                0.16s  {"vectors": 1, "dimensions": 384, "usage": {"prompt_tokens": 5, "total_tokens": 5}}
+OK   embed: 16 texts                              0.13s  {"vectors": 16, "dimensions": 384, "usage": {"prompt_tokens": 64, "total_tokens": 64}}
+OK   embed: 17 texts (limit 16) is refused        0.04s  {"expected": "rejected", "status": 422, "error": "{'message': 'batch size 17 > maximum allowed batch size 16', 'code': 422, 'type': 'Validation'}"}
+OK   embed: 802-token text (limit 512) is refused   0.05s  {"expected": "rejected", "status": 422, "error": "{'message': 'Input validation error: `inputs` must have less than 512 tokens. Given: 802', 'code': 422, 'type': 'Validation'}", "bge_tokens": 802}
+OK   chat: list models                            0.15s  {"models": ["Qwen/Qwen3-8B"]}
+OK   chat: thinking off (chat_template_kwargs)    0.48s  {"thinking_seen": false, "completion_tokens": 19, "finish": "stop", "answer": "A reranker reorders or prioritizes items in a list based on relevance or importance."}
+OK   chat: thinking off (enable_thinking)         0.48s  {"thinking_seen": false, "completion_tokens": 19, "finish": "stop", "answer": "A reranker reorders or prioritizes items in a list based on relevance or importance."}
+OK   chat: no thinking flag (default)             0.48s  {"thinking_seen": false, "completion_tokens": 19, "finish": "stop", "answer": "A reranker reorders or prioritizes items in a list based on relevance or importance."}
+OK   chat: prompt-token estimate                  1.16s  {"server_prompt_tokens": 35, "our_estimate": 35, "server_with_tool": 178, "our_estimate_with_tool": 187}
+OK   chat: tool call                              0.57s  {"tool_calls": ["lookup_record"], "arguments": {"name": "Acme Traders"}}
+OK   chat: strict json_schema                     0.99s  {"parsed": {"passed": true, "reason": "The draft is clear and concise. It effectively communicates the rule allowing purchases up to Rs 50,000 without quotations."}}
+OK   chat: streamed usage                         0.50s  {"chunks": 21, "usage": {"completion_tokens": 19, "prompt_tokens": 24, "total_tokens": 43, "completion_tokens_details": null, "prompt_tokens_details": null}}
+OK   chat: max_tokens=1025 refused                0.06s  {"status": 400}
+
+== Verdict (the note's 'Reading the results' table) ==
+- models: 1 chat model ['Qwen/Qwen3-8B']; matches CHAT_MODEL; context length 8192 (copilot budgets 8192 per call). Develop locally on the same family; write the name in SPEC.md.
+- tools: OK in 5/5 runs -> native tool calling; keep the tools parameter in the planner and still validate arguments with Pydantic.
+- forced tool calls: required OK, named OK -> the planner can force a call when a step must use a tool.
+- json_schema: OK -> constrained decoding is available: use it for the planner, writer and critic outputs; record 'with vs. without' as an experiment.
+- embeddings: OK -> configure the vector store with dimension 384 (model bge-small-en-v1.5).
+- embedding model name: the server publishes none (/v1/models and /info answer 404 and 404); it accepted 'bge-small-en-v1.5', but that does not prove which model it is. The dimension fits bge-small-en-v1.5; ask the programme office to confirm the name (Q2).
+- usage reported: token counting works -> log prompt_tokens and completion_tokens per call for the cost metric and the quota log.
+- known behaviour (14 Nov probe): 13/13 as before.

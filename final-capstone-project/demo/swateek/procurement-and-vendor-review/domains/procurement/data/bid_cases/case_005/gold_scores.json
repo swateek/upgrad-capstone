@@ -1,0 +1,41 @@
+{
+  "case_id": "case_005",
+  "synthetic": true,
+  "is_draft": true,
+  "rows": [
+    {"bidder": "B1", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "We enclose the signed Bid Securing Declaration in the prescribed form.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "We are registered with the State PWD as a Class III civil contractor; the certificate is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Our largest similar work in the last seven years was an office renovation valued at Rs 16.20 lakh.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "S1", "kind": "scored", "weight": 30, "quoted_evidence": "We completed three office renovation works in the last seven years.", "score": 30, "gap": null},
+    {"bidder": "B1", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "We will complete the work within 75 days from the date of start.", "score": 15, "gap": null},
+    {"bidder": "B1", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": null, "score": null, "gap": "no response"},
+    {"bidder": "B1", "requirement_id": "S4", "kind": "scored", "weight": 25, "quoted_evidence": "A full-time site engineer with a diploma in civil engineering will be posted at site.", "score": 25, "gap": null},
+
+    {"bidder": "B2", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "A signed Bid Securing Declaration is submitted with this bid.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "We hold CPWD registration in the appropriate class for civil works (copy attached).", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Largest similar work completed in the last seven years: renovation of a bank office, Rs 21.50 lakh.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "S1", "kind": "scored", "weight": 30, "quoted_evidence": "Two similar office renovation works were completed in the last seven years.", "score": 20, "gap": null},
+    {"bidder": "B2", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "Completion period offered: 60 days from the date of start.", "score": 25, "gap": null},
+    {"bidder": "B2", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "We offer a defect liability period of 12 months from completion.", "score": 20, "gap": null},
+    {"bidder": "B2", "requirement_id": "S4", "kind": "scored", "weight": 25, "quoted_evidence": "A graduate civil engineer will be deployed full time at site.", "score": 25, "gap": null},
+
+    {"bidder": "B3", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "Bid Securing Declaration (signed) is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "Our registration with the State PWD for civil works is valid; a copy is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Our largest similar work in the last seven years is an office renovation of Rs 15 lakh.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "S1", "kind": "scored", "weight": 30, "quoted_evidence": "We have completed two office renovation works in the last seven years.", "score": 20, "gap": null},
+    {"bidder": "B3", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "The work will be completed in 85 days from the date of start.", "score": 15, "gap": null},
+    {"bidder": "B3", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "Defect liability period: 12 months after completion.", "score": 20, "gap": null},
+    {"bidder": "B3", "requirement_id": "S4", "kind": "scored", "weight": 25, "quoted_evidence": "A full-time site engineer holding a civil engineering diploma will be at site throughout.", "score": 25, "gap": null}
+  ],
+  "bidders": [
+    {"bidder": "B1", "name": "Vardhan Buildcon Works", "status": "responsive", "technical_total": 70, "quoted_price_inr": 1745000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}},
+    {"bidder": "B2", "name": "Kaveri Interiors and Civil Pvt Ltd", "status": "responsive", "technical_total": 90, "quoted_price_inr": null,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}},
+    {"bidder": "B3", "name": "Pinewood Constructions LLP", "status": "responsive", "technical_total": 80, "quoted_price_inr": 1810000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}}
+  ],
+  "ranking_eligible": ["B2", "B3", "B1"],
+  "withheld_bidders": [],
+  "notes": "B1 does not state a defect liability period, so S3 is a gap ('no response') and counts 0. B2 quotes no price ('will be shared on request'): quoted_price_inr is a gap (null) and must be raised with the committee; price does not affect the technical score, so B2 still ranks first technically. Draft ranking for the committee; not an award."
+}

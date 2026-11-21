@@ -1,0 +1,51 @@
+case_id: case_005
+synthetic: true
+mandatory:
+  - id: M1
+    text: Bid Securing Declaration in the prescribed form is submitted with the bid.
+    field: bid_security_declaration
+    pass_if: true
+  - id: M2
+    text: The bidder is registered with CPWD or a State PWD in the appropriate class for civil works.
+    field: contractor_registration
+    pass_if: true
+  - id: M3
+    text: The bidder has completed at least one similar work of value not less than Rs 14.40 lakh (80% of the estimated cost) in the last seven years.
+    field: largest_similar_work_inr
+    pass_if: {min: 1440000}
+scored:
+  - id: S1
+    text: Number of similar civil renovation works for office premises completed in the last seven years.
+    field: similar_works
+    weight: 30
+    rubric:
+      - {min: 3, marks: 30}
+      - {min: 2, marks: 20}
+      - {min: 1, marks: 10}
+      - {min: 0, marks: 0}
+  - id: S2
+    text: Completion period offered, in days from the date of start (lower is better).
+    field: completion_days
+    weight: 25
+    rubric:
+      - {max: 60, marks: 25}
+      - {max: 90, marks: 15}
+      - {min: 0, marks: 0}
+  - id: S3
+    text: Defect liability period offered, in months from the date of completion.
+    field: defect_liability_months
+    weight: 20
+    rubric:
+      - {min: 12, marks: 20}
+      - {min: 6, marks: 10}
+      - {min: 0, marks: 0}
+  - id: S4
+    text: A full-time site engineer holding a degree or diploma in civil engineering will be deployed for the duration of the work.
+    field: site_engineer_qualified
+    weight: 25
+    rubric:
+      - {equals: true, marks: 25}
+      - {equals: false, marks: 0}
+price:
+  field: quoted_price_inr
+  basis: Total quoted amount for the renovation works as per the schedule of quantities, including GST and labour cess.
