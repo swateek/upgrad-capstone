@@ -37,6 +37,7 @@ EMBED_MODEL=bge-small-en-v1.5
 # CHAT_CLIENT_CERT=... / CHAT_CLIENT_KEY=...   mutual TLS, if your endpoint needs it (same for EMBED_)
 # CA_RELAX_STRICT=1                           if Python rejects the CA as "not strict X.509"
 # LLM_CACHE=0                                 turn the response cache off (official runs)
+# RERANKER=none                               plain hybrid search, no reranker (default BAAI/bge-reranker-v2-m3)
 ```
 
 Certificates can be PEM or DER; paths are relative to `customs-agent/`.
@@ -108,10 +109,32 @@ uv run python eval/retrieval_experiment.py                   # full grid: embeds
 
 Writes `results/retrieval_experiment.csv` (recall@1/3/5/10, MRR, hard negatives in the top 3, per configuration) and `results/retrieval_per_query.csv`.
 
+Decisions from these results: `docs/RETRIEVAL.md` (hybrid + `BAAI/bge-reranker-v2-m3`, 350-token chunks, hard negatives filtered, 5 chunks per question). To repeat the reranker comparison:
+
+```bash
+uv run python eval/retrieval_experiment.py --chunkings 350 --methods hybrid_rerank --reranker BAAI/bge-reranker-v2-m3 --out retrieval_experiment_bge
+```
+
+## 9. Search index
+
+The agent searches a saved index of the 350-token chunks, so a run (even with `LLM_CACHE=0`) never re-embeds the corpus. Build it once after building the corpus, and again after re-chunking:
+
+```bash
+uv run python -m src.retrieval.index            # builds data/rag-corpus/index/ (git-ignored), or confirms it matches chunks.jsonl
+uv run python -m src.retrieval.index --rebuild  # embed every chunk again
+```
+
+Try a search (the same one the agent uses):
+
+```bash
+uv run python -m src.retrieval.search "4 bottles of wine after 10 days in Italy, do I owe anything?" --ids 19cfr148.33 htsus9816.00.20
+```
+
+If `chunks.jsonl` changes, the saved index no longer matches it (fingerprint in `meta.json`) and is rebuilt automatically the next time search starts. The reranker (`BAAI/bge-reranker-v2-m3`, ~2 GB) downloads on first use; set `RERANKER=none` to run without it.
+
 ## Coming next (add steps here as they land)
 
-- Retrieval index and experiment (Days 5–7).
-- Agent, verifier, Streamlit app, Docker.
+- Agent, code router, verifier, Streamlit app, Docker.
 
 ## Reference
 

@@ -17,7 +17,7 @@ flowchart TB
     RET["Retriever<br/>BM25 + dense + rerank"]
     LLM["src/llm.py<br/>queue, retry, cache, usage log"]
     RULES[("data/rules.yaml<br/>data/rates.yaml")]
-    QD[("Qdrant index<br/>500+ regulation docs")]
+    QD[("Saved index<br/>data/rag-corpus/index/<br/>1,480 chunk vectors")]
     CHAT{{"Chat endpoint<br/>Qwen/Qwen3-8B"}}
     EMB{{"Embeddings endpoint<br/>bge-small-en-v1.5, 384-d"}}
     SRC[/"Source sites<br/>eCFR, CBP, OFAC, TTB"/]
@@ -55,12 +55,12 @@ Purple = uses the LLM · green = plain code · grey = data, UI, logs.
 | Checkpointer | SQLite via LangGraph `SqliteSaver` | Data | Keeps conversation state so a correction re-runs only the affected steps |
 | Calculator tools | `src/tools/` | Code | `normalise_units`, `check_restrictions`, `determine_exemption`, `compute_allowance`, `compute_duty_excise`, `lookup_state_rule`, `whatif_optimise`, `escalate_to_human` |
 | Rules + rates | `data/rules.yaml`, `data/rates.yaml` | Data | Allowances, limits, prohibited origins, TTB excise rates; every row has a citation and as-of date |
-| Retriever | `src/retrieval/` | Code | `search_regulations`: metadata filter, BM25 + dense (RRF k=60), cross-encoder rerank, top 3-5 chunks |
-| Qdrant index | Docker service | Data | Chunks of ≤ 350 tokens with source, section, authority, tags, as-of |
+| Retriever | `src/retrieval/`, `src/tools/search_regulations.py` | Code | `search_regulations`: clauses for the rules the tools applied (by citation id), then hybrid search (hard negatives filtered first, BM25 + dense, RRF k=60, `bge-reranker-v2-m3` on the top 30) fills up to 5 chunks. Decisions: `docs/RETRIEVAL.md` |
+| Saved index | `data/rag-corpus/index/` (git-ignored) | Data | `vectors.npy` (one normalised 384-d vector per 350-token chunk) + `meta.json` (model, fingerprint of the chunk set). Searched in numpy (~1 ms); no vector database at this size (`docs/RETRIEVAL.md`, decision 3) |
 | `src/llm.py` | `src/llm.py` | Code | The only way to call a model: one request in flight per endpoint, back-off on 429/5xx, response cache, writes `logs/usage.jsonl` |
 | Chat endpoint | upGrad, own URL / key / CA cert | External | `Qwen/Qwen3-8B`: native tool calls and `json_schema` supported; 8,192 tokens per call, 1,024 max output |
 | Embeddings endpoint | upGrad, own URL / key / CA cert | External | `bge-small-en-v1.5`, 384 dimensions, max 512 tokens per input; no `/models` route |
-| Corpus pipeline | `data/rag-corpus/` | Code | Fetches official sources, chunks, embeds, loads Qdrant; snapshot frozen Day 3 |
+| Corpus pipeline | `data/rag-corpus/` | Code | Fetches official sources and chunks them (`chunk_corpus.py`); `python -m src.retrieval.index` embeds the chunks into the saved index; snapshot frozen Day 3 |
 | Langfuse | Docker service | Logs | One trace per question: every step's input, output, tokens, latency. Used for debugging and failure labelling |
 
 ## 2. Request flow for one question

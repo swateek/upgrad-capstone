@@ -12,9 +12,11 @@ from src.tools.determine_exemption import determine_exemption
 from src.tools.escalate_to_human import escalate_to_human
 from src.tools.lookup_state_rule import lookup_state_rule
 from src.tools.normalise_units import normalise_units
+from src.tools.search_regulations import RegulationSearch, search_regulations
 from src.tools.whatif_optimise import whatif_optimise
 
 __all__ = [
+    "RegulationSearch",
     "ToolError",
     "check_restrictions",
     "compute_allowance",
@@ -23,5 +25,6 @@ __all__ = [
     "escalate_to_human",
     "lookup_state_rule",
     "normalise_units",
+    "search_regulations",
     "whatif_optimise",
 ]

@@ -233,3 +233,31 @@ class EscalationNote(Model):
     summary: str
     facts: dict
     known: dict = {}
+
+
+class Clause(Model):
+    """One retrieved chunk of regulation text. The writer may cite only these citation_ids."""
+
+    citation_id: str
+    chunk_id: str
+    heading: str
+    text: str
+    authority: str
+    source_url: str | None = None
+    as_of: str | None = None
+    tokens: int | None = None
+    found_by: Literal["citation_id", "search"]
+    rank: int | None = Field(None, description="Rank in the search results (search only)")
+
+
+class Clauses(Model):
+    query: str
+    clauses: list[Clause]
+    retrieved_ids: list[str] = Field(
+        description="citation_ids the writer may cite, in order (CLAUDE.md rule 2)"
+    )
+    not_found: list[str] = Field(
+        [], description="Requested citation_ids missing from the corpus or not citable"
+    )
+    method: str
+    ms: float = 0.0

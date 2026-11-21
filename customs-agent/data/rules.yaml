@@ -71,7 +71,7 @@ restrictions:
     outcome: prohibited                         # wherever bought; allowances do not apply
     message: "Cuban-origin alcohol and tobacco cannot be brought into the US as personal baggage, wherever they were bought."
     ask_origin_when: {types: [cigars], item_keywords: [rum, ron, cigar, habano]}   # SPEC 5.2 stage 1
-    citations: [31cfr515.204, 31cfr515.585, ofac-faq-719, cbp-info-1389]
+    citations: [31cfr515.204, 31cfr515.585, ofac-faq-720, ofac-faq-719, cbp-info-1389]   # FAQ 720: bought in a third country (e.g. Cancun)
     status: checked
 
   - id: russian_origin_alcohol

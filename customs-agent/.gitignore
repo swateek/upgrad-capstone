@@ -25,3 +25,6 @@ data/rag-corpus/corpus/fetch_report.json
 
 # Derived from corpus/docs by chunk_corpus.py (rebuild instead of committing; several MB)
 data/rag-corpus/corpus/chunks.jsonl
+
+# Saved search index (vectors of chunks.jsonl): rebuild with `python -m src.retrieval.index`
+data/rag-corpus/index/

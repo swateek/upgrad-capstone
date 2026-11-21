@@ -89,6 +89,19 @@ class Retriever:
             )
         return self._matrix
 
+    def set_matrix(self, matrix: np.ndarray) -> Retriever:
+        """Use a saved dense index (rows L2-normalised, same order as self.chunks)."""
+        if matrix.shape[0] != len(self.chunks):
+            raise ValueError(
+                f"index has {matrix.shape[0]} rows for {len(self.chunks)} chunks"
+            )
+        self._matrix = np.asarray(matrix, dtype=np.float32)
+        return self
+
+    def bm25_scores(self, query: str) -> np.ndarray:
+        """Raw BM25 score of every chunk (no filter), for picking a chunk within one section."""
+        return np.asarray(self.bm25_index().get_scores(tokenize(query)))
+
     def share_indexes(self, other: Retriever) -> Retriever:
         """Reuse another retriever's built indexes (same chunks), e.g. across filters."""
         self._bm25, self._matrix = other._bm25, other._matrix
@@ -96,8 +109,7 @@ class Retriever:
 
     # ------------------------------------------------------------ ranking
     def _bm25_rank(self, query: str) -> list[int]:
-        scores = np.asarray(self.bm25_index().get_scores(tokenize(query)))
-        scores = np.where(self._allowed, scores, -np.inf)
+        scores = np.where(self._allowed, self.bm25_scores(query), -np.inf)
         order = np.argsort(-scores, kind="stable")
         return [int(i) for i in order if np.isfinite(scores[i]) and scores[i] > 0][
             :CANDIDATES

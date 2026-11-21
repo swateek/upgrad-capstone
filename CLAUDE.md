@@ -248,7 +248,8 @@ If behind at Day 9: drop `whatif_optimise` first, then UI extras. Never drop the
 - [x] Day 4 code: `eval/score.py` (deterministic scorer, SPEC 6), `src/baselines/` (closed_book, fewshot_json with 4 dev examples, cot_sc 3 samples, decompose 3 steps; closed book, model does all arithmetic), `eval/run_baselines.py` (resumable; writes `results/week1_*.csv` for the eval set). 124 offline tests.
 - [x] Baselines run: dev v1/v2 (prompt fixes logged), official `week1` on eval-v2 -> `results/week1_strategies.csv`, `results/week1_failures.csv`; write-up `docs/BASELINES.md`. Best accuracy 0.175 (fewshot_json); dollars ≤ 0.07; clarify ≤ 1/8.
 - [x] **Gate passed (end of Day 4):** SPEC approved, `eval-v2` tagged, baselines committed (commit 5615aa7, tag `gate-day4`). Agent code now allowed.
-- [ ] Days 5–7: retrieval experiment -> `results/retrieval_experiment.csv` + three decisions; agent v0 end to end on dev; code router.
+- [x] Days 5–7 retrieval: `results/retrieval_experiment.csv` (+ `_bge`), decisions in `customs-agent/docs/RETRIEVAL.md` (hybrid RRF + `BAAI/bge-reranker-v2-m3`, 350-token chunks, hard negatives filtered, k = 5, numpy index instead of Qdrant). `search_regulations` built (by citation id + search; saved index in `data/rag-corpus/index/`).
+- [ ] Days 5–7: agent v0 end to end on dev; code router.
 - [ ] `uv add --dev pyyaml openpyxl` (needed by `eval/build_eval.py`).
 - [ ] Add the newly cited sources to the corpus: 19 USC 1681a, 26 USC 5754/5761, HTSUS General Note 3 and ch. 98 U.S. Note 4, OFAC Russia FAQs.
 
