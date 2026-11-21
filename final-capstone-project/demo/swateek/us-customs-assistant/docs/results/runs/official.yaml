@@ -2,88 +2,88 @@ runs:
   planner-1:
     set: frozen
     mode: planner
-    chat: 21
-    embed: 4
-    tokens: 20907
-    minutes: 2.0
-    finished: '2026-11-18T10:28:01+00:00'
-    agent_freeze: 4
+    chat: 490
+    embed: 70
+    tokens: 577781
+    minutes: 26.0
+    finished: '2026-11-20T18:57:08+00:00'
+    agent_freeze: 6
   planner-1-corr:
     set: corrections
     mode: planner
-    chat: 40
+    chat: 83
     embed: 12
-    tokens: 45731
-    minutes: 4.1
-    finished: '2026-11-18T10:33:00+00:00'
-    agent_freeze: 4
+    tokens: 101179
+    minutes: 3.9
+    finished: '2026-11-20T19:01:03+00:00'
+    agent_freeze: 6
   planner-2:
     set: frozen
     mode: planner
-    chat: 284
-    embed: 70
-    tokens: 301685
-    minutes: 23.2
-    finished: '2026-11-18T10:56:14+00:00'
-    agent_freeze: 4
+    chat: 469
+    embed: 67
+    tokens: 552848
+    minutes: 25.8
+    finished: '2026-11-21T03:21:05+00:00'
+    agent_freeze: 6
   planner-2-corr:
     set: corrections
     mode: planner
-    chat: 40
-    embed: 0
-    tokens: 45731
-    minutes: 3.7
-    finished: '2026-11-18T10:59:59+00:00'
-    agent_freeze: 4
+    chat: 83
+    embed: 12
+    tokens: 101160
+    minutes: 3.9
+    finished: '2026-11-21T03:24:59+00:00'
+    agent_freeze: 6
   planner-3:
     set: frozen
     mode: planner
-    chat: 284
-    embed: 0
-    tokens: 301685
-    minutes: 22.5
-    finished: '2026-11-18T11:22:29+00:00'
-    agent_freeze: 4
+    chat: 490
+    embed: 3
+    tokens: 577704
+    minutes: 27.2
+    finished: '2026-11-21T03:52:10+00:00'
+    agent_freeze: 6
   planner-3-corr:
     set: corrections
     mode: planner
-    chat: 38
+    chat: 83
     embed: 0
-    tokens: 42664
-    minutes: 40.6
-    finished: '2026-11-18T12:03:06+00:00'
-    agent_freeze: 4
+    tokens: 101160
+    minutes: 3.8
+    finished: '2026-11-21T03:55:57+00:00'
+    agent_freeze: 6
   router:
     set: frozen
     mode: router
-    chat: 213
+    chat: 424
     embed: 0
-    tokens: 258244
-    minutes: 17.3
-    finished: '2026-11-18T12:20:23+00:00'
-    agent_freeze: 4
+    tokens: 541276
+    minutes: 21.5
+    finished: '2026-11-21T04:17:25+00:00'
+    agent_freeze: 6
   tool_calling:
     set: frozen
     mode: tool_calling
-    chat: 542
+    chat: 553
     embed: 0
-    tokens: 903750
-    minutes: 21.5
-    finished: '2026-11-18T12:41:52+00:00'
-    agent_freeze: 4
+    tokens: 918576
+    minutes: 21.7
+    finished: '2026-11-21T04:39:09+00:00'
+    agent_freeze: 6
   single_rag:
     set: frozen
     mode: single_rag
     chat: 87
     embed: 87
     tokens: 138414
-    minutes: 6.0
-    finished: '2026-11-18T12:47:51+00:00'
-    agent_freeze: 4
+    minutes: 5.9
+    finished: '2026-11-21T04:45:04+00:00'
+    agent_freeze: 6
 pins:
-  agent_freeze: 4
+  agent_freeze: 6
   eval_version: 1
-  commit: 2b0684f
+  commit: db9f6c7
   uncommitted_code_or_pack: false
   model: Qwen/Qwen3-8B
   caps:

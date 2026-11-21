@@ -1,0 +1,92 @@
+runs:
+  planner-1:
+    set: frozen
+    mode: planner
+    chat: 21
+    embed: 4
+    tokens: 20907
+    minutes: 2.0
+    finished: '2026-11-18T10:28:01+00:00'
+    agent_freeze: 4
+  planner-1-corr:
+    set: corrections
+    mode: planner
+    chat: 40
+    embed: 12
+    tokens: 45731
+    minutes: 4.1
+    finished: '2026-11-18T10:33:00+00:00'
+    agent_freeze: 4
+  planner-2:
+    set: frozen
+    mode: planner
+    chat: 284
+    embed: 70
+    tokens: 301685
+    minutes: 23.2
+    finished: '2026-11-18T10:56:14+00:00'
+    agent_freeze: 4
+  planner-2-corr:
+    set: corrections
+    mode: planner
+    chat: 40
+    embed: 0
+    tokens: 45731
+    minutes: 3.7
+    finished: '2026-11-18T10:59:59+00:00'
+    agent_freeze: 4
+  planner-3:
+    set: frozen
+    mode: planner
+    chat: 284
+    embed: 0
+    tokens: 301685
+    minutes: 22.5
+    finished: '2026-11-18T11:22:29+00:00'
+    agent_freeze: 4
+  planner-3-corr:
+    set: corrections
+    mode: planner
+    chat: 38
+    embed: 0
+    tokens: 42664
+    minutes: 40.6
+    finished: '2026-11-18T12:03:06+00:00'
+    agent_freeze: 4
+  router:
+    set: frozen
+    mode: router
+    chat: 213
+    embed: 0
+    tokens: 258244
+    minutes: 17.3
+    finished: '2026-11-18T12:20:23+00:00'
+    agent_freeze: 4
+  tool_calling:
+    set: frozen
+    mode: tool_calling
+    chat: 542
+    embed: 0
+    tokens: 903750
+    minutes: 21.5
+    finished: '2026-11-18T12:41:52+00:00'
+    agent_freeze: 4
+  single_rag:
+    set: frozen
+    mode: single_rag
+    chat: 87
+    embed: 87
+    tokens: 138414
+    minutes: 6.0
+    finished: '2026-11-18T12:47:51+00:00'
+    agent_freeze: 4
+pins:
+  agent_freeze: 4
+  eval_version: 1
+  commit: 2b0684f
+  uncommitted_code_or_pack: false
+  model: Qwen/Qwen3-8B
+  caps:
+    tokens: 12000
+    model_calls: 10
+    tool_calls: 10

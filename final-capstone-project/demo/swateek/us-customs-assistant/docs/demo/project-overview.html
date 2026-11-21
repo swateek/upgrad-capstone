@@ -304,7 +304,8 @@ footer.foot { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 
 
   <div class="subpanel" id="sp-report" role="tabpanel" aria-labelledby="s-report" hidden>
     <div class="docbar"><span>From <code>docs/report/report.md</code> · 19 Nov 2026 · 14 pages printed</span><a href="../report/report.pdf">Open report.pdf</a></div>
-    <div class="doc"><p><strong>Code:</strong> <code>final-capstone-project/demo/swateek/us-customs-assistant/</code> · <strong>Model:</strong> Qwen3-8B (frozen weights) on the course chat endpoint, group 031–045 · <strong>Embeddings:</strong> <code>bge-small-en-v1.5</code> on the course embedding endpoint · <strong>Orchestration:</strong> LangGraph · <strong>Headline (frozen <code>eval-v1</code>, 80 scenarios, 91 turns):</strong> the planner agent gets <strong>80.2%</strong> of turns fully right and the dollar amount right on <strong>89.7%</strong> of answered turns, against <strong>2–13%</strong> and <strong>12–22%</strong> for the bare model and <strong>5.5%</strong> for plain RAG.</p>
+    <div class="doc"><p><strong>Code:</strong> <code>final-capstone-project/demo/swateek/us-customs-assistant/</code> · <strong>Model:</strong> Qwen3-8B (frozen weights) on the course chat endpoint, group 031–045 · <strong>Embeddings:</strong> <code>bge-small-en-v1.5</code> on the course embedding endpoint · <strong>Orchestration:</strong> LangGraph · <strong>Headline (frozen <code>eval-v1</code>, 80 scenarios, 91 turns):</strong> the planner agent gets <strong>78.0%</strong> of turns fully right and the dollar amount right on <strong>86.8%</strong> of answered turns, against <strong>2–13%</strong> and <strong>12–22%</strong> for the bare model and <strong>5.5%</strong> for plain RAG.</p>
+<p><strong>Official runs under agent v6 (21 Nov 2026), the shipped system with the listwise reranker (§5).</strong> Two planner turns that v4 answered, B04 and F04, are escalated under v6, the first version with the reranker (the cause is not isolated; the planner’s turns correct fell from 80.2% in v4, archived in <code>docs/results/runs/v4-archive/</code>, to 78.0%). The corrections suite rose from 88.9% to 100%. The retrieval figures in §5 are measured on their own set.</p>
 <p>Every number below comes from a file in <code>docs/results/</code> or an entry in <code>docs/COMPENSATIONS.md</code> (cited as “C#n”). All runs used the course endpoints. The figures are generated from the saved results by <code>docs/report/make_figures.py</code>.</p>
 <h4 id="rep-problem-and-scope">1. Problem and scope</h4>
 <p><strong>User.</strong> A US resident flying or driving home who bought alcohol or tobacco abroad. Before landing they want to know four things: how much they can bring in free, what they will owe on the rest, whether anything is prohibited, and which rule says so. Today that means reading 19 CFR Part 148, the HTS chapter 98 headings, TTB excise tables, OFAC’s Cuba rules and a state page, then doing the arithmetic. The business case’s own four examples contained two legal errors (below), which shows how easy it is to get wrong.</p>
@@ -468,15 +469,15 @@ footer.foot { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 
 <h4 id="rep-retrieval">5. Retrieval</h4>
 <p>Decided on the dev labels (45 claims) and reported on the frozen labels (220 claims), across 63 variants (<code>docs/results/retrieval-decisions.md</code>, <code>retrieval_experiment.md</code>). Recall at a fixed k favours big chunks (five whole sections are about 3,600 tokens, five 200-token windows about 900), so the deciding metric is <strong>R@1.5k</strong>: is the gold clause within the first 1,500 tokens of passages, about what one writer call can take.</p>
 <figure>
-<img src="../report/figures/fig2-retrieval.png" alt="Figure 2. What moved retrieval: the query and the topic filter, not the reranker." />
-<figcaption aria-hidden="true">Figure 2. What moved retrieval: the query and the topic filter, not the reranker.</figcaption>
+<img src="../report/figures/fig2-retrieval.png" alt="Figure 2. What moved retrieval: the query and the topic filter. The reranker moves rank 1 but costs recall inside the writer’s budget." />
+<figcaption aria-hidden="true">Figure 2. What moved retrieval: the query and the topic filter. The reranker moves rank 1 but costs recall inside the writer’s budget.</figcaption>
 </figure>
 <p><strong>The query mattered most.</strong> A traveller asks about “wine, Paris, $90”, not “flat rate duty”. Code adds the names of the rules the calculators used to the question, and a topic filter keeps the sanctions and rate tables (about 70% of chunks) out of exemption searches. No model writes queries.</p>
 <p><strong>Three decisions:</strong></p>
 <ul>
 <li><strong>Chunking → 200-token windows.</strong> Whole sections win R@5 (0.82 on dev) but spend four times the tokens and fall to 0.27 within the budget. Windows give 0.84.</li>
 <li><strong>Embedding → bge with its query prefix, hybrid with BM25</strong> (reciprocal rank fusion). Hybrid 0.84 against 0.69 for either alone: BM25 catches “9816.00.20” and “proof gallon”, dense catches paraphrase.</li>
-<li><strong>Reranker → none.</strong> The local MiniLM cross-encoder was worse on every dev metric (R@1.5k 0.84 → 0.71), and wrecked rule-specific claims on frozen (the allocation rule fell from 1.00 to 0.11). Qwen3-8B listwise improved the top of the list (R@1 +0.07) but not R@1.5k (0.82), at one extra call and about 4,000 tokens per search, a third of the per-question budget. It stays switchable.</li>
+<li><strong>Reranker → Qwen3-8B listwise over the top 10, 120-token passages (shipped, decision revised 20 Nov).</strong> The local MiniLM cross-encoder was worse on every dev metric (R@1.5k 0.84 → 0.71) and wrecked rule-specific claims on frozen (the allocation rule fell from 1.00 to 0.11), so it is not used. The first listwise setting (top 20, 300-token passages) cost about 4,000 tokens per search and lowered R@1.5k to 0.82. The shipped setting costs about 1,340 tokens per call. It raises R@1 from 0.22 to 0.40 on dev (0.24 to 0.38 on frozen), but lowers recall within the 1,500-token budget from 0.84 to 0.80 on dev (0.77 to 0.75 on frozen). Hard negatives in the top five also rise (dev 4% → 9%). We ship it because the brief requires a reranker and the top-rank gain is large; the budget loss is the price. Figures: <code>docs/results/retrieval/rerank_a.json</code>.</li>
 </ul>
 <p><strong>What retrieval still misses is covered by the rule tables.</strong> On frozen, the “which exemption” rule (R9) is found only half the time, because travellers rarely say “exemption”. Each calculator result carries rule ids that map to signed-off clause ids. When a rule’s clause isn’t retrieved, the executor fetches it by id and logs it (design decision D20). In the official runs <strong>23% of shown sources</strong> came through this fallback.</p>
 <h4 id="rep-prompting-strategies-in-the-system">6. Prompting strategies in the system</h4>
@@ -608,7 +609,7 @@ footer.foot { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 
 <td>C4</td>
 <td>Wrong money</td>
 <td>calculators over signed-off tables; figures by handle</td>
-<td>amount right 12–22% → <strong>89.7%</strong></td>
+<td>amount right 12–22% → <strong>86.8%</strong></td>
 </tr>
 <tr>
 <td>C5</td>
@@ -684,10 +685,10 @@ footer.foot { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 
 </tr>
 </tbody>
 </table>
-<p>Two design choices follow from the endpoint, not from a single failure. <strong>The executor is code</strong>, because a model executor would only re-call validated steps in order, at one request at a time; §9 measures that choice. <strong>No reranker and no model-written queries</strong>, because each would cost a call per search for no gain within the budget.</p>
-<p>How the agent was tuned: five dev runs went from 14/23 to 23/23 (<code>docs/results/dev-runs.md</code>). An oracle run with perfect model replies scored 23/23 first, so every failure was the model’s. The agent was then frozen by hash (27 files: prompts, guard policy, agent code, retrieval, calculators). Live smoke tests through the UI and the red-team caught three more problems the dev score didn’t, giving freezes v2–v4, each confirmed with a full dev rerun. The official runs used freeze v4.</p>
+<p>Two design choices follow from the endpoint, not from a single failure. <strong>The executor is code</strong>, because a model executor would only re-call validated steps in order, at one request at a time; §9 measures that choice. <strong>One reranker, with a small pool and short passages</strong>, so the extra call per search stays within the per-question caps (about 1,340 tokens per call, against 4,000 for the first setting). The budget loss is reported in §5. <strong>No model-written queries</strong>, because the rule names are code, and a model-written query would cost a call per search for no gain.</p>
+<p>How the agent was tuned: five dev runs went from 14/23 to 23/23 (<code>docs/results/dev-runs.md</code>). An oracle run with perfect model replies scored 23/23 first, so every failure was the model’s. The agent was then frozen by hash (27 files: prompts, guard policy, agent code, retrieval, calculators). Live smoke tests through the UI and the red-team caught three more problems the dev score didn’t, giving freezes v2–v4, each confirmed with a full dev rerun. Two later freezes followed: v5 (tobacco over the allowance is never taxed) and v6 (the reranker, §5). The official runs used freeze v6.</p>
 <h4 id="rep-end-to-end-evaluation">9. End-to-end evaluation</h4>
-<p><strong>Runs</strong> (<code>docs/eval-report.md</code>, <code>docs/results/runs/</code>): the frozen agent v4 on <code>eval-v1</code>: planner three times, router once, <code>tool_calling</code> once, <code>single_rag</code> once, and the corrections suite with each planner run. Cache off, one request at a time.</p>
+<p><strong>Runs</strong> (<code>docs/eval-report.md</code>, <code>docs/results/runs/</code>): the frozen agent v6 on <code>eval-v1</code>: planner three times, router once, <code>tool_calling</code> once, <code>single_rag</code> once, and the corrections suite with each planner run. Cache off, one request at a time. The model calls now include the reranker’s calls, one per search.</p>
 <figure>
 <img src="../report/figures/fig3-accuracy.png" alt="Figure 3. Turn accuracy and dollar accuracy: the bare model (week 1) against the four system modes." />
 <figcaption aria-hidden="true">Figure 3. Turn accuracy and dollar accuracy: the bare model (week 1) against the four system modes.</figcaption>
@@ -712,44 +713,44 @@ footer.foot { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 
 <tbody>
 <tr>
 <td>Turns correct (91)</td>
-<td><strong>80.2%</strong></td>
-<td><strong>80.2%</strong></td>
+<td><strong>78.0%</strong></td>
+<td><strong>79.1%</strong></td>
 <td>24.2%</td>
 <td>5.5%</td>
 </tr>
 <tr>
 <td>Scenarios fully correct (80)</td>
-<td>78.8%</td>
-<td>78.8%</td>
+<td>76.2%</td>
+<td>77.5%</td>
 <td>17.5%</td>
 <td>6.2%</td>
 </tr>
 <tr>
 <td>Amount right (answered turns)</td>
-<td>89.7%</td>
-<td>89.7%</td>
+<td>86.8%</td>
+<td>88.2%</td>
 <td>8.8%</td>
 <td>17.6%</td>
 </tr>
 <tr>
 <td>All citation claims met (answered)</td>
-<td>88.2%</td>
-<td>88.2%</td>
+<td>85.3%</td>
+<td>86.8%</td>
 <td>8.8%</td>
 <td>5.9%</td>
 </tr>
 <tr>
 <td>Citation claims met</td>
-<td>92.7%</td>
-<td>92.7%</td>
+<td>88.1%</td>
+<td>90.4%</td>
 <td>3.2%</td>
 <td>21.9%</td>
 </tr>
 <tr>
 <td>Fact extraction (fields)</td>
-<td>94.9%</td>
 <td>95.1%</td>
-<td>94.9%</td>
+<td>95.1%</td>
+<td>95.1%</td>
 <td>–</td>
 </tr>
 <tr>
@@ -761,30 +762,30 @@ footer.foot { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 
 </tr>
 <tr>
 <td>Task completion (no system escalation)</td>
-<td>100%</td>
-<td>100%</td>
+<td>97.8%</td>
+<td>98.9%</td>
 <td>30.8%</td>
 <td>100%</td>
 </tr>
 <tr>
 <td>Model calls / tool calls per turn</td>
-<td>3.1 / 3.7</td>
-<td>2.3 / 3.6</td>
-<td>6.0 / 3.5</td>
+<td>5.4 / 3.7</td>
+<td>4.7 / 3.6</td>
+<td>6.1 / 3.5</td>
 <td>1.0 / 1.0</td>
 </tr>
 <tr>
 <td>Tokens per turn</td>
-<td>3,316</td>
-<td>2,838</td>
-<td>9,931</td>
+<td>6,349</td>
+<td>5,948</td>
+<td>10,094</td>
 <td>1,521</td>
 </tr>
 <tr>
 <td>Latency p50 / p95</td>
-<td>15.6 / 34.4 s</td>
-<td>10.4 / 29.0 s</td>
-<td>15.0 / 23.0 s</td>
+<td>17.9 / 34.7 s</td>
+<td>12.9 / 33.1 s</td>
+<td>15.0 / 23.5 s</td>
 <td>3.2 / 4.7 s</td>
 </tr>
 <tr>
@@ -796,14 +797,14 @@ footer.foot { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 
 </tr>
 </tbody>
 </table>
-<p>The <strong>corrections suite</strong> scored 88.9% of turns (range 83.3–91.7% over three runs) and 77.8% of scenarios.</p>
-<p><strong>Per category</strong> (planner turns): over-$800 alcohol 100%, Caribbean 2 L 100%, both injection categories 100%, mixed baskets 90%, clarify 87.5%, tobacco over the limit 87.5%, out of scope 80%, $200 all-or-nothing 75%, under-21 75%, Cuban origin 66.7%, state flags 66.7%, evasion 50%, what-if 0% (not built). The SPEC’s target of 95% on duty and restriction categories is met for the two alcohol-allowance categories only.</p>
+<p>The <strong>corrections suite</strong> scored 100% of turns and of scenarios in all three runs (it scored 88.9% of turns under agent v4). <code>tool_calling</code> and <code>single_rag</code> do not use the reranker; their turn results match the v4 runs exactly (0 of 91 turns differ), with tokens within 2%.</p>
+<p><strong>Per category</strong> (planner turns): over-$800 alcohol 100%, both injection categories 100%, mixed baskets 90%, clarify 87.5%, tobacco over the limit 87.5%, out of scope 80%, Caribbean 2 L 75%, $200 all-or-nothing 75%, Cuban origin 66.7%, state flags 66.7%, under-21 50%, evasion 50%, what-if 0% (not built). The SPEC’s target of 95% on duty and restriction categories is met for over-$800 alcohol only. The two changed turns are Caribbean 2 L (B04, 100% to 75%) and under-21 (F04, 75% to 50%).</p>
 <p><strong>What the ablations show:</strong></p>
 <ul>
 <li><strong>Calculators and the graph are what work.</strong> Plain RAG with the same retrieval gets 5.5%, and it invented the figures in 52 of its wrong turns. The bare model peaks at 13%.</li>
-<li><strong>The model planner adds nothing over the code router on this set.</strong> The same turns right and wrong, with 0.8 more model calls and 5 s more at p50. The plan’s risk table anticipated this (“a valid result: ship the router as default and report it”). We report it and recommend the router as the default; the agent stays frozen for this submission.</li>
-<li><strong>A model executor breaks the budget.</strong> In <code>tool_calling</code> mode 63 of 91 turns hit the 12,000-token cap, because every tool round resends the conversation (9,931 tokens per turn). It made no bad tool arguments; it ran out of room. This is the evidence for the code executor.</li>
-<li><strong>Repeat runs are deterministic.</strong> At temperature 0 the three planner runs gave identical answers on all 91 turns. In the corrections suite one turn differed, an endpoint “busy or unavailable” escalation during a slow period. So the three runs measure stability, not sampling variance.</li>
+<li><strong>The model planner adds nothing over the code router on this set.</strong> The two agree on 90 of 91 turns; on the one they differ (F04) the router answers and the planner escalates. The planner makes 0.7 more model calls and takes 5 s more at p50. The plan’s risk table anticipated this (“a valid result: ship the router as default and report it”). We report it and recommend the router as the default; the agent stays frozen for this submission.</li>
+<li><strong>A model executor breaks the budget.</strong> In <code>tool_calling</code> mode 63 of 91 turns hit the 12,000-token cap, because every tool round resends the conversation (10,094 tokens per turn). It made no bad tool arguments; it ran out of room. This is the evidence for the code executor.</li>
+<li><strong>Repeat runs are deterministic.</strong> At temperature 0 the three planner runs gave identical answers on all 91 turns, and the three corrections runs identical answers on all 12. The v4 corrections runs had one differing turn, an endpoint “busy or unavailable” escalation during a slow period. So the repeats measure stability, not sampling variance.</li>
 </ul>
 <p><strong>Tool calls per tool</strong> (planner-1, 91 turns): <code>check_restrictions</code> 71, <code>search_regulations</code> 70, <code>determine_exemption</code> 63, <code>compute_allowance</code> 63, <code>compute_duty_excise</code> 60, <code>lookup_state_rule</code> 6. The planner skips duty for tobacco-only and prohibited baskets.</p>
 <h5 id="rep-failure-taxonomy">9.1 Failure taxonomy</h5>
@@ -860,7 +861,7 @@ footer.foot { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 
 <img src="../report/figures/fig5-cost.png" alt="Figure 5. Cost per turn by mode." />
 <figcaption aria-hidden="true">Figure 5. Cost per turn by mode.</figcaption>
 </figure>
-<p><strong>Cost.</strong> The course endpoint publishes no price and the team chose not to assume one, so cost is reported as tokens and calls: 3,316 tokens and 3.1 calls per planner turn, 2,838 and 2.3 for the router.</p>
+<p><strong>Cost.</strong> The course endpoint publishes no price and the team chose not to assume one, so cost is reported as tokens and calls: 6,349 tokens and 5.4 calls per planner turn, 5,948 and 4.7 for the router. About 3,000 of the planner’s extra tokens per turn are the reranker’s calls (about 1,340 tokens each, roughly 2.3 per turn).</p>
 <h4 id="rep-responsible-ai-and-safety">10. Responsible AI and safety</h4>
 <ul>
 <li><strong>Human-in-the-loop boundary.</strong> The assistant informs. It never fills in, signs or submits a declaration, never contacts CBP, and never advises not declaring. Every card says it is an estimate, gives the as-of date, says the officer decides, and says to declare everything. Escalations hand off with the facts relied on.</li>
@@ -970,8 +971,8 @@ footer.foot { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 
 </tr>
 <tr>
 <td>Reranker expected</td>
-<td>None shipped</td>
-<td>worse (cross-encoder) or no gain within budget (listwise), §5</td>
+<td>Listwise (top 10, 120-token passages) shipped</td>
+<td>rank 1 up, recall within budget down (0.84 to 0.80 dev), §5</td>
 </tr>
 <tr>
 <td>Cost per query</td>
@@ -1532,10 +1533,10 @@ footer.foot { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 
   <div id="check-list"></div>
 
   <div class="card questions">
-    <div class="eyebrow">Still to clarify</div>
-    <p class="small muted" style="margin:0">These are the points where the repo does not settle the answer. Each one is left unticked until you decide.</p>
+    <div class="eyebrow">Decided on 20 Nov</div>
+    <p class="small muted" style="margin:0">These are the points where the repo does not settle the answer. The one open choice has been decided; the report and checklist reflect it.</p>
     <ol>
-      <li><b style="font-weight:500">Reranker (item III):</b> is a reranker that was tested and rejected enough, or must one be shipped?</li>
+      <li><b style="font-weight:500">Reranker (item III):</b> ship option A (listwise Qwen3-8B, top 10, 120-token passages) and report the recall drop. Shipped in agent v6; the drop is in §5 and §9.</li>
     </ol>
   </div>
 </section>
@@ -1691,7 +1692,7 @@ footer.foot { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 
         j: "Our agent answers one question through a fixed set of steps, with a planner, a code executor and a verifier. It is not an open-ended loop." },
       { t: "Tool calling (function calling)", s: "used",
         p: "The model asks for a named function with arguments (for example, a calculation with these quantities). The program runs it and returns the result to the model.",
-        j: "Seven tools. The default has code run them. A mode where the model picks the tools itself was measured: 24.2% of turns right, against 80.2% for the planner." },
+        j: "Seven tools. The default has code run them. A mode where the model picks the tools itself was measured: 24.2% of turns right, against 78.0% for the planner." },
       { t: "Planner, executor and critic", s: "used",
         p: "The planner decides which steps to take. The executor carries them out. The critic (here, the verifier) checks the result before anything is shown.",
         j: "Planner: the LLM proposes a plan, and code checks it against the allowed steps (falling back to a code router). Executor: code calculators. Verifier: code checks plus an advisory LLM review." },
@@ -1856,8 +1857,8 @@ footer.foot { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 
       ["a5", "Constrained decoding and schema validation", "done", "Strict <code>json_schema</code> on every model output: 100% valid, against 55% without it"]
     ]},
     { g: "Item V: evaluation and observability", items: [
-      ["e1", "End-to-end accuracy against the Week-1 evaluation set", "done", "Planner: 80.2% of turns right in three identical runs · <code>docs/eval-report.md</code>"],
-      ["e2", "Task completion rate", "done", "100% with no system escalation (planner)"],
+      ["e1", "End-to-end accuracy against the Week-1 evaluation set", "done", "Planner: 78.0% of turns right in three identical runs (agent v6) · <code>docs/eval-report.md</code>"],
+      ["e2", "Task completion rate", "done", "97.8% with no system escalation (planner, agent v6)"],
       ["e3", "Average tool calls per task", "done", "3.7 per turn (planner)"],
       ["e4", "Cost and latency per query", "done", "Latency p50 15.6 s, p95 34.4 s; cost reported as tokens and calls (price set to zero)."],
       ["e5", "Failure taxonomy: retrieval miss, reasoning error, tool-call error, hallucination", "done", "Ten buckets · hand-check agrees on 16 of 20 · labels drafted by Claude Code, reviewed by swateek"],

@@ -39,3 +39,14 @@ One line per run that reaches the course endpoints (group 031–045), made only 
 | 2026-11-20 ~01:30 (start time approximate) | swateek | live demo-script run for screenshots (docs/demo/screens): 6 questions, 2 clarify replies, 1 correction edit, 9 turns | not counted | not counted | not counted | app does not count per run; no cached answers (fresh Redis); refusal turn expected to make no model call; see Langfuse customs-agent traces for 20 Nov. Explicit OK given by the user to call the endpoints for this run.
 | 2026-11-20 ~02:00 (start time approximate) | swateek | retrieval option A, dev: listwise rerank of top 10, 120-token passages (docs/results/retrieval/rerank_a.json) | 45 | 0 | ~60,300 | 45 calls, 0 fallbacks, 0 errors; per-call mean 1,341 tokens. Approved by the user ("do option A"). |
 | 2026-11-20 ~02:05 (start time approximate) | swateek | retrieval option A, frozen: same configuration (docs/results/retrieval/rerank_a.json) | 220 | 0 | ~296,000 | 220 calls, 0 fallbacks, 0 errors; per-call mean 1,346 tokens. Approved by the user ("do option A"). Some 429s were retried by the client. |
+| 2026-11-20 18:26 | swateek | agent run dev-09 (dev, planner) | 113 | 17 | 129939 | run took 7 min |
+| 2026-11-20 18:57 | swateek | agent run planner-1 (frozen, planner) | 490 | 70 | 577781 | run took 26 min |
+| 2026-11-20 19:01 | swateek | agent run planner-1-corr (corrections, planner) | 83 | 12 | 101179 | run took 4 min |
+| 2026-11-21 00:30 (IST) | swateek | agent run planner-2 (frozen, planner), PARTIAL: stopped by the user | not counted | not counted | not counted | 3 of 80 scenarios saved; the scenario in flight at the stop was not saved; resumable. Remaining official runs (planner-2 onward) wait for the user's next OK.
+| 2026-11-21 03:21 | swateek | agent run planner-2 (frozen, planner) | 469 | 67 | 552848 | run took 26 min |
+| 2026-11-21 03:24 | swateek | agent run planner-2-corr (corrections, planner) | 83 | 12 | 101160 | run took 4 min |
+| 2026-11-21 03:52 | swateek | agent run planner-3 (frozen, planner) | 490 | 3 | 577704 | run took 27 min |
+| 2026-11-21 03:55 | swateek | agent run planner-3-corr (corrections, planner) | 83 | 0 | 101160 | run took 4 min |
+| 2026-11-21 04:17 | swateek | agent run router (frozen, router) | 424 | 0 | 541276 | run took 21 min |
+| 2026-11-21 04:39 | swateek | agent run tool_calling (frozen, tool_calling) | 553 | 0 | 918576 | run took 22 min |
+| 2026-11-21 04:45 | swateek | agent run single_rag (frozen, single_rag) | 87 | 87 | 138414 | run took 6 min |
