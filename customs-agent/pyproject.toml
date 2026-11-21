@@ -16,3 +16,6 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+# Live tests call the real endpoints; run them with `uv run pytest -m live -v`.
+addopts = "-m 'not live'"
+markers = ["live: calls the real chat/embeddings endpoints (uses quota)"]

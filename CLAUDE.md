@@ -55,14 +55,18 @@ Two separate OpenAI-compatible endpoints, each with its own URL, API key and CA 
 | Verified | Native tool calls 3/3; `response_format` `json_schema` and `json_object` both work; `usage` reported | `POST /v1/embeddings` works; **384 dimensions**; **max 512 tokens per input** |
 | Limits | 8,192 tokens per call total, max 1,024 output; 1 request in flight | 1 request in flight |
 
-- Certificates live in `certs/` (git-ignored). TLS setup: reuse `Endpoint`, `resolve_file()`, `load_ca()` and `make_client()` from `prechecks/check_endpoint.py`. `CA_RELAX_STRICT=1` only if Python 3.13+ rejects a CA for missing key-usage extensions.
-- Design consequences: planner uses native `tools`; planner, writer and verifier use `json_schema`; Pydantic still validates every output. Chunks ≤ 350 tokens (hard limit, below the embedder's 512).
-- **Qwen3 thinking mode: not yet tested.** If replies contain `<think>` or a `reasoning_content` field, disable per call with `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` (or `/no_think` in the prompt); enable only where an experiment says it helps. Record the result in COMPENSATIONS.md row 3.
+- Certificates live in `certs/` (git-ignored). TLS setup lives in `src/endpoints.py` (`Endpoint`, `resolve_file()`, `load_ca()`, `make_client()`); application code imports from there, never from `prechecks/`. `CA_RELAX_STRICT=1` only if Python 3.13+ rejects a CA for missing key-usage extensions.
+- Design consequences: planner uses native `tools`; planner, writer and verifier use `json_schema`; Pydantic still validates every output. Tool schemas take quantities and durations **as stated** (`{value, unit}`), never pre-converted: asked for `trip_hours`, the model passed `10` for "10 days" (COMPENSATIONS.md row 3). Chunks ≤ 350 tokens (hard limit, below the embedder's 512).
+- No thinking mode on this endpoint: replies contain no `<think>` text or `reasoning_content`, so no switch is needed.
 
-## `src/llm.py` (single client for both endpoints)
+## `src/llm.py` (single client for both endpoints; built, 21 tests in `tests/test_llm.py`)
 
-- One FIFO queue per endpoint, one request in flight; exponential back-off with jitter on 429/5xx, honouring `Retry-After`.
-- Response cache keyed by model + messages + params; **cache OFF for official runs**.
+Use: `llm = LLM.from_env(run_name=...)`, then `llm.chat(messages, stage=..., tools=..., response_format=..., max_tokens=...)` → `ChatResult` (content, tool_calls, usage, cached) and `llm.embed(texts, stage=...)` → vectors. Smoke test against the real endpoints: `uv run python -m src.llm`. Live tests (11, about 8 real calls, marker `live`, excluded from the default run): `uv run pytest -m live -v`. Requires `CHAT_MODEL` and `EMBED_MODEL` in `.env`.
+
+
+- One FIFO queue per endpoint, one request in flight, across threads and across processes on this machine (lock file in `logs/`); exponential back-off with jitter on 429/5xx and connection errors, honouring `Retry-After`; other 4xx fail at once with `LLMError`.
+- Refuses before sending (`BudgetError`) any call with `max_tokens` > 1,024 or an estimated total over 8,192 tokens.
+- SQLite response cache (`logs/llm_cache.sqlite3`) keyed by model + messages + params; calls with temperature > 0 are cached only with a `sample` id (self-consistency samples 0, 1, 2). **Cache OFF for official runs**: `LLM_CACHE=0` or `cache_enabled=False`.
 - Writes one line per call to `logs/usage.jsonl`: timestamp, run name, stage, endpoint, model, prompt/completion tokens, latency, cached flag. This is the source of truth for cost and quota (no manual quota log).
 - Budget: target < 3k input tokens per call; retrieval returns 3–5 clauses of ≤ 350 tokens; 12,000 tokens per question.
 - Long runs (baselines, official evaluation) run overnight.
@@ -181,10 +185,11 @@ prechecks/check_endpoint.py  # endpoint check; source of Endpoint/make_client TL
 certs/                       # CA certificates, git-ignored
 .env                         # endpoint URLs, keys, cert paths, model names; git-ignored
 data/                        # rules.yaml, rates.yaml, rag-corpus/, raw snapshot + hashes
-logs/usage.jsonl             # one line per model call, written by src/llm.py
+logs/                        # git-ignored: usage.jsonl (one line per model call), llm_cache.sqlite3, queue locks
 eval/eval_set.jsonl          # frozen, tag eval-v1
 eval/dev_set.jsonl
 eval/score.py
+src/endpoints.py             # endpoint settings, TLS (CA certs), OpenAI client factory
 src/llm.py                   # chat + embeddings clients: queue, retries, cache, usage log
 src/schemas.py               # Pydantic models for every agent output
 src/retrieval/               # chunkers, bm25, dense, hybrid (RRF k=60), reranker
@@ -200,7 +205,7 @@ tests/
 
 | Days | Work | Exit criterion |
 | --- | --- | --- |
-| 0 | Endpoint check; repo skeleton; `src/llm.py`; COMPENSATIONS.md; thinking-mode test | `docs/endpoint_check.md` committed |
+| 0 | Endpoint check; repo skeleton; `src/llm.py`; COMPENSATIONS.md | `docs/endpoint_check.md` committed |
 | 1–2 | Resolve VERIFY rows; rules.yaml + rates.yaml; SPEC.md; calculators + unit tests | SPEC APPROVED; rule tests green |
 | 1–3 | Corpus fetch, clean, dedupe, metadata; freeze snapshot | ≥ 500 docs, hashes stored |
 | 2–3 | 80 + 20 scenarios; independent gold spreadsheet | tag `eval-v1` |
@@ -214,15 +219,14 @@ If behind at Day 9: drop `whatif_optimise` first, then UI extras. Never drop the
 
 ## Current status
 
-**Day 0: done except `src/llm.py` and the thinking-mode test.**
+**Day 0: done.**
 
 - [x] Endpoint check run; `docs/endpoint_check.md` committed (results in "Endpoints" above).
 - [x] `prechecks/check_endpoint.py`: separate chat/embeddings settings, `.crt` CA certs (PEM or DER), path resolution.
 - [x] `docs/ARCHITECTURE.md`: component and request-flow diagrams.
-- [x] `docs/COMPENSATIONS.md` started: 3 rows + planned measurements.
-- [x] `data/rag-corpus/` starter kit (14 sources, fetch script, chunker). Must grow to 500+; curated reference has known errors.
-- [ ] `src/llm.py` (next).
-- [ ] Qwen3 thinking-mode test → COMPENSATIONS.md row 3.
+- [x] `docs/COMPENSATIONS.md` started: 2 rows + planned measurements.
+- [ ] `data/rag-corpus/` is empty: unzip the starter kit (14 sources, fetch script, chunker) on Day 1. Must grow to 500+; its curated reference has known errors.
+- [x] `src/endpoints.py` + `src/llm.py` with 21 tests (mock API, no quota).
 - [ ] Day 1: regulatory checks (`docs/regulatory_checks.md`: quote + URL + conclusion per VERIFY row) → `data/rules.yaml`, `data/rates.yaml`; start corpus fetch.
 
 - Business case and first technical design exist (pre-mentor review): Business Case https://claude.ai/artifact/3EmBYyxpiwUn4LhgD2xKvJ · Technical Design https://claude.ai/artifact/AAoYfA26TQhgigAvZfzQoc. The mentor proposal supersedes them where they differ (planner, 9 tools, corpus size, corrected facts).

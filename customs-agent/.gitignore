@@ -6,3 +6,5 @@
 .venv/
 __pycache__/
 certs
+# Usage log, response cache and queue lock files written by src/llm.py
+logs/
