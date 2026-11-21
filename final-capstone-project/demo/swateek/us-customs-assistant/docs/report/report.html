@@ -644,11 +644,12 @@ denying the computed exemption</td>
 failure. <strong>The executor is code</strong>, because a model executor
 would only re-call validated steps in order, at one request at a time;
 §9 measures that choice. <strong>One reranker, with a small pool and
-short passages</strong>, so the extra call per search stays within the
-per-question caps (about 1,340 tokens per call, against 4,000 for the
-first setting). The budget loss is reported in §5. <strong>No
-model-written queries</strong>, because the rule names are code, and a
-model-written query would cost a call per search for no gain.</p>
+short passages</strong>, so the extra call per search fits the
+per-question caps on most turns (about 1,340 tokens per call, against
+4,000 for the first setting). The budget loss is reported in §5.
+<strong>No model-written queries</strong>, because the rule names are
+code, and a model-written query would cost a call per search for no
+gain.</p>
 <p>How the agent was tuned: five dev runs went from 14/23 to 23/23
 (<code>docs/results/dev-runs.md</code>). An oracle run with perfect
 model replies scored 23/23 first, so every failure was the model’s. The
@@ -831,14 +832,15 @@ errors</strong> except the four what-if items, which were not built. For
 tool-call failures); for <code>single_rag</code>, invented figures.
 There were no retrieval misses and no hallucinated figures or citations
 in the agent modes.</p>
-<p>The 20 distinct planner and corrections failures were
+<p>The 22 distinct planner and corrections failures were
 <strong>hand-checked</strong>
-(<code>docs/results/hand-check.yaml</code>; drafted by Claude Code,
-reviewed by a team member). The automatic label agreed on 12 of 20. Two
-classifier rules were fixed as a result: a missed refusal had been
-labelled an extraction error, and a source missing because a fact was
-never read had been labelled a citation-mapping error. The classifier
-now agrees on 16 of 20, and the report uses the hand labels. What
+(<code>docs/results/hand-check.yaml</code>): 20 on 18 Nov, drafted by
+Claude Code and reviewed by a team member, and two budget escalations
+added on 21 Nov that are drafted but not yet reviewed. Two classifier
+rules were fixed on 18 Nov: a missed refusal had been labelled an
+extraction error, and a source missing because a fact was never read had
+been labelled a citation-mapping error. The classifier now agrees with
+the hand labels on 16 of 22, and the report uses the hand labels. What
 actually goes wrong:</p>
 <table>
 <colgroup>
@@ -881,6 +883,12 @@ of asking</td>
 <tr>
 <td>Not asking</td>
 <td>the arrival state and the spirits’ origin (I07, I08)</td>
+</tr>
+<tr>
+<td>Token cap</td>
+<td>B04 and F04 under agent v6: the run is cut off at 12,678 and 12,424
+tokens, over the 12,000 cap. The reranker’s calls count against it
+(§5).</td>
 </tr>
 </tbody>
 </table>

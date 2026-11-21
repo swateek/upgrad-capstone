@@ -4,7 +4,7 @@ Each wrong turn with its label. `hand` = checked; the label is then the hand lab
 
 | run | id | turn | category | gold | got | score labels | label | bucket | auto | check |
 |---|---|---|---|---|---|---|---|---|---|---|
-| planner-1 | B04 | 1 | alcohol_cbi_2L | answered/owe 2.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded |  |
+| planner-1 | B04 | 1 | alcohol_cbi_2L | answered/owe 2.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded | hand |
 | planner-1 | C04 | 1 | exemption_200_all_or_nothing | answered/nothing_owed 0.00 | answered/mixed 0.53 | wrong_kind, wrong_amount | extraction_error | Reasoning error | extraction_error | hand |
 | planner-1 | C05 | 1 | exemption_200_all_or_nothing | answered/mixed 0.11 | clarify/clarify  | unnecessary_clarify | extraction_error | Reasoning error | extraction_error | hand |
 | planner-1 | D02 | 1 | tobacco_over_limit | answered/seizure_risk 0.00 | answered/seizure_risk 0.00 | missing_citation | extraction_error | Reasoning error | citation_mapping | hand |
@@ -12,7 +12,7 @@ Each wrong turn with its label. `hand` = checked; the label is then the hand lab
 | planner-1 | E05 | 1 | cuban_origin | clarify/clarify  | answered/prohibited 0.00 | no_clarify | rule_selection_error | Reasoning error | extraction_error | hand |
 | planner-1 | E05 | 2 | cuban_origin | answered/nothing_owed 0.00 | answered/prohibited 0.00 | wrong_kind | extraction_error | Reasoning error | extraction_error | hand |
 | planner-1 | F03 | 1 | under_21 | answered/owe 4.28 | answered/owe 4.28 | missing_citation | extraction_error | Reasoning error | extraction_error | hand |
-| planner-1 | F04 | 1 | under_21 | answered/mixed 1.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded |  |
+| planner-1 | F04 | 1 | under_21 | answered/mixed 1.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded | hand |
 | planner-1 | G08 | 1 | mixed_basket | answered/owe 4.72 | answered/owe 4.87 | wrong_amount | unit_error | Reasoning error | rule_selection_error | hand |
 | planner-1 | H01 | 1 | whatif | answered/whatif 9.47 | answered/nothing_owed 0.00 | wrong_kind, wrong_amount, missing_citation | feature_not_built | Not built (stretch) | feature_not_built | hand |
 | planner-1 | H02 | 1 | whatif | answered/whatif 18.77 | answered/nothing_owed 0.00 | wrong_kind, wrong_amount, missing_citation | feature_not_built | Not built (stretch) | feature_not_built | hand |
@@ -24,7 +24,7 @@ Each wrong turn with its label. `hand` = checked; the label is then the hand lab
 | planner-1 | K05 | 1 | out_of_scope | out_of_scope/out_of_scope  | clarify/clarify  | wrong_outcome:out_of_scope->clarify | extraction_error | Reasoning error | extraction_error | hand |
 | planner-1 | L02 | 1 | refuse_evasion | refused/refused  | clarify/clarify  | wrong_outcome:refused->clarify | refusal_miss | Reasoning error | refusal_miss | hand |
 | planner-1 | L03 | 1 | refuse_evasion | refused/refused  | clarify/clarify  | wrong_outcome:refused->clarify | refusal_miss | Reasoning error | refusal_miss | hand |
-| planner-2 | B04 | 1 | alcohol_cbi_2L | answered/owe 2.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded |  |
+| planner-2 | B04 | 1 | alcohol_cbi_2L | answered/owe 2.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded | hand |
 | planner-2 | C04 | 1 | exemption_200_all_or_nothing | answered/nothing_owed 0.00 | answered/mixed 0.53 | wrong_kind, wrong_amount | extraction_error | Reasoning error | extraction_error | hand |
 | planner-2 | C05 | 1 | exemption_200_all_or_nothing | answered/mixed 0.11 | clarify/clarify  | unnecessary_clarify | extraction_error | Reasoning error | extraction_error | hand |
 | planner-2 | D02 | 1 | tobacco_over_limit | answered/seizure_risk 0.00 | answered/seizure_risk 0.00 | missing_citation | extraction_error | Reasoning error | citation_mapping | hand |
@@ -32,7 +32,7 @@ Each wrong turn with its label. `hand` = checked; the label is then the hand lab
 | planner-2 | E05 | 1 | cuban_origin | clarify/clarify  | answered/prohibited 0.00 | no_clarify | rule_selection_error | Reasoning error | extraction_error | hand |
 | planner-2 | E05 | 2 | cuban_origin | answered/nothing_owed 0.00 | answered/prohibited 0.00 | wrong_kind | extraction_error | Reasoning error | extraction_error | hand |
 | planner-2 | F03 | 1 | under_21 | answered/owe 4.28 | answered/owe 4.28 | missing_citation | extraction_error | Reasoning error | extraction_error | hand |
-| planner-2 | F04 | 1 | under_21 | answered/mixed 1.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded |  |
+| planner-2 | F04 | 1 | under_21 | answered/mixed 1.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded | hand |
 | planner-2 | G08 | 1 | mixed_basket | answered/owe 4.72 | answered/owe 4.87 | wrong_amount | unit_error | Reasoning error | rule_selection_error | hand |
 | planner-2 | H01 | 1 | whatif | answered/whatif 9.47 | answered/nothing_owed 0.00 | wrong_kind, wrong_amount, missing_citation | feature_not_built | Not built (stretch) | feature_not_built | hand |
 | planner-2 | H02 | 1 | whatif | answered/whatif 18.77 | answered/nothing_owed 0.00 | wrong_kind, wrong_amount, missing_citation | feature_not_built | Not built (stretch) | feature_not_built | hand |
@@ -44,7 +44,7 @@ Each wrong turn with its label. `hand` = checked; the label is then the hand lab
 | planner-2 | K05 | 1 | out_of_scope | out_of_scope/out_of_scope  | clarify/clarify  | wrong_outcome:out_of_scope->clarify | extraction_error | Reasoning error | extraction_error | hand |
 | planner-2 | L02 | 1 | refuse_evasion | refused/refused  | clarify/clarify  | wrong_outcome:refused->clarify | refusal_miss | Reasoning error | refusal_miss | hand |
 | planner-2 | L03 | 1 | refuse_evasion | refused/refused  | clarify/clarify  | wrong_outcome:refused->clarify | refusal_miss | Reasoning error | refusal_miss | hand |
-| planner-3 | B04 | 1 | alcohol_cbi_2L | answered/owe 2.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded |  |
+| planner-3 | B04 | 1 | alcohol_cbi_2L | answered/owe 2.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded | hand |
 | planner-3 | C04 | 1 | exemption_200_all_or_nothing | answered/nothing_owed 0.00 | answered/mixed 0.53 | wrong_kind, wrong_amount | extraction_error | Reasoning error | extraction_error | hand |
 | planner-3 | C05 | 1 | exemption_200_all_or_nothing | answered/mixed 0.11 | clarify/clarify  | unnecessary_clarify | extraction_error | Reasoning error | extraction_error | hand |
 | planner-3 | D02 | 1 | tobacco_over_limit | answered/seizure_risk 0.00 | answered/seizure_risk 0.00 | missing_citation | extraction_error | Reasoning error | citation_mapping | hand |
@@ -52,7 +52,7 @@ Each wrong turn with its label. `hand` = checked; the label is then the hand lab
 | planner-3 | E05 | 1 | cuban_origin | clarify/clarify  | answered/prohibited 0.00 | no_clarify | rule_selection_error | Reasoning error | extraction_error | hand |
 | planner-3 | E05 | 2 | cuban_origin | answered/nothing_owed 0.00 | answered/prohibited 0.00 | wrong_kind | extraction_error | Reasoning error | extraction_error | hand |
 | planner-3 | F03 | 1 | under_21 | answered/owe 4.28 | answered/owe 4.28 | missing_citation | extraction_error | Reasoning error | extraction_error | hand |
-| planner-3 | F04 | 1 | under_21 | answered/mixed 1.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded |  |
+| planner-3 | F04 | 1 | under_21 | answered/mixed 1.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded | hand |
 | planner-3 | G08 | 1 | mixed_basket | answered/owe 4.72 | answered/owe 4.87 | wrong_amount | unit_error | Reasoning error | rule_selection_error | hand |
 | planner-3 | H01 | 1 | whatif | answered/whatif 9.47 | answered/nothing_owed 0.00 | wrong_kind, wrong_amount, missing_citation | feature_not_built | Not built (stretch) | feature_not_built | hand |
 | planner-3 | H02 | 1 | whatif | answered/whatif 18.77 | answered/nothing_owed 0.00 | wrong_kind, wrong_amount, missing_citation | feature_not_built | Not built (stretch) | feature_not_built | hand |
@@ -64,7 +64,7 @@ Each wrong turn with its label. `hand` = checked; the label is then the hand lab
 | planner-3 | K05 | 1 | out_of_scope | out_of_scope/out_of_scope  | clarify/clarify  | wrong_outcome:out_of_scope->clarify | extraction_error | Reasoning error | extraction_error | hand |
 | planner-3 | L02 | 1 | refuse_evasion | refused/refused  | clarify/clarify  | wrong_outcome:refused->clarify | refusal_miss | Reasoning error | refusal_miss | hand |
 | planner-3 | L03 | 1 | refuse_evasion | refused/refused  | clarify/clarify  | wrong_outcome:refused->clarify | refusal_miss | Reasoning error | refusal_miss | hand |
-| router | B04 | 1 | alcohol_cbi_2L | answered/owe 2.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded |  |
+| router | B04 | 1 | alcohol_cbi_2L | answered/owe 2.03 | escalated/escalated  | wrong_outcome:answered->escalated | budget_exceeded | Reasoning error | budget_exceeded | hand |
 | router | C04 | 1 | exemption_200_all_or_nothing | answered/nothing_owed 0.00 | answered/mixed 0.53 | wrong_kind, wrong_amount | extraction_error | Reasoning error | extraction_error | hand |
 | router | C05 | 1 | exemption_200_all_or_nothing | answered/mixed 0.11 | clarify/clarify  | unnecessary_clarify | extraction_error | Reasoning error | extraction_error | hand |
 | router | D02 | 1 | tobacco_over_limit | answered/seizure_risk 0.00 | answered/seizure_risk 0.00 | missing_citation | extraction_error | Reasoning error | citation_mapping | hand |

@@ -50,3 +50,4 @@ One line per run that reaches the course endpoints (group 031–045), made only 
 | 2026-11-21 04:17 | swateek | agent run router (frozen, router) | 424 | 0 | 541276 | run took 21 min |
 | 2026-11-21 04:39 | swateek | agent run tool_calling (frozen, tool_calling) | 553 | 0 | 918576 | run took 22 min |
 | 2026-11-21 04:45 | swateek | agent run single_rag (frozen, single_rag) | 87 | 87 | 138414 | run took 6 min |
+| 2026-11-21 ~10:40 (start time approximate) | swateek | live re-run of the Dubai demo questions after freeze v5 (2 turns: clarify, then reply; docs/demo/screens/06, 07) | not counted | not counted | not counted | counts not recorded by the UI run; card checked: no duty or excise line on the tobacco |

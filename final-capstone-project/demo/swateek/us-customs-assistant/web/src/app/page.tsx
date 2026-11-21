@@ -14,7 +14,7 @@ const EXAMPLES = [
   "Back from 10 days in Italy with four bottles of wine, 750 ml each, $30 a bottle. Do I owe anything?",
   "Coming home from Cancún. I bought a box of 25 Cuban cigars and a bottle of Cuban rum there. Is that fine?",
   "Flying home from Dubai after two weeks. I'm 45 and haven't used my exemption this month. I bought two cartons of cigarettes (400) at duty-free.",
-  "Day trip to Tijuana. I'm 30 and it's my first trip this month. I bought one 750 ml bottle of tequila for $40.",
+  "Day trip to Tijuana. I'm 30 and it's my first trip this month. I bought one 750 ml bottle of tequila for $35.",
 ];
 
 type Turn = { id: number; role: "user"; text: string } | { id: number; role: "assistant"; card: Card };

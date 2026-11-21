@@ -158,7 +158,7 @@ Each row is a measured symptom, the fix, and the number before and after (`docs/
 | C16 | Plain RAG follows planted text | the writer sees only clauses of the rules used; banned patterns | planted claims followed 3/3 → 0/3 |
 | C17 | Leetspeak, Spanish, euphemisms slip past the guard | guard reads look-alikes and Spanish | red-team 22/22 |
 
-Two design choices follow from the endpoint, not from a single failure. **The executor is code**, because a model executor would only re-call validated steps in order, at one request at a time; §9 measures that choice. **One reranker, with a small pool and short passages**, so the extra call per search stays within the per-question caps (about 1,340 tokens per call, against 4,000 for the first setting). The budget loss is reported in §5. **No model-written queries**, because the rule names are code, and a model-written query would cost a call per search for no gain.
+Two design choices follow from the endpoint, not from a single failure. **The executor is code**, because a model executor would only re-call validated steps in order, at one request at a time; §9 measures that choice. **One reranker, with a small pool and short passages**, so the extra call per search fits the per-question caps on most turns (about 1,340 tokens per call, against 4,000 for the first setting). The budget loss is reported in §5. **No model-written queries**, because the rule names are code, and a model-written query would cost a call per search for no gain.
 
 How the agent was tuned: five dev runs went from 14/23 to 23/23 (`docs/results/dev-runs.md`). An oracle run with perfect model replies scored 23/23 first, so every failure was the model's. The agent was then frozen by hash (27 files: prompts, guard policy, agent code, retrieval, calculators). Live smoke tests through the UI and the red-team caught three more problems the dev score didn't, giving freezes v2–v4, each confirmed with a full dev rerun. Two later freezes followed: v5 (tobacco over the allowance is never taxed) and v6 (the reranker, §5). The official runs used freeze v6.
 
@@ -202,7 +202,7 @@ The **corrections suite** scored 100% of turns and of scenarios in all three run
 
 Every wrong turn gets a fine label that rolls up into the template's buckets. For the planner, all wrong turns are **reasoning errors** except the four what-if items, which were not built. For `tool_calling` they are the token budget (labelled as tool-call failures); for `single_rag`, invented figures. There were no retrieval misses and no hallucinated figures or citations in the agent modes.
 
-The 20 distinct planner and corrections failures were **hand-checked** (`docs/results/hand-check.yaml`; drafted by Claude Code, reviewed by a team member). The automatic label agreed on 12 of 20. Two classifier rules were fixed as a result: a missed refusal had been labelled an extraction error, and a source missing because a fact was never read had been labelled a citation-mapping error. The classifier now agrees on 16 of 20, and the report uses the hand labels. What actually goes wrong:
+The 22 distinct planner and corrections failures were **hand-checked** (`docs/results/hand-check.yaml`): 20 on 18 Nov, drafted by Claude Code and reviewed by a team member, and two budget escalations added on 21 Nov that are drafted but not yet reviewed. Two classifier rules were fixed on 18 Nov: a missed refusal had been labelled an extraction error, and a source missing because a fact was never read had been labelled a citation-mapping error. The classifier now agrees with the hand labels on 16 of 22, and the report uses the hand labels. What actually goes wrong:
 
 | Cause | Items |
 |---|---|
@@ -212,6 +212,7 @@ The 20 distinct planner and corrections failures were **hand-checked** (`docs/re
 | Cuban brands | Cohiba and Montecristo answered "declare it, origin unclear" instead of asking |
 | Missed refusals | under-declaring the price; a friend falsely claiming half the cigars (it asked for facts; nothing harmful was said) |
 | Not asking | the arrival state and the spirits' origin (I07, I08) |
+| Token cap | B04 and F04 under agent v6: the run is cut off at 12,678 and 12,424 tokens, over the 12,000 cap. The reranker's calls count against it (§5). |
 
 The worst single answer: after the traveller said the cigars were Dominican, the working stated "The cigars are of Cuban origin", and the verifier let it through. These failures came from the frozen set, so they are reported here and not fixed (§12).
 

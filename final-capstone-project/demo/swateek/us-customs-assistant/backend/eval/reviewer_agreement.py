@@ -29,7 +29,9 @@ CITED = re.compile(r"\(([^()]*(?:\([^()]*\)[^()]*)*)\)\.?$")
 
 def sample(run: str = RUN) -> list[dict]:
     rows = []
-    path = PROJECT_ROOT / "docs" / "results" / "runs" / run / "raw.jsonl"
+    # The labels were drafted on the agent v4 answers. Agent v6 changes some answers, so the
+    # sample is pinned to the archived v4 run; re-labelling the v6 answers is a separate step.
+    path = PROJECT_ROOT / "docs" / "results" / "runs" / "v4-archive" / run / "raw.jsonl"
     for line in path.read_text(encoding="utf-8").splitlines():
         r = json.loads(line)
         for t in r["turns"]:

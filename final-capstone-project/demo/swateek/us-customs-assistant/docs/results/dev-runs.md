@@ -109,3 +109,9 @@ The findings came from the safety suite and the red-team (`safety.md`, `red-team
 - **Change:** the search reranks the fused top 10 with Qwen3-8B (listwise) and cuts each passage to 120 tokens (`RERANKER=listwise`, `RERANKER_POOL=10`, `RERANKER_PASSAGE_TOKENS=120`). It is the reranker the Track B brief requires. Each rerank call counts toward the question's model-call and token caps.
 - **Measured before the freeze:** docs/results/retrieval/rerank_a.json. Recall@1 rises (dev 0.22 -> 0.40, frozen 0.24 -> 0.38). Recall within the 1,500-token budget falls (dev 0.84 -> 0.80, frozen 0.77 -> 0.75). Hard negatives in the top 5 rise (dev 4% -> 9%, frozen 6% -> 11%). No fallbacks or errors. About 1,340 tokens per call, so a typical turn stays under the 12,000-token cap.
 - **Checked:** offline tests (`tests/test_reranker_shipped.py`). **Not yet checked:** a dev agent run and the official reruns. Both need the user's OK and the endpoint.
+
+## After freeze v6: dev-09 and the official reruns (20–21 Nov)
+
+- **Dev run dev-09** (agent v6, 23 turns): 22 of 23 turns right. DV13 (mixed basket) was cut off by the cap at 12,772 tokens, against 12,000. It was run and kept as is.
+- **Official reruns** (agent v6, 91 turns): planner 71 of 91 turns right in all three runs; corrections 12 of 12 in all three; router 72 of 91; tool-calling and plain RAG unchanged from v4. Three turns hit the cap that answered under v4: planner B04 (12,678 tokens) and F04 (12,424), and router B04 (12,043). The reranker's calls (about 1,340 tokens each) count against the same per-question cap, so the cap now binds on a few longer turns.
+- **Not decided:** whether to raise the cap (a new freeze and full reruns) or keep the cap and report these turns as cap escalations. The report currently says the second. The B04 and F04 labels in `hand-check.yaml` are drafted and await review.
