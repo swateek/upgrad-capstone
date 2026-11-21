@@ -1,0 +1,8 @@
+# The repo-root .gitignore ignores every dotfile (`.*`).
+# uv's Python pin must be committed so everyone gets the same interpreter.
+!.python-version
+
+# uv virtual environment (also covered by the root `.*` rule)
+.venv/
+__pycache__/
+certs

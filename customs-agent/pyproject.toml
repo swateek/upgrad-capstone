@@ -1,0 +1,18 @@
+[project]
+name = "customs-agent"
+version = "0.1.0"
+description = "DeclareRight: US customs assistant for alcohol and tobacco (Track B capstone)"
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=3.57.0",
+    "python-dotenv>=1.2.4",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
