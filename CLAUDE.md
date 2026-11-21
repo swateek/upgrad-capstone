@@ -244,7 +244,10 @@ If behind at Day 9: drop `whatif_optimise` first, then UI extras. Never drop the
 - [x] Calculators: `src/schemas.py` and `src/tools/` (normalise_units, check_restrictions, determine_exemption, compute_allowance, compute_duty_excise, lookup_state_rule, whatif_optimise, escalate_to_human), reading `rules.yaml` / `rates.yaml`. Tests: `tests/test_tools.py` (rule tests with clause references) and `tests/test_dev_set.py` (all calculable dev scenarios match gold). All 94 tests pass on the Mac (73 tool + 21 llm).
 - [x] Corpus v2 built (Day 3): 742 docs in `data/rag-corpus/corpus/docs/` (one per CFR section, USC section, HTSUS line/note, OFAC FAQ, page section), `MANIFEST.json` with SHA-256s, raw snapshots in `corpus/raw/` (3 PDFs over 500 KB git-ignored). Every citation in the eval gold and the YAML files exists as a `citation_id`. EO 14068 saved by hand (`corpus/raw/eo14068.html`).
 - [x] Chunks: 1,289 (≤ 350 tokens each). The corpus itself is not committed: `corpus/docs/`, `corpus/raw/` and `chunks.jsonl` are rebuilt from `SETUP.md` step 5; committed are `MANIFEST.json` (hashes), `raw/INDEX.json` and the two hand-saved pages. eCFR date pinned (`ecfr_as_of` in `sources.yaml`).
-- [ ] Delete `corpus/primary/`, commit the corpus, tag `corpus-v1`. Then `eval/score.py` and the four baselines (Day 4 gate).
+- [x] Corpus committed as manifest + hand-saved pages; tag `corpus-v1`.
+- [x] Day 4 code: `eval/score.py` (deterministic scorer, SPEC 6), `src/baselines/` (closed_book, fewshot_json with 4 dev examples, cot_sc 3 samples, decompose 3 steps; closed book, model does all arithmetic), `eval/run_baselines.py` (resumable; writes `results/week1_*.csv` for the eval set). 124 offline tests.
+- [x] Baselines run: dev v1/v2 (prompt fixes logged), official `week1` on eval-v2 -> `results/week1_strategies.csv`, `results/week1_failures.csv`; write-up `docs/BASELINES.md`. Best accuracy 0.175 (fewshot_json); dollars ≤ 0.07; clarify ≤ 1/8.
+- [ ] **Gate (end of Day 4):** SPEC approved ✓, `eval-v2` tagged ✓, baselines committed (commit `results/`). Then Days 5–7: retrieval experiment, agent v0, code router.
 - [ ] `uv add --dev pyyaml openpyxl` (needed by `eval/build_eval.py`).
 - [ ] Add the newly cited sources to the corpus: 19 USC 1681a, 26 USC 5754/5761, HTSUS General Note 3 and ch. 98 U.S. Note 4, OFAC Russia FAQs.
 

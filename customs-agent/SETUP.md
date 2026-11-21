@@ -81,9 +81,23 @@ uv run python eval/build_eval.py export
 
 Never tune prompts or code against `eval_set.jsonl`; use `dev_set.jsonl`.
 
+## 7. Prompting baselines and scoring (Day 4)
+
+Four closed-book strategies (no retrieval, no calculators): `closed_book`, `fewshot_json`, `cot_sc` (3 samples, majority vote), `decompose` (extract -> rules -> compute). They use the chat endpoint; one request is in flight at a time.
+
+```bash
+uv run python eval/run_baselines.py --set dev --strategies closed_book --limit 3   # smoke test
+uv run python eval/run_baselines.py --set dev --run-name day4-dev                 # all four on the 20 dev items
+LLM_CACHE=0 uv run python eval/run_baselines.py --set eval --run-name week1       # official: 80 items, cache off, run overnight
+```
+
+- Answers go to `results/runs/<run>/<strategy>.jsonl`; re-running the same command resumes where it stopped.
+- The eval run writes `results/week1_strategies.csv` (one row per strategy) and `results/week1_failures.csv` (one row per wrong item).
+- Score any answers file again: `uv run python eval/score.py --gold eval/dev_set.jsonl --pred results/runs/<run>/<strategy>.jsonl`.
+- Tune prompts on `--set dev` only. Run `--set eval` once the prompts are fixed.
+
 ## Coming next (add steps here as they land)
 
-- Scorer and baselines (Day 4): `eval/score.py`, `results/week1_*.csv`.
 - Retrieval index and experiment (Days 5–7).
 - Agent, verifier, Streamlit app, Docker.
 
