@@ -296,3 +296,20 @@ How to add an entry: append under the current day, newest at the bottom. One ent
 
 - **What:** `day6-planner-v2` (order rule in the prompt): accuracy 1.00; first plans valid 13/16 (was 1/16); 0 fallbacks; 3,640 tokens and 3.94 calls per question (router 2,995 / 2.75). Remaining first-plan errors: search_regulations left out (3), what-if plan with whatif_optimise third and no calculation steps (1). COMPENSATIONS row 13 filled.
   - **Ablation so far (dev, post-tuning):** router 1.00 at 2.75 calls / 2,995 tok; planner 1.00 at 3.94 calls / 3,640 tok (+22% tokens) with the validator repairing 3/16 plans. Planner adds cost, no accuracy; the validator is what keeps it safe.
+
+- **What:** `single_rag` ablation arm: `src/baselines/single_rag.py` (Day-4 TASK prompt + the top 5 clauses from the same search, free-text only; one call; no guard, intake, tools, verifier or sanitiser; planted document passed through as for the agent), `run_agent.py --mode single_rag` (agent record format, so the same scorer and retrieved-ids citation check), `tests/test_single_rag.py`, SETUP step 10. 332 offline tests.
+  - **Open:** run on dev (`day6-single-rag`); three-way table (closed_book from day4-dev-v2, single_rag, planner, router).
+
+- **What:** `single_rag` on dev (`day6-single-rag`): accuracy **0.05**, outcome 0.75, bottom line 0.69, dollars 0/11, clarify 0/2, citations 0.00, 2,289 tokens, 1 call.
+  - **Ablation (dev; closed_book from `day4-dev-v2`, same TASK prompt):**
+
+    | Arm | Accuracy | Outcome | Bottom line | Dollars (n=11) | Clarify (n=2) | Citations | Tokens / q | Calls / q |
+    | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+    | closed_book | 0.20 | 0.90 | 0.69 | 0.00 | 0.00 | 0.00 | 670 | 1.0 |
+    | single_rag | 0.05 | 0.75 | 0.69 | 0.00 | 0.00 | 0.00 | 2,289 | 1.0 |
+    | planner | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 3,640 | 3.94 |
+    | router | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 2,995 | 2.75 |
+
+    Planner and router are post-tuning on dev; closed_book and single_rag were not tuned on these results. Official comparison: eval-v2, Day 10.
+  - **Found:** (1) Retrieval alone adds nothing on dev: same bottom line (0.69), dollars still 0. (2) Free-text search on the whole question finds CBP guidance pages, not the deciding sections: the full gold citation set was in the top 5 for 0 of 14 questions (partly for 5). The retrieval experiment's short, focused queries (R@3 0.917) overstate end-to-end retrieval; fetching the applied rules by id is what fixes citations (COMPENSATIONS row 14). (3) Retrieved text weakened refusals: closed_book refused D16, D17, D19; single_rag answered all three (outcome 0.90 -> 0.75). (4) The planted document worked on single_rag: it cited `planted-limit-note` (must_not failed); the agent's sanitiser drops it.
+  - **Open:** Days 5-7 done. Next: Langfuse trace dashboard (rubric), then Days 8-9 (corrections across turns, red-team list, prompt freeze).

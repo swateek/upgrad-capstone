@@ -2,6 +2,7 @@
 
     uv run python eval/run_agent.py --set dev --run-name day5-router            # agent v0, code router
     uv run python eval/run_agent.py --set dev --mode planner --run-name day6-planner   # LLM planner
+    uv run python eval/run_agent.py --set dev --mode single_rag --run-name day6-single-rag   # search + 1 call
     uv run python eval/run_agent.py --set dev --limit 3                          # smoke test
     uv run python eval/run_agent.py --set paraphrase --run-name para-router      # generalisation check (once)
     LLM_CACHE=0 uv run python eval/run_agent.py --set eval --run-name official-router-1   # Day 10 only
@@ -30,7 +31,7 @@ SETS = {
     / "paraphrase_set.jsonl",  # one-shot check: PARAPHRASE_BRIEF.md
     "eval": ROOT / "eval" / "eval_set.jsonl",
 }
-MODES = ("router", "planner")  # "single_rag" joins here
+MODES = ("router", "planner", "single_rag")
 CHECKS = (
     "outcome",
     "bottom_line",
@@ -69,14 +70,17 @@ def run(
             if item["id"] in done:
                 continue
             t0 = time.perf_counter()
-            res = answer_question(
-                item["question"],
-                llm=llm,
-                search=search,
-                inject=item.get("inject_into_retrieval"),
-                verify_with_llm=verify_with_llm,
-                mode=mode,
-            )
+            if mode == "single_rag":
+                res = _single_rag(llm, search, item)
+            else:
+                res = answer_question(
+                    item["question"],
+                    llm=llm,
+                    search=search,
+                    inject=item.get("inject_into_retrieval"),
+                    verify_with_llm=verify_with_llm,
+                    mode=mode,
+                )
             rec = res.record(item["id"], mode)
             rec["seconds"] = round(time.perf_counter() - t0, 1)
             fh.write(json.dumps(rec, ensure_ascii=False, default=str) + "\n")
@@ -126,6 +130,25 @@ def run(
                 f"   wrong: {r['id']} {r['type']}: {' '.join(failed)}  {r.get('error') or ''}"
             )
     return s
+
+
+def _single_rag(llm, search, item):
+    """Wrap the single_rag baseline in the agent's record format."""
+    from src.agent.pipeline import AgentRun
+    from src.baselines.single_rag import single_rag
+
+    base, ids, trace = single_rag(
+        llm, search, item["question"], item.get("inject_into_retrieval")
+    )
+    res = AgentRun(
+        answer=base.answer, error=base.error, retrieved_ids=ids, trace=[trace]
+    )
+    res.usage.calls, res.usage.tokens, res.usage.steps = (
+        base.calls,
+        base.tokens,
+        base.steps,
+    )
+    return res
 
 
 def main() -> int:

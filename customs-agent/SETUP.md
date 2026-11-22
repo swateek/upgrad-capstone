@@ -144,6 +144,12 @@ uv run python eval/run_agent.py --set dev --mode planner --run-name day6-planner
 
 `--mode planner` adds one model call: the planner picks the tools and their order, a validator checks the plan (restrictions before calculations, required steps, at most 10), one repair is allowed, and otherwise the code router's plan is used (`plan fallbacks` in the summary). Every question is capped at 10 tool steps and 12,000 tokens; over either, it escalates.
 
+Third ablation arm, `single_rag`: the same search, then one model call answers from the 5 clauses (no guard, no tools, no verifier):
+
+```bash
+uv run python eval/run_agent.py --set dev --mode single_rag --run-name day6-single-rag
+```
+
 Writes `results/runs/<run>/router.jsonl` (answer, answer card, trace of every step), `scores_router.csv` and `summary_router.json`. Re-running the same command resumes; delete the run folder to start again. Never run `--set eval` until the Day 10 official runs.
 
 ## Coming next (add steps here as they land)

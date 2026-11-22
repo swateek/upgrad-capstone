@@ -280,7 +280,7 @@ If behind at Day 9: drop `whatif_optimise` first, then UI extras. Never drop the
 - [x] Baselines run: dev v1/v2 (prompt fixes logged), official `week1` on eval-v2 -> `results/week1_strategies.csv`, `results/week1_failures.csv`; write-up `docs/BASELINES.md`. Best accuracy 0.175 (fewshot_json); dollars ≤ 0.07; clarify ≤ 1/8.
 - [x] **Gate passed (end of Day 4):** SPEC approved, `eval-v2` tagged, baselines committed (commit 5615aa7, tag `gate-day4`). Agent code now allowed.
 - [x] Days 5–7 retrieval: `results/retrieval_experiment.csv` (+ `_bge`), decisions in `customs-agent/docs/RETRIEVAL.md` (hybrid RRF + `BAAI/bge-reranker-v2-m3`, 350-token chunks, hard negatives filtered, k = 5, numpy index instead of Qdrant). `search_regulations` built (by citation id + search; saved index in `data/rag-corpus/index/`).
-- [ ] Days 5–7: agent v0 end to end on dev; code router.
+- [x] Days 5–7: agent v0 (code router) and LLM planner + validator end to end on dev; single_rag arm; hard budget (10 steps, 12k tokens). Dev ablation in WORKLOG (Day 6). Paraphrase check 0.883 before fixes.
 - [ ] `uv add --dev pyyaml openpyxl` (needed by `eval/build_eval.py`).
 - [ ] Add the newly cited sources to the corpus: 19 USC 1681a, 26 USC 5754/5761, HTSUS General Note 3 and ch. 98 U.S. Note 4, OFAC Russia FAQs.
 
