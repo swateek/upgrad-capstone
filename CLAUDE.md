@@ -250,7 +250,7 @@ From the mentor proposal's day-by-day table (`docs/01_US_Customs_Assistant.docx`
 | 4 | Four prompting baselines | **GATE**: week1 CSVs committed | ✅ `gate-day4` |
 | 5–7 | Retrieval experiment + three decisions; citation grounding; agent v0 end to end on dev; code router | recall@k table; three decisions | ✅ (+ LLM planner, single_rag, hard budget, paraphrase check) |
 | 5–7 | Writer and verifier prompts; failure notes for the report | | ✅ |
-| 5–7 | UI connected to agent v0; trace link per answer; PII masking in logs; taxonomy labelling rules | **Day 7 checkpoint:** "the web app shows real answers" (React + FastAPI replaces Streamlit) | ✅ app, traces, PII masking (Day 6); ⏳ taxonomy labelling rules |
+| 5–7 | UI connected to agent v0; trace link per answer; PII masking in logs; taxonomy labelling rules | **Day 7 checkpoint:** "the web app shows real answers" (React + FastAPI replaces Streamlit) | ✅ app, traces, PII masking (Day 6); ✅ taxonomy labelling rules (`docs/TAXONOMY.md`, `eval/label_failures.py`) |
 | 8 | Error handling: JSON retries ✅, ToolError back to the planner ✅, loop block ✅, 10-step cap ✅, token budget ✅ | error-handling tests pass | ✅ `tests/test_error_handling.py` (17) |
 | 8 | Corrections across turns: LangGraph StateGraph + SqliteSaver; replan only steps that depend on the changed field | | ✅ built (Day 7); 13 dev conversations to run |
 | 8 | Rate limit (10 questions per minute); answer cache (off for official runs) | | ✅ |
@@ -272,7 +272,7 @@ From the mentor proposal's day-by-day table (`docs/01_US_Customs_Assistant.docx`
 | SPEC, 80-question frozen set, 4-strategy baseline ✅ | `whatif_optimise` and its 4 items ✅ (built; D12 passes) |
 | Corpus ≥ 500, hybrid + reranker, recall@k, citations ✅ | State-rule table beyond 5 states ⏳ |
 | LLM planner + validator + executor + verifier, ≥ 3 tools ✅; memory and corrections ⏳; error handling (partly) | 3 code-router runs (1 is enough for the ablation) ⏳ |
-| Official runs (3 × agent, 1 × router, 1 × single_rag), taxonomy, tracing ⏳ | Embedded regulation viewer in the UI ⏳ |
+| Official runs (3 × agent, 1 × router, 1 × single_rag) ⏳, taxonomy rules ✅ (labelling Day 11), tracing ✅ | Embedded regulation viewer in the UI ✅ |
 | Web app (React + FastAPI) in a container ⏳, rate limit ✅, cache ✅, injection/PII/refusal tests (partly), HITL boundary, red-team log ⏳ | PDF export of the declaration checklist ⏳ |
 | 12-page report, 10-minute demo, backup video ⏳ | Extra dev-set tuning rounds (partly: stop at the prompt freeze) |
 
@@ -280,9 +280,9 @@ Rules that still hold: prompts freeze on Day 9 and code on Day 10; nothing is tu
 
 ### Next, in order
 
-1. Day 7 catch-up: ✅ web app (React + FastAPI) on agent v0 with answer card and regulation viewer; ✅ Langfuse tracing with a trace link per answer (= rubric "trace dashboard"; needs Langfuse keys); ✅ PII masking; ⏳ taxonomy labelling rules.
+1. Day 7 catch-up: ✅ web app (React + FastAPI) on agent v0 with answer card and regulation viewer; ✅ Langfuse tracing with a trace link per answer (= rubric "trace dashboard"; needs Langfuse keys); ✅ PII masking; ✅ taxonomy labelling rules (28/29 known failures labelled as found by hand).
 2. Days 8–9: multi-turn dev conversations (written before the code, independent gold) → LangGraph StateGraph + SqliteSaver, clarify → answer → continue, corrections replan only dependent steps, defaults after two unanswered rounds (SPEC 5.2); ToolError back to the planner; rate limit; error-handling tests; editable facts in the UI; red-team list (15+); also the rule-4 gap (Cuban item with an unreadable count asks before it prohibits).
-3. Stretch, alongside: state rules beyond 5 states; regulation viewer; PDF checklist export.
+3. Stretch, alongside: state rules beyond 5 states; ✅ regulation viewer; PDF checklist export.
 4. Day 9 checkpoint and prompt freeze, then Day 10 official runs.
 
 ## Current status

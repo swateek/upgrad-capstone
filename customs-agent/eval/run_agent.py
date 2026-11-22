@@ -110,6 +110,9 @@ def run(
     if planned:
         s["plan_fallbacks"] = sum(1 for r in planned if r["plan_fallback"])
         s["planned_n"] = len(planned)
+    from eval.freeze import status as freeze_status
+
+    s["freeze"] = freeze_status()
     (out_dir / f"summary_{mode}.json").write_text(
         json.dumps({"set": set_name, "run": run_name, **s}, indent=1)
     )
@@ -163,8 +166,28 @@ def main() -> int:
         action="store_true",
         help="skip the verifier's LLM evasion check",
     )
+    ap.add_argument(
+        "--allow-unfrozen",
+        action="store_true",
+        help="run the eval set although the code does not match eval/freeze.json",
+    )
     args = ap.parse_args()
     if args.set == "eval":
+        from eval.freeze import status as freeze_status
+
+        fz = freeze_status()
+        if not (fz["frozen"] and fz["matches"]) and not args.allow_unfrozen:
+            print(
+                "Refusing to run eval-v2: "
+                + (
+                    "no freeze yet (eval/freeze.py --write)"
+                    if not fz["frozen"]
+                    else "the code drifted from the freeze:"
+                )
+            )
+            for line in fz.get("drift") or []:
+                print(f"  {line}")
+            return 1
         print(
             "Running on eval-v2: official runs only (Day 10). Nothing may be tuned on this result."
         )
@@ -175,6 +198,9 @@ def main() -> int:
     run_name = args.run_name or f"agent-{args.set}"
     llm = LLM.from_env(run_name=run_name)
     print(f"chat: {llm.chat_model}  cache {'on' if llm.cache_enabled else 'OFF'}")
+    if args.set == "eval" and llm.cache_enabled and not args.allow_unfrozen:
+        print("Refusing to run eval-v2 with the response cache on: set LLM_CACHE=0")
+        return 1
     search = RegulationSearch.from_env(llm)
     print(f"search: {search.method}")
     run(

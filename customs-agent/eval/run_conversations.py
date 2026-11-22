@@ -101,6 +101,9 @@ def run(
         if rows
         else None,
     }
+    from eval.freeze import status as freeze_status
+
+    s["freeze"] = freeze_status()
     (out_dir / "summary_conversations.json").write_text(
         json.dumps({"run": run_name, "mode": mode, **s}, indent=1)
     )

@@ -367,6 +367,16 @@ def respond(
     """Plan, tools, retrieval, answer card, writer, verifier: everything after the question has
     been read. A session passes its own executor (defaults, reuse of earlier steps)."""
     run.assumptions = list(assumptions or [])
+    # the exact facts this answer relies on (merged across turns in a session): for failure labelling
+    run.trace.append(
+        {
+            "step": "facts",
+            "profile": facts.profile.model_dump(mode="json", exclude_none=True),
+            "basket": [
+                b.model_dump(mode="json", exclude_none=True) for b in facts.basket
+            ],
+        }
+    )
     # an item of type "other" is not alcohol or tobacco, whatever category the model gave it
     basket = [b for b in facts.basket if b.category != "other" and b.type != "other"]
     other = len(basket) < len(facts.basket) or other_goods
