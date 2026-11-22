@@ -9,9 +9,6 @@ certs
 # Usage log, response cache and queue lock files written by src/llm.py
 logs/
 
-# Local work log (not committed)
-WORKLOG.md
-
 # RAG corpus: rebuilt with fetch_corpus.py (see SETUP.md), not committed. MANIFEST.json holds the
 # SHA-256 of every doc and download, so `fetch_corpus.py --check` shows whether a rebuild matches corpus-v1.
 data/rag-corpus/corpus/docs/
