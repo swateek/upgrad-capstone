@@ -406,8 +406,18 @@ def _answer(
         message=f"{out.bottom_line} {out.explanation} {disclaimer}",
     )
     by_id = {c.citation_id: c for c in clauses}
+    owed = {d.line: float(d.total_usd) for d in (r.duty.lines if r.duty else [])}
     run.card = {
         "bottom_line": out.bottom_line,
+        "items": [
+            {
+                "line": n.index,
+                "item": n.line.item,
+                "type": t,
+                "owed_usd": owed.get(n.index),
+            }
+            for n, t in zip(r.lines, r.line_types, strict=False)
+        ],
         "result": result,
         "explanation": out.explanation,
         "working": working,

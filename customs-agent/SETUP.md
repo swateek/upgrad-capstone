@@ -152,6 +152,35 @@ uv run python eval/run_agent.py --set dev --mode single_rag --run-name day6-sing
 
 Writes `results/runs/<run>/router.jsonl` (answer, answer card, trace of every step), `scores_router.csv` and `summary_router.json`. Re-running the same command resumes; delete the run folder to start again. Never run `--set eval` until the Day 10 official runs.
 
+## 11. Web app
+
+A FastAPI backend (`app/api.py`) and a React front end (`web/`, Vite + TypeScript). Needs Node 20+.
+
+```bash
+uv add fastapi "uvicorn[standard]" langfuse      # once
+uv add --dev httpx                                # once, for the API tests
+cd web && npm install && cd ..                    # once
+```
+
+Development (two terminals):
+
+```bash
+uv run uvicorn app.api:app --port 8000            # API; loads the models once at the first question
+cd web && npm run dev                             # http://localhost:5173 (proxies /api to :8000)
+```
+
+One process, as in the container: `cd web && npm run build && cd ..`, then `uv run uvicorn app.api:app --port 8000` serves the built app at http://localhost:8000.
+
+Each answer carries a trace. With Langfuse settings in `.env` the trace goes to Langfuse and the answer links to it; without them it is appended to `logs/trace.jsonl`. Questions and answers are PII-masked first (emails, phone, passport and card numbers, "my name is ...").
+
+```
+LANGFUSE_HOST=https://cloud.langfuse.com         # or your self-hosted Langfuse
+LANGFUSE_PUBLIC_KEY=pk-lf-...
+LANGFUSE_SECRET_KEY=sk-lf-...
+LANGFUSE_PROJECT_ID=...                           # optional: builds trace links without an API call
+RATE_LIMIT_PER_MINUTE=10                          # optional
+```
+
 ## Coming next (add steps here as they land)
 
 - LLM planner + plan validator, single_rag baseline, corrections across turns, Streamlit app, Docker.

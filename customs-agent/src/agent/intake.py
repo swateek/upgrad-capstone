@@ -140,12 +140,55 @@ HISTORY = re.compile(
 )
 
 
+_UNITS = [
+    "zero",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "sixteen",
+    "seventeen",
+    "eighteen",
+    "nineteen",
+]
+_TENS = ["twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
+SPELLED = re.compile(
+    rf"\b(?:(?P<tens>{'|'.join(_TENS)})(?:[\s-]+(?P<unit>{'|'.join(_UNITS[1:10])}))?|(?P<small>{'|'.join(_UNITS)}))\b",
+    re.IGNORECASE,
+)
+
+
+def spelled_numbers(text: str) -> set[str]:
+    """Numbers written in words, 0-99 ("forty-nine", "twenty one", "seventeen"), as digit strings."""
+    out = set()
+    for m in SPELLED.finditer(text):
+        if m.group("tens"):
+            n = 20 + 10 * _TENS.index(m.group("tens").lower())
+            if m.group("unit"):
+                n += _UNITS.index(m.group("unit").lower())
+        else:
+            n = _UNITS.index(m.group("small").lower())
+        out.add(str(n))
+    return out
+
+
 def ground_in_question(
     r: IntakeResult, question: str
 ) -> tuple[IntakeResult, list[str]]:
     """Drop profile facts the question does not state (the model fills gaps with guesses).
 
-    Age must appear as a number in the question; a trip length needs some duration in it
+    Age must appear as a number in the question, in digits or words ("49", "forty-nine"); a trip length needs some duration in it
     ("10 days", "a week", "day trip", "overnight"); the 30-day history needs something about earlier
     trips or the exemption ("first trip this year", "haven't used my exemption"). Anything dropped
     becomes null, so the clarify
@@ -153,7 +196,9 @@ def ground_in_question(
     """
     dropped: list[str] = []
     upd: dict[str, Any] = {}
-    numbers_in_q = set(re.findall(r"\d+", question or ""))
+    numbers_in_q = set(re.findall(r"\d+", question or "")) | spelled_numbers(
+        question or ""
+    )
     p = r.profile
     if p.age is not None and str(p.age) not in numbers_in_q:
         upd["age"] = None

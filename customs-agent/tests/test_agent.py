@@ -740,3 +740,40 @@ def test_guard_catches_authority_claims_and_concealment(q, reason) -> None:
 )
 def test_guard_still_passes_normal_questions(q) -> None:
     assert check_question(q).action == "pass"
+
+
+@pytest.mark.parametrize(
+    "q,age",
+    [
+        ("I'm forty-nine", 49),
+        ("aged twenty one", 21),
+        ("I am Thirty", 30),
+        ("I'm 49", 49),
+    ],
+)
+def test_grounding_keeps_ages_written_in_words(q, age) -> None:
+    from src.agent.intake import ground_in_question
+
+    r = IntakeResult.model_validate({"request_kind": "assess", "profile": {"age": age}})
+    assert ground_in_question(r, q)[0].profile.age == age
+
+
+def test_grounding_still_drops_an_age_that_is_not_there() -> None:
+    from src.agent.intake import ground_in_question
+
+    r = IntakeResult.model_validate({"request_kind": "assess", "profile": {"age": 49}})
+    assert ground_in_question(r, "I'm forty, back from Scotland")[0].profile.age is None
+
+
+def test_working_states_the_tobacco_allowance() -> None:
+    from src.agent import card
+
+    d = DEV["D11"]
+    r = route(
+        profile_from_fact(d["facts"]["profile"]),
+        [line_from_fact(f) for f in d["facts"]["basket"]],
+    )
+    assert (
+        "Item 2: 100 cigarettes; your allowance is 200 cigarettes: within it."
+        in card.working(r)
+    )

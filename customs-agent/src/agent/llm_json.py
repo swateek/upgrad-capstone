@@ -4,6 +4,7 @@ malformed JSON -> up to 2 retries with the validation error fed back -> StepErro
 from __future__ import annotations
 
 import re
+import time
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -50,6 +51,7 @@ def json_call(
     msgs = list(messages)
     last = ""
     for attempt in range(1 + MAX_REPAIRS):
+        t0 = time.perf_counter()
         r = llm.chat(
             msgs,
             stage=stage if attempt == 0 else f"{stage}_repair",
@@ -57,9 +59,18 @@ def json_call(
             temperature=temperature,
             max_tokens=max_tokens,
         )
+        tokens = int(getattr(getattr(r, "usage", None), "total_tokens", 0) or 0)
         usage.calls += 1
-        usage.tokens += int(getattr(getattr(r, "usage", None), "total_tokens", 0) or 0)
-        usage.steps.append({"stage": stage, "attempt": attempt, "content": r.content})
+        usage.tokens += tokens
+        usage.steps.append(
+            {
+                "stage": stage,
+                "attempt": attempt,
+                "content": r.content,
+                "tokens": tokens,
+                "ms": round((time.perf_counter() - t0) * 1000),
+            }
+        )
         try:
             return parse(model, r.content)
         except ValidationError as e:

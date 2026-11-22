@@ -206,7 +206,7 @@ Chunks carry a metadata header (source, section path, authority, tags, as-of). F
 
 ## Stack
 
-LangGraph · Pydantic v2 + instructor · Qdrant (or FAISS + rank_bm25) · reranker `cross-encoder/ms-marco-MiniLM-L-6-v2` (compare `BAAI/bge-reranker-v2-m3`) · embeddings: `bge-small-en-v1.5` from the provided endpoint (384-d) · Langfuse (fallback `trace.jsonl`) · Streamlit · Docker + docker-compose (app + Qdrant + Langfuse) · GitHub Actions. Local dev on the same model family as the endpoint via Ollama/vLLM.
+LangGraph · Pydantic v2 · numpy flat index + rank_bm25 (no Qdrant: docs/RETRIEVAL.md) · reranker `cross-encoder/ms-marco-MiniLM-L-6-v2` (compare `BAAI/bge-reranker-v2-m3`) · embeddings: `bge-small-en-v1.5` from the provided endpoint (384-d) · Langfuse (fallback `logs/trace.jsonl`) · **web app: FastAPI (`app/api.py`) + React/Vite/TypeScript (`web/`) instead of Streamlit** (decision Day 6: Streamlit could not give the answer card, editable facts and regulation viewer a demo needs; one container serves both) · Docker + docker-compose (app + Langfuse) · GitHub Actions. Local dev on the same model family as the endpoint via Ollama/vLLM.
 
 ## Repo layout
 
@@ -239,19 +239,51 @@ tests/
 
 ## Plan and gates (14 days)
 
-| Days | Work | Exit criterion |
-| --- | --- | --- |
-| 0 | Endpoint check; repo skeleton; `src/llm.py`; COMPENSATIONS.md | `docs/endpoint_check.md` committed |
-| 1–2 | Resolve VERIFY rows; rules.yaml + rates.yaml; SPEC.md; calculators + unit tests | SPEC APPROVED; rule tests green |
-| 1–3 | Corpus fetch, clean, dedupe, metadata; freeze snapshot | ≥ 500 docs, hashes stored |
-| 2–3 | 80 + 20 scenarios; independent gold spreadsheet | tag `eval-v1` |
-| 4 | Four prompting baselines | **GATE**: week1 CSVs committed |
-| 5–7 | Retrieval experiment; agent v0 end to end on dev set; code router | recall@k table; three decisions |
-| 8–9 | Error handling, corrections across turns, verifier, guard, red-team list; prompt freeze Day 9 | error-handling tests pass |
-| 10 | Code freeze; official runs overnight | tag `v1.0.0-rc` |
-| 11–14 | Metrics, failure taxonomy, Streamlit in Docker, CI, 12-page report, demo + backup video | tag `v1.0.0` |
+From the mentor proposal's day-by-day table (`docs/01_US_Customs_Assistant.docx`, section 5). ✅ done, ⏳ open, ⚠️ open and behind the mentor's day.
 
-If behind at Day 9: drop `whatif_optimise` first, then UI extras. Never drop the eval set, baselines, retrieval table, planner + verifier, or official runs.
+| Days | Work (mentor plan) | Exit criterion | Status |
+| --- | --- | --- | --- |
+| 0 | Endpoint check; repo skeleton; `src/llm.py`; COMPENSATIONS.md | `docs/endpoint_check.md` committed | ✅ |
+| 1–2 | Resolve VERIFY rows; rules.yaml + rates.yaml; SPEC.md; calculators + unit tests | SPEC APPROVED; rule tests green | ✅ |
+| 1–3 | Corpus fetch, clean, dedupe, metadata; freeze snapshot | ≥ 500 docs, hashes stored | ✅ 742 docs, `corpus-v1` |
+| 2–3 | 80 + 20 scenarios; independent gold spreadsheet | tag `eval-v1` | ✅ `eval-v2` |
+| 4 | Four prompting baselines | **GATE**: week1 CSVs committed | ✅ `gate-day4` |
+| 5–7 | Retrieval experiment + three decisions; citation grounding; agent v0 end to end on dev; code router | recall@k table; three decisions | ✅ (+ LLM planner, single_rag, hard budget, paraphrase check) |
+| 5–7 | Writer and verifier prompts; failure notes for the report | | ✅ |
+| 5–7 | UI connected to agent v0; trace link per answer; PII masking in logs; taxonomy labelling rules | **Day 7 checkpoint:** "the web app shows real answers" (React + FastAPI replaces Streamlit) | ✅ app, traces, PII masking (Day 6); ⏳ taxonomy labelling rules |
+| 8 | Error handling: JSON retries ✅, ToolError back to the planner ⏳, loop block ✅, 10-step cap ✅, token budget ✅ | error-handling tests pass | ⏳ |
+| 8 | Corrections across turns: LangGraph StateGraph + SqliteSaver; replan only steps that depend on the changed field | | ⏳ |
+| 8 | Rate limit (10 questions per minute); answer cache (off for official runs) | | ✅ |
+| 8 | Error-handling tests | | ⏳ |
+| 9 | Dry-run scoring on dev; prompt freeze at end of day; freeze the retrieval configuration | prompts frozen | ⏳ |
+| 9 | Verifier rules final; red-team prompt list (15+) | | ⏳ red-team list |
+| 9 | Editable "facts relied on" in the UI that triggers a replan | | ⏳ |
+| 9 | **Checkpoint:** must-have vs. stretch (section 5.4) | | ⏳ |
+| 10 | Official runs overnight, cache off: 3 × LLM-planner agent, 1 × code router, 1 × single_rag (≈ 3–4 h); code freeze, tag `v1.0.0-rc`; red-team against the live app, logged; CI green, image builds, health check; report §3 (prompting, small-model failures) and §4 (retrieval) | tag `v1.0.0-rc` | ⏳ |
+| 11 | Metrics: accuracy per type, $ accuracy, citation accuracy, clarify precision/recall, completion, tool calls, tokens and cost, p50/p95 latency; failure taxonomy (label every wrong answer, hand-check ≥ 15); recall@k next to end-to-end accuracy; report §5 (agent design, planner vs. router), §6 (responsible AI, injection and PII results, HITL boundary); deploy the container | | ⏳ |
+| 12 | Report §7 from COMPENSATIONS.md; figures; blocking bugs only; security notes, model limits, as-of dates; demo script (four conversations + one refusal + one correction) | | ⏳ |
+| 13 | Assemble the 12-page report; optional 2 more router runs; final check: no keys in Git, masked logs; backup demo video; full rehearsal | | ⏳ |
+| 14 | Final report, tag `v1.0.0`; live demo dry-run; submission | tag `v1.0.0` | ⏳ |
+
+### Must-have vs. stretch (mentor 5.4): we are doing all of it
+
+| Must-have (graded) | Stretch |
+| --- | --- |
+| SPEC, 80-question frozen set, 4-strategy baseline ✅ | `whatif_optimise` and its 4 items ✅ (built; D12 passes) |
+| Corpus ≥ 500, hybrid + reranker, recall@k, citations ✅ | State-rule table beyond 5 states ⏳ |
+| LLM planner + validator + executor + verifier, ≥ 3 tools ✅; memory and corrections ⏳; error handling (partly) | 3 code-router runs (1 is enough for the ablation) ⏳ |
+| Official runs (3 × agent, 1 × router, 1 × single_rag), taxonomy, tracing ⏳ | Embedded regulation viewer in the UI ⏳ |
+| Web app (React + FastAPI) in a container ⏳, rate limit ✅, cache ✅, injection/PII/refusal tests (partly), HITL boundary, red-team log ⏳ | PDF export of the declaration checklist ⏳ |
+| 12-page report, 10-minute demo, backup video ⏳ | Extra dev-set tuning rounds (partly: stop at the prompt freeze) |
+
+Rules that still hold: prompts freeze on Day 9 and code on Day 10; nothing is tuned against the eval set; if the schedule slips, stretch items go first, then UI extras. Never drop the eval set, baselines, retrieval table, planner + verifier, or official runs.
+
+### Next, in order
+
+1. Day 7 catch-up: ✅ web app (React + FastAPI) on agent v0 with answer card and regulation viewer; ✅ Langfuse tracing with a trace link per answer (= rubric "trace dashboard"; needs Langfuse keys); ✅ PII masking; ⏳ taxonomy labelling rules.
+2. Days 8–9: multi-turn dev conversations (written before the code, independent gold) → LangGraph StateGraph + SqliteSaver, clarify → answer → continue, corrections replan only dependent steps, defaults after two unanswered rounds (SPEC 5.2); ToolError back to the planner; rate limit; error-handling tests; editable facts in the UI; red-team list (15+); also the rule-4 gap (Cuban item with an unreadable count asks before it prohibits).
+3. Stretch, alongside: state rules beyond 5 states; regulation viewer; PDF checklist export.
+4. Day 9 checkpoint and prompt freeze, then Day 10 official runs.
 
 ## Current status
 

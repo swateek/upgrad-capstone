@@ -8,11 +8,11 @@ The model reads the question and writes the answer. Everything that decides the 
 
 ```mermaid
 flowchart TB
-    UI["Streamlit app<br/>chat UI, answer card"]
+    UI["Web app: React + FastAPI<br/>answer card, regulation viewer"]
     EVAL["Eval harness<br/>80 scenarios + scorer"]
     AGENT["LangGraph agent<br/>plan, act, verify"]
     CKPT[("Checkpointer<br/>SQLite conversation state")]
-    TRACE[("Langfuse traces<br/>+ logs/usage.jsonl")]
+    TRACE[("Langfuse traces (PII-masked)<br/>or logs/trace.jsonl")]
     CALC["Calculator tools<br/>exemption, duty, excise"]
     RET["Retriever<br/>BM25 + dense + rerank"]
     LLM["src/llm.py<br/>queue, retry, cache, usage log"]

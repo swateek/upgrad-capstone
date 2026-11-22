@@ -30,6 +30,31 @@ def litres(x: Decimal | float) -> str:
     return f"{Decimal(str(x)).normalize():f} L"
 
 
+def plural(unit: str, n: float) -> str:
+    """ "bottle" x 4 -> "bottles"; units that already carry a count ("box of 10") stay as stated."""
+    if (
+        n == 1
+        or " of " in unit
+        or unit.endswith("s")
+        or unit in ("ml", "cl", "l", "fl oz")
+    ):
+        return unit
+    return unit + ("es" if unit.endswith(("x", "ch", "sh")) else "s")
+
+
+def country(code: str | None) -> str | None:
+    """ISO code -> name for the traveller ("IT" -> "Italy"); the code itself if unknown."""
+    if not code:
+        return code
+    try:
+        import pycountry
+
+        c = pycountry.countries.get(alpha_2=code)
+    except ImportError:  # pragma: no cover
+        return code
+    return (getattr(c, "common_name", None) or c.name) if c else code
+
+
 def facts_relied_on(profile: Profile, lines) -> list[str]:
     p = profile
     out = []
@@ -40,7 +65,7 @@ def facts_relied_on(profile: Profile, lines) -> list[str]:
         else "Time abroad: not stated"
     )
     if p.direct_arrival_from:
-        out.append(f"Arriving directly from: {p.direct_arrival_from}")
+        out.append(f"Arriving directly from: {country(p.direct_arrival_from)}")
     if p.exemption_used_last_30_days is not None:
         out.append(
             "Exemption used in the last 30 days: "
@@ -50,7 +75,10 @@ def facts_relied_on(profile: Profile, lines) -> list[str]:
         out.append(f"Arrival state: {p.arrival_state}")
     for n in lines:
         b = n.line
-        bits = [f"{b.quantity.value:g} {b.quantity.unit}", b.item]
+        bits = [
+            f"{b.quantity.value:g} {plural(b.quantity.unit, b.quantity.value)}",
+            b.item,
+        ]
         if n.unit_ml:
             bits.append(f"{Decimal(n.unit_ml).normalize():f} ml each")
         if b.abv:
@@ -58,7 +86,7 @@ def facts_relied_on(profile: Profile, lines) -> list[str]:
         if b.unit_price_usd is not None:
             bits.append(f"{money(b.unit_price_usd)} each")
         if b.origin:
-            bits.append(f"made in {b.origin}")
+            bits.append(f"made in {country(b.origin)}")
         out.append(f"Item {n.index}: " + ", ".join(bits))
     return out
 
@@ -79,12 +107,12 @@ def working(r: RouteResult) -> list[str]:
         steps += al.reasons
         by_index = {n.index: n for n in r.lines}
         for a in al.lines:
+            n = by_index.get(a.line)
             if (
                 a.exempt_l is not None
                 and a.excess_l is not None
                 and (a.excess_l or a.exempt_l)
             ):
-                n = by_index.get(a.line)
                 brought = (
                     f"{n.units.normalize():f} x {Decimal(n.unit_ml).normalize():f} ml"
                     f" = {litres(n.total_l)} in total; "
@@ -94,6 +122,15 @@ def working(r: RouteResult) -> list[str]:
                 steps.append(
                     f"Item {a.line}: {brought}{litres(a.exempt_l)} duty-free, "
                     f"{litres(a.excess_l)} over the allowance."
+                )
+            elif n is not None and n.count is not None and ex is not None:
+                # tobacco: state the count and the allowance, so the writer never has to
+                kind = n.line.type  # cigarettes | cigars
+                limit = ex.max_cigarettes if kind == "cigarettes" else ex.max_cigars
+                verdict = "within" if a.status == "exempt" else "over"
+                steps.append(
+                    f"Item {a.line}: {n.count} {kind}; your allowance is {limit} {kind}: {verdict} it."
+                    + (f" {a.message}" if a.message else "")
                 )
             elif a.message:
                 steps.append(f"Item {a.line}: {a.message}")
