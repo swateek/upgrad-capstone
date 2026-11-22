@@ -56,10 +56,10 @@ It asks one clarifying question only when a missing fact changes the answer, ref
 | Rubric item | How we meet it | Status |
 | --- | --- | --- |
 | Git repository, full agent stack | `customs-agent/` on branch `customs-agent-main`; `SETUP.md` rebuilds everything | In progress |
-| Trace dashboard | Langfuse (Docker), one trace per question; fallback `trace.jsonl` | Not started (agent records a step trace per item already) |
-| Evaluation report + failure taxonomy | `eval/score.py`, official runs Day 10, failure taxonomy Days 11–14 | Baselines done (`docs/BASELINES.md`) |
+| Trace dashboard | Langfuse cloud, one trace per question with a link on every answer; PII masked first; fallback `logs/trace.jsonl` | Met |
+| Evaluation report + failure taxonomy | `eval/score.py`, official runs Day 10, failure taxonomy Days 11–14 | Baselines done (`docs/BASELINES.md`); labelling rules done (`docs/TAXONOMY.md`, `eval/label_failures.py`) |
 | 12-page technical report | Days 11–14 | Not started |
-| 10-minute live demo | Streamlit in Docker + backup video, Days 11–14 | Not started |
+| 10-minute live demo | React + FastAPI app in Docker (`docker compose up`) + backup video, Days 11–14 | App and container ready; demo not started |
 | Corpus ≤ 2,000 documents | 742 documents (`corpus-v1`) | Met |
 | ≤ 10 steps per query | Enforced in `src/agent/pipeline.py`: at most 10 tool steps and 12,000 tokens per question, else escalate; the plan validator also caps plans at 10. Router plan: 7 steps (8 for what-if) | Met |
 | Eval frozen and baselines recorded before agent code | `eval-v2` tagged, `results/week1_*.csv` committed, gate `gate-day4` before any `src/agent/` code | Met |
@@ -206,7 +206,7 @@ Chunks carry a metadata header (source, section path, authority, tags, as-of). F
 
 ## Stack
 
-LangGraph · Pydantic v2 · numpy flat index + rank_bm25 (no Qdrant: docs/RETRIEVAL.md) · reranker `cross-encoder/ms-marco-MiniLM-L-6-v2` (compare `BAAI/bge-reranker-v2-m3`) · embeddings: `bge-small-en-v1.5` from the provided endpoint (384-d) · Langfuse (fallback `logs/trace.jsonl`) · **web app: FastAPI (`app/api.py`) + React/Vite/TypeScript (`web/`) instead of Streamlit** (decision Day 6: Streamlit could not give the answer card, editable facts and regulation viewer a demo needs; one container serves both) · Docker + docker-compose (app + Langfuse) · GitHub Actions. Local dev on the same model family as the endpoint via Ollama/vLLM.
+LangGraph · Pydantic v2 · numpy flat index + rank_bm25 (no Qdrant: docs/RETRIEVAL.md) · reranker `BAAI/bge-reranker-v2-m3` (MiniLM compared and dropped: docs/RETRIEVAL.md) · embeddings: `bge-small-en-v1.5` from the provided endpoint (384-d) · Langfuse (fallback `logs/trace.jsonl`) · **web app: FastAPI (`app/api.py`) + React/Vite/TypeScript (`web/`) instead of Streamlit** (decision Day 6: Streamlit could not give the answer card, editable facts and regulation viewer a demo needs; one container serves both) · Docker + docker-compose (one app container; Langfuse is the cloud service) · GitHub Actions. Local dev on the same model family as the endpoint via Ollama/vLLM.
 
 ## Repo layout
 
@@ -273,7 +273,7 @@ From the mentor proposal's day-by-day table (`docs/01_US_Customs_Assistant.docx`
 | Corpus ≥ 500, hybrid + reranker, recall@k, citations ✅ | State-rule table beyond 5 states ✅ (10 more, app only) |
 | LLM planner + validator + executor + verifier, ≥ 3 tools ✅; memory and corrections ✅; error handling ✅ | 3 code-router runs (1 is enough for the ablation) ⏳ |
 | Official runs (3 × agent, 1 × router, 1 × single_rag) ⏳, taxonomy rules ✅ (labelling Day 11), tracing ✅ | Embedded regulation viewer in the UI ✅ |
-| Web app (React + FastAPI) in a container ⏳, rate limit ✅, cache ✅, injection/PII/refusal tests (partly), HITL boundary, red-team log ⏳ | PDF export of the declaration checklist ✅ |
+| Web app (React + FastAPI) in a container ✅, rate limit ✅, cache ✅, injection/PII/refusal tests (partly), HITL boundary, red-team log ⏳ | PDF export of the declaration checklist ✅ |
 | 12-page report, 10-minute demo, backup video ⏳ | Extra dev-set tuning rounds (partly: stop at the prompt freeze) |
 
 Rules that still hold: prompts freeze on Day 9 and code on Day 10; nothing is tuned against the eval set; if the schedule slips, stretch items go first, then UI extras. Never drop the eval set, baselines, retrieval table, planner + verifier, or official runs.

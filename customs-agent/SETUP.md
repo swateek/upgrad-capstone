@@ -205,9 +205,27 @@ uv run python eval/run_conversations.py --mode planner --run-name day7-conv-plan
 
 The web app uses the same sessions: answer a question in the box under it, or use "Correct a fact" on the card.
 
+## 13. Docker (the app in one container)
+
+Needs Docker Desktop (or Docker Engine with Compose). Build the corpus and the index first (steps 5 and 9): `chunks.jsonl` and `data/rag-corpus/index/` are copied into the image. `.env`, `certs/` and `logs/` are never copied in; `docker-compose.yml` mounts them at run time.
+
+```bash
+uv run python docker/fetch_wheels.py   # once, and again after uv.lock changes: Linux packages into docker/wheels/
+docker compose up --build        # http://localhost:8000; first build ~5-10 minutes
+docker compose logs -f app       # server log
+docker compose down              # stop; sessions, cache and the reranker download are kept
+```
+
+- The build installs Python packages offline from `docker/wheels/` (git-ignored), never from PyPI: Docker Desktop reached PyPI very slowly on the owner's Mac, while the Mac itself downloads the ~400 MB in seconds. The script picks the image's CPU from your machine (`--arch x86_64` for an Intel host). PyTorch is the CPU-only build: the default Linux one pulls several GB of NVIDIA libraries.
+- The first question loads the models and downloads the reranker (~2 GB) into the `hf-cache` volume: expect about a minute once. To put the reranker in the image instead (a deploy with no volume): `docker compose build --build-arg PRELOAD_RERANKER=1`.
+- The container flags all 15 researched arrival states (`STATE_RULES=all`); evaluation runs outside Docker keep the SPEC's five.
+- Health: `curl localhost:8000/api/live` (no models loaded) and `curl localhost:8000/api/health` (loads them, lists models, search and state flags).
+- After re-chunking the corpus or rebuilding the index, rebuild the image.
+
 ## Coming next (add steps here as they land)
 
-- LLM planner + plan validator, single_rag baseline, corrections across turns, Streamlit app, Docker.
+- Day 10: official runs (see step 10, `--set eval`; the script checks the freeze, the cache and the state flags first).
+- Days 11-14: failure labelling (`docs/TAXONOMY.md`), CI, report, demo.
 
 ## Reference
 

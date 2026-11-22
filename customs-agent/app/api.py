@@ -4,6 +4,7 @@
     cd web && npm run dev                             # web app with hot reload, proxies /api to :8000
 
 Endpoints
+  GET  /api/live                   liveness (container health check; loads nothing)
   GET  /api/health                 models, search method, tracing backend
   POST /api/ask                    {question, mode?, session_id?} -> answer, card, facts, trace link, cost
                                    (one turn of a conversation; session_id continues it)
@@ -156,6 +157,11 @@ def create_app(service: Service | None = None) -> FastAPI:
                     c["citation_id"], (c.get("metadata") or {}).get("title")
                 )
         return state["titles"].get(cid)
+
+    @app.get("/api/live")
+    def live() -> dict:
+        """Liveness for the container health check: answers without loading any model."""
+        return {"ok": True}
 
     @app.get("/api/health")
     def health() -> dict:

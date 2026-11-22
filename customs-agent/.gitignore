@@ -1,6 +1,8 @@
 # The repo-root .gitignore ignores every dotfile (`.*`).
 # uv's Python pin must be committed so everyone gets the same interpreter.
 !.python-version
+# the Docker build context filter (step 13 of SETUP.md)
+!.dockerignore
 
 # uv virtual environment (also covered by the root `.*` rule)
 .venv/
@@ -25,3 +27,6 @@ data/rag-corpus/corpus/chunks.jsonl
 
 # Saved search index (vectors of chunks.jsonl): rebuild with `python -m src.retrieval.index`
 data/rag-corpus/index/
+
+# Linux packages for the Docker build, downloaded by docker/fetch_wheels.py (SETUP.md step 13)
+docker/wheels/

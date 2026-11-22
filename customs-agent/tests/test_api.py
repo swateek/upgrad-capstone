@@ -216,3 +216,14 @@ def test_no_checklist_while_a_question_is_open(tmp_path) -> None:
     s = Service(None, None, None, [])
     s.last["x"] = {"outcome": "clarify", "card": {}}
     assert TestClient(create_app(s)).get("/api/checklist/x").status_code == 409
+
+
+def test_live_loads_nothing(monkeypatch) -> None:
+    """The container health check must not build the service (models load on first use)."""
+    from app.api import Service, create_app
+
+    def never(cls):
+        raise AssertionError("service built")
+
+    monkeypatch.setattr(Service, "from_env", classmethod(never))
+    assert TestClient(create_app()).get("/api/live").json() == {"ok": True}
