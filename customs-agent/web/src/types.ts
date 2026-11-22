@@ -31,7 +31,7 @@ export interface Card {
   disclaimer?: string;
   clarify?: string[];
   assumptions?: string[];
-  state_flag?: { state: string; name: string; note: string; source: string } | null;
+  state_flag?: { state: string; name: string; note: string; source: string; general_note?: string } | null;
 }
 
 export interface Answer {

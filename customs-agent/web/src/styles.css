@@ -750,3 +750,39 @@ details.slip__section > summary {
   padding-left: 1.125rem;
   font-size: 0.9375rem;
 }
+
+/* arrival-state rule: a note from the state, not part of the federal estimate */
+.state-rule {
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--stamp);
+  background: #f1f5fb;
+}
+
+.state-rule p {
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.state-rule a {
+  font-size: 0.875rem;
+  color: var(--stamp);
+}
+
+/* the checklist download: the one action a traveller takes away from the answer */
+.download {
+  display: inline-block;
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--stamp);
+  border-radius: 4px;
+  color: var(--stamp);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+
+.download:hover,
+.download:focus-visible {
+  background: var(--stamp);
+  color: #fff;
+}

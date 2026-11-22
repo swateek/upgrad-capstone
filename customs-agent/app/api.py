@@ -9,6 +9,9 @@ Endpoints
                                    (one turn of a conversation; session_id continues it)
   POST /api/edit                   {session_id, field, value} -> a fact changed on the card
   GET  /api/clause/{citation_id}   regulation text for the citation viewer
+  GET  /api/checklist/{session_id} declaration checklist (PDF) for the latest answered/escalated turn
+
+State flags: the app sets STATE_RULES=all (15 states) unless the environment says otherwise.
 
 Rate limit: 10 questions per minute per client (mentor plan, Day 8); 429 with Retry-After beyond it.
 One request at a time reaches the endpoint anyway (src/llm.py queue).
@@ -21,14 +24,17 @@ import threading
 import time
 import uuid
 from collections import defaultdict, deque
-from dataclasses import dataclass
+from contextlib import asynccontextmanager
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Literal
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+
+from src.tools.lookup_state_rule import covered_states
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB_DIST = ROOT / "web" / "dist"
@@ -61,6 +67,8 @@ class Service:
     tracer: Any
     chunks: list[dict]
     sessions: Any = None  # src.agent.session.Sessions; built on first use
+    # the last reply per conversation, for the PDF checklist (in memory: a restart forgets it)
+    last: dict[str, dict] = field(default_factory=dict)
 
     @classmethod
     def from_env(cls) -> Service:
@@ -124,7 +132,14 @@ def pretty_citation(cid: str, title: str | None = None) -> str:
 
 
 def create_app(service: Service | None = None) -> FastAPI:
-    app = FastAPI(title="DeclareRight API")
+    @asynccontextmanager
+    async def lifespan(_: FastAPI):
+        # the app flags all 15 researched arrival states; official runs keep the SPEC's five
+        # (stretch, Day 9). Set at server start, not import, so tests and runs are untouched.
+        os.environ.setdefault("STATE_RULES", "all")
+        yield
+
+    app = FastAPI(title="DeclareRight API", lifespan=lifespan)
     state: dict[str, Any] = {"service": service}
     limiter = RateLimiter(RATE_LIMIT)
 
@@ -151,6 +166,7 @@ def create_app(service: Service | None = None) -> FastAPI:
             "search": getattr(s.search, "method", None),
             "tracing": type(s.tracer).__name__,
             "rate_limit_per_minute": RATE_LIMIT,
+            "state_flags": sorted(covered_states()),
         }
 
     def limited(request: Request) -> JSONResponse | None:
@@ -182,7 +198,7 @@ def create_app(service: Service | None = None) -> FastAPI:
         for c in card.get("citations") or []:
             c["label"] = pretty_citation(c["id"], title_of(c["id"]))
         st = s.conversations().state(session)
-        return {
+        out = {
             "session_id": session,
             "outcome": run.answer.outcome if run.answer else "escalated",
             "reason": run.reason,
@@ -202,6 +218,8 @@ def create_app(service: Service | None = None) -> FastAPI:
             },
             "error": bool(run.error),
         }
+        s.last[session] = out
+        return out
 
     @app.post("/api/ask")
     def ask(body: AskIn, request: Request):
@@ -232,6 +250,29 @@ def create_app(service: Service | None = None) -> FastAPI:
             body.session_id,
             body.mode,
             lambda: convo.turn(body.session_id, edit=change, mode=body.mode),
+        )
+
+    @app.get("/api/checklist/{session_id}")
+    def checklist(session_id: str) -> Response:
+        """The declaration checklist for the conversation's latest answer, as a PDF."""
+        from app.checklist import CHECKLIST_OUTCOMES, build_pdf
+
+        resp = svc().last.get(session_id)
+        if resp is None:
+            raise HTTPException(
+                404, "No answer for that conversation yet: ask a question first."
+            )
+        if resp["outcome"] not in CHECKLIST_OUTCOMES:
+            raise HTTPException(
+                409,
+                "Answer the open question first: there is nothing settled to declare yet.",
+            )
+        return Response(
+            build_pdf(resp),
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": 'attachment; filename="declaration-checklist.pdf"'
+            },
         )
 
     @app.get("/api/clause/{citation_id}")

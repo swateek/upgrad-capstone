@@ -270,10 +270,10 @@ From the mentor proposal's day-by-day table (`docs/01_US_Customs_Assistant.docx`
 | Must-have (graded) | Stretch |
 | --- | --- |
 | SPEC, 80-question frozen set, 4-strategy baseline ✅ | `whatif_optimise` and its 4 items ✅ (built; D12 passes) |
-| Corpus ≥ 500, hybrid + reranker, recall@k, citations ✅ | State-rule table beyond 5 states ⏳ |
-| LLM planner + validator + executor + verifier, ≥ 3 tools ✅; memory and corrections ⏳; error handling (partly) | 3 code-router runs (1 is enough for the ablation) ⏳ |
+| Corpus ≥ 500, hybrid + reranker, recall@k, citations ✅ | State-rule table beyond 5 states ✅ (10 more, app only) |
+| LLM planner + validator + executor + verifier, ≥ 3 tools ✅; memory and corrections ✅; error handling ✅ | 3 code-router runs (1 is enough for the ablation) ⏳ |
 | Official runs (3 × agent, 1 × router, 1 × single_rag) ⏳, taxonomy rules ✅ (labelling Day 11), tracing ✅ | Embedded regulation viewer in the UI ✅ |
-| Web app (React + FastAPI) in a container ⏳, rate limit ✅, cache ✅, injection/PII/refusal tests (partly), HITL boundary, red-team log ⏳ | PDF export of the declaration checklist ⏳ |
+| Web app (React + FastAPI) in a container ⏳, rate limit ✅, cache ✅, injection/PII/refusal tests (partly), HITL boundary, red-team log ⏳ | PDF export of the declaration checklist ✅ |
 | 12-page report, 10-minute demo, backup video ⏳ | Extra dev-set tuning rounds (partly: stop at the prompt freeze) |
 
 Rules that still hold: prompts freeze on Day 9 and code on Day 10; nothing is tuned against the eval set; if the schedule slips, stretch items go first, then UI extras. Never drop the eval set, baselines, retrieval table, planner + verifier, or official runs.
@@ -281,9 +281,10 @@ Rules that still hold: prompts freeze on Day 9 and code on Day 10; nothing is tu
 ### Next, in order
 
 1. Day 7 catch-up: ✅ web app (React + FastAPI) on agent v0 with answer card and regulation viewer; ✅ Langfuse tracing with a trace link per answer (= rubric "trace dashboard"; needs Langfuse keys); ✅ PII masking; ✅ taxonomy labelling rules (28/29 known failures labelled as found by hand).
-2. Days 8–9: multi-turn dev conversations (written before the code, independent gold) → LangGraph StateGraph + SqliteSaver, clarify → answer → continue, corrections replan only dependent steps, defaults after two unanswered rounds (SPEC 5.2); ToolError back to the planner; rate limit; error-handling tests; editable facts in the UI; red-team list (15+); also the rule-4 gap (Cuban item with an unreadable count asks before it prohibits).
-3. Stretch, alongside: state rules beyond 5 states; ✅ regulation viewer; PDF checklist export.
-4. Day 9 checkpoint and prompt freeze, then Day 10 official runs.
+2. ✅ Days 8–9: multi-turn dev conversations (written before the code, independent gold) → LangGraph StateGraph + SqliteSaver, clarify → answer → continue, corrections replan only dependent steps, defaults after two unanswered rounds (SPEC 5.2); ToolError back to the planner; rate limit; error-handling tests; editable facts in the UI; red-team list (15+); also the rule-4 gap (Cuban item with an unreadable count asks before it prohibits).
+3. Stretch, alongside: ✅ state rules beyond 5 states (15 in the app, 5 in official runs); ✅ regulation viewer; ✅ PDF checklist export.
+4. ✅ Day 9 checkpoint: dev dry run 1.00 in router and planner mode, prompts and retrieval frozen (`eval/freeze.json`).
+5. Day 10: code freeze, official runs overnight.
 
 ## Current status
 

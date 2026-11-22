@@ -160,6 +160,60 @@ flags:
         name: New Jersey
         note: "No permit is needed for personal use, but New Jersey alcoholic beverage tax applies to imported alcohol."
         source: https://nj.gov/treasury/taxation/importalcolbev.shtml
+    # Stretch (Day 9): ten more arrival states, the next busiest international arrival points.
+    # Used only when STATE_RULES=all (the web app). Official runs use the five above, as SPEC 5.4
+    # and the frozen eval gold do. Each note checked against the linked official text on as_of.
+    extended_states:
+      GA:
+        name: Georgia
+        note: "Georgia's Department of Revenue asks for a customs request, filed in the Georgia Tax Center with Georgia excise paid, for alcohol brought from another country; personal requests are limited to 1 gallon of spirits, 2 cases of beer and 2 cases of wine."
+        source: https://dor.georgia.gov/alcohol-tobacco/alcohol-licenses-permits/customs-requests
+        as_of: 2026-11-22
+      IL:
+        name: Illinois
+        note: "Without an import licence, less than one gallon a year for personal use; more needs the Illinois Liquor Control Commission's approval (one request per person per year). Illinois use and gallonage taxes apply."
+        source: https://ilga.gov/commission/jcar/admincode/011/011001000004800R.html
+        as_of: 2026-11-22
+      MA:
+        name: Massachusetts
+        note: "For your own use, without a permit, at one time: up to 20 gallons of beer, 3 gallons of other alcoholic beverages, or 1 gallon of alcohol."
+        source: https://malegislature.gov/Laws/GeneralLaws/PartI/TitleXX/Chapter138/Section22
+        as_of: 2026-11-22
+      WA:
+        name: Washington
+        note: "From outside the U.S., the amount you declare and bring in duty-free under federal law owes no Washington liquor tax or markup; above that, Washington tax and markup are owed (form to the Liquor and Cannabis Board within 10 days)."
+        source: https://lcb.wa.gov/licensing/individual-importation-alcoholic-beverages-personal-use
+        as_of: 2026-11-22
+      PA:
+        name: Pennsylvania
+        note: "Pennsylvania generally bars bringing liquor in, but up to 1 gallon bought abroad is allowed if, when asked, you can show proof of the trip, the foreign receipt and a sworn statement that it entered the U.S. duty free (40 Pa. Code 9.82)."
+        source: https://www.pa.gov/agencies/lcb/laws-compliance-regulations/legal-faqs.html
+        as_of: 2026-11-22
+      VA:
+        name: Virginia
+        note: "Through U.S. Customs in your accompanying baggage, up to 3 gallons for personal use, not for resale."
+        source: https://law.lis.virginia.gov/vacode/4.1-311
+        as_of: 2026-11-22
+      MI:
+        name: Michigan
+        note: "Re-entering from abroad at 21 or over, the amount federal law allows needs no Michigan approval; more needs the Liquor Control Commission's prior written approval and Michigan taxes."
+        source: https://www.michigan.gov/documents/dleg/LC156_0109_264605_7.pdf
+        as_of: 2026-11-22
+      AZ:
+        name: Arizona
+        note: "From a foreign country, without a licence only if you are of drinking age, are returning from that country, and bring no more than the federal duty-free amount in any 31 days."
+        source: https://www.azleg.gov/ars/4/00244-02.htm
+        as_of: 2026-11-22
+      HI:
+        name: Hawaii
+        note: "Arriving in Hawaii, up to 1 gallon of liquor and two cases of beer (up to 6 gallons) for private use, without a licence."
+        source: https://data.capitol.hawaii.gov/hrscurrent/Vol05_Ch0261-0319/HRS0281/HRS_0281-0033.htm
+        as_of: 2026-11-22
+      NV:
+        name: Nevada
+        note: "Entering Nevada with the amount exempt from federal import duty, for personal use, is outside Nevada's liquor-licence rules; more than that falls under them."
+        source: https://www.leg.state.nv.us/nrs/nrs-369.html
+        as_of: 2026-11-22
     general_note: "CBP: most state limits apply to residents of that state; travellers in transit are usually not subject to them."
     citations: [cbp-duty-info]
     status: checked

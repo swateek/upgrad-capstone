@@ -144,6 +144,17 @@ export function AnswerSlip({ response: r, onCite, onAnswerClarify, onEdit, busy 
           </section>
         )}
 
+        {c.state_flag && (
+          <section className="slip__section state-rule">
+            <h3>Arriving in {c.state_flag.name}</h3>
+            <p>{c.state_flag.note}</p>
+            {c.state_flag.general_note && <p className="muted">{c.state_flag.general_note}</p>}
+            <a href={c.state_flag.source} target="_blank" rel="noreferrer">
+              {c.state_flag.name}'s rule (official source)
+            </a>
+          </section>
+        )}
+
         {c.citations && c.citations.length > 0 && (
           <section className="slip__section">
             <h3>Rules behind this answer</h3>
@@ -162,6 +173,11 @@ export function AnswerSlip({ response: r, onCite, onAnswerClarify, onEdit, busy 
       </div>
 
       <footer className="slip__foot">
+        {(r.outcome === "answered" || r.outcome === "escalated") && (
+          <a className="download" href={`/api/checklist/${r.session_id}`} download>
+            Download declaration checklist (PDF)
+          </a>
+        )}
         <p className="slip__disclaimer">{c.disclaimer ?? "Estimate only. The CBP officer decides. Declare everything."}</p>
         <p className="slip__meta">
           <span>{r.cost.model_calls} model calls</span>

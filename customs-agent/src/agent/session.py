@@ -609,6 +609,21 @@ class Sessions:
             }
             if fields:
                 touched[i] = fields
+        # an answer to our own ABV question may be a bare number ("35"): it counts when that
+        # number is in the message (the same rule as a terse "no" to the 30-day question)
+        if "abv" in asked:
+            said = [float(x) for x in re.findall(r"\d+(?:\.\d+)?", message)]
+            for i, fields in touched.items():
+                b = facts.basket[i]
+                if (
+                    "abv" in fields
+                    and b.abv is not None
+                    and any(abs(b.abv - x) < 0.051 for x in said)
+                ):
+                    fields.discard("abv")
+                    notes.append(
+                        f"item {i + 1} abv {b.abv:g} kept (answer to the ABV question)"
+                    )
         facts, item_notes = ground_items(facts, message, only=touched)
         notes += item_notes
         out = dict(p)

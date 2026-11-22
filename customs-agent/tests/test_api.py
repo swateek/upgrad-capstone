@@ -183,3 +183,36 @@ def test_edit_needs_a_conversation(tmp_path) -> None:
     c, _ = client(tmp_path)
     r = c.post("/api/edit", json={"session_id": "nope", "field": "age", "value": 20})
     assert r.status_code == 404
+
+
+def test_app_flags_all_researched_states(tmp_path, monkeypatch) -> None:
+    """The running app uses all 15 arrival states; importing the module changes nothing."""
+    monkeypatch.setenv(
+        "STATE_RULES", "spec"
+    )  # recorded, so teardown removes what the app sets
+    monkeypatch.delenv("STATE_RULES")
+    c, _ = client(tmp_path)
+    import os
+
+    assert "STATE_RULES" not in os.environ  # no server started yet
+    with c:  # server start runs the lifespan
+        h = c.get("/api/health").json()
+    assert len(h["state_flags"]) == 15 and "HI" in h["state_flags"]
+
+
+def test_checklist_pdf_for_an_answer(tmp_path) -> None:
+    c, _ = client(tmp_path)
+    assert c.get("/api/checklist/nope").status_code == 404
+    r = c.post("/api/ask", json={"question": DEV["D01"]["question"]}).json()
+    pdf = c.get(f"/api/checklist/{r['session_id']}")
+    assert pdf.status_code == 200
+    assert pdf.headers["content-type"] == "application/pdf"
+    assert pdf.content.startswith(b"%PDF")
+
+
+def test_no_checklist_while_a_question_is_open(tmp_path) -> None:
+    from app.api import Service, create_app
+
+    s = Service(None, None, None, [])
+    s.last["x"] = {"outcome": "clarify", "card": {}}
+    assert TestClient(create_app(s)).get("/api/checklist/x").status_code == 409

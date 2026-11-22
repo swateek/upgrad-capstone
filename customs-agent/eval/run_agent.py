@@ -174,7 +174,13 @@ def main() -> int:
     args = ap.parse_args()
     if args.set == "eval":
         from eval.freeze import status as freeze_status
+        from src.tools.lookup_state_rule import state_rules_mode
 
+        if state_rules_mode() != "spec" and not args.allow_unfrozen:
+            print(
+                "Refusing to run eval-v2 with STATE_RULES=all: the eval gold uses the SPEC's five states"
+            )
+            return 1
         fz = freeze_status()
         if not (fz["frozen"] and fz["matches"]) and not args.allow_unfrozen:
             print(

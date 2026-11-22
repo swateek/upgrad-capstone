@@ -163,10 +163,9 @@ def working(r: RouteResult) -> list[str]:
             f"What-if: up to {r.whatif.max_units} bottles owe {money(r.whatif.owed_usd)}, "
             f"under your {money(r.whatif.limit_usd)} limit."
         )
-    if r.state_flag:
-        steps.append(
-            f"{r.state_flag.name}: {r.state_flag.note} Source: {r.state_flag.source}"
-        )
+    # The arrival-state note is not a step of the calculation: the card shows it in its own
+    # section (state_flag), and it is kept away from the writer, which converted its gallons
+    # into litres and failed the verifier (COMPENSATIONS row 18).
     return steps
 
 

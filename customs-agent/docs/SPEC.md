@@ -185,5 +185,6 @@ Change from the mentor's table (adopted at approval): the mentor's 7 `cuban_orig
 | Day | Item | Decision |
 | --- | --- | --- |
 | 7 | Container size, count and unit price as clarify facts (5.2) | Approved by the project owner: asked in the same stage-1 message as the trip facts, after origin and ABV; size defaults to 750 ml after two unanswered rounds, count and price escalate. Found in hands-on testing (the size was asked in a separate first round). No frozen eval item changes: all 8 eval clarify items state their sizes. |
+| 9 | State flags beyond the five (5.4), stretch | Ten more arrival states (GA, IL, MA, WA, PA, VA, MI, AZ, HI, NV), each a note and an official source checked on 2026-11-22, in `rules.yaml → extended_states`. Shown by the web app only (`STATE_RULES=all`); the official runs keep the five states, because the frozen eval gold was written for them (one eval item arrives in Georgia with no flag). `run_agent.py --set eval` refuses `STATE_RULES=all`. |
 
 Not blocking, revisit if time allows: resolve Russian-origin alcohol (currently escalated).
