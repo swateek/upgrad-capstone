@@ -21,6 +21,7 @@ basket can apply more rules than the 5-clause budget holds.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from decimal import Decimal
@@ -95,7 +96,7 @@ STATUS_TO_LINE_TYPE = {
 
 @dataclass
 class RouteResult:
-    outcome: Literal["answered", "clarify", "escalated"]
+    outcome: Literal["answered", "clarify", "escalated", "refused"]
     missing: list[str] = field(default_factory=list)
     rule_id: str | None = None
     message: str | None = None
@@ -114,6 +115,7 @@ class RouteResult:
     reused: list[str] = field(
         default_factory=list
     )  # steps taken from the previous turn
+    error: dict | None = None  # a tool / plan error the planner may be able to fix
 
     def tool_outputs(self) -> list[object]:
         return [
@@ -228,16 +230,37 @@ def _execute_once(
     try:
         return _execute(profile, list(basket), plan, owe_less_than_usd, r, reuse)
     except ToolError as e:
-        if e.code == "missing_fact":
-            r.outcome, r.missing = "clarify", order_missing(e.missing)
-        else:
-            r.outcome, r.rule_id, r.message = (
-                "escalated",
-                e.rule_id or e.code,
-                e.message,
-            )
-            _cite(r.citations, e.citations)
+        return tool_error(r, e)
+    except (
+        PlanError
+    ) as e:  # a step ran without its inputs: back to the planner, or the router plan
+        r.outcome, r.rule_id, r.message = "escalated", "plan_error", str(e)
+        r.error = {"kind": "plan_error", "message": str(e)}
         return r
+
+
+UNIT_FACT = re.compile(
+    r"unknown (?:size|quantity|container) unit|unknown unit", re.IGNORECASE
+)
+
+
+def tool_error(r: RouteResult, e: ToolError) -> RouteResult:
+    """What a tool's error means for the traveller (CLAUDE.md error handling):
+    missing_fact -> ask (clarify); escalate -> an officer decides, by rule; out_of_scope -> the
+    scope note, no assessment; invalid_input -> a unit we cannot read is asked for as the size,
+    anything else goes back to the planner (r.error), and escalates if nothing can fix it."""
+    if e.code == "missing_fact":
+        r.outcome, r.missing = "clarify", order_missing(e.missing)
+    elif e.code == "out_of_scope":
+        r.outcome, r.rule_id, r.message = "refused", "out_of_scope", e.message
+    elif e.code == "invalid_input" and UNIT_FACT.search(e.message):
+        r.outcome, r.missing = "clarify", ["size"]
+    else:
+        r.outcome, r.rule_id, r.message = "escalated", e.rule_id or e.code, e.message
+        if e.code == "invalid_input":
+            r.error = {"kind": "tool_error", "message": e.message}
+    _cite(r.citations, e.citations)
+    return r
 
 
 def _call(r: RouteResult, step: str, reuse: dict, fn: Callable, log: bool = True):

@@ -109,10 +109,13 @@ def _over_budget(run: AgentRun, what: str) -> AgentRun:
     return run
 
 
-def _plan(run: AgentRun, llm: Any, facts) -> list[str]:
-    """LLM plan, validated; one repair; else the code router's plan (a fallback)."""
+def _plan(
+    run: AgentRun, llm: Any, facts, feedback: list[str] | None = None
+) -> list[str]:
+    """LLM plan, validated; one repair; else the code router's plan (a fallback). `feedback`: a
+    tool error from running the previous plan, given to the planner as if it were a repair."""
     fixed = ROUTER_WHATIF_PLAN if facts.owe_less_than_usd else ROUTER_PLAN
-    errors: list[str] | None = None
+    errors: list[str] | None = feedback
     for attempt in range(2):
         try:
             p = propose(llm, run.usage, facts, errors)
@@ -135,6 +138,36 @@ def _plan(run: AgentRun, llm: Any, facts) -> list[str]:
     run.plan_fallback = True
     run.trace.append({"step": "planner", "fallback": "code router plan"})
     return fixed
+
+
+def _planned(
+    run: AgentRun, llm: Any, facts, basket: list, reuse: dict | None = None
+) -> RouteResult:
+    """Planner mode: plan, run; a tool or plan error goes back to the planner once (with the error),
+    then to the code router's plan; if that fails too, the escalation stands (CLAUDE.md)."""
+    plan = _plan(run, llm, facts)
+    r = execute(facts.profile, basket, plan, facts.owe_less_than_usd, reuse)
+    if r.error is None:
+        return r
+    run.trace.append({"step": "tool_error", "plan": plan, "error": r.error})
+    feedback = [
+        f"Running your plan failed: {r.error['message']}. Return a plan that avoids this."
+    ]
+    plan2 = _plan(run, llm, facts, feedback=feedback)
+    if plan2 != plan:
+        r2 = execute(facts.profile, basket, plan2, facts.owe_less_than_usd, reuse)
+        run.trace.append(
+            {"step": "tool_error_replan", "plan": plan2, "error": r2.error}
+        )
+        if r2.error is None:
+            return r2
+    fixed = ROUTER_WHATIF_PLAN if facts.owe_less_than_usd else ROUTER_PLAN
+    if fixed not in (plan, plan2):
+        r3 = execute(facts.profile, basket, fixed, facts.owe_less_than_usd, reuse)
+        run.trace.append({"step": "tool_error_router", "error": r3.error})
+        run.plan_fallback = True
+        return r3
+    return r
 
 
 def _clarify(run: AgentRun, missing: list[str], items: list[str]) -> AgentRun:
@@ -361,8 +394,7 @@ def respond(
     if executor is not None:
         r: RouteResult = executor(facts, basket, mode)
     elif mode == "planner":
-        plan = _plan(run, llm, facts.model_copy(update={"basket": basket}))
-        r = execute(facts.profile, basket, plan, facts.owe_less_than_usd)
+        r = _planned(run, llm, facts.model_copy(update={"basket": basket}), basket)
     else:
         r = route(facts.profile, basket, facts.owe_less_than_usd)
     run.tool_steps = r.tool_steps + 1  # + search_regulations
@@ -375,6 +407,20 @@ def respond(
         return _over_budget(run, f"{run.tool_steps} tool steps")
     if r.outcome == "clarify":
         return _clarify(run, r.missing, [b.item for b in basket])
+    if (
+        r.outcome == "refused"
+    ):  # a tool found the case out of scope (arriving from a US territory)
+        from src.safety.guard import MESSAGES, SCOPE_WHAT
+
+        insular = "insular" in (r.message or "")
+        run.reason = (
+            "out_of_scope_insular_possession_arrivals" if insular else "out_of_scope"
+        )
+        what = SCOPE_WHAT["insular_possession_arrivals"] if insular else "this case"
+        run.answer = Answer(
+            outcome="refused", message=MESSAGES["out_of_scope"].format(what=what)
+        )
+        return run
 
     # 4. retrieval: the rules the tools applied (by id) + search
     clauses = _search(search, run, question, r.citations, inject)

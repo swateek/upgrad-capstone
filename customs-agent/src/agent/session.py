@@ -45,7 +45,7 @@ from src.agent.intake import (
     sizes_from_question,
 )
 from src.agent.llm_json import StepError, json_call
-from src.agent.pipeline import AgentRun, _plan, read, respond
+from src.agent.pipeline import AgentRun, _plan, _planned, read, respond
 from src.agent.router import ROUTER_PLAN, ROUTER_WHATIF_PLAN, RouteResult, execute
 from src.baselines.answer import Answer, Strict
 from src.safety.guard import check_question
@@ -675,6 +675,12 @@ class Sessions:
                             ROUTER_WHATIF_PLAN if f.owe_less_than_usd else ROUTER_PLAN
                         )
                 r = execute(f.profile, b, plan, f.owe_less_than_usd, reuse)
+                if (
+                    r.error is not None and mode_ == "planner"
+                ):  # tool error: back to the planner
+                    r = _planned(
+                        run, self.llm, f.model_copy(update={"basket": b}), b, reuse
+                    )
                 if r.outcome != "clarify":
                     break
                 # SPEC 5.2: a fact asked twice without an answer gets its default
