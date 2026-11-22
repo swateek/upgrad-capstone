@@ -70,10 +70,10 @@ Every turn ends in one of four states: `answered`, `clarify`, `refused`, `escala
 
 Ask only for facts that change the answer, all in **one** clarifying message per turn, in two stages:
 
-1. **Facts that decide the exemption**, asked together: age; trip length (and the country arrived from, when the trip may be under 48 hours); exemption use in the last 30 days; and origin, when an item could be Cuban or Russian (rum, cigars or vodka of unstated origin).
+1. **Facts that decide the exemption**, asked together: age; trip length (and the country arrived from, when the trip may be under 48 hours); exemption use in the last 30 days; origin, when an item could be Cuban or Russian (rum, cigars or vodka of unstated origin); and, for any item, the container size, the count or the price when not stated, because they decide what fits the allowance (amended Day 7, see 9).
 2. **Facts that set the amount**, asked only when something is owed once stage 1 is known: origin (for the duty rate) and ABV.
 
-Within one message the facts are listed in this order: age → trip length → 30-day use → origin → ABV.
+Within one message the facts are listed in this order: age → trip length → 30-day use → origin → ABV → size → count → unit price.
 
 | Missing fact | Asked when | Default after two unanswered rounds |
 | --- | --- | --- |
@@ -82,6 +82,9 @@ Within one message the facts are listed in this order: age → trip length → 3
 | Exemption used in last 30 days | Trip ≥ 48 h (or direct from Mexico) and the answer differs between $800 and $200; or something is dutiable (the flat rate has its own 30-day rule) | Used ($200 rules; flat rate treated as used, so escalate) |
 | Origin | Something is owed and origin changes the rate; or the item could be Cuban or Russian | 3% general rate; if it could be Cuban or Russian, the answer also says what applies if it is |
 | ABV | Spirits with an excess; wine possibly over 16% | Spirits 40%; table wine ≤ 16%; fortified wine (port, sherry) 16–21% |
+| Size (amended Day 7) | An alcohol item's container size is not stated | A standard bottle: 750 ml |
+| Count (amended Day 7) | The number of bottles, packs or cigars cannot be read | None: escalate ("declare it; an officer decides") |
+| Unit price (amended Day 7) | Something may be owed, or the $800 total may be exceeded, and the price is not stated | None: escalate |
 
 Each default used is listed under `assumptions`, with what would change if it is wrong.
 
@@ -176,5 +179,11 @@ Change from the mentor's table (adopted at approval): the mentor's 7 `cuban_orig
 | Commercial-quantity threshold | Adopted: > 9 L total or > 12 units of one product (5.4) |
 | The five states | Adopted: NY, FL, CA, TX, NJ; note and source only (5.4) |
 | Evaluation table | Adopted: one `cuban_origin` scenario becomes `sanctions_escalate` (7) |
+
+## 9a. Amendments after approval
+
+| Day | Item | Decision |
+| --- | --- | --- |
+| 7 | Container size, count and unit price as clarify facts (5.2) | Approved by the project owner: asked in the same stage-1 message as the trip facts, after origin and ABV; size defaults to 750 ml after two unanswered rounds, count and price escalate. Found in hands-on testing (the size was asked in a separate first round). No frozen eval item changes: all 8 eval clarify items state their sizes. |
 
 Not blocking, revisit if time allows: resolve Russian-origin alcohol (currently escalated).

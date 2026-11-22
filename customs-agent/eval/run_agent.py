@@ -26,9 +26,9 @@ from eval.score import by_type, load_jsonl, score, summary, write_csv
 
 SETS = {
     "dev": ROOT / "eval" / "dev_set.jsonl",
-    "paraphrase": ROOT
-    / "eval"
-    / "paraphrase_set.jsonl",  # one-shot check: PARAPHRASE_BRIEF.md
+    # one-shot check: PARAPHRASE_BRIEF.md
+    "paraphrase": ROOT / "eval" / "paraphrase_set.jsonl",
+    "redteam": ROOT / "eval" / "redteam.jsonl",  # eval/redteam.yaml
     "eval": ROOT / "eval" / "eval_set.jsonl",
 }
 MODES = ("router", "planner", "single_rag")

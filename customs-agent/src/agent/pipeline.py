@@ -270,7 +270,8 @@ def _answer(
             message=MESSAGES[key].format(what="those goods"),
         )
         return run
-    basket = [b for b in facts.basket if b.category != "other"]
+    # an item of type "other" is not alcohol or tobacco, whatever category the model gave it
+    basket = [b for b in facts.basket if b.category != "other" and b.type != "other"]
     other = len(basket) < len(facts.basket) or g.other_goods
     if not basket:
         if other:
@@ -280,7 +281,17 @@ def _answer(
                 message="This assistant only covers alcohol and tobacco. See CBP's traveller guidance at cbp.gov for other goods.",
             )
             return run
-        return _clarify(run, ["count"], [])
+        run.answer = Answer(
+            outcome="clarify",
+            clarify_facts=["count"],
+            message="What are you bringing home? Tell me each bottle or tobacco product, how many, their size and what you paid.",
+        )
+        run.card = {
+            "clarify": [
+                "What are you bringing home: which bottles or tobacco, how many, what size and what price?"
+            ]
+        }
+        return run
 
     # 3. plan: the code router's fixed plan, or the LLM planner's (validated; router as fallback)
     if mode == "planner":

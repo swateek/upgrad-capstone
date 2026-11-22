@@ -39,6 +39,10 @@ INJECTION = _any(
         r"\b(always|only) (answer|say|reply|respond)\b",
         r"\b(you|assistant|the bot|the ai) (must|should|have to|need to|are to) (always )?(answer|say|reply|respond|tell)\b",
         r"\beverything is now (duty[- ]?free|free|exempt)\b",
+        # orders about the reply's form, and bracketed role tags ("[SYSTEM] ...")
+        r"(^|[.!?:]\s*|\b(you|assistant)\s+(must|should|will|shall)\s+)(reply|respond|answer|say)\s+only\s+(with|that|the words?)\b",
+        r"\bfrom now on\b.{0,30}\b(reply|respond|answer|say|tell|treat|you)\b",
+        r"\[\s*(system|admin|administrator|developer|operator|assistant)\s*\]",
     ]
 )
 
@@ -51,6 +55,8 @@ EVASION = _any(
         r"\b(tell|say to) (the )?(officer|cbp|customs)\b.{0,30}\b(less|cheaper|gift|not mine|only)\b",
         r"\b(don'?t|do not|not) (want to |going to |plan to )?declare\b",
         r"\bget (it|them|this|these) (past|through) customs\b",
+        # will they notice / find / check it: asking about not being detected
+        r"\b(will|would|do|does|can|could)\s+(they|customs|cbp|the officers?|officers|anyone|security)\s+(even\s+)?(notice|see|find|spot|detect|catch)\b",
         r"\bso (that )?(customs|cbp|the officers?|officers|they|nobody|no one)\b.{0,20}\b(doesn'?t|don'?t|won'?t|can'?t|will not|do not|does not|never)\b.{0,10}\b(find|see|notice|spot|detect)\b",
     ]
 )

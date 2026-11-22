@@ -82,6 +82,18 @@ uv run python eval/build_eval.py export
 
 Never tune prompts or code against `eval_set.jsonl`; use `dev_set.jsonl`.
 
+Dev-only sets for Days 8-9 (committed; rebuild after editing their YAML):
+
+```bash
+# multi-turn conversations: eval/conversations.yaml -> conversations.jsonl (dollar gold from conv_gold.xlsx formulas)
+uv run python eval/build_conversations.py workbook
+soffice --headless --convert-to xlsx --outdir /tmp eval/conv_gold.xlsx && cp /tmp/conv_gold.xlsx eval/conv_gold.xlsx
+uv run python eval/build_conversations.py export
+# red-team list: eval/redteam.yaml -> redteam.jsonl (answerable items copy the gold of a dev item)
+uv run python eval/build_redteam.py
+uv run python eval/run_agent.py --set redteam --run-name redteam-day8
+```
+
 ## 7. Prompting baselines and scoring (Day 4)
 
 Four closed-book strategies (no retrieval, no calculators): `closed_book`, `fewshot_json`, `cot_sc` (3 samples, majority vote), `decompose` (extract -> rules -> compute). They use the chat endpoint; one request is in flight at a time.
