@@ -1,0 +1,36 @@
+{
+ "frozen_at": "2026-11-22",
+ "note": "Day 9 checkpoint",
+ "prompts": {
+  "intake": "6d9f7db561729d70",
+  "writer": "56473503301212aa",
+  "verify_evasion": "e78e15ef2f0bf75e",
+  "planner": "3b6b9603c6677075",
+  "turn_intake": "64ec591b3f01a9b0"
+ },
+ "retrieval": {
+  "method": "hybrid BM25 + dense, RRF, cross-encoder rerank",
+  "reranker": "BAAI/bge-reranker-v2-m3",
+  "rrf_k": 60,
+  "candidates_per_retriever": 50,
+  "rerank_pool": 30,
+  "max_k": 5,
+  "not_citable": [
+   "curated_secondary",
+   "hard_negative"
+  ],
+  "citations_per_rule": 2,
+  "chunk_max_tokens": 350
+ },
+ "budget": {
+  "max_tool_steps": 10,
+  "max_tokens_per_question": 12000,
+  "max_plan_steps": 10
+ },
+ "corpus": {
+  "fingerprint": "b70b8349c3ffabf4d28c55062def9f24c167435f1dbab7b14534862c359da0ca",
+  "embed_model": "bge-small-en-v1.5",
+  "n_chunks": 1480,
+  "dim": 384
+ }
+}
