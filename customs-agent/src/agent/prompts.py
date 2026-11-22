@@ -16,6 +16,7 @@ INTAKE = (
 - quantity counts containers or packs ("two 1-litre bottles" is quantity {2, "bottle"} with size {1, "litre"}); size is the volume of one alcohol container.
 - Tobacco: quantity is the number of packs, cartons, boxes or single cigars, with the count in the unit when stated ("a pack of 20 cigarettes" is {1, "pack of 20"}; "a box of 10 cigars" is {1, "box of 10"}; "2 cartons" is {2, "carton"}); size is null.
 - Follow-ups: a line "Asked: <question>" followed by "Answer: <reply>" is the traveller replying to that question ("Asked: Have you used your duty-free exemption in the last 30 days? Answer: no" means exemption_used_last_30_days is false).
+- "over 21", "21+" or "of legal drinking age" without an exact age: age 21.
 - Only facts the traveller states: leave age, trip, direct_arrival_from and exemption_used_last_30_days null when the question does not say them. Never guess.
 - owe_less_than_usd: only when they ask how many they can bring while owing less than some amount: that amount. Put the product in basket with quantity null. Otherwise null."""
 )

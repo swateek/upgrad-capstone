@@ -183,6 +183,13 @@ def spelled_numbers(text: str) -> set[str]:
     return out
 
 
+OVER_21 = re.compile(
+    r"\b(?:over|above|older than|at least|past)\s+(?:the age of\s+)?21\b|\b21\s*\+|\b21 or (?:over|older|above)\b|"
+    r"\b(?:of )?legal (?:drinking )?age\b",
+    re.IGNORECASE,
+)
+
+
 def ground_in_question(
     r: IntakeResult, question: str
 ) -> tuple[IntakeResult, list[str]]:
@@ -200,7 +207,13 @@ def ground_in_question(
         question or ""
     )
     p = r.profile
-    if p.age is not None and str(p.age) not in numbers_in_q:
+    if OVER_21.search(question or "") and (
+        p.age is None or str(p.age) not in numbers_in_q
+    ):
+        # "over 21", "21+", "of legal drinking age": the rules only need "not under 21"
+        upd["age"] = 21
+        dropped.append("age: stated as 21 or over")
+    elif p.age is not None and str(p.age) not in numbers_in_q:
         upd["age"] = None
         dropped.append(f"age {p.age} (not in the question)")
     if p.trip is not None and not DURATION.search(question or ""):

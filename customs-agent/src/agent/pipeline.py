@@ -322,7 +322,9 @@ def _answer(
         return run
 
     # 5. answer card (code) + writer (LLM) + verifier (code + LLM), one retry
-    facts_list = C.facts_relied_on(facts.profile, r.lines)
+    facts_list = C.facts_relied_on(
+        facts.profile, r.lines, age_21_plus=any("21 or over" in d for d in dropped)
+    )
     working = C.working(r)
     result = C.bottom_line_items(r)
     if other:

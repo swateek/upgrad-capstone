@@ -777,3 +777,31 @@ def test_working_states_the_tobacco_allowance() -> None:
         "Item 2: 100 cigarettes; your allowance is 200 cigarettes: within it."
         in card.working(r)
     )
+
+
+@pytest.mark.parametrize(
+    "q",
+    [
+        "I'm over 21",
+        "21+ here",
+        "I am of legal drinking age",
+        "older than 21",
+        "21 or older",
+    ],
+)
+def test_over_21_counts_as_a_stated_age(q) -> None:
+    from src.agent.intake import ground_in_question
+
+    for model_age in (None, 22):
+        r = IntakeResult.model_validate(
+            {"request_kind": "assess", "profile": {"age": model_age}}
+        )
+        out, notes = ground_in_question(r, q)
+        assert out.profile.age == 21 and any("21 or over" in n for n in notes)
+
+
+def test_exact_age_wins_over_the_over_21_phrase() -> None:
+    from src.agent.intake import ground_in_question
+
+    r = IntakeResult.model_validate({"request_kind": "assess", "profile": {"age": 34}})
+    assert ground_in_question(r, "I'm 34, so over 21")[0].profile.age == 34

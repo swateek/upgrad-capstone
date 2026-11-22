@@ -55,10 +55,13 @@ def country(code: str | None) -> str | None:
     return (getattr(c, "common_name", None) or c.name) if c else code
 
 
-def facts_relied_on(profile: Profile, lines) -> list[str]:
+def facts_relied_on(profile: Profile, lines, *, age_21_plus: bool = False) -> list[str]:
     p = profile
     out = []
-    out.append(f"Age: {p.age}" if p.age is not None else "Age: not stated")
+    if age_21_plus:
+        out.append("Age: 21 or over")
+    else:
+        out.append(f"Age: {p.age}" if p.age is not None else "Age: not stated")
     out.append(
         f"Time abroad: {p.trip.value:g} {p.trip.unit}"
         if p.trip
