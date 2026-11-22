@@ -12,7 +12,7 @@ Programme brief, deadlines and grading: repo-root `README.md` (final submission 
 ## Repo conventions
 
 - **Setup guide:** `customs-agent/SETUP.md` is how someone else installs and runs the project. When a step is added or changes (new dependency, new build step, new command), update it in the same change.
-- **Work log:** `customs-agent/WORKLOG.md` (git-ignored, local only). After each piece of work, append an entry under the current day: what, files, found / decided, open.
+- **Work log:** `customs-agent/WORKLOG.md` (committed since `198cdb1`). After each piece of work, append an entry under the current day: what, files, found / decided, open.
 
 - **Python env: uv, inside `customs-agent/` only.** `uv sync` to install; `uv run python …` / `uv run pytest` to run; `uv add <pkg>` (or `uv add --dev`) to add dependencies. Never `pip install` into `.venv/`. Commit `pyproject.toml`, `uv.lock` and `.python-version` together.
 - **Git flow** (repo-root `docs/GITFLOW.md`): never commit to `main`; short-lived branches `feature/…`, `bugfix/…`, `docs/…`, `refactor/…`; merge through a PR. Commit messages `#<issue> - <what>` when there is an issue.

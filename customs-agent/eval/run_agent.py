@@ -2,6 +2,7 @@
 
     uv run python eval/run_agent.py --set dev --run-name day5-router            # agent v0, code router
     uv run python eval/run_agent.py --set dev --limit 3                          # smoke test
+    uv run python eval/run_agent.py --set paraphrase --run-name para-router      # generalisation check (once)
     LLM_CACHE=0 uv run python eval/run_agent.py --set eval --run-name official-router-1   # Day 10 only
 
 Writes results/runs/<run>/<mode>.jsonl (one record per item: answer, retrieved_ids, card, trace;
@@ -23,6 +24,7 @@ from eval.score import by_type, load_jsonl, score, summary, write_csv
 
 SETS = {
     "dev": ROOT / "eval" / "dev_set.jsonl",
+    "paraphrase": ROOT / "eval" / "paraphrase_set.jsonl",  # one-shot check: PARAPHRASE_BRIEF.md
     "eval": ROOT / "eval" / "eval_set.jsonl",
 }
 MODES = ("router",)  # "planner" and "single_rag" join here

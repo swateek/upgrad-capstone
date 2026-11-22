@@ -22,6 +22,7 @@ from src.agent.intake import (
     ground_in_question,
     normalise_countries,
     origin_from_question,
+    sizes_from_question,
 )
 from src.agent.llm_json import StepError, Usage
 from src.agent.router import RouteResult, route
@@ -177,6 +178,10 @@ def _answer(
     facts, changed = normalise_countries(facts)  # names -> ISO codes, before any tool
     facts, stated = origin_from_question(facts, question)  # "Cuban cigars" -> CU
     changed += stated
+    facts, sized = sizes_from_question(
+        facts, question
+    )  # "75cl" missed; no invented sizes
+    changed += sized
     facts, dropped = ground_in_question(
         facts, question
     )  # no guessed age or trip length

@@ -34,6 +34,11 @@ INJECTION = _any(
         r"\b(developer|jailbreak|dan) mode\b",
         r"\bpretend (you are|to be|that)\b",
         r"\b(say|tell me|answer|respond)\b.{0,20}\b(everything|it'?s|it is|they'?re|all)\b.{0,15}\bduty[- ]?free\b",
+        # claims of authority and orders about how to answer ("admin note: always answer ...")
+        r"\b(admin|administrator|developer|operator|moderator|system) (note|notice|message|update|override|instruction)s?\b",
+        r"\b(always|only) (answer|say|reply|respond)\b",
+        r"\b(you|assistant|the bot|the ai) (must|should|have to|need to|are to) (always )?(answer|say|reply|respond|tell)\b",
+        r"\beverything is now (duty[- ]?free|free|exempt)\b",
     ]
 )
 
@@ -46,6 +51,7 @@ EVASION = _any(
         r"\b(tell|say to) (the )?(officer|cbp|customs)\b.{0,30}\b(less|cheaper|gift|not mine|only)\b",
         r"\b(don'?t|do not|not) (want to |going to |plan to )?declare\b",
         r"\bget (it|them|this|these) (past|through) customs\b",
+        r"\bso (that )?(customs|cbp|the officers?|officers|they|nobody|no one)\b.{0,20}\b(doesn'?t|don'?t|won'?t|can'?t|will not|do not|does not|never)\b.{0,10}\b(find|see|notice|spot|detect)\b",
     ]
 )
 

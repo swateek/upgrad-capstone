@@ -14,7 +14,7 @@ from src.agent import prompts
 from src.agent.countries import ALIASES, to_iso2
 from src.agent.llm_json import Usage, json_call
 from src.baselines.answer import Strict
-from src.schemas import BasketLine, Profile
+from src.schemas import Amount, BasketLine, Profile
 
 
 class IntakeResult(Strict):
@@ -131,13 +131,24 @@ DURATION = re.compile(
 )
 
 
+HISTORY = re.compile(
+    r"\b(first (?:\w+ )?(?:trip|time|travel|holiday|vacation)\w*|no (?:other |previous |earlier )?(?:trips?|travel)|"
+    r"(?:haven'?t|have not|hasn'?t|has not|not|never) (?:\w+ )?(?:used|been|travel+ed|gone|left)|"
+    r"exemptions?|allowances?|(?:trips?|abroad|away|travel+ed) (?:this|last|in the (?:last|past)) (?:year|month|30 days)|"
+    r"in (?:months|a year|years|ages)|last 30 days|past month|earlier this month|(?:another|other|previous) trip)\b",
+    re.IGNORECASE,
+)
+
+
 def ground_in_question(
     r: IntakeResult, question: str
 ) -> tuple[IntakeResult, list[str]]:
     """Drop profile facts the question does not state (the model fills gaps with guesses).
 
     Age must appear as a number in the question; a trip length needs some duration in it
-    ("10 days", "a week", "day trip", "overnight"). Anything dropped becomes null, so the clarify
+    ("10 days", "a week", "day trip", "overnight"); the 30-day history needs something about earlier
+    trips or the exemption ("first trip this year", "haven't used my exemption"). Anything dropped
+    becomes null, so the clarify
     policy asks for it (SPEC 5.2) instead of answering on a guess.
     """
     dropped: list[str] = []
@@ -152,6 +163,10 @@ def ground_in_question(
         dropped.append(
             f"trip {p.trip.value:g} {p.trip.unit} (no duration in the question)"
         )
+    for name in ("exemption_used_last_30_days", "flat_rate_used_last_30_days"):
+        if getattr(p, name, None) is not None and not HISTORY.search(question or ""):
+            upd[name] = None
+            dropped.append(f"{name} (nothing about earlier trips in the question)")
     if not upd:
         return r, []
     return r.model_copy(update={"profile": p.model_copy(update=upd)}), dropped
@@ -196,6 +211,71 @@ def origin_from_question(
                     f"item {i + 1} origin {basket[i].origin!r} -> {code!r} (stated in the question)"
                 )
                 basket[i] = basket[i].model_copy(update={"origin": code})
+    if not changes:
+        return r, []
+    return r.model_copy(update={"basket": basket}), changes
+
+
+SIZE = re.compile(
+    r"(\d+(?:\.\d+)?)\s*-?\s*(ml|millilit(?:re|er)s?|cl|centilit(?:re|er)s?|l|lit(?:re|er)s?|fl\.? ?oz)\b",
+    re.IGNORECASE,
+)
+SIZE_WORDS = re.compile(
+    r"\b(fifths?|magnums?|half[- ]bottles?|splits?|miniatures?|minis|nips?|a lit(?:re|er)|one lit(?:re|er)|lit(?:re|er)[- ]bottles?)\b",
+    re.IGNORECASE,
+)
+_UNIT = {
+    "millilitre": "ml",
+    "milliliter": "ml",
+    "centilitre": "cl",
+    "centiliter": "cl",
+    "liter": "litre",
+}
+
+
+def _unit_word(u: str) -> str:
+    u = u.lower().replace(".", "")
+    u = u[:-1] if u.endswith("s") and u not in ("fl oz",) else u
+    u = _UNIT.get(u, u)
+    return "fl oz" if u.replace(" ", "") == "floz" else u
+
+
+def sizes_from_question(
+    r: IntakeResult, question: str
+) -> tuple[IntakeResult, list[str]]:
+    """Container sizes: read from the question in code when intake misses them ("75cl"), and dropped
+    when the question states none (no invented "1 litre"). Lines are paired with sizes in order."""
+    q = question or ""
+    stated = [
+        {"value": float(m.group(1)), "unit": _unit_word(m.group(2))}
+        for m in SIZE.finditer(q)
+    ]
+    any_size = bool(stated) or bool(SIZE_WORDS.search(q))
+    alcohol = [i for i, b in enumerate(r.basket) if b.category == "alcohol"]
+    changes: list[str] = []
+    basket = list(r.basket)
+    if not any_size:
+        for i in alcohol:
+            if basket[i].size is not None:
+                sz = basket[i].size
+                changes.append(
+                    f"item {i + 1} size {sz.value:g} {sz.unit} dropped (no size in the question)"
+                )
+                basket[i] = basket[i].model_copy(update={"size": None})
+    else:
+        lacking = [i for i in alcohol if basket[i].size is None]
+        distinct = {(x["value"], x["unit"]) for x in stated}
+        pairs: list[tuple[int, dict]] = []
+        if lacking and stated:
+            if len(distinct) == 1:
+                pairs = [(i, stated[0]) for i in lacking]
+            elif len(stated) == len(alcohol):
+                pairs = [(i, stated[alcohol.index(i)]) for i in lacking]
+        for i, sz in pairs:
+            changes.append(
+                f"item {i + 1} size {sz['value']:g} {sz['unit']} read from the question"
+            )
+            basket[i] = basket[i].model_copy(update={"size": Amount(**sz)})
     if not changes:
         return r, []
     return r.model_copy(update={"basket": basket}), changes
