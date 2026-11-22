@@ -61,7 +61,7 @@ It asks one clarifying question only when a missing fact changes the answer, ref
 | 12-page technical report | Days 11–14 | Not started |
 | 10-minute live demo | Streamlit in Docker + backup video, Days 11–14 | Not started |
 | Corpus ≤ 2,000 documents | 742 documents (`corpus-v1`) | Met |
-| ≤ 10 steps per query | Plan validator caps at 10; the code router runs at most 8 tool steps (7, plus `whatif_optimise` for what-if questions) | Met by design; hard cap (≤ 10 steps counting tool + model calls, ≤ 12,000 tokens, escalate if exceeded) to add with the planner |
+| ≤ 10 steps per query | Enforced in `src/agent/pipeline.py`: at most 10 tool steps and 12,000 tokens per question, else escalate; the plan validator also caps plans at 10. Router plan: 7 steps (8 for what-if) | Met |
 | Eval frozen and baselines recorded before agent code | `eval-v2` tagged, `results/week1_*.csv` committed, gate `gate-day4` before any `src/agent/` code | Met |
 | Small-model compensations (graded) | `docs/COMPENSATIONS.md`: symptom, fix, before/after metric per row | Ongoing |
 

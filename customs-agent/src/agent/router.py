@@ -1,8 +1,15 @@
-"""Code router: the tools in a fixed order (CLAUDE.md architecture; ablation baseline for the planner).
+"""Plan executor and the code router (CLAUDE.md architecture; the ablation baseline for the planner).
+
+A plan is an ordered list of tool names. `execute()` runs any valid plan, filling every tool's
+arguments from the state (the model never writes tool arguments: it copies numbers badly,
+COMPENSATIONS row 3). The code router is one fixed plan:
 
     normalise_units -> check_restrictions -> determine_exemption -> (clarify?) -> (escalate?)
-      -> compute_allowance -> compute_duty_excise -> lookup_state_rule
-    what-if questions: whatif_optimise, then the same chain at the answer's quantity
+      -> compute_allowance -> compute_duty_excise -> lookup_state_rule -> search_regulations
+    what-if questions: whatif_optimise first, then the same chain at the answer's quantity
+
+The LLM planner (src/agent/planner.py) proposes a plan instead; the validator checks it and the
+same executor runs it, so a difference in score belongs to the plan alone.
 
 Restrictions run before any calculation (rule 4). Missing facts come from the tools, in the SPEC 5.2
 order, never from the model. The router also collects the citations of the rules each tool applied,
@@ -47,6 +54,33 @@ from src.tools.normalise_units import Args as NArgs
 from src.tools.whatif_optimise import Args as WArgs
 
 PER_RULE = 2  # citations passed per applied rule
+TOOLS = (
+    "whatif_optimise",
+    "normalise_units",
+    "check_restrictions",
+    "determine_exemption",
+    "compute_allowance",
+    "compute_duty_excise",
+    "lookup_state_rule",
+    "search_regulations",
+    "escalate_to_human",
+)
+ROUTER_PLAN = [
+    "normalise_units",
+    "check_restrictions",
+    "determine_exemption",
+    "compute_allowance",
+    "compute_duty_excise",
+    "lookup_state_rule",
+    "search_regulations",
+]
+ROUTER_WHATIF_PLAN = ["whatif_optimise", *ROUTER_PLAN]
+
+
+class PlanError(Exception):
+    """A plan step ran without its inputs (the validator should have caught it)."""
+
+
 STATUS_TO_LINE_TYPE = {
     "prohibited": "prohibited",
     "declare_detention_risk": "declare_detention_risk",
@@ -71,6 +105,8 @@ class RouteResult:
     line_types: list[str] = field(default_factory=list)  # bottom line per basket line
     citations: list[str] = field(default_factory=list)  # rules applied, in order
     trace: list[dict] = field(default_factory=list)  # tool name + compact output
+    plan: list[str] = field(default_factory=list)
+    tool_steps: int = 0  # tools actually run (search counted by the pipeline)
 
     def tool_outputs(self) -> list[object]:
         return [
@@ -113,58 +149,18 @@ def _log(r: RouteResult, tool: str, output: object) -> None:
     r.trace.append({"tool": tool, "output": dump})
 
 
-def _chain(profile: Profile, basket: list[BasketLine], r: RouteResult) -> RouteResult:
-    lines = normalise_units(NArgs(basket=basket))
-    r.lines = lines
-    _log(
-        r,
-        "normalise_units",
-        [ln.model_dump(mode="json", exclude_none=True) for ln in lines],
-    )
-    rs = check_restrictions(RArgs(profile=profile, lines=lines))
-    r.restrictions = rs
-    _log(r, "check_restrictions", rs)
-    for h in rs.hits:
-        _cite(r.citations, h.citations)
-    if lines and set(rs.prohibited_lines) >= {ln.index for ln in lines}:
-        # everything is prohibited: no exemption fact can change the answer (SPEC 5.2), so none
-        # is asked for (rule 4: restrictions before any calculation)
-        r.line_types = ["prohibited"] * len(lines)
-        r.outcome = "answered"
+def _need(cond: object, step: str, what: str) -> None:
+    if not cond:
+        raise PlanError(f"{step} needs {what} first")
+
+
+def _finish(r: RouteResult) -> RouteResult:
+    """Bottom line per item once the allowance (and duty, if anything is dutiable) is known."""
+    al, de = r.allowance, r.duty
+    if al is None:
         return r
-    ex = determine_exemption(EArgs(profile=profile, lines=lines))
-    r.exemption = ex
-    _log(r, "determine_exemption", ex)
-    missing = order_missing(rs.missing + ex.missing)
-    if missing:
-        r.outcome, r.missing = "clarify", missing
-        return r
-    if rs.escalate:
-        hit = next(h for h in rs.hits if h.outcome == "escalate")
-        r.outcome, r.rule_id, r.message = "escalated", hit.rule_id, hit.message
-        return r
-    _cite(r.citations, ex.citations)
-    al = compute_allowance(AArgs(exemption=ex, restrictions=rs, lines=lines))
-    r.allowance = al
-    _log(r, "compute_allowance", al)
-    for rid in dict.fromkeys(a.rule_id for a in al.lines if a.rule_id):
-        _cite(
-            r.citations, _rule_citations(rid)
-        )  # rules applied per line (tobacco over allowance...)
-    esc = next((a for a in al.lines if a.status == "escalate"), None)
-    if esc:
-        r.outcome, r.rule_id, r.message = "escalated", esc.rule_id, esc.message
-        return r
-    de = compute_duty_excise(DArgs(profile=profile, lines=lines, allowance=al))
-    r.duty = de
-    _log(r, "compute_duty_excise", de)
-    _cite(r.citations, de.citations)
-    sf = lookup_state_rule(SArgs(arrival_state=profile.arrival_state))
-    if sf:
-        r.state_flag = sf
-        _log(r, "lookup_state_rule", sf)
-        _cite(r.citations, sf.citations, 1)
-    owed = {d.line: d.total_usd for d in de.lines}
+    owed = {d.line: d.total_usd for d in (de.lines if de else [])}
+    r.line_types = []
     for a in al.lines:
         if a.status in ("partly_exempt", "dutiable"):
             r.line_types.append(
@@ -172,39 +168,19 @@ def _chain(profile: Profile, basket: list[BasketLine], r: RouteResult) -> RouteR
             )
         else:
             r.line_types.append(STATUS_TO_LINE_TYPE[a.status])
-    r.outcome = "answered"
     return r
 
 
-def route(
+def execute(
     profile: Profile,
     basket: list[BasketLine],
+    plan: list[str],
     owe_less_than_usd: float | None = None,
 ) -> RouteResult:
-    r = RouteResult(outcome="answered")
+    """Run a plan. Stops early on clarify / escalate / everything prohibited, as the rules say."""
+    r = RouteResult(outcome="answered", plan=list(plan))
     try:
-        if owe_less_than_usd:
-            product = basket[0]
-            w = whatif_optimise(
-                WArgs(
-                    profile=profile,
-                    product=product,
-                    owe_less_than_usd=owe_less_than_usd,
-                )
-            )
-            _log(r, "whatif_optimise", w)
-            at = product.model_copy(
-                update={
-                    "quantity": product.quantity.model_copy(
-                        update={"value": w.max_units}
-                    )
-                }
-            )
-            _chain(profile, [at], r)
-            r.whatif = w
-            r.line_types = []  # a what-if has no bottom line per item
-            return r
-        return _chain(profile, basket, r)
+        return _execute(profile, list(basket), plan, owe_less_than_usd, r)
     except ToolError as e:
         if e.code == "missing_fact":
             r.outcome, r.missing = "clarify", order_missing(e.missing)
@@ -216,3 +192,120 @@ def route(
             )
             _cite(r.citations, e.citations)
         return r
+
+
+def _execute(
+    profile: Profile,
+    basket: list[BasketLine],
+    plan: list[str],
+    owe_less_than_usd: float | None,
+    r: RouteResult,
+) -> RouteResult:
+    rs = ex = al = None
+    lines: list[NormalisedLine] | None = None
+    for step in plan:
+        if step == "whatif_optimise":
+            _need(owe_less_than_usd, step, "a what-if target")
+            product = basket[0]
+            w = whatif_optimise(
+                WArgs(
+                    profile=profile,
+                    product=product,
+                    owe_less_than_usd=owe_less_than_usd,
+                )
+            )
+            r.tool_steps += 1
+            _log(r, step, w)
+            r.whatif = w
+            basket = [
+                product.model_copy(
+                    update={
+                        "quantity": product.quantity.model_copy(
+                            update={"value": w.max_units}
+                        )
+                    }
+                )
+            ]
+        elif step == "normalise_units":
+            lines = normalise_units(NArgs(basket=basket))
+            r.lines = lines
+            r.tool_steps += 1
+            _log(
+                r, step, [ln.model_dump(mode="json", exclude_none=True) for ln in lines]
+            )
+        elif step == "check_restrictions":
+            _need(lines is not None, step, "normalise_units")
+            rs = check_restrictions(RArgs(profile=profile, lines=lines))
+            r.restrictions = rs
+            r.tool_steps += 1
+            _log(r, step, rs)
+            for h in rs.hits:
+                _cite(r.citations, h.citations)
+            if lines and set(rs.prohibited_lines) >= {ln.index for ln in lines}:
+                # everything is prohibited: no exemption fact can change the answer (SPEC 5.2)
+                r.line_types = ["prohibited"] * len(lines)
+                r.outcome = "answered"
+                return r
+        elif step == "determine_exemption":
+            _need(rs is not None, step, "check_restrictions")  # rule 4
+            ex = determine_exemption(EArgs(profile=profile, lines=lines))
+            r.exemption = ex
+            r.tool_steps += 1
+            _log(r, step, ex)
+            missing = order_missing(rs.missing + ex.missing)
+            if missing:
+                r.outcome, r.missing = "clarify", missing
+                return r
+            if rs.escalate:
+                hit = next(h for h in rs.hits if h.outcome == "escalate")
+                r.outcome, r.rule_id, r.message = "escalated", hit.rule_id, hit.message
+                return r
+            _cite(r.citations, ex.citations)
+        elif step == "compute_allowance":
+            _need(ex is not None, step, "determine_exemption")
+            al = compute_allowance(AArgs(exemption=ex, restrictions=rs, lines=lines))
+            r.allowance = al
+            r.tool_steps += 1
+            _log(r, step, al)
+            for rid in dict.fromkeys(a.rule_id for a in al.lines if a.rule_id):
+                _cite(r.citations, _rule_citations(rid))  # rules applied per line
+            esc = next((a for a in al.lines if a.status == "escalate"), None)
+            if esc:
+                r.outcome, r.rule_id, r.message = "escalated", esc.rule_id, esc.message
+                return r
+        elif step == "compute_duty_excise":
+            _need(al is not None, step, "compute_allowance")
+            de = compute_duty_excise(DArgs(profile=profile, lines=lines, allowance=al))
+            r.duty = de
+            r.tool_steps += 1
+            _log(r, step, de)
+            _cite(r.citations, de.citations)
+        elif step == "lookup_state_rule":
+            sf = lookup_state_rule(SArgs(arrival_state=profile.arrival_state))
+            r.tool_steps += 1
+            if sf:
+                r.state_flag = sf
+                _log(r, step, sf)
+                _cite(r.citations, sf.citations, 1)
+        elif step == "escalate_to_human":
+            r.outcome, r.rule_id = "escalated", r.rule_id or "planner_escalated"
+            r.message = r.message or "The planner could not assess this with the tools."
+            return r
+        elif step == "search_regulations":
+            continue  # run by the pipeline, with the citations collected here
+        else:
+            raise PlanError(f"unknown tool {step!r}")
+    if r.whatif:
+        r.line_types = []  # a what-if has no bottom line per item
+        return r
+    return _finish(r)
+
+
+def route(
+    profile: Profile,
+    basket: list[BasketLine],
+    owe_less_than_usd: float | None = None,
+) -> RouteResult:
+    """The code router: the fixed plan."""
+    plan = ROUTER_WHATIF_PLAN if owe_less_than_usd else ROUTER_PLAN
+    return execute(profile, basket, plan, owe_less_than_usd)

@@ -139,7 +139,10 @@ One question end to end: guard → intake (LLM) → tools in a fixed order → `
 ```bash
 uv run python eval/run_agent.py --set dev --limit 3              # smoke test
 uv run python eval/run_agent.py --set dev --run-name day5-router  # all 20 dev scenarios, scored
+uv run python eval/run_agent.py --set dev --mode planner --run-name day6-planner   # LLM planner instead of the fixed plan
 ```
+
+`--mode planner` adds one model call: the planner picks the tools and their order, a validator checks the plan (restrictions before calculations, required steps, at most 10), one repair is allowed, and otherwise the code router's plan is used (`plan fallbacks` in the summary). Every question is capped at 10 tool steps and 12,000 tokens; over either, it escalates.
 
 Writes `results/runs/<run>/router.jsonl` (answer, answer card, trace of every step), `scores_router.csv` and `summary_router.json`. Re-running the same command resumes; delete the run folder to start again. Never run `--set eval` until the Day 10 official runs.
 

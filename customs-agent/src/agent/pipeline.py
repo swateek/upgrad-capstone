@@ -25,7 +25,14 @@ from src.agent.intake import (
     sizes_from_question,
 )
 from src.agent.llm_json import StepError, Usage
-from src.agent.router import RouteResult, route
+from src.agent.planner import propose, validate
+from src.agent.router import (
+    ROUTER_PLAN,
+    ROUTER_WHATIF_PLAN,
+    RouteResult,
+    execute,
+    route,
+)
 from src.agent.verifier import tool_json, verify
 from src.agent.writer import write
 from src.baselines.answer import Answer, LineResult, WhatIfAnswer
@@ -48,6 +55,11 @@ FACT_QUESTIONS = {
 
 SearchFn = Callable[[SearchArgs], Clauses]
 
+# Hard budget per question (CLAUDE.md; course guardrail: at most 10 steps per query).
+# A step = one tool run (search included). Model calls are bounded by the token budget.
+MAX_TOOL_STEPS = 10
+MAX_TOKENS = 12_000
+
 
 @dataclass
 class AgentRun:
@@ -58,6 +70,10 @@ class AgentRun:
     retrieved_ids: list[str] | None = None
     card: dict = field(default_factory=dict)
     trace: list[dict] = field(default_factory=list)
+    tool_steps: int = 0
+    plan_fallback: bool | None = (
+        None  # planner mode: True if the router's plan was used
+    )
 
     def record(self, item_id: str, mode: str = "router") -> dict:
         return {
@@ -68,6 +84,8 @@ class AgentRun:
             else None,
             "error": self.error,
             "reason": self.reason,
+            "tool_steps": self.tool_steps,
+            "plan_fallback": self.plan_fallback,
             "calls": self.usage.calls,
             "tokens": self.usage.tokens,
             "retrieved_ids": self.retrieved_ids,
@@ -75,6 +93,44 @@ class AgentRun:
             "trace": self.trace,
             "steps": self.usage.steps,
         }
+
+
+def _over_budget(run: AgentRun, what: str) -> AgentRun:
+    run.reason = "budget_exceeded"
+    run.trace.append({"step": "budget", "exceeded": what})
+    run.answer = Answer(
+        outcome="escalated",
+        message="This question needs more work than one estimate allows. Declare everything; a CBP officer will assess it.",
+    )
+    return run
+
+
+def _plan(run: AgentRun, llm: Any, facts) -> list[str]:
+    """LLM plan, validated; one repair; else the code router's plan (a fallback)."""
+    fixed = ROUTER_WHATIF_PLAN if facts.owe_less_than_usd else ROUTER_PLAN
+    errors: list[str] | None = None
+    for attempt in range(2):
+        try:
+            p = propose(llm, run.usage, facts, errors)
+        except StepError as e:
+            run.trace.append({"step": "planner", "attempt": attempt, "error": str(e)})
+            break
+        errors = validate(list(p.steps), facts)
+        run.trace.append(
+            {
+                "step": "planner",
+                "attempt": attempt,
+                "plan": list(p.steps),
+                "reason": p.reason,
+                "errors": errors,
+            }
+        )
+        if not errors:
+            run.plan_fallback = False
+            return list(p.steps)
+    run.plan_fallback = True
+    run.trace.append({"step": "planner", "fallback": "code router plan"})
+    return fixed
 
 
 def _clarify(run: AgentRun, missing: list[str], items: list[str]) -> AgentRun:
@@ -135,10 +191,12 @@ def answer_question(
     search: SearchFn,
     inject: dict | None = None,
     verify_with_llm: bool = True,
+    mode: str = "router",
 ) -> AgentRun:
+    """mode: "router" (fixed plan) or "planner" (LLM plan, validated; router plan as fallback)."""
     run = AgentRun()
     try:
-        return _answer(run, question, llm, search, inject, verify_with_llm)
+        return _answer(run, question, llm, search, inject, verify_with_llm, mode)
     except Exception as e:  # noqa: BLE001 - endpoint or tool failure: record it, escalate
         run.error = f"{type(e).__name__}: {e}"
         run.reason = run.reason or "error"
@@ -156,6 +214,7 @@ def _answer(
     search: SearchFn,
     inject: dict | None,
     verify_with_llm: bool,
+    mode: str = "router",
 ) -> AgentRun:
     # 1. guard (code)
     g = check_question(question)
@@ -223,9 +282,20 @@ def _answer(
             return run
         return _clarify(run, ["count"], [])
 
-    # 3. router (code): restrictions -> exemption -> allowance -> duty/excise -> state flag
-    r: RouteResult = route(facts.profile, basket, facts.owe_less_than_usd)
-    run.trace.append({"step": "router", "outcome": r.outcome, "tools": r.trace})
+    # 3. plan: the code router's fixed plan, or the LLM planner's (validated; router as fallback)
+    if mode == "planner":
+        plan = _plan(run, llm, facts.model_copy(update={"basket": basket}))
+        r: RouteResult = execute(facts.profile, basket, plan, facts.owe_less_than_usd)
+    else:
+        r = route(facts.profile, basket, facts.owe_less_than_usd)
+    run.tool_steps = r.tool_steps + 1  # + search_regulations
+    run.trace.append(
+        {"step": "executor", "plan": r.plan, "outcome": r.outcome, "tools": r.trace}
+    )
+    if (
+        run.tool_steps > MAX_TOOL_STEPS
+    ):  # cannot happen with a validated plan; kept as a hard stop
+        return _over_budget(run, f"{run.tool_steps} tool steps")
     if r.outcome == "clarify":
         return _clarify(run, r.missing, [b.item for b in basket])
 
@@ -264,6 +334,8 @@ def _answer(
     feedback: list[str] | None = None
     out = None
     for attempt in range(2):
+        if run.usage.tokens > MAX_TOKENS:
+            return _over_budget(run, f"{run.usage.tokens} tokens")
         try:
             out = write(
                 llm,

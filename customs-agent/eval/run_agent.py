@@ -1,6 +1,7 @@
 """Run the agent on a scenario set and score it (eval/score.py).
 
     uv run python eval/run_agent.py --set dev --run-name day5-router            # agent v0, code router
+    uv run python eval/run_agent.py --set dev --mode planner --run-name day6-planner   # LLM planner
     uv run python eval/run_agent.py --set dev --limit 3                          # smoke test
     uv run python eval/run_agent.py --set paraphrase --run-name para-router      # generalisation check (once)
     LLM_CACHE=0 uv run python eval/run_agent.py --set eval --run-name official-router-1   # Day 10 only
@@ -24,10 +25,12 @@ from eval.score import by_type, load_jsonl, score, summary, write_csv
 
 SETS = {
     "dev": ROOT / "eval" / "dev_set.jsonl",
-    "paraphrase": ROOT / "eval" / "paraphrase_set.jsonl",  # one-shot check: PARAPHRASE_BRIEF.md
+    "paraphrase": ROOT
+    / "eval"
+    / "paraphrase_set.jsonl",  # one-shot check: PARAPHRASE_BRIEF.md
     "eval": ROOT / "eval" / "eval_set.jsonl",
 }
-MODES = ("router",)  # "planner" and "single_rag" join here
+MODES = ("router", "planner")  # "single_rag" joins here
 CHECKS = (
     "outcome",
     "bottom_line",
@@ -72,6 +75,7 @@ def run(
                 search=search,
                 inject=item.get("inject_into_retrieval"),
                 verify_with_llm=verify_with_llm,
+                mode=mode,
             )
             rec = res.record(item["id"], mode)
             rec["seconds"] = round(time.perf_counter() - t0, 1)
@@ -84,22 +88,36 @@ def run(
                 else f"  (gold {item['gold']['outcome']})"
             )
             err = f"  ERROR {rec['error'][:90]}" if rec["error"] else ""
+            fb = {True: "  plan=FALLBACK", False: "  plan=ok"}.get(
+                rec.get("plan_fallback"), ""
+            )
             print(
                 f"[{mode}] {item['id']} {got}{flag}  reason={rec['reason']}  "
-                f"({rec['calls']} calls, {rec['tokens']} tok, {rec['seconds']} s){err}"
+                f"({rec['tool_steps']} steps, {rec['calls']} calls, {rec['tokens']} tok, {rec['seconds']} s){fb}{err}"
             )
     rows = score(
         gold, [r for r in load_jsonl(path) if r["id"] in {g["id"] for g in gold}]
     )
     write_csv(out_dir / f"scores_{mode}.csv", rows)
+    recs = [r for r in load_jsonl(path) if r["id"] in {g["id"] for g in gold}]
+    planned = [r for r in recs if r.get("plan_fallback") is not None]
     s = {**summary(rows), "by_type": by_type(rows)}
+    s["max_tool_steps"] = max((r.get("tool_steps") or 0) for r in recs) if recs else 0
+    if planned:
+        s["plan_fallbacks"] = sum(1 for r in planned if r["plan_fallback"])
+        s["planned_n"] = len(planned)
     (out_dir / f"summary_{mode}.json").write_text(
         json.dumps({"set": set_name, "run": run_name, **s}, indent=1)
     )
     print(
         f"== {mode}: accuracy {s['accuracy']}  outcome {s['outcome_acc']}  bottom line {s['bottom_line_acc']}  "
         f"dollars {s['dollar_acc']} (n={s['dollar_n']})  clarify {s['clarify_acc']}  citations {s['citation_acc']}  "
-        f"tokens/q {s['tokens_per_q']}  calls/q {s['calls_per_q']}"
+        f"tokens/q {s['tokens_per_q']}  calls/q {s['calls_per_q']}  max steps {s['max_tool_steps']}"
+        + (
+            f"  plan fallbacks {s['plan_fallbacks']}/{s['planned_n']}"
+            if planned
+            else ""
+        )
     )
     for r in rows:
         if not r["correct"]:

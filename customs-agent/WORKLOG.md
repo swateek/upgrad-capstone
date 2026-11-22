@@ -280,3 +280,19 @@ How to add an entry: append under the current day, newest at the bottom. One ent
 
 - **What:** After the paraphrase fixes: `para-router-v2` **1.00** (60/60), `day5-router-v4` dev **1.00** (no regression); ~3,000 tokens and 2.75 calls per question. COMPENSATIONS rows 10-12 filled, marked "after fixing on this set".
   - **Status of the sets:** dev and paraphrase are both tuned-on now. Reportable generalisation number: paraphrase 0.883 (first run, before fixes). Honest estimate from here: the Day 10 eval run. Optional: a fresh paraphrase set later, recorded but never fixed on.
+
+
+## Day 6
+
+- **What:** LLM planner + plan validator, and the hard budget.
+  - **Files:** `src/agent/router.py` refactored into a plan executor (`execute(profile, basket, plan)`); the code router is the fixed plan `ROUTER_PLAN` (test: executor with that plan == old router on every dev item; paraphrase replay still 0/60 wrong). `src/agent/planner.py` (prompt, `Plan` schema = ordered tool names only, `validate`, `propose`). `pipeline.py`: `mode="router"|"planner"`; planner -> validate -> one repair -> router plan as fallback (`plan_fallback` in each record); budget: 10 tool steps, 12,000 tokens -> escalate `budget_exceeded`. `run_agent.py --mode planner` (prints steps, fallbacks, max steps). `tests/test_planner.py`. 329 offline tests.
+  - **Decided:** the planner chooses tools and order; it never writes tool arguments (executor fills them from state). JSON plan via `json_schema`, not the native `tools` parameter (COMPENSATIONS row 1 said tools): one call returns the whole plan, which the validator can check before anything runs. Validator: known tools, no repeats, <= 10, search last, calculation order (rule 4), what-if first only for what-if, state lookup required when the state is known. "Step" = one tool run; model calls are bounded by the token budget.
+  - **Open:** run planner on dev (`day6-planner`) and compare with `day5-router-v4`; then single_rag baseline for the three-way ablation.
+
+- **What:** Planner on dev (`day6-planner`): accuracy **1.00**, same as the router, at **3,981 tokens and 4.69 calls per question** (router 2,995 and 2.75): +33% tokens, +1.9 calls. Max 8 tool steps. Fallbacks 0/16.
+  - **Found:** the first plan was invalid on 15 of 16 questions: always check_restrictions before normalise_units (it took "before any calculation" literally), search_regulations left out, determine_exemption missing on 7. The one repair fixed every one, so the validator, not the planner, is what makes it correct. The final plans are the router's plan (15 x the standard chain incl. lookup_state_rule, 1 x what-if).
+  - **Changed:** planner prompt states the order as a rule. This makes the planner close to a copy of the router plan: the honest finding is that for this task the plan is a fixed dependency chain, so a planner adds cost and needs a validator, without changing answers. COMPENSATIONS row 13 (before numbers; after pending).
+  - **Open:** re-run as `day6-planner-v2`; then single_rag.
+
+- **What:** `day6-planner-v2` (order rule in the prompt): accuracy 1.00; first plans valid 13/16 (was 1/16); 0 fallbacks; 3,640 tokens and 3.94 calls per question (router 2,995 / 2.75). Remaining first-plan errors: search_regulations left out (3), what-if plan with whatif_optimise third and no calculation steps (1). COMPENSATIONS row 13 filled.
+  - **Ablation so far (dev, post-tuning):** router 1.00 at 2.75 calls / 2,995 tok; planner 1.00 at 3.94 calls / 3,640 tok (+22% tokens) with the validator repairing 3/16 plans. Planner adds cost, no accuracy; the validator is what keeps it safe.
