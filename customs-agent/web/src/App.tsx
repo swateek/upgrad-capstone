@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ask } from "./api";
+import { ask, edit } from "./api";
 import { AnswerSlip } from "./AnswerSlip";
+import type { Change } from "./EditFacts";
 import { RegulationPanel } from "./RegulationPanel";
 import type { AskResponse, Mode } from "./types";
 
 interface Turn {
   id: number;
-  question: string;
-  shown: string; // what the traveller typed this turn
+  shown: string; // what the traveller typed (or changed) this turn
   response?: AskResponse;
   error?: string;
 }
@@ -24,25 +24,44 @@ export default function App() {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [busy, setBusy] = useState(false);
   const [cite, setCite] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | undefined>(undefined);
   const endRef = useRef<HTMLDivElement>(null);
   const nextId = useRef(1);
 
-  const run = useCallback(
-    async (full: string, shown: string) => {
-      const id = nextId.current++;
-      setTurns((t) => [...t, { id, question: full, shown }]);
-      setBusy(true);
-      try {
-        const response = await ask(full, mode);
-        setTurns((t) => t.map((x) => (x.id === id ? { ...x, response } : x)));
-      } catch (e) {
-        setTurns((t) => t.map((x) => (x.id === id ? { ...x, error: (e as Error).message } : x)));
-      } finally {
-        setBusy(false);
-      }
-    },
-    [mode],
-  );
+  // one turn of the conversation: a message, or a fact changed on the card
+  const step = useCallback(async (shown: string, call: () => Promise<AskResponse>) => {
+    const id = nextId.current++;
+    setTurns((t) => [...t, { id, shown }]);
+    setBusy(true);
+    try {
+      const response = await call();
+      setSessionId(response.session_id);
+      setTurns((t) => t.map((x) => (x.id === id ? { ...x, response } : x)));
+      return response;
+    } catch (e) {
+      setTurns((t) => t.map((x) => (x.id === id ? { ...x, error: (e as Error).message } : x)));
+      return undefined;
+    } finally {
+      setBusy(false);
+    }
+  }, []);
+
+  const send = (text: string) => step(text, () => ask(text, mode, sessionId));
+
+  const applyEdits = async (changes: Change[]) => {
+    let sid = sessionId;
+    for (const c of changes) {
+      if (!sid) return;
+      const r = await step(`Changed ${c.label}`, () => edit(sid!, c.field, c.value, mode));
+      sid = r?.session_id;
+    }
+  };
+
+  const restart = () => {
+    setTurns([]);
+    setSessionId(undefined);
+    setCite(null);
+  };
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "end" });
@@ -53,7 +72,7 @@ export default function App() {
     const q = question.trim();
     if (!q || busy) return;
     setQuestion("");
-    run(q, q);
+    send(q);
   };
 
   return (
@@ -61,6 +80,11 @@ export default function App() {
       <header className="top">
         <p className="brand">DeclareRight</p>
         <p className="top__note">Duty estimates for US residents bringing alcohol or tobacco home</p>
+        {turns.length > 0 && (
+          <button className="top__new" onClick={restart} disabled={busy}>
+            New conversation
+          </button>
+        )}
       </header>
 
       <main className={`main ${turns.length === 0 ? "main--empty" : ""}`}>
@@ -83,10 +107,8 @@ export default function App() {
                   response={t.response}
                   onCite={setCite}
                   busy={busy}
-                  onAnswerClarify={(reply) =>
-                    // interim, until LangGraph sessions (Days 8-9): re-ask with the question and its answer
-                    run(`${t.question}\nAsked: ${(t.response!.card.clarify ?? []).join(" ")}\nAnswer: ${reply}`, reply)
-                  }
+                  onAnswerClarify={send}
+                  onEdit={t.id === turns[turns.length - 1]?.id ? applyEdits : undefined}
                 />
               )}
               {!t.response && !t.error && (

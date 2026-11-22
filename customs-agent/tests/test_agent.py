@@ -874,3 +874,108 @@ def test_no_items_asks_what_they_are_bringing() -> None:
         "I'm 40 and just landed. Do I owe anything?", llm=llm, search=fake_search
     )
     assert run.answer.outcome == "clarify" and "the item" not in run.answer.message
+
+
+@pytest.mark.parametrize(
+    "q,abv_kept,origin_kept",
+    [
+        ("2 bottles of vodka, 750 ml, $25 each", False, False),
+        ("2 bottles of Polish vodka, 40%, $25 each", True, True),
+        ("a bottle of 80 proof vodka from Poland", True, True),
+    ],
+)
+def test_ground_items(q, abv_kept, origin_kept) -> None:
+    from src.agent.intake import ground_items
+
+    r = IntakeResult.model_validate(
+        {
+            "request_kind": "assess",
+            "profile": {},
+            "basket": [
+                {
+                    "item": "vodka",
+                    "category": "alcohol",
+                    "type": "spirits",
+                    "quantity": {"value": 2, "unit": "bottle"},
+                    "abv": 40,
+                    "origin": "PL",
+                }
+            ],
+        }
+    )
+    out, _ = ground_items(r, q)
+    assert (out.basket[0].abv is not None) == abv_kept and (
+        out.basket[0].origin is not None
+    ) == origin_kept
+
+
+def test_origin_of_a_non_risky_item_is_not_grounded() -> None:
+    from src.agent.intake import ground_items
+
+    r = IntakeResult.model_validate(
+        {
+            "request_kind": "assess",
+            "profile": {},
+            "basket": [
+                {
+                    "item": "tequila",
+                    "category": "alcohol",
+                    "type": "spirits",
+                    "quantity": {"value": 1, "unit": "bottle"},
+                    "origin": "MX",
+                }
+            ],
+        }
+    )
+    assert (
+        ground_items(r, "Day trip to Tijuana, one bottle of tequila")[0]
+        .basket[0]
+        .origin
+        == "MX"
+    )
+
+
+@pytest.mark.parametrize(
+    "q,expected",
+    [
+        ("first trip this year", False),
+        ("no other trips lately", False),
+        ("I'm 41, back from 4 days in London", None),
+    ],
+)
+def test_history_from_question(q, expected) -> None:
+    from src.agent.intake import history_from_question
+
+    r = IntakeResult.model_validate({"request_kind": "assess", "profile": {}})
+    assert (
+        history_from_question(r, q)[0].profile.exemption_used_last_30_days is expected
+    )
+
+
+@pytest.mark.parametrize(
+    "q,kept",
+    [
+        ("Bought 2 cartons of British cigarettes at Heathrow duty-free", False),
+        ("2 cartons of Marlboro, US-made, labelled for export, bought in Cancún", True),
+        ("a carton of American cigarettes from the duty-free shop", True),
+    ],
+)
+def test_export_label_flag_needs_the_question_to_say_so(q, kept) -> None:
+    from src.agent.intake import ground_items
+
+    r = IntakeResult.model_validate(
+        {
+            "request_kind": "assess",
+            "profile": {},
+            "basket": [
+                {
+                    "item": "cigarettes",
+                    "category": "tobacco",
+                    "type": "cigarettes",
+                    "quantity": {"value": 2, "unit": "carton"},
+                    "export_labelled_us": True,
+                }
+            ],
+        }
+    )
+    assert ground_items(r, q)[0].basket[0].export_labelled_us is kept

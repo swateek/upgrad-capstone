@@ -5,7 +5,9 @@
 
 Endpoints
   GET  /api/health                 models, search method, tracing backend
-  POST /api/ask                    {question, mode?, session_id?} -> answer, card, trace link, cost
+  POST /api/ask                    {question, mode?, session_id?} -> answer, card, facts, trace link, cost
+                                   (one turn of a conversation; session_id continues it)
+  POST /api/edit                   {session_id, field, value} -> a fact changed on the card
   GET  /api/clause/{citation_id}   regulation text for the citation viewer
 
 Rate limit: 10 questions per minute per client (mentor plan, Day 8); 429 with Retry-After beyond it.
@@ -39,6 +41,17 @@ class AskIn(BaseModel):
     session_id: str | None = None
 
 
+class EditIn(BaseModel):
+    session_id: str = Field(min_length=1)
+    field: str = Field(
+        min_length=1,
+        max_length=40,
+        description='"age", "trip", "exemption_used_last_30_days", "item1.quantity"',
+    )
+    value: Any
+    mode: Literal["planner", "router"] = "planner"
+
+
 @dataclass
 class Service:
     """What the API needs: built once at startup (models load slowly), replaced by fakes in tests."""
@@ -47,6 +60,7 @@ class Service:
     search: Any
     tracer: Any
     chunks: list[dict]
+    sessions: Any = None  # src.agent.session.Sessions; built on first use
 
     @classmethod
     def from_env(cls) -> Service:
@@ -63,6 +77,13 @@ class Service:
             Tracer.from_env(),
             chunks,
         )
+
+    def conversations(self):
+        if self.sessions is None:
+            from src.agent.session import Sessions
+
+            self.sessions = Sessions(self.llm, self.search)  # logs/sessions.sqlite3
+        return self.sessions
 
 
 class RateLimiter:
@@ -132,10 +153,7 @@ def create_app(service: Service | None = None) -> FastAPI:
             "rate_limit_per_minute": RATE_LIMIT,
         }
 
-    @app.post("/api/ask")
-    def ask(body: AskIn, request: Request):
-        from src.agent.pipeline import answer_question
-
+    def limited(request: Request) -> JSONResponse | None:
         client = request.client.host if request.client else "local"
         wait = limiter.retry_after(client)
         if wait:
@@ -146,14 +164,16 @@ def create_app(service: Service | None = None) -> FastAPI:
                 status_code=429,
                 headers={"Retry-After": str(wait)},
             )
+        return None
+
+    def reply(question: str, session: str, mode: str, turn) -> dict:
         s = svc()
-        session = body.session_id or uuid.uuid4().hex
         t0 = time.perf_counter()
-        run = answer_question(body.question, llm=s.llm, search=s.search, mode=body.mode)
+        run = turn()
         seconds = round(time.perf_counter() - t0, 1)
         try:
             ref = s.tracer.record(
-                body.question, run, mode=body.mode, session_id=session, seconds=seconds
+                question, run, mode=mode, session_id=session, seconds=seconds
             )
             trace = {"id": ref.trace_id, "url": ref.url}
         except Exception as e:  # noqa: BLE001 - a tracing failure must not lose the answer
@@ -161,12 +181,18 @@ def create_app(service: Service | None = None) -> FastAPI:
         card = dict(run.card)
         for c in card.get("citations") or []:
             c["label"] = pretty_citation(c["id"], title_of(c["id"]))
+        st = s.conversations().state(session)
         return {
             "session_id": session,
             "outcome": run.answer.outcome if run.answer else "escalated",
             "reason": run.reason,
             "answer": run.answer.model_dump(mode="json") if run.answer else None,
             "card": card,
+            "facts": {
+                "profile": st.get("profile") or {},
+                "basket": st.get("basket") or [],
+            },
+            "assumptions": run.assumptions,
             "trace": trace,
             "cost": {
                 "tool_steps": run.tool_steps,
@@ -176,6 +202,37 @@ def create_app(service: Service | None = None) -> FastAPI:
             },
             "error": bool(run.error),
         }
+
+    @app.post("/api/ask")
+    def ask(body: AskIn, request: Request):
+        if (r := limited(request)) is not None:
+            return r
+        session = body.session_id or uuid.uuid4().hex
+        convo = svc().conversations()
+        return reply(
+            body.question,
+            session,
+            body.mode,
+            lambda: convo.turn(session, message=body.question, mode=body.mode),
+        )
+
+    @app.post("/api/edit")
+    def edit(body: EditIn, request: Request):
+        """A fact changed on the answer card: one turn, no model reading, only dependent steps re-run."""
+        if (r := limited(request)) is not None:
+            return r
+        convo = svc().conversations()
+        if not convo.state(body.session_id).get("basket"):
+            raise HTTPException(
+                404, "No conversation with that id: ask a question first."
+            )
+        change = {"field": body.field, "value": body.value}
+        return reply(
+            f"(changed {body.field} to {body.value})",
+            body.session_id,
+            body.mode,
+            lambda: convo.turn(body.session_id, edit=change, mode=body.mode),
+        )
 
     @app.get("/api/clause/{citation_id}")
     def clause(citation_id: str) -> dict:

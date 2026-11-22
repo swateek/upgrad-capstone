@@ -337,3 +337,139 @@ def sizes_from_question(
     if not changes:
         return r, []
     return r.model_copy(update={"basket": basket}), changes
+
+
+ABV_STATED = re.compile(
+    r"(\d+(?:\.\d+)?)\s*(?:%|percent|per cent|abv\b|% abv)|(\d+(?:\.\d+)?)\s*proof\b|\babv\s*(?:of\s*)?(\d+(?:\.\d+)?)",
+    re.IGNORECASE,
+)
+
+
+def abvs_in(text: str) -> set[float]:
+    out: set[float] = set()
+    for m in ABV_STATED.finditer(text or ""):
+        if m.group(1):
+            out.add(float(m.group(1)))
+        elif m.group(2):
+            out.add(float(m.group(2)) / 2)  # US proof = 2 x ABV
+        elif m.group(3):
+            out.add(float(m.group(3)))
+    return out
+
+
+def countries_in(text: str) -> set[str]:
+    """ISO codes of countries named in a text (names, demonyms; not 2-letter words like "in")."""
+    words = re.findall(r"[A-Za-zÀ-ÿ'.]+", text or "")  # "Cuban-made" -> "Cuban", "made"
+    out: set[str] = set()
+    for n in (3, 2, 1):
+        for i in range(len(words) - n + 1):
+            phrase = " ".join(words[i : i + n]).strip(".'")
+            if len(phrase) <= 2:
+                continue
+            code = to_iso2(phrase)
+            if code:
+                out.add(code)
+    return out
+
+
+def _risk_line(b: BasketLine) -> bool:
+    """Items whose origin could make them banned or sanctioned (rules.yaml ask_origin_when)."""
+    from src.tools.common import rules
+
+    name = (b.item or "").lower()
+    for rule in rules()["restrictions"]:
+        ask = rule.get("ask_origin_when") or {}
+        if b.type in ask.get("types", []) or any(
+            k in name for k in ask.get("item_keywords", [])
+        ):
+            return True
+    return False
+
+
+EXPORT_LABEL = re.compile(
+    r"\b(?:for export|export(?:ed)?[- ]label\w*|label+ed for export|tax[- ]exempt for export|"
+    r"not for sale in the (?:us|u\.s\.|united states)|us[- ]made|u\.s\.[- ]made|"
+    r"made in (?:the )?(?:usa|us|u\.s\.|united states|america)|american[- ](?:made|brand)\w*|american cigarettes)\b",
+    re.IGNORECASE,
+)
+AMERICAN_RETURNED = re.compile(
+    r"\b(?:american goods returned|us goods returned|made in (?:the )?(?:usa|us|u\.s\.|united states)|"
+    r"(?:bought|purchased) (?:it|them|these) in the (?:us|u\.s\.|states)|originally (?:from|bought in) the (?:us|u\.s\.|states))\b",
+    re.IGNORECASE,
+)
+FLAGS = {
+    "export_labelled_us": EXPORT_LABEL,
+    "claims_american_goods_returned": AMERICAN_RETURNED,
+}
+
+
+def ground_items(
+    r: IntakeResult, question: str, only: dict[int, set[str]] | None = None
+) -> tuple[IntakeResult, list[str]]:
+    """Drop item facts the question does not state: an ABV with no matching "40%" / "80 proof",
+    the origin of an item that could be Cuban or Russian when no country is named (a guessed
+    origin would hide the question SPEC 5.2 requires), and the export-label / American-goods
+    flags unless the question says so (each switches on a different rule). `only`: {line index: fields} to check (a
+    later turn checks only the facts its message changed)."""
+    abvs, named = abvs_in(question), countries_in(question)
+    notes: list[str] = []
+    basket = list(r.basket)
+    for i, b in enumerate(basket):
+        fields = {"abv", "origin", *FLAGS} if only is None else only.get(i, set())
+        upd: dict[str, Any] = {}
+        if (
+            "abv" in fields
+            and b.abv is not None
+            and not any(abs(b.abv - a) < 0.051 for a in abvs)
+        ):
+            upd["abv"] = None
+            notes.append(f"item {i + 1} abv {b.abv:g} dropped (not in the question)")
+        if "origin" in fields and b.origin and _risk_line(b) and b.origin not in named:
+            upd["origin"] = None
+            notes.append(
+                f"item {i + 1} origin {b.origin} dropped (no country named for it)"
+            )
+        for (
+            flag,
+            pattern,
+        ) in FLAGS.items():  # special rules switch on these: never on a guess
+            if (
+                flag in fields
+                and getattr(b, flag)
+                and not pattern.search(question or "")
+            ):
+                upd[flag] = False
+                notes.append(
+                    f"item {i + 1} {flag} dropped (not stated in the question)"
+                )
+        if upd:
+            basket[i] = b.model_copy(update=upd)
+    if not notes:
+        return r, []
+    return r.model_copy(update={"basket": basket}), notes
+
+
+NOT_USED = re.compile(
+    r"\b(?:first (?:\w+ )?(?:trip|time|travel|holiday|vacation)\w*|no (?:other |previous |earlier )?(?:trips?|travel)|"
+    r"(?:haven'?t|have not|hasn'?t|has not|never) (?:\w+ )?(?:used (?:my|the|it)|been abroad|travel+ed|been away)|"
+    r"not (?:used|been abroad)|in (?:months|a year|years|ages))\b",
+    re.IGNORECASE,
+)
+
+
+def history_from_question(
+    r: IntakeResult, question: str
+) -> tuple[IntakeResult, list[str]]:
+    """'first trip this year', 'no other trips', 'haven't used my exemption': not used in the last
+    30 days, set in code when the model left it empty (the intake prompt asks the same)."""
+    p = r.profile
+    if p.exemption_used_last_30_days is not None or not NOT_USED.search(question or ""):
+        return r, []
+    return (
+        r.model_copy(
+            update={
+                "profile": p.model_copy(update={"exemption_used_last_30_days": False})
+            }
+        ),
+        ["exemption_used_last_30_days: not used (stated in the question)"],
+    )

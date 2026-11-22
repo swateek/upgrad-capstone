@@ -103,8 +103,11 @@ def working(r: RouteResult) -> list[str]:
                 steps.append(f"Item {h.line}: {h.message}" if h.line else h.message)
     if ex and ex.kind:
         s = EXEMPTION_LABEL[ex.kind]
-        if ex.kind == "standard_800" and ex.alcohol_l:
-            s += f"; alcohol allowance {litres(ex.alcohol_l)}"
+        has_alcohol = any(n.line.category == "alcohol" for n in r.lines)
+        if r.restrictions and r.restrictions.alcohol_excluded:
+            s += "; alcohol allowance 0 L: under 21, no alcohol is duty-free"
+        elif ex.kind == "standard_800" and has_alcohol:
+            s += f"; alcohol allowance {litres(ex.alcohol_l or 0)}"
         steps.append("Exemption: " + s + ". " + " ".join(ex.reasons))
     if al:
         steps += al.reasons

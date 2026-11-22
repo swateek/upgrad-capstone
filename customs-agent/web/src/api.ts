@@ -24,3 +24,12 @@ export async function ask(question: string, mode: Mode, sessionId?: string): Pro
 export async function clause(citationId: string): Promise<ClauseText> {
   return json<ClauseText>(await fetch(`/api/clause/${encodeURIComponent(citationId)}`));
 }
+
+export async function edit(sessionId: string, field: string, value: unknown, mode: Mode): Promise<AskResponse> {
+  const res = await fetch("/api/edit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ session_id: sessionId, field, value, mode }),
+  });
+  return json<AskResponse>(res);
+}

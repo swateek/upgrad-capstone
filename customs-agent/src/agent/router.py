@@ -17,14 +17,18 @@ for search_regulations to fetch by id (docs/RETRIEVAL.md): the first two per rul
 basket can apply more rules than the 5-clause budget holds.
 """
 
+# ruff: noqa: B023  (each lambda passed to _call runs at once, inside its loop iteration)
+
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import Literal
 
 from src.schemas import (
     Allowance,
+    Amount,
     BasketLine,
     DutyExcise,
     Exemption,
@@ -107,6 +111,9 @@ class RouteResult:
     trace: list[dict] = field(default_factory=list)  # tool name + compact output
     plan: list[str] = field(default_factory=list)
     tool_steps: int = 0  # tools actually run (search counted by the pipeline)
+    reused: list[str] = field(
+        default_factory=list
+    )  # steps taken from the previous turn
 
     def tool_outputs(self) -> list[object]:
         return [
@@ -171,16 +178,55 @@ def _finish(r: RouteResult) -> RouteResult:
     return r
 
 
+ITEM_FACTS = {"size", "count"}
+
+
+def _placeholder(basket: list[BasketLine]) -> list[BasketLine]:
+    """Stand-ins for unreadable item facts, only to find which trip facts are also missing."""
+    out = []
+    for b in basket:
+        upd: dict = {}
+        if b.category == "alcohol" and b.size is None:
+            upd["size"] = Amount(value=750, unit="ml")
+        if b.category == "tobacco":
+            upd["quantity"] = b.quantity.model_copy(
+                update={"unit": "cigar" if b.type == "cigars" else "cigarette"}
+            )
+        out.append(b.model_copy(update=upd) if upd else b)
+    return out
+
+
 def execute(
     profile: Profile,
     basket: list[BasketLine],
     plan: list[str],
     owe_less_than_usd: float | None = None,
+    reuse: dict | None = None,
 ) -> RouteResult:
-    """Run a plan. Stops early on clarify / escalate / everything prohibited, as the rules say."""
+    """Run a plan. Stops early on clarify / escalate / everything prohibited, as the rules say.
+
+    When an item fact (size, count) is missing, the trip facts that are also missing are found by
+    running the plan once more with stand-in values, so every missing fact is asked in one
+    message (SPEC 5.2, amended Day 7). The stand-in run's answer is never used.
+    """
+    r = _execute_once(profile, basket, plan, owe_less_than_usd, reuse)
+    if r.outcome == "clarify" and ITEM_FACTS & set(r.missing):
+        probe = _execute_once(profile, _placeholder(basket), plan, owe_less_than_usd)
+        if probe.outcome == "clarify":
+            r.missing = order_missing(list(dict.fromkeys(r.missing + probe.missing)))
+    return r
+
+
+def _execute_once(
+    profile: Profile,
+    basket: list[BasketLine],
+    plan: list[str],
+    owe_less_than_usd: float | None = None,
+    reuse: dict | None = None,
+) -> RouteResult:
     r = RouteResult(outcome="answered", plan=list(plan))
     try:
-        return _execute(profile, list(basket), plan, owe_less_than_usd, r)
+        return _execute(profile, list(basket), plan, owe_less_than_usd, r, reuse)
     except ToolError as e:
         if e.code == "missing_fact":
             r.outcome, r.missing = "clarify", order_missing(e.missing)
@@ -194,28 +240,54 @@ def execute(
         return r
 
 
+def _call(r: RouteResult, step: str, reuse: dict, fn: Callable, log: bool = True):
+    """Run one tool, or take its output from the previous turn when the facts it depends on did
+    not change (a correction replans only the steps after the changed fact)."""
+    if step in reuse:
+        out = reuse[step]
+        r.reused.append(step)
+        r.trace.append({"tool": step, "reused": True})
+        return out
+    out = fn()
+    r.tool_steps += 1
+    if log:
+        _log(
+            r,
+            step,
+            [x.model_dump(mode="json", exclude_none=True) for x in out]
+            if isinstance(out, list)
+            else out,
+        )
+    return out
+
+
 def _execute(
     profile: Profile,
     basket: list[BasketLine],
     plan: list[str],
     owe_less_than_usd: float | None,
     r: RouteResult,
+    reuse: dict | None = None,
 ) -> RouteResult:
+    reuse = reuse or {}
     rs = ex = al = None
     lines: list[NormalisedLine] | None = None
     for step in plan:
         if step == "whatif_optimise":
             _need(owe_less_than_usd, step, "a what-if target")
             product = basket[0]
-            w = whatif_optimise(
-                WArgs(
-                    profile=profile,
-                    product=product,
-                    owe_less_than_usd=owe_less_than_usd,
-                )
+            w = _call(
+                r,
+                step,
+                reuse,
+                lambda: whatif_optimise(
+                    WArgs(
+                        profile=profile,
+                        product=product,
+                        owe_less_than_usd=owe_less_than_usd,
+                    )
+                ),
             )
-            r.tool_steps += 1
-            _log(r, step, w)
             r.whatif = w
             basket = [
                 product.model_copy(
@@ -227,18 +299,17 @@ def _execute(
                 )
             ]
         elif step == "normalise_units":
-            lines = normalise_units(NArgs(basket=basket))
+            lines = _call(r, step, reuse, lambda: normalise_units(NArgs(basket=basket)))
             r.lines = lines
-            r.tool_steps += 1
-            _log(
-                r, step, [ln.model_dump(mode="json", exclude_none=True) for ln in lines]
-            )
         elif step == "check_restrictions":
             _need(lines is not None, step, "normalise_units")
-            rs = check_restrictions(RArgs(profile=profile, lines=lines))
+            rs = _call(
+                r,
+                step,
+                reuse,
+                lambda: check_restrictions(RArgs(profile=profile, lines=lines)),
+            )
             r.restrictions = rs
-            r.tool_steps += 1
-            _log(r, step, rs)
             for h in rs.hits:
                 _cite(r.citations, h.citations)
             if lines and set(rs.prohibited_lines) >= {ln.index for ln in lines}:
@@ -248,10 +319,13 @@ def _execute(
                 return r
         elif step == "determine_exemption":
             _need(rs is not None, step, "check_restrictions")  # rule 4
-            ex = determine_exemption(EArgs(profile=profile, lines=lines))
+            ex = _call(
+                r,
+                step,
+                reuse,
+                lambda: determine_exemption(EArgs(profile=profile, lines=lines)),
+            )
             r.exemption = ex
-            r.tool_steps += 1
-            _log(r, step, ex)
             missing = order_missing(rs.missing + ex.missing)
             if missing:
                 r.outcome, r.missing = "clarify", missing
@@ -263,10 +337,15 @@ def _execute(
             _cite(r.citations, ex.citations)
         elif step == "compute_allowance":
             _need(ex is not None, step, "determine_exemption")
-            al = compute_allowance(AArgs(exemption=ex, restrictions=rs, lines=lines))
+            al = _call(
+                r,
+                step,
+                reuse,
+                lambda: compute_allowance(
+                    AArgs(exemption=ex, restrictions=rs, lines=lines)
+                ),
+            )
             r.allowance = al
-            r.tool_steps += 1
-            _log(r, step, al)
             for rid in dict.fromkeys(a.rule_id for a in al.lines if a.rule_id):
                 _cite(r.citations, _rule_citations(rid))  # rules applied per line
             esc = next((a for a in al.lines if a.status == "escalate"), None)
@@ -275,14 +354,24 @@ def _execute(
                 return r
         elif step == "compute_duty_excise":
             _need(al is not None, step, "compute_allowance")
-            de = compute_duty_excise(DArgs(profile=profile, lines=lines, allowance=al))
+            de = _call(
+                r,
+                step,
+                reuse,
+                lambda: compute_duty_excise(
+                    DArgs(profile=profile, lines=lines, allowance=al)
+                ),
+            )
             r.duty = de
-            r.tool_steps += 1
-            _log(r, step, de)
             _cite(r.citations, de.citations)
         elif step == "lookup_state_rule":
-            sf = lookup_state_rule(SArgs(arrival_state=profile.arrival_state))
-            r.tool_steps += 1
+            sf = _call(
+                r,
+                step,
+                reuse,
+                lambda: lookup_state_rule(SArgs(arrival_state=profile.arrival_state)),
+                log=False,
+            )
             if sf:
                 r.state_flag = sf
                 _log(r, step, sf)

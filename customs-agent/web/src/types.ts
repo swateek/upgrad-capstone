@@ -30,6 +30,7 @@ export interface Card {
   citations?: Citation[];
   disclaimer?: string;
   clarify?: string[];
+  assumptions?: string[];
   state_flag?: { state: string; name: string; note: string; source: string } | null;
 }
 
@@ -44,8 +45,20 @@ export interface Answer {
   message: string;
 }
 
+export interface Facts {
+  profile: {
+    age?: number;
+    trip?: { value: number; unit: string };
+    exemption_used_last_30_days?: boolean;
+    arrival_state?: string;
+  };
+  basket: { item: string; quantity: { value: number; unit: string } }[];
+}
+
 export interface AskResponse {
   session_id: string;
+  facts: Facts;
+  assumptions: string[];
   outcome: Outcome;
   reason: string | null;
   answer: Answer | null;

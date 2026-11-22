@@ -193,6 +193,18 @@ LANGFUSE_PROJECT_ID=...                           # optional: builds trace links
 RATE_LIMIT_PER_MINUTE=10                          # optional
 ```
 
+## 12. Conversations (multi-turn)
+
+Each conversation is a LangGraph thread stored in SQLite (`logs/sessions.sqlite3` for the app). Follow-ups, corrections ("actually it was 30 hours") and fact edits on the answer card continue the same thread; a correction re-runs only the tool steps after the changed fact.
+
+```bash
+uv add langgraph langgraph-checkpoint-sqlite      # once
+uv run python eval/run_conversations.py --run-name day7-conv                        # 13 dev conversations, code router
+uv run python eval/run_conversations.py --mode planner --run-name day7-conv-planner
+```
+
+The web app uses the same sessions: answer a question in the box under it, or use "Correct a fact" on the card.
+
 ## Coming next (add steps here as they land)
 
 - LLM planner + plan validator, single_rag baseline, corrections across turns, Streamlit app, Docker.

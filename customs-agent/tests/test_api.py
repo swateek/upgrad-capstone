@@ -54,7 +54,12 @@ def client(tmp_path, llm=None) -> tuple[TestClient, FileTracer]:
         writer=[GOOD_D01],
         verifier=[{"advises_evasion": False}],
     )
-    return TestClient(create_app(Service(llm, fake_search, tracer, CHUNKS))), tracer
+    from src.agent.session import Sessions
+
+    convo = Sessions(llm, fake_search, db=tmp_path / "s.sqlite3")
+    return TestClient(
+        create_app(Service(llm, fake_search, tracer, CHUNKS, convo))
+    ), tracer
 
 
 def test_ask_returns_answer_card_trace_and_cost(tmp_path) -> None:
@@ -154,3 +159,27 @@ def test_pii_masked(text, kept) -> None:
 def test_pii_leaves_customs_facts_alone() -> None:
     t = "4 bottles, 750 ml, $30 each, $1,000 band, back 2026-11-21, 10 days, I'm 34, HTSUS 9816.00.20"
     assert mask_text(t) == t
+
+
+def test_conversation_continues_and_a_card_edit_replans(tmp_path) -> None:
+    c, _ = client(tmp_path)
+    first = c.post(
+        "/api/ask", json={"question": DEV["D01"]["question"], "mode": "router"}
+    ).json()
+    assert first["outcome"] == "answered" and first["facts"]["profile"]["age"] == 34
+    sid = first["session_id"]
+    edited = c.post(
+        "/api/edit",
+        json={"session_id": sid, "field": "age", "value": 20, "mode": "router"},
+    ).json()
+    assert edited["session_id"] == sid and edited["facts"]["profile"]["age"] == 20
+    assert edited["outcome"] in (
+        "answered",
+        "escalated",
+    )  # the scripted writer's text no longer fits
+
+
+def test_edit_needs_a_conversation(tmp_path) -> None:
+    c, _ = client(tmp_path)
+    r = c.post("/api/edit", json={"session_id": "nope", "field": "age", "value": 20})
+    assert r.status_code == 404

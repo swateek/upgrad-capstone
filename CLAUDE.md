@@ -252,12 +252,12 @@ From the mentor proposal's day-by-day table (`docs/01_US_Customs_Assistant.docx`
 | 5–7 | Writer and verifier prompts; failure notes for the report | | ✅ |
 | 5–7 | UI connected to agent v0; trace link per answer; PII masking in logs; taxonomy labelling rules | **Day 7 checkpoint:** "the web app shows real answers" (React + FastAPI replaces Streamlit) | ✅ app, traces, PII masking (Day 6); ⏳ taxonomy labelling rules |
 | 8 | Error handling: JSON retries ✅, ToolError back to the planner ⏳, loop block ✅, 10-step cap ✅, token budget ✅ | error-handling tests pass | ⏳ |
-| 8 | Corrections across turns: LangGraph StateGraph + SqliteSaver; replan only steps that depend on the changed field | | ⏳ |
+| 8 | Corrections across turns: LangGraph StateGraph + SqliteSaver; replan only steps that depend on the changed field | | ✅ built (Day 7); 13 dev conversations to run |
 | 8 | Rate limit (10 questions per minute); answer cache (off for official runs) | | ✅ |
 | 8 | Error-handling tests | | ⏳ |
 | 9 | Dry-run scoring on dev; prompt freeze at end of day; freeze the retrieval configuration | prompts frozen | ⏳ |
-| 9 | Verifier rules final; red-team prompt list (15+) | | ⏳ red-team list |
-| 9 | Editable "facts relied on" in the UI that triggers a replan | | ⏳ |
+| 9 | Verifier rules final; red-team prompt list (15+) | | ✅ red-team list (20, eval/redteam.yaml) |
+| 9 | Editable "facts relied on" in the UI that triggers a replan | | ✅ ("Correct a fact" → /api/edit) |
 | 9 | **Checkpoint:** must-have vs. stretch (section 5.4) | | ⏳ |
 | 10 | Official runs overnight, cache off: 3 × LLM-planner agent, 1 × code router, 1 × single_rag (≈ 3–4 h); code freeze, tag `v1.0.0-rc`; red-team against the live app, logged; CI green, image builds, health check; report §3 (prompting, small-model failures) and §4 (retrieval) | tag `v1.0.0-rc` | ⏳ |
 | 11 | Metrics: accuracy per type, $ accuracy, citation accuracy, clarify precision/recall, completion, tool calls, tokens and cost, p50/p95 latency; failure taxonomy (label every wrong answer, hand-check ≥ 15); recall@k next to end-to-end accuracy; report §5 (agent design, planner vs. router), §6 (responsible AI, injection and PII results, HITL boundary); deploy the container | | ⏳ |

@@ -20,6 +20,8 @@ from src.agent import card as C
 from src.agent.intake import (
     extract,
     ground_in_question,
+    ground_items,
+    history_from_question,
     normalise_countries,
     origin_from_question,
     sizes_from_question,
@@ -74,6 +76,7 @@ class AgentRun:
     plan_fallback: bool | None = (
         None  # planner mode: True if the router's plan was used
     )
+    assumptions: list[str] = field(default_factory=list)  # SPEC 5.2 defaults used
 
     def record(self, item_id: str, mode: str = "router") -> dict:
         return {
@@ -86,6 +89,7 @@ class AgentRun:
             "reason": self.reason,
             "tool_steps": self.tool_steps,
             "plan_fallback": self.plan_fallback,
+            "assumptions": self.assumptions,
             "calls": self.usage.calls,
             "tokens": self.usage.tokens,
             "retrieved_ids": self.retrieved_ids,
@@ -216,13 +220,40 @@ def _answer(
     verify_with_llm: bool,
     mode: str = "router",
 ) -> AgentRun:
+    rd = read(run, question, llm)
+    if rd is None:
+        return run
+    return respond(
+        run,
+        question,
+        rd.facts,
+        llm=llm,
+        search=search,
+        inject=inject,
+        verify_with_llm=verify_with_llm,
+        mode=mode,
+        other_goods=rd.other_goods,
+        age_21_plus=rd.age_21_plus,
+    )
+
+
+@dataclass
+class Read:
+    facts: Any  # IntakeResult
+    other_goods: bool = False
+    age_21_plus: bool = False
+
+
+def read(run: AgentRun, question: str, llm: Any) -> Read | None:
+    """Guard + intake + code clean-up. None when the turn is already finished (refused, or the
+    question could not be read)."""
     # 1. guard (code)
     g = check_question(question)
     run.trace.append({"step": "guard", "action": g.action, "reason": g.reason})
     if g.action == "refuse":
         run.reason = g.reason
         run.answer = Answer(outcome="refused", message=g.message)
-        return run
+        return None
 
     # 2. intake (LLM)
     try:
@@ -233,7 +264,7 @@ def _answer(
             outcome="escalated",
             message="I couldn't read the details of this question. Declare everything; an officer decides.",
         )
-        return run
+        return None
     facts, changed = normalise_countries(facts)  # names -> ISO codes, before any tool
     facts, stated = origin_from_question(facts, question)  # "Cuban cigars" -> CU
     changed += stated
@@ -244,6 +275,11 @@ def _answer(
     facts, dropped = ground_in_question(
         facts, question
     )  # no guessed age or trip length
+    facts, items_dropped = ground_items(
+        facts, question
+    )  # no guessed ABV or risky origin
+    facts, history = history_from_question(facts, question)  # "first trip this year"
+    dropped += items_dropped + history
     run.trace.append(
         {
             "step": "intake",
@@ -269,10 +305,38 @@ def _answer(
             outcome="refused",
             message=MESSAGES[key].format(what="those goods"),
         )
-        return run
+        return None
+    return Read(
+        facts,
+        other_goods=g.other_goods,
+        age_21_plus=any("21 or over" in d for d in dropped),
+    )
+
+
+Executor = Callable[[Any, list, str], RouteResult]
+
+
+def respond(
+    run: AgentRun,
+    question: str,
+    facts: Any,
+    *,
+    llm: Any,
+    search: SearchFn,
+    inject: dict | None = None,
+    verify_with_llm: bool = True,
+    mode: str = "router",
+    other_goods: bool = False,
+    age_21_plus: bool = False,
+    executor: Executor | None = None,
+    assumptions: list[str] | None = None,
+) -> AgentRun:
+    """Plan, tools, retrieval, answer card, writer, verifier: everything after the question has
+    been read. A session passes its own executor (defaults, reuse of earlier steps)."""
+    run.assumptions = list(assumptions or [])
     # an item of type "other" is not alcohol or tobacco, whatever category the model gave it
     basket = [b for b in facts.basket if b.category != "other" and b.type != "other"]
-    other = len(basket) < len(facts.basket) or g.other_goods
+    other = len(basket) < len(facts.basket) or other_goods
     if not basket:
         if other:
             run.reason = "out_of_scope_other_goods"
@@ -294,9 +358,11 @@ def _answer(
         return run
 
     # 3. plan: the code router's fixed plan, or the LLM planner's (validated; router as fallback)
-    if mode == "planner":
+    if executor is not None:
+        r: RouteResult = executor(facts, basket, mode)
+    elif mode == "planner":
         plan = _plan(run, llm, facts.model_copy(update={"basket": basket}))
-        r: RouteResult = execute(facts.profile, basket, plan, facts.owe_less_than_usd)
+        r = execute(facts.profile, basket, plan, facts.owe_less_than_usd)
     else:
         r = route(facts.profile, basket, facts.owe_less_than_usd)
     run.tool_steps = r.tool_steps + 1  # + search_regulations
@@ -329,13 +395,12 @@ def _answer(
         run.card = {
             "escalation": note.model_dump(mode="json"),
             "citations": cited_by_rule,
+            "assumptions": run.assumptions,
         }
         return run
 
     # 5. answer card (code) + writer (LLM) + verifier (code + LLM), one retry
-    facts_list = C.facts_relied_on(
-        facts.profile, r.lines, age_21_plus=any("21 or over" in d for d in dropped)
-    )
+    facts_list = C.facts_relied_on(facts.profile, r.lines, age_21_plus=age_21_plus)
     working = C.working(r)
     result = C.bottom_line_items(r)
     if other:
@@ -435,7 +500,7 @@ def _answer(
         "explanation": out.explanation,
         "working": working,
         "facts_relied_on": facts_list,
-        "assumptions": [],
+        "assumptions": list(assumptions or []),
         "citations": [
             {"id": c, "as_of": by_id[c].as_of, "url": by_id[c].source_url}
             for c in citations

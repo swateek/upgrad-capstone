@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { type Change, EditFacts } from "./EditFacts";
 import { LINE_TEXT, headline, money, splitFact } from "./format";
 import type { AskResponse } from "./types";
 
@@ -6,13 +7,15 @@ interface Props {
   response: AskResponse;
   onCite: (id: string) => void;
   onAnswerClarify: (text: string) => void;
+  onEdit?: (changes: Change[]) => void;
   busy: boolean;
 }
 
-export function AnswerSlip({ response: r, onCite, onAnswerClarify, busy }: Props) {
+export function AnswerSlip({ response: r, onCite, onAnswerClarify, onEdit, busy }: Props) {
   const h = headline(r);
   const c = r.card;
   const [reply, setReply] = useState("");
+  const [editing, setEditing] = useState(false);
 
   return (
     <article className={`slip slip--${h.tone}`} aria-live="polite">
@@ -111,7 +114,33 @@ export function AnswerSlip({ response: r, onCite, onAnswerClarify, busy }: Props
                 );
               })}
             </dl>
-            <p className="hint">If any of these is wrong, ask again with the right detail.</p>
+            {editing && onEdit ? (
+              <EditFacts
+                facts={r.facts}
+                onCancel={() => setEditing(false)}
+                onSave={(changes) => {
+                  setEditing(false);
+                  if (changes.length) onEdit(changes);
+                }}
+              />
+            ) : (
+              onEdit && (
+                <button className="link" onClick={() => setEditing(true)} disabled={busy}>
+                  Correct a fact
+                </button>
+              )
+            )}
+          </section>
+        )}
+
+        {c.assumptions && c.assumptions.length > 0 && (
+          <section className="slip__section assumed">
+            <h3>Assumed because it was not answered</h3>
+            <ul>
+              {c.assumptions.map((a) => (
+                <li key={a}>{a}</li>
+              ))}
+            </ul>
           </section>
         )}
 
