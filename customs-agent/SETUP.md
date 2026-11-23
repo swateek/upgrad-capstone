@@ -92,6 +92,9 @@ uv run python eval/build_conversations.py export
 # red-team list: eval/redteam.yaml -> redteam.jsonl (answerable items copy the gold of a dev item)
 uv run python eval/build_redteam.py
 uv run python eval/run_agent.py --set redteam --run-name redteam-day8
+uv run python -u eval/run_agent.py --set dev2 --run-name v2b-dev2-router         # agent v2: tune on dev-v2 (-u: live log through tee)
+uv run python eval/replay.py results/runs/v1-dev2-router --set dev2              # today's code on a run's recorded readings, no model call
+LLM_CACHE=0 uv run python eval/run_agent.py --set eval3 --run-name official-v2-router   # after the v2 freeze: eval-v3 (held out)
 ```
 
 ## 7. Prompting baselines and scoring (Day 4)

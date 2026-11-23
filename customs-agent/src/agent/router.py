@@ -50,7 +50,7 @@ from src.tools import (
     whatif_optimise,
 )
 from src.tools.check_restrictions import Args as RArgs
-from src.tools.common import order_missing, rules
+from src.tools.common import order_missing, rates, rules
 from src.tools.compute_allowance import Args as AArgs
 from src.tools.compute_duty_excise import Args as DArgs
 from src.tools.determine_exemption import Args as EArgs
@@ -108,7 +108,10 @@ class RouteResult:
     state_flag: StateFlag | None = None
     whatif: WhatIf | None = None
     line_types: list[str] = field(default_factory=list)  # bottom line per basket line
-    citations: list[str] = field(default_factory=list)  # rules applied, in order
+    citations: list[str] = field(
+        default_factory=list
+    )  # rules applied, main sources first
+    n_primary: int = 0  # citations[:n_primary] are each rule's main source
     trace: list[dict] = field(default_factory=list)  # tool name + compact output
     plan: list[str] = field(default_factory=list)
     tool_steps: int = 0  # tools actually run (search counted by the pipeline)
@@ -132,14 +135,58 @@ class RouteResult:
         ]
 
 
-def _cite(out: list[str], ids: list[str], n: int = PER_RULE) -> None:
+def _cite(r: RouteResult, ids: list[str], n: int = PER_RULE, primary: int = 1) -> None:
+    """Collect a rule's citations: the first `primary` are its main sources and go before every
+    second-tier one, so the 5-clause budget of search_regulations keeps each rule's main source
+    (agent v2: Day 10 E35/E46 lost the duty and excise sources to second-tier clauses)."""
     added = 0
-    for c in ids:
+    for k, c in enumerate(ids):
         if added >= n:
             break
-        if c not in out:
-            out.append(c)
-            added += 1
+        if c in r.citations:
+            if k < primary and r.citations.index(c) >= r.n_primary:
+                r.citations.remove(
+                    c
+                )  # promote a second-tier id that is a main source here
+            else:
+                continue
+        if k < primary:
+            r.citations.insert(r.n_primary, c)
+            r.n_primary += 1
+        else:
+            r.citations.append(c)
+        added += 1
+
+
+def abv_needed_anyway(
+    profile: Profile, lines: list[NormalisedLine] | None
+) -> list[str]:
+    """["abv"] when the alcohol is over the largest allowance the traveller could have (1 L; 2 L
+    arriving directly from a 2-litre country) and a line's excise needs an ABV it lacks."""
+    from src.tools.normalise_units import excise_class
+
+    alcohol = [n for n in lines or [] if n.line.category == "alcohol"]
+    if not alcohol or any(n.total_l is None for n in alcohol):
+        return []
+    alc = rules()["exemptions"]["standard_800"]["alcohol"]
+    two_l = (
+        profile.direct_arrival_from in rates()["beneficiary_countries_2l"]["countries"]
+    )
+    cap = Decimal(
+        str(
+            alc["beneficiary_country_direct_arrival"]["max_liters"]
+            if two_l
+            else alc["max_liters"]
+        )
+    )
+    if sum((n.total_l for n in alcohol), Decimal(0)) <= cap:
+        return []
+    needs = [
+        n
+        for n in alcohol
+        if n.line.abv is None and (excise_class(n.line) in (None, "spirits"))
+    ]
+    return ["abv"] if needs else []
 
 
 def _rule_citations(rule_id: str) -> list[str]:
@@ -259,7 +306,7 @@ def tool_error(r: RouteResult, e: ToolError) -> RouteResult:
         r.outcome, r.rule_id, r.message = "escalated", e.rule_id or e.code, e.message
         if e.code == "invalid_input":
             r.error = {"kind": "tool_error", "message": e.message}
-    _cite(r.citations, e.citations)
+    _cite(r, e.citations)
     return r
 
 
@@ -334,7 +381,7 @@ def _execute(
             )
             r.restrictions = rs
             for h in rs.hits:
-                _cite(r.citations, h.citations)
+                _cite(r, h.citations)
             if lines and set(rs.prohibited_lines) >= {ln.index for ln in lines}:
                 # everything is prohibited: no exemption fact can change the answer (SPEC 5.2)
                 r.line_types = ["prohibited"] * len(lines)
@@ -349,15 +396,26 @@ def _execute(
                 lambda: determine_exemption(EArgs(profile=profile, lines=lines)),
             )
             r.exemption = ex
+            if rs.escalate and not rs.missing:
+                # a restriction that escalates (Russian origin, commercial quantity) does so
+                # whatever the exemption facts are: nothing to ask first (agent v2, D2-083/084)
+                hit = next(h for h in rs.hits if h.outcome == "escalate")
+                r.outcome, r.rule_id, r.message = "escalated", hit.rule_id, hit.message
+                return r
             missing = order_missing(rs.missing + ex.missing)
             if missing:
-                r.outcome, r.missing = "clarify", missing
+                # SPEC v2 row 12: when the alcohol is over the allowance whatever the answers are,
+                # excise is owed in every case, so the ABV is asked in this first round too
+                r.outcome, r.missing = (
+                    "clarify",
+                    order_missing(missing + abv_needed_anyway(profile, lines)),
+                )
                 return r
             if rs.escalate:
                 hit = next(h for h in rs.hits if h.outcome == "escalate")
                 r.outcome, r.rule_id, r.message = "escalated", hit.rule_id, hit.message
                 return r
-            _cite(r.citations, ex.citations)
+            _cite(r, ex.citations)
         elif step == "compute_allowance":
             _need(ex is not None, step, "determine_exemption")
             al = _call(
@@ -370,7 +428,7 @@ def _execute(
             )
             r.allowance = al
             for rid in dict.fromkeys(a.rule_id for a in al.lines if a.rule_id):
-                _cite(r.citations, _rule_citations(rid))  # rules applied per line
+                _cite(r, _rule_citations(rid))  # rules applied per line
             esc = next((a for a in al.lines if a.status == "escalate"), None)
             if esc:
                 r.outcome, r.rule_id, r.message = "escalated", esc.rule_id, esc.message
@@ -386,7 +444,7 @@ def _execute(
                 ),
             )
             r.duty = de
-            _cite(r.citations, de.citations)
+            _cite(r, de.citations, primary=2)  # duty and excise sources
         elif step == "lookup_state_rule":
             sf = _call(
                 r,
@@ -398,7 +456,7 @@ def _execute(
             if sf:
                 r.state_flag = sf
                 _log(r, step, sf)
-                _cite(r.citations, sf.citations, 1)
+                _cite(r, sf.citations, 1)
         elif step == "escalate_to_human":
             r.outcome, r.rule_id = "escalated", r.rule_id or "planner_escalated"
             r.message = r.message or "The planner could not assess this with the tools."

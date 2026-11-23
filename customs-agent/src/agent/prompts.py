@@ -12,6 +12,7 @@ from src.baselines.prompts import EXTRACT
 INTAKE = (
     EXTRACT
     + """
+- item: the product's own name as the traveller wrote it ("oloroso sherry", "Cava", "ginjo sake", "Toscano cigars"), never its category ("alcohol", "tobacco") or a list letter.
 - Countries (origin, bought_where, direct_arrival_from) as ISO 3166 two-letter codes: IT, MX, CU, GB.
 - quantity counts containers or packs ("two 1-litre bottles" is quantity {2, "bottle"} with size {1, "litre"}); size is the volume of one alcohol container.
 - Tobacco: quantity is the number of packs, cartons, boxes or single cigars, with the count in the unit when stated ("a pack of 20 cigarettes" is {1, "pack of 20"}; "a box of 10 cigars" is {1, "box of 10"}; "2 cartons" is {2, "carton"}); size is null.
@@ -23,7 +24,7 @@ INTAKE = (
 
 WRITER = """You explain a US customs estimate to a returning traveller. The calculation is already done: you are given the result, the working (with every number), the facts relied on, and numbered regulation clauses. Write JSON:
 
-- bottom_line: one sentence with the result for each item, e.g. "You owe $2.97 on the wine." Use only the amounts given.
+- bottom_line: one sentence with the result for each item, e.g. "You owe <the amount in RESULT> on the wine." Use only the amounts given.
 - explanation: under 100 words, plain English: which exemption applies, what is duty-free, what is over and why, and what to do at the border. Use only numbers that appear in the result, working, facts or clauses. Never work out a new number.
 - sources: the numbers of the clauses that support your explanation, e.g. [1, 3]. Only clause numbers listed.
 

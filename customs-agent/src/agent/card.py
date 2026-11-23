@@ -7,6 +7,7 @@ from decimal import Decimal
 
 from src.agent.router import RouteResult
 from src.schemas import Clauses, Profile
+from src.tools.normalise_units import class_by_name
 
 EXEMPTION_LABEL = {
     "standard_800": "$800 personal exemption (abroad 48 hours or more, not used in the last 30 days)",
@@ -140,6 +141,13 @@ def working(r: RouteResult) -> list[str]:
                 )
             elif a.message:
                 steps.append(f"Item {a.line}: {a.message}")
+    over = [a.excess_l for a in (al.lines if al else []) if a.excess_l]
+    if (
+        len(over) > 1
+    ):  # the total, so the writer never adds the lines up (dev-v2 D2-015)
+        steps.append(
+            f"Alcohol over the allowance in total: {litres(sum(over, Decimal(0)))}."
+        )
     if de:
         for d in de.lines:
             rate = f"{(d.duty_rate * 100).normalize():f}%"
@@ -158,6 +166,10 @@ def working(r: RouteResult) -> list[str]:
             steps.append(
                 f"Total: duty {money(de.duty_usd)} + excise {money(de.excise_usd)} = {money(de.total_usd)}."
             )
+    for n in r.lines:  # product notes from rates.yaml (SPEC v2 row 10: sake)
+        entry = class_by_name(n.line.item) if n.line.category == "alcohol" else None
+        if entry and entry.get("note"):
+            steps.append(f"Item {n.index}: {entry['note']}")
     if r.whatif:
         steps.append(
             f"What-if: up to {r.whatif.max_units} bottles owe {money(r.whatif.owed_usd)}, "
@@ -167,6 +179,61 @@ def working(r: RouteResult) -> list[str]:
     # section (state_flag), and it is kept away from the writer, which converted its gallons
     # into litres and failed the verifier (COMPENSATIONS row 18).
     return steps
+
+
+def _names(items: list[str]) -> str:
+    items = [f"the {i}" for i in items]
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " and " + items[-1]
+
+
+def bottom_line_text(r: RouteResult) -> str:
+    """The bottom line in code from the tool results (agent v2: the writer copied the prompt's
+    example amount, or left the total out, and the verifier escalated: dev-v2 D2-015, D2-095)."""
+    if r.whatif:
+        w = r.whatif
+        return (
+            f"Up to {w.max_units} bottles keep what you owe under {money(w.limit_usd)} "
+            f"(you would owe {money(w.owed_usd)})."
+        )
+    owed = {d.line: d.total_usd for d in (r.duty.lines if r.duty else [])}
+    by_type: dict[str, list] = {}
+    for n, t in zip(r.lines, r.line_types, strict=False):
+        by_type.setdefault(t, []).append(n)
+    out = []
+    if by_type.get("owe"):
+        lines = by_type["owe"]
+        if len(lines) == 1:
+            out.append(
+                f"You owe {money(owed[lines[0].index])} on the {lines[0].line.item}."
+            )
+        else:
+            parts = [f"{money(owed[n.index])} on the {n.line.item}" for n in lines]
+            out.append(
+                f"You owe {money(r.duty.total_usd)} in total: "
+                + ", ".join(parts[:-1])
+                + f" and {parts[-1]}."
+            )
+    if by_type.get("prohibited"):
+        out.append(
+            f"{_names([n.line.item for n in by_type['prohibited']]).capitalize()}: prohibited, you cannot bring "
+            + ("it" if len(by_type["prohibited"]) == 1 else "them")
+            + " in."
+        )
+    if by_type.get("declare_detention_risk"):
+        out.append(
+            f"{_names([n.line.item for n in by_type['declare_detention_risk']]).capitalize()}: over the tobacco "
+            "allowance; declare it, the excess may be detained or seized."
+        )
+    if by_type.get("relinquish_excess"):
+        out.append(
+            f"{_names([n.line.item for n in by_type['relinquish_excess']]).capitalize()}: over the allowance; "
+            "hand the excess to CBP at entry."
+        )
+    if by_type.get("nothing_to_pay"):
+        out.append(
+            f"Nothing to pay on {_names([n.line.item for n in by_type['nothing_to_pay']])}."
+        )
+    return " ".join(out)
 
 
 def bottom_line_items(r: RouteResult) -> list[str]:

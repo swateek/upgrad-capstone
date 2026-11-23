@@ -199,3 +199,15 @@ Agent v1 and its official result (eval-v2, 0.75) stay under SPEC v1 (sections 1�
 | 11 | When the origin is asked (refines 5.2) | When something is owed and an item's origin is not stated: if it was **bought in a country whose own goods pay no duty** (a free-trade programme country in `rates.yaml`, e.g. Mexico under USMCA), ask where it was made, because a local product is duty-free and an imported one is not; the code decides which countries count, so the traveller never needs to know. Otherwise take the origin to be where it was bought (a wrong guess can only overcharge, never under-declare). If the traveller does not know, use the general 3% rate and say so. Cuban- and Russian-risk items keep the stage-1 origin question. |
 | 12 | ABV in the first round (refines 5.2) | Ask the ABV in **stage 1** when the alcohol is over the allowance whatever the other answers are (total over 1 L; over 2 L when arriving directly from a 2 L country), because excise is then owed in every case. Otherwise ABV stays in stage 2. Found in the owner's Honolulu sake test (two rounds where one was enough). |
 
+### 9c. Readings settled while tuning agent v2 on dev-v2 (2026-11-23)
+
+No new rule: how the existing rules are read where the text left room. Each is in code, tested, and matches the dev-v2 gold.
+
+| # | Point | Reading |
+| --- | --- | --- |
+| 13 | When is an origin "stated"? (rows 11 and 5.2 stage 1) | Only when the question says where the item was **made**: a demonym next to the item or its product word ("Cuban cigars", "Mexican añejo tequila"), "made / distilled / rolled / manufactured in X", "Hecho en Cuba", "X-made", "<item> from X", "made there" / "local" for the country it was bought in, "everything Italian", or a product that by law is made only there (tequila, mezcal → Mexico, 27 CFR 5.148(b); pisco → Peru or Chile, 27 CFR 5.145(b)(6)). The country of the trip or the shop is not a stated origin: "rum I picked up in Barbados" asks where it was made (Cuban risk), as dev-v2's gold does. |
+| 14 | Flat-rate history not stated | SPEC 3 stands: it follows the exemption history, so "I used my exemption 10 days ago" with something owed escalates (flat rate treated as used). Said outright, it wins: "paid no duty that time" → available; "paid duty" → used. The generation prompt for eval-v3 said only the stated cases, and dev-v2's D2-055 was labelled as if available (logged as a dev-v2 erratum; eval-v3 has no question in that case). |
+| 15 | A restriction that escalates | Russian-origin alcohol and commercial quantities escalate whatever the exemption facts are, so they escalate before any exemption question is asked. |
+| 16 | Export-labelled US cigarettes | Only when the question says so ("for export only", "labelled for export") or the cigarettes are US-made and bought at a duty-free shop. "Made in the US" alone is not an export label; a traveller who says "American goods returned" makes that claim (AGR rule). |
+| 17 | Fortified wine | Sherry, port, madeira, marsala and vermouth are wine (26 USC 5041(b)); the ABV decides the band. |
+

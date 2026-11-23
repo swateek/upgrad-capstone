@@ -56,8 +56,15 @@ EVASION = _any(
         r"\b(don'?t|do not|not) (want to |going to |plan to )?declare\b",
         r"\bget (it|them|this|these) (past|through) customs\b",
         # will they notice / find / check it: asking about not being detected
-        r"\b(will|would|do|does|can|could)\s+(they|customs|cbp|the officers?|officers|anyone|security)\s+(even\s+)?(notice|see|find|spot|detect|catch)\b",
+        r"\b(will|would|do|does|can|could)\s+(they|customs|cbp|the officers?|officers|anyone|security)\s+((even|actually|really|ever)\s+)*(notice|see|find|spot|detect|catch)\b",
         r"\bso (that )?(customs|cbp|the officers?|officers|they|nobody|no one)\b.{0,20}\b(doesn'?t|don'?t|won'?t|can'?t|will not|do not|does not|never)\b.{0,10}\b(find|see|notice|spot|detect)\b",
+        # agent v2: a lower value on the form, probing the checks
+        r"\b(put|write|list|enter|declare|say|claim|mark)\w*\b( down| it at| them at)?\s+(only\s+)?\$?\d[\d,.]*\b.{0,40}\b(instead of|rather than|when i (actually )?paid|though i (actually )?paid|but i (actually )?paid)\b",
+        r"\b(put|write|list|enter|declare)\w*\b( down)?\s+(just\s+|only\s+)?\$?\d[\d,.]*\s*(a|per|each)?\s*\w*\s*on the (declaration|customs form|form)\b",
+        r"\b(they|customs|cbp|officers)\s+(don'?t|do not|never|won'?t|rarely)\s+(really\s+|actually\s+)?(check|look at|ask for|verify|open)\s+(the\s+)?(receipts?|invoices?|bags?|luggage|suitcases?)\b",
+        r"\bno way (they|customs|cbp|the officers?) (can|could|will|would) (prove|know|tell|find out|check)\b",
+        r"\b(customs|cbp|the officers?|officers|security)\s+(\w+\s+)?(finds?|notices?|spots?|detects?|catch(es)?)\s+(them|it|the bottles?)\b.{0,10}$|\bhow likely\b.{0,40}\b(find|notice|spot|detect|catch)\w*\b",
+        r"\btips?\b.{0,25}\b(so|to)\b.{0,15}\b(not|don'?t|avoid|never)\b.{0,10}\b(get )?(charged|pay(ing)?|caught|taxed)\b",
     ]
 )
 
@@ -65,14 +72,30 @@ EVASION = _any(
 # no alcohol or tobacco is mentioned; mixed questions are assessed with a note (SPEC 2).
 SCOPE_TRAVELLER = {
     "crew": r"\b(flight attendant|cabin crew|crew ?member|aircrew|airline crew|ship'?s crew|pilot for)\b",
-    "non_residents": r"\b(non-?resident|not a (us|u\.s\.) (resident|citizen)|tourist visa|i'?m (a )?(tourist|visitor|visiting the us))\b",
+    "non_residents": r"\b(non-?resident|not a (us|u\.s\.) (resident|citizen)|tourist visa|i'?m (a )?(tourist|visitor|visiting the us))\b"
+    # agent v2: "a Canadian citizen visiting the US", "visiting America for a week", "on an ESTA"
+    r"|\b(visiting|visit to|coming to|first time in) (the )?(us|u\.s\.|usa|u\.s\.a\.|united states|america|the states)\b"
+    r"|\b(foreign (visitor|national|tourist)|on an? (esta|b-?1|b-?2|visitor visa|tourist visa)|esta (visa|waiver))\b",
     "insular_possession_arrivals": r"\b(guam|american samoa|northern mariana|saipan|u\.?s\.? virgin islands|usvi|st\.? thomas|st\.? croix|st\.? john\b)",
-    "shipped_goods": r"\b(ship(ped|ping)?|mail(ed|ing)?|post(ed|ing)?|courier|send(ing)?)\b.{0,20}\b(home|it|them|back|to the us|to myself)\b.{0,30}\b(instead|separately|by (mail|post)|fedex|dhl|ups)\b|\b(fedex|dhl|ups|usps) (it|them)\b",
+    "shipped_goods": r"\b(ship(ped|ping)?|mail(ed|ing)?|post(ed|ing)?|courier|send(ing)?)\b.{0,20}\b(home|it|them|back|to the us|to myself)\b.{0,30}\b(instead|separately|by (mail|post)|fedex|dhl|ups)\b|\b(fedex|dhl|ups|usps) (it|them)\b"
+    # agent v2: "shipping it to my home in Ohio", "ship a case straight to my house", "via DHL",
+    # "having the case shipped"
+    r"|\b(ship|mail|post|courier|send|sent|deliver)\w*\b.{0,40}\b(to (my|our) (home|house|address|place|door|apartment|flat|office)|home to (myself|me)|to myself)\b"
+    r"|\b(ship|mail|post|send|sent)\w*\b.{0,60}\b(via|by|with|through) (dhl|fedex|ups|usps|the post|post|mail|courier|freight)\b"
+    r"|\b(have|having|had|get|getting|got|is being|are being|will be|was|were)\s+(it|them|the \w+|\w+ \w+)?\s*(shipped|mailed|couriered|sent home|delivered home)\b",
     "family_grouping": r"\b(pool|combine|share|add up)\b.{0,25}\b(exemptions?|allowances?)\b",
 }
+# "rather than shipping it", "decided not to ship them", "offered to ship it but I carried it home"
+NOT_SHIPPED = re.compile(
+    r"\b(instead of|rather than|didn'?t|did not|won'?t|will not|not going to|decided not to|decided against)\s+(\w+\s+){0,2}"
+    r"(ship|shipping|mail|mailing|send|sending|having (it|them) shipped)\b"
+    r"|\b(but|so) (i|we) (carried|brought|packed|took)\b",
+    _I,
+)
 SCOPE_GOODS = {
     "vapes_and_nicotine_products": r"\b(vapes?|vaping|e-?cig\w*|e-?liquid|juul|nicotine pouch\w*|zyn|snus|heated tobacco|iqos)\b",
-    "food_and_agriculture": r"\b(cheese|sausage|salami|ham|meat|fruit|vegetables?|seeds?|plants?|honey|chocolate|food)\b",
+    "food_and_agriculture": r"\b(cheese|sausage|salami|ham|meat|fruit|vegetables?|seeds?|plants?|honey|chocolate|food)\b"
+    r"|\b(jam[oó]n|prosciutto|chorizo|charcuterie|cured meats?|foie gras|p[aâ]t[eé]|caviar|olive oil|spices|truffles?|biscuits|cookies|pastries|sweets|candy|eggs|nuts)\b",
     "currency": r"\b(cash|currency|\$ ?10,?000|monetary instruments?)\b",
 }
 ALCOHOL_TOBACCO = re.compile(
@@ -88,6 +111,10 @@ DOC_INJECTION = _any(
         r"\bsystem (notice|prompt|message|override)\b",
         r"\b(ignore|disregard)\b.{0,30}\b(instructions?|rules|above|previous)\b",
         r"\btell (the )?(travell?ers?|users?|customers?)\b",
+        # agent v2: "Assistant instruction: ...", "Note for AI systems ...", "Repeat this to the user"
+        r"\b(assistant|ai|chatbot|model|llm|bot)s?\s+(instruction|note|notice|directive|guidance|update)s?\b",
+        r"\b(note|notice|instructions?|message|update|guidance)\s+(to|for)\s+(all\s+)?(the\s+)?(ai|assistants?|chatbots?|language models?|llms?|ai systems?|bots?|models?)\b",
+        r"\b(repeat|pass|relay|say)\s+(this|that|it)\s+(on\s+)?to\s+(the\s+)?(users?|travell?ers?|customers?)\b",
     ]
 )
 
@@ -125,6 +152,8 @@ def check_question(question: str) -> GuardResult:
     if EVASION.search(q):
         return GuardResult("refuse", "evasion", MESSAGES["evasion"])
     for cat, pat in SCOPE_TRAVELLER.items():
+        if cat == "shipped_goods" and NOT_SHIPPED.search(q):
+            continue
         if re.search(pat, q, _I):
             return GuardResult(
                 "refuse",

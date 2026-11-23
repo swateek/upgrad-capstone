@@ -58,6 +58,30 @@ def test_eval_run_refuses_without_a_matching_freeze(tmp_path, monkeypatch, capsy
     assert "Refusing to run eval-v2" in capsys.readouterr().out
 
 
+@pytest.mark.parametrize(
+    ("set_name", "label"), [("eval3", "eval-v3"), ("eval-gold2", "eval-v2 (gold-v2)")]
+)
+def test_v2_held_out_sets_refuse_without_a_matching_freeze(
+    tmp_path, monkeypatch, capsys, set_name, label
+):
+    from eval import run_agent
+
+    monkeypatch.setattr(freeze, "FROZEN", tmp_path / "none.json")
+    monkeypatch.setattr(
+        "sys.argv", ["run_agent.py", "--set", set_name, "--mode", "router"]
+    )
+    assert run_agent.main() == 1
+    assert f"Refusing to run {label}" in capsys.readouterr().out
+
+
+def test_every_set_file_exists():
+    from eval import run_agent
+
+    for name, path in run_agent.SETS.items():
+        assert path.exists(), name
+    assert set(run_agent.HELD_OUT) == {"eval", "eval3", "eval-gold2"}
+
+
 @pytest.mark.skipif(not freeze.FROZEN.exists(), reason="no freeze recorded yet")
 def test_code_matches_the_recorded_freeze():
     """After Day 9: a prompt or retrieval change must come with a new, logged freeze."""

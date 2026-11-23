@@ -32,6 +32,9 @@ SETS = {
     "redteam": ROOT / "eval" / "redteam.jsonl",
     "eval": ROOT / "eval" / "eval_set.jsonl",
     "conversations": ROOT / "eval" / "conversations.jsonl",
+    "dev2": ROOT / "eval" / "dev_set_v2.jsonl",
+    "eval3": ROOT / "eval" / "eval_set_v3.jsonl",
+    "eval-gold2": ROOT / "eval" / "eval_set_gold_v2.jsonl",
 }
 
 # code -> one-line definition (docs/TAXONOMY.md has the full rules and examples)

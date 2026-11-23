@@ -103,6 +103,8 @@ Step by step:
 7. **Writer (LLM).** Bottom line, working, facts relied on, citations (only retrieved clause ids), as-of date, disclaimer.
 8. **Verifier (code + one LLM check).** Every dollar figure must equal a tool output; every citation must be in the retrieved set; facts must match the profile; no evasion advice. One writer retry, then escalate.
 
+**Agent v2 (2026-11-23).** Between intake and the tools, the code clean-up (`src/agent/pipeline.clean`) now also: takes the product's name from the question when the model wrote its category; sets the tax class from the product name (`rates.yaml` excise.classes_by_name: sake as beer, Champagne as sparkling, liqueurs as spirits, sherry as wine); reads the 30-day and flat-rate history, box counts, prices per box and explicit trip lengths from the question; keeps an origin only when the question says where the item was made (SPEC 9b row 11, 9c row 13); drops a what-if target with no "how many" question. The router asks the ABV in the first round when the alcohol is over any possible allowance (row 12) and escalates a restriction before asking exemption facts. Citations: each rule's main source first in the 5-clause budget, and only clauses whose text is exactly a frozen-corpus chunk can be cited. `eval/replay.py` runs this clean-up and the router on a run's recorded intake JSON, without the model.
+
 A clarifying question ends the turn. The reply re-enters at intake, and the checkpointer keeps earlier facts, so only steps that depend on the new fact run again.
 
 ## 3. Ablations run against this design

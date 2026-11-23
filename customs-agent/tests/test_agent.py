@@ -291,7 +291,9 @@ def test_d01_end_to_end() -> None:
 
 
 def test_writer_gets_one_retry_then_escalates() -> None:
-    bad = {**GOOD_D01, "bottom_line": "You owe $5.00."}
+    # agent v2: the bottom line is built in code, so a bad writer output is a bad explanation;
+    # an explanation whose only sentence has an invented number cannot be pruned to anything
+    bad = {**GOOD_D01, "explanation": "You owe $5.00 because of the duty."}
     llm = ScriptedLLM(
         intake=[intake_for("D01")],
         writer=[bad, bad],
@@ -303,7 +305,7 @@ def test_writer_gets_one_retry_then_escalates() -> None:
 
 
 def test_writer_retry_can_recover() -> None:
-    bad = {**GOOD_D01, "bottom_line": "You owe $5.00."}
+    bad = {**GOOD_D01, "explanation": "You owe $5.00 because of the duty."}
     llm = ScriptedLLM(
         intake=[intake_for("D01")],
         writer=[bad, GOOD_D01],
@@ -311,6 +313,39 @@ def test_writer_retry_can_recover() -> None:
     )
     run = answer_question(DEV["D01"]["question"], llm=llm, search=fake_search)
     assert run.answer.outcome == "answered"
+
+
+def test_invented_sentence_pruned_after_the_retry() -> None:
+    """agent v2 (dev-v2 D2-064): one invented sentence in an otherwise checked answer is dropped."""
+    bad = {
+        **GOOD_D01,
+        "explanation": GOOD_D01["explanation"]
+        + " Only $300 of the exemption is left for alcohol.",
+    }
+    llm = ScriptedLLM(
+        intake=[intake_for("D01")],
+        writer=[bad, bad],
+        verifier=[{"advises_evasion": False}] * 2,
+    )
+    run = answer_question(DEV["D01"]["question"], llm=llm, search=fake_search)
+    assert run.answer.outcome == "answered"
+    assert "$300" not in run.answer.message and "$2.97" in run.answer.message
+    pruned = [t for t in run.trace if t.get("attempt") == "pruned"]
+    assert pruned and pruned[0]["removed"] == [
+        "Only $300 of the exemption is left for alcohol."
+    ]
+
+
+def test_bottom_line_comes_from_the_tools() -> None:
+    """agent v2 (dev-v2 D2-095): the writer copied the prompt's example amount into the bottom line."""
+    bad = {**GOOD_D01, "bottom_line": "You owe $9.99 on the cigarettes."}
+    llm = ScriptedLLM(
+        intake=[intake_for("D01")], writer=[bad], verifier=[{"advises_evasion": False}]
+    )
+    run = answer_question(DEV["D01"]["question"], llm=llm, search=fake_search)
+    assert run.answer.outcome == "answered" and run.answer.message.startswith(
+        "You owe $2.97 on the"
+    )
 
 
 def test_refusal_never_calls_the_model() -> None:

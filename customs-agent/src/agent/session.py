@@ -37,12 +37,15 @@ from src.agent.intake import (
     FLAGS,
     HISTORY,
     IntakeResult,
+    flat_rate_from_question,
     ground_in_question,
     ground_items,
     history_from_question,
     normalise_countries,
     origin_from_question,
+    pack_counts_from_question,
     sizes_from_question,
+    types_from_names,
 )
 from src.agent.llm_json import StepError, json_call
 from src.agent.pipeline import AgentRun, _plan, _planned, read, respond
@@ -563,6 +566,11 @@ class Sessions:
         facts, notes = normalise_countries(facts)
         facts, stated = origin_from_question(facts, message)
         notes += stated
+        # agent v2: named products, box counts; the flat rate only when this message says so
+        facts, typed = types_from_names(facts)
+        facts, packs = pack_counts_from_question(facts, message)
+        facts, flat = flat_rate_from_question(facts, message, drop_unstated=False)
+        notes += typed + packs + flat
         # sizes: fill missing ones from this message, never drop an earlier one
         lacking = [
             i

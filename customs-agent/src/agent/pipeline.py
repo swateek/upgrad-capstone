@@ -19,12 +19,19 @@ from typing import Any
 from src.agent import card as C
 from src.agent.intake import (
     extract,
+    flat_rate_from_question,
     ground_in_question,
     ground_items,
     history_from_question,
+    names_from_question,
     normalise_countries,
+    origin_free_from_question,
     origin_from_question,
+    pack_counts_from_question,
     sizes_from_question,
+    trip_from_question,
+    types_from_names,
+    whatif_from_question,
 )
 from src.agent.llm_json import StepError, Usage
 from src.agent.planner import propose, validate
@@ -35,7 +42,7 @@ from src.agent.router import (
     execute,
     route,
 )
-from src.agent.verifier import tool_json, verify
+from src.agent.verifier import prune, tool_json, verify
 from src.agent.writer import write
 from src.baselines.answer import Answer, LineResult, WhatIfAnswer
 from src.safety.guard import check_question, sanitise_clause
@@ -277,6 +284,44 @@ class Read:
     age_21_plus: bool = False
 
 
+def clean(facts: Any, question: str) -> tuple[Any, list[str], list[str]]:
+    """The code clean-up of the intake model's reading of one question (COMPENSATIONS rows 5-11,
+    17, 19-28): returns (facts, changed, dropped) for the trace. Also used to replay a run's
+    intake outputs offline (eval/replay.py)."""
+    facts, changed = normalise_countries(facts)  # names -> ISO codes, before any tool
+    # agent v2: product names and their tax class first, since the origin rules read them
+    facts, named = names_from_question(facts, question)  # "alcohol" -> "oloroso sherry"
+    facts, typed = types_from_names(facts)  # Champagne, liqueurs, sake, sherry, beer
+    changed += named + typed
+    facts, stated = origin_from_question(facts, question)  # "Cuban cigars" -> CU
+    changed += stated
+    facts, sized = sizes_from_question(
+        facts, question
+    )  # "75cl" missed; no invented sizes
+    changed += sized
+    facts, dropped = ground_in_question(
+        facts, question
+    )  # no guessed age or trip length
+    facts, items_dropped = ground_items(
+        facts, question
+    )  # no guessed ABV or risky origin
+    facts, history = history_from_question(facts, question)  # "first trip this year"
+    dropped += items_dropped + history
+    # agent v2 (COMPENSATIONS rows 19-23): named products, box counts, flat-rate history,
+    # and SPEC v2 row 11 (a guessed 0%-duty origin is dropped, so it is asked when it matters)
+    facts, trip = trip_from_question(
+        facts, question
+    )  # "a 36-hour weekend" stays 36 hours
+    changed += trip
+    facts, packs = pack_counts_from_question(facts, question)  # "6 boxes of 25"
+    facts, flat = flat_rate_from_question(facts, question)  # "paid no duty that time"
+    facts, free = origin_free_from_question(facts, question)
+    facts, whatif = whatif_from_question(facts, question)
+    changed += packs
+    dropped += flat + free + whatif
+    return facts, changed, dropped
+
+
 def read(run: AgentRun, question: str, llm: Any) -> Read | None:
     """Guard + intake + code clean-up. None when the turn is already finished (refused, or the
     question could not be read)."""
@@ -298,21 +343,7 @@ def read(run: AgentRun, question: str, llm: Any) -> Read | None:
             message="I couldn't read the details of this question. Declare everything; an officer decides.",
         )
         return None
-    facts, changed = normalise_countries(facts)  # names -> ISO codes, before any tool
-    facts, stated = origin_from_question(facts, question)  # "Cuban cigars" -> CU
-    changed += stated
-    facts, sized = sizes_from_question(
-        facts, question
-    )  # "75cl" missed; no invented sizes
-    changed += sized
-    facts, dropped = ground_in_question(
-        facts, question
-    )  # no guessed age or trip length
-    facts, items_dropped = ground_items(
-        facts, question
-    )  # no guessed ABV or risky origin
-    facts, history = history_from_question(facts, question)  # "first trip this year"
-    dropped += items_dropped + history
+    facts, changed, dropped = clean(facts, question)
     run.trace.append(
         {
             "step": "intake",
@@ -485,6 +516,9 @@ def respond(
             feedback = [str(e)]
             out = None
             continue
+        out = out.model_copy(
+            update={"bottom_line": C.bottom_line_text(r)}
+        )  # code, not the writer
         feedback = verify(
             out,
             n_clauses=len(clauses),
@@ -499,6 +533,41 @@ def respond(
         run.trace.append({"step": "verifier", "attempt": attempt, "problems": feedback})
         if not feedback:
             break
+    if (
+        feedback
+        and out is not None
+        and all("is not in the result or working" in f for f in feedback)
+    ):
+        # only invented numbers left after the retry: drop those sentences, check again
+        sources = [
+            tools_json + "\n" + "\n".join(result + working),
+            "\n".join(facts_list),
+            question,
+            *[c.text for c in clauses],
+        ]
+        pruned, removed = prune(out, sources)
+        if pruned.explanation:
+            feedback = verify(
+                pruned,
+                n_clauses=len(clauses),
+                tool_json=sources[0],
+                facts_text=sources[1],
+                question=question,
+                clause_texts=[c.text for c in clauses],
+                total_owed=total,
+                llm=llm if verify_with_llm else None,
+                usage=run.usage,
+            )
+            run.trace.append(
+                {
+                    "step": "verifier",
+                    "attempt": "pruned",
+                    "removed": removed,
+                    "problems": feedback,
+                }
+            )
+            if not feedback:
+                out = pruned
     if feedback or out is None:
         run.reason = "verifier_failed"
         run.answer = Answer(
@@ -509,8 +578,18 @@ def respond(
         run.card = {"verifier_problems": feedback}
         return run
 
-    # citations: the rules the tools applied (deterministic) + the clauses the writer used
-    used = [clauses[i - 1].citation_id for i in out.sources]
+    # citations: the rules the tools applied (deterministic) + the clauses the writer used,
+    # only clauses that are exactly a chunk of the frozen corpus (a planted passage is not)
+    in_corpus = getattr(search, "has_chunk", None)
+    used = [
+        clauses[i - 1].citation_id
+        for i in out.sources
+        if in_corpus is None or in_corpus(clauses[i - 1].chunk_id, clauses[i - 1].text)
+    ]
+    if len(used) < len(out.sources):
+        run.trace.append(
+            {"step": "citations", "not_in_corpus_dropped": len(out.sources) - len(used)}
+        )
     citations = list(dict.fromkeys(cited_by_rule + used))
     date = C.as_of(
         Clauses(

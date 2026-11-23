@@ -53,3 +53,8 @@ With plain hybrid, 7 of 60 queries have no gold chunk in the top 3:
 With the bge reranker, 5 of 60 still miss the top 3: R09 (rank 5), R16 (8: the $800 family-grouping section 148.34 still outranks 148.51), R26 (5), R36 (not in the top 10) and R60 (not in the top 10, out of scope). R05, R21 and R52 are fixed.
 
 Implication for the agent: R36 (and R52 without the reranker) are rules the calculators and `check_restrictions` apply. Those tools already know which rule they used, because every row in `rules.yaml` / `rates.yaml` carries its citation. So `search_regulations` will take two inputs: the citation ids of the rules the tools applied (fetched by id from the index: exact, no ranking) plus free-text search for the rest. The writer still cites only clauses that were retrieved for this question (rule 2), and none of this changes the experiment numbers above, which measure free-text search alone.
+
+## Agent v2: the by-id budget (2026-11-23)
+
+The by-id fetch fills the 5-clause budget first. In mixed baskets (Cuban cigars plus wine owed) the first two citations of every applied rule could fill it before the duty and excise sources (Day 10 E35, E46; dev-v2 D2-039, D2-048). From agent v2 each rule's main source goes first (both duty sources, HTSUS 9816.00.20 and the TTB rates, count as main), then the second-tier ones (`router._cite`). Citations are also limited to clauses whose text is exactly a chunk of the frozen corpus (SHA-256, `RegulationSearch.has_chunk`), so a passage planted among the results can be read by the writer but not cited. Free-text search and the experiment above are unchanged.
+

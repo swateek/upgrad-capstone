@@ -7,6 +7,7 @@ Conversions come from rates.yaml -> conversions.
 from __future__ import annotations
 
 import re
+import unicodedata
 from decimal import Decimal
 
 from pydantic import BaseModel
@@ -86,8 +87,27 @@ def size_ml(amount_value: float, unit: str) -> Decimal | None:
     return None
 
 
+def _plain(text: str) -> str:
+    text = unicodedata.normalize("NFKD", text or "").encode("ascii", "ignore").decode()
+    return re.sub(r"[\s_]+", " ", text.lower())
+
+
+def class_by_name(item: str) -> dict | None:
+    """rates.yaml excise.classes_by_name entry whose name appears in the item (whole words)."""
+    name = _plain(item)
+    for entry in rates()["excise"].get("classes_by_name", {}).get("entries", []):
+        for n in entry["names"]:
+            if re.search(rf"(?<![a-z]){re.escape(_plain(n))}(?![a-z])", name):
+                return entry
+    return None
+
+
 def excise_class(line: BasketLine) -> str | None:
-    """TTB class for an alcohol line; None if the ABV needed to decide it is missing."""
+    """TTB class for an alcohol line; None if the ABV needed to decide it is missing. A product
+    name with a fixed class (rates.yaml classes_by_name: sake, Champagne, liqueurs) wins."""
+    named = class_by_name(line.item) if line.category == "alcohol" else None
+    if named and named.get("class"):
+        return named["class"]
     if line.type == "spirits":
         return "spirits"
     if line.type == "beer":
@@ -149,7 +169,7 @@ def normalise_line(index: int, line: BasketLine) -> NormalisedLine:
     elif line.category == "tobacco":
         unit = _unit(q.unit)
         table = conv["tobacco_units"].get(line.type, {})
-        m = re.fullmatch(r"(?:box|pack|tin|case) of (\d+)", unit)
+        m = re.fullmatch(r"(?:box|pack|tin|case|carton|bundle) of (\d+)(?: \w+)?", unit)
         piece_size = (
             line.size is not None
             and _unit(line.size.unit) in PIECE_UNITS

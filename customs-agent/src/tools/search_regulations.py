@@ -52,6 +52,12 @@ class Args(BaseModel):
     k: int = Field(MAX_K, ge=1, le=MAX_K)
 
 
+def _digest(text: str) -> str:
+    import hashlib
+
+    return hashlib.sha256((text or "").encode()).hexdigest()
+
+
 def norm_id(s: str) -> str:
     return "".join(s.split()).lower()
 
@@ -81,6 +87,7 @@ class RegulationSearch:
         self._by_id: dict[str, list[int]] = {}
         for i, c in enumerate(chunks):
             self._by_id.setdefault(norm_id(c["citation_id"]), []).append(i)
+        self._digest = {c["chunk_id"]: _digest(c["text"]) for c in chunks}
 
     @classmethod
     def from_env(
@@ -109,6 +116,11 @@ class RegulationSearch:
                 )
                 reranker = None
         return cls(chunks, embed, matrix=matrix, reranker=reranker, reranker_name=name)
+
+    def has_chunk(self, chunk_id: str, text: str) -> bool:
+        """Is this exactly a chunk of the frozen corpus? Only those may be cited (agent v2: Day 10
+        E78 cited a passage planted among the results)."""
+        return self._digest.get(chunk_id) == _digest(text)
 
     # ------------------------------------------------------------------ search
     def _citable(self, i: int) -> bool:

@@ -134,3 +134,15 @@ def tool_json(objs: list[object]) -> str:
         [o.model_dump(mode="json") if hasattr(o, "model_dump") else o for o in objs],
         ensure_ascii=False,
     )
+
+
+def prune(out: WriterOut, sources: list[str]) -> tuple[WriterOut, list[str]]:
+    """Drop the explanation's sentences that state a number no tool, fact, clause or the question
+    gave (agent v2): after the writer's retry, a correct answer with one invented sentence ("only
+    $300 of it is available for alcohol", dev-v2 D2-064) is kept without that sentence instead of
+    escalated. Returns the pruned output and the sentences removed."""
+    ok = allowed_numbers(sources)
+    keep, removed = [], []
+    for sent in re.split(r"(?<=[.!?])\s+", out.explanation or ""):
+        (removed if numbers(sent)[1] - ok else keep).append(sent)
+    return out.model_copy(update={"explanation": " ".join(keep).strip()}), removed

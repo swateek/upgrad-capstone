@@ -6,9 +6,12 @@
     uv run python eval/run_agent.py --set dev --limit 3                          # smoke test
     uv run python eval/run_agent.py --set paraphrase --run-name para-router      # generalisation check (once)
     LLM_CACHE=0 uv run python eval/run_agent.py --set eval --run-name official-router-1   # Day 10 only
+    uv run python eval/run_agent.py --set dev2 --run-name v2-dev2-router         # agent v2 tuning (dev-v2)
+    LLM_CACHE=0 uv run python eval/run_agent.py --set eval3 --run-name official-v2-router   # after the v2 freeze
 
 Writes results/runs/<run>/<mode>.jsonl (one record per item: answer, retrieved_ids, card, trace;
-resumable), scores_<mode>.csv and summary_<mode>.json. Never tune on --set eval (CLAUDE.md rule 6).
+resumable), scores_<mode>.csv and summary_<mode>.json. Never tune on a held-out set (eval, eval3,
+eval-gold2; CLAUDE.md rule 6).
 """
 
 from __future__ import annotations
@@ -29,8 +32,16 @@ SETS = {
     # one-shot check: PARAPHRASE_BRIEF.md
     "paraphrase": ROOT / "eval" / "paraphrase_set.jsonl",
     "redteam": ROOT / "eval" / "redteam.jsonl",  # eval/redteam.yaml
-    "eval": ROOT / "eval" / "eval_set.jsonl",
+    "eval": ROOT
+    / "eval"
+    / "eval_set.jsonl",  # eval-v2, gold-v1: agent v1's official set
+    # agent v2 (SPEC v2): dev-v2 to tune on; eval-v3 held out (headline); eval-v2 re-scored
+    "dev2": ROOT / "eval" / "dev_set_v2.jsonl",
+    "eval3": ROOT / "eval" / "eval_set_v3.jsonl",
+    "eval-gold2": ROOT / "eval" / "eval_set_gold_v2.jsonl",
 }
+# held-out sets: official runs only, from a frozen build with the cache off
+HELD_OUT = {"eval": "eval-v2", "eval3": "eval-v3", "eval-gold2": "eval-v2 (gold-v2)"}
 MODES = ("router", "planner", "single_rag")
 CHECKS = (
     "outcome",
@@ -172,19 +183,20 @@ def main() -> int:
         help="run the eval set although the code does not match eval/freeze.json",
     )
     args = ap.parse_args()
-    if args.set == "eval":
+    held = HELD_OUT.get(args.set)
+    if held:
         from eval.freeze import status as freeze_status
         from src.tools.lookup_state_rule import state_rules_mode
 
         if state_rules_mode() != "spec" and not args.allow_unfrozen:
             print(
-                "Refusing to run eval-v2 with STATE_RULES=all: the eval gold uses the SPEC's five states"
+                f"Refusing to run {held} with STATE_RULES=all: the gold uses the SPEC's five states"
             )
             return 1
         fz = freeze_status()
         if not (fz["frozen"] and fz["matches"]) and not args.allow_unfrozen:
             print(
-                "Refusing to run eval-v2: "
+                f"Refusing to run {held}: "
                 + (
                     "no freeze yet (eval/freeze.py --write)"
                     if not fz["frozen"]
@@ -195,7 +207,7 @@ def main() -> int:
                 print(f"  {line}")
             return 1
         print(
-            "Running on eval-v2: official runs only (Day 10). Nothing may be tuned on this result."
+            f"Running on {held}: official runs only. Nothing may be tuned on this result."
         )
 
     from src.llm import LLM
@@ -204,8 +216,8 @@ def main() -> int:
     run_name = args.run_name or f"agent-{args.set}"
     llm = LLM.from_env(run_name=run_name)
     print(f"chat: {llm.chat_model}  cache {'on' if llm.cache_enabled else 'OFF'}")
-    if args.set == "eval" and llm.cache_enabled and not args.allow_unfrozen:
-        print("Refusing to run eval-v2 with the response cache on: set LLM_CACHE=0")
+    if held and llm.cache_enabled and not args.allow_unfrozen:
+        print(f"Refusing to run {held} with the response cache on: set LLM_CACHE=0")
         return 1
     search = RegulationSearch.from_env(llm)
     print(f"search: {search.method}")

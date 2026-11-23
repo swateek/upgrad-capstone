@@ -233,7 +233,10 @@ def test_tool_step_cap(monkeypatch) -> None:
 
 
 def test_verifier_failing_twice_escalates() -> None:
-    bad = {**GOOD_D01, "bottom_line": "You owe $9.99."}
+    bad = {
+        **GOOD_D01,
+        "explanation": "You owe $9.99 in duty.",
+    }  # bottom line is code (v2)
     llm = ScriptedLLM(intake=[intake_for("D01")], writer=[bad, bad], verifier=[OK])
     run = answer_question(DEV["D01"]["question"], llm=llm, search=fake_search)
     assert run.answer.outcome == "escalated" and run.reason == "verifier_failed"

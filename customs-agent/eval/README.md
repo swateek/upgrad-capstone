@@ -20,6 +20,8 @@
 | `gold_v2_changes.yaml` | Every gold-v2 change with its rule, and how the 80 were screened (`check_v3.py`, each SPEC v2 row by hand, the Day 10 failures, a random sample of passes) |
 | `scenarios_gold_v2.yaml`, `gold_v2.xlsx`, `gold_v2.md` | Source, dollar gold (same formulas) and readable copy for gold-v2. Rebuilt by `build_gold_v2.py`; not edited by hand |
 | `REVIEW_GOLD_V2.md` | The owner's check of gold-v2: the changed scenarios, gold-v1 next to gold-v2, and 12 random Day 10 passes; owner: all right |
+| `replay.py` | Puts a run's recorded intake JSON through today's guard, clean-up and router (no model call) and scores outcome, bottom line, dollars, what-if and clarify. A cheap check between runs on dev sets; refuses held-out sets; never replaces a run |
+| (dev-v2 errata) | D2-055: gold answered ($1.21), but the question gives no flat-rate history after using the exemption, so SPEC 3 escalates; its facts also record "$180 for the box" as per cigar. Not changed (dev-v2 is tagged); counted as an expected miss |
 
 The dollar gold is computed by spreadsheet formulas, never by `src/tools` (CLAUDE.md rule 5). Spreadsheet results were also checked against a separate decimal calculation outside the repo: all 61 priced lines and 5 what-if answers agree.
 
@@ -54,6 +56,8 @@ uv run python eval/build_gold_v2.py export
 uv run python eval/build_gold_v2.py diff     # fails if an id not in gold_v2_changes.yaml moved
 uv run python eval/build_gold_v2.py review
 ```
+
+Agent v2 runs: `run_agent.py --set dev2` (tune), `--set eval3` (held out, headline) and `--set eval-gold2` (eval-v2 re-scored, labelled); the last two need the v2 freeze and `LLM_CACHE=0`.
 
 ## Record format (one JSON object per line)
 

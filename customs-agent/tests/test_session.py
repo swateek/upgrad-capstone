@@ -483,10 +483,10 @@ def test_turn_intake_prompt_does_not_treat_declining_as_evasion() -> None:
 
 
 def test_bare_number_answers_the_abv_question(tmp_path) -> None:
-    """Owner's test (Day 9, Honolulu sake): "35" in reply to "What is the ABV?" was dropped by
+    """Owner's test (Day 9, Honolulu sake; shochu here, since SPEC v2 taxes sake as beer and needs no ABV): "35" in reply to "What is the ABV?" was dropped by
     grounding (no % sign), asked again, then defaulted to 40% and escalated."""
-    sake = {
-        "item": "sake",
+    shochu = {
+        "item": "shochu",
         "category": "alcohol",
         "type": "spirits",
         "quantity": {"value": 3, "unit": "bottle"},
@@ -505,7 +505,7 @@ def test_bare_number_answers_the_abv_question(tmp_path) -> None:
                     "direct_arrival_from": "JP",
                     "arrival_state": "HI",
                 },
-                "basket": [sake],
+                "basket": [shochu],
             }
         ],
         turn_intake=[
@@ -521,7 +521,7 @@ def test_bare_number_answers_the_abv_question(tmp_path) -> None:
         ],
         writer=[
             {
-                "bottom_line": "You owe $3.63 on the sake.",
+                "bottom_line": "You owe $3.63 on the shochu.",
                 "explanation": "Your alcohol allowance is 1 L. You brought 2.25 L, so 1.25 L is over. "
                 "Duty is 3% of $17.00 ($0.51) and federal excise tax is $3.12. Total is $3.63.",
                 "sources": [1],
@@ -529,7 +529,7 @@ def test_bare_number_answers_the_abv_question(tmp_path) -> None:
         ],
     )
     s = sessions(tmp_path, llm)
-    q = "Flying into Honolulu after 10 days in Japan, 3 bottles of sake, 10$ each of 750ml, what do i owe"
+    q = "Flying into Honolulu after 10 days in Japan, 3 bottles of shochu, 10$ each of 750ml, what do i owe"
     r1 = s.turn("c", message=q)
     assert r1.answer.outcome == "clarify" and "abv" not in s.state("c")["basket"][0]
     r2 = s.turn("c", message="i'm of age and no")
@@ -544,8 +544,8 @@ def test_a_number_not_in_the_reply_is_still_dropped(tmp_path) -> None:
     """The ABV answer rule only keeps a number the traveller wrote: a guess stays a guess."""
     from src.agent.session import Sessions  # noqa: F401  (same module as above)
 
-    sake = {
-        "item": "sake",
+    shochu = {
+        "item": "shochu",
         "category": "alcohol",
         "type": "spirits",
         "quantity": {"value": 3, "unit": "bottle"},
@@ -562,7 +562,7 @@ def test_a_number_not_in_the_reply_is_still_dropped(tmp_path) -> None:
                     "trip": {"value": 10, "unit": "days"},
                     "exemption_used_last_30_days": False,
                 },
-                "basket": [sake],
+                "basket": [shochu],
             }
         ],
         turn_intake=[
@@ -577,7 +577,7 @@ def test_a_number_not_in_the_reply_is_still_dropped(tmp_path) -> None:
     s = sessions(tmp_path, llm)
     s.turn(
         "c",
-        message="3 bottles of sake, 750 ml, $10 each, 10 days in Japan, I'm 30, first trip this year",
+        message="3 bottles of shochu, 750 ml, $10 each, 10 days in Japan, I'm 30, first trip this year",
     )
     r = s.turn("c", message="not sure, it's the usual kind")
     assert r.answer.outcome == "clarify" and r.answer.clarify_facts == ["abv"]

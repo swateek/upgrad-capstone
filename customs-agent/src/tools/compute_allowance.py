@@ -278,7 +278,8 @@ def compute_allowance(args: Args) -> Allowance:
                         exempt_value += dec(ln.line.unit_price_usd) * ln.units
             if over:
                 reasons.append(
-                    f"{pieces} {kind} is over the {limit} allowance."
+                    # the excess stated here, so the writer copies it (Day 10 E27: it subtracted)
+                    f"{pieces} {kind} is {pieces - limit} over the {limit} allowance."
                     if not rs.tobacco_excluded
                     else "Under 21: no tobacco in the exemption."
                 )
@@ -288,6 +289,8 @@ def compute_allowance(args: Args) -> Allowance:
                 f"Exempt goods are worth ${exempt_value:.2f}, over the $800 exemption: "
                 "splitting the value is not modelled in v1.",
                 rule_id=None,
+                # the part beyond the exemption is dutiable under the flat-rate band (agent v2, D2-010)
+                citations=["19cfr148.33", "htsus9816.00.20"],
             )
 
     for ln in args.lines:  # other goods: noted, not assessed
