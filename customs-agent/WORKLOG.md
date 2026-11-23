@@ -492,5 +492,14 @@ How to add an entry: append under the current day, newest at the bottom. One ent
 - **What:** the v2 freeze.
   - `eval/freeze.py` now also records one hash over `src/**/*.py`, `data/rules.yaml` and `data/rates.yaml` (37 files): most v2 changes are code and data, which a freeze of the prompts alone would not see. Compared only when both freezes have it. The agent v1 freeze is kept as `eval/freeze_v1.json` (2026-11-22, prompts only).
   - Prompts changed since the v1 freeze: intake (one line: the product's own name) and writer (the example amount is a placeholder). Retrieval and budget unchanged.
-  - **Open (owner):** `freeze.py --write` on the Mac (it has the saved index, so the corpus fingerprint is recorded), commit, tag `v2.0.0-rc`, then the official runs with the cache off.
+  - **Done (owner):** freeze written 2026-11-23 (code hash `fcc6683aa207b857` over 43 files on the Mac), commit `5d05c90`, tag `v2.0.0-rc`.
+
+- **What:** agent v2 official runs on eval-v3 (held out), cache off.
+  - **Planner ×3** (`official-v2-eval3-planner-1..3`): 0.77 each (77/100; outcome 0.84, bottom line 0.806, dollars 0.765 on 51 priced items, clarify 0.5, citations 0.792); the same 23 items wrong in all three; 3,430 tokens/q, 3.51 calls/q; plan fallbacks 0/87.
+  - **Generalisation gap:** dev-v2 (tuned on) 0.991 → eval-v3 (never seen) 0.77. The code rules cover the phrasings they were written from; eval-v3's writers say the same facts in other words, and the 8B model's reading is still the limit. Agent v1 scored 0.75 on eval-v2, a different set: not a like-for-like comparison (agent v1 on eval-v3 would be).
+  - **Failure labels (planner run 1, `eval/label_failures.py`; for the report, not for fixes):** 11 missed facts (7 of them the 30-day history), 5 wrong values, 4 invented, 1 rules (E3-019, $1.10 vs $1.17), 1 clarify logic, 1 guard (a non-resident). Severity: 20 safe fails (a question not needed, or an escalation), 3 unsafe (E3-019, E3-022 a direct arrival from Jamaica read in, so 2 L allowed; E3-043 history read as not used). The owner's hand check of labels is Day 11 work.
+  - **Router** (`official-v2-eval3-router`): 0.77, the same 23 items; 2,769 tokens/q, 2.33 calls/q (planner +24% tokens, +1.2 calls, same answers: as on eval-v2 for agent v1).
+  - **single_rag** (`official-v2-eval3-single_rag`): 0.07 (outcome 0.75, bottom line 0.493, dollars 0.02, clarify 0.0, citations 0.111; 2,348 tokens/q, 1 call). Agent v1's single_rag on eval-v2 was 0.075.
+  - **eval-v2 with gold-v2** (`official-v2-gold2-planner`): 1.00 (80/80; 3,810 tokens/q, 3.85 calls/q). Labelled: the v2 fixes were built from these questions' failures, so this measures fit, not generalisation. Router (`official-v2-gold2-router`): 1.00 (3,179 tokens/q, 2.68 calls/q).
+  - **Rule:** eval-v3 is spent for agent v2. Nothing is fixed and re-run on it; a later agent needs a new held-out set.
 
