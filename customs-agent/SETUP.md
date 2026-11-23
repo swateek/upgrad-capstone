@@ -231,7 +231,7 @@ docker compose down              # stop; sessions, cache and the reranker downlo
 
 | What | Where |
 | --- | --- |
-| Project brief and rules | `../CLAUDE.md` |
+| Project brief and rules | `CLAUDE.md` |
 | Spec (approved) | `docs/SPEC.md` |
 | Architecture diagrams | `docs/ARCHITECTURE.md` |
 | Rules and rates (data) | `data/rules.yaml`, `data/rates.yaml` |

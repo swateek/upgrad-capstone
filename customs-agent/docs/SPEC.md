@@ -188,3 +188,14 @@ Change from the mentor's table (adopted at approval): the mentor's 7 `cuban_orig
 | 9 | State flags beyond the five (5.4), stretch | Ten more arrival states (GA, IL, MA, WA, PA, VA, MI, AZ, HI, NV), each a note and an official source checked on 2026-11-22, in `rules.yaml → extended_states`. Shown by the web app only (`STATE_RULES=all`); the official runs keep the five states, because the frozen eval gold was written for them (one eval item arrives in Georgia with no flag). `run_agent.py --set eval` refuses `STATE_RULES=all`. |
 
 Not blocking, revisit if time allows: resolve Russian-origin alcohol (currently escalated).
+
+## 9b. SPEC v2 (for agent v2), 2026-11-23
+
+Agent v1 and its official result (eval-v2, 0.75) stay under SPEC v1 (sections 1–9a). Agent v2 implements these amendments. `eval-v2` and its gold are not changed: the eval-v2 questions are re-scored under SPEC v2 as **gold-v2**, and the new held-out set **eval-v3** (and the new dev set) are written under SPEC v2. Decided by the project owner after the Day 10 runs.
+
+| # | Change | Decision and why |
+| --- | --- | --- |
+| 10 | Sake (excise class) | Taxed as **beer** ($18 per barrel), TTB's treatment of sake whose alcohol comes only from fermentation (https://www.ttb.gov/regulated-commodities/beverage-alcohol/sake). The answer adds one line: sake with added brewer's alcohol or distilled spirits is taxed at the spirits rate. No new question: travellers rarely know, and the line tells them what changes. SPEC v1 had no rule; the eval-v2 gold used the wine rate and agent v1 used spirits, both unlike the regulation. |
+| 11 | When the origin is asked (refines 5.2) | When something is owed and an item's origin is not stated: if it was **bought in a country whose own goods pay no duty** (a free-trade programme country in `rates.yaml`, e.g. Mexico under USMCA), ask where it was made, because a local product is duty-free and an imported one is not; the code decides which countries count, so the traveller never needs to know. Otherwise take the origin to be where it was bought (a wrong guess can only overcharge, never under-declare). If the traveller does not know, use the general 3% rate and say so. Cuban- and Russian-risk items keep the stage-1 origin question. |
+| 12 | ABV in the first round (refines 5.2) | Ask the ABV in **stage 1** when the alcohol is over the allowance whatever the other answers are (total over 1 L; over 2 L when arriving directly from a 2 L country), because excise is then owed in every case. Otherwise ABV stays in stage 2. Found in the owner's Honolulu sake test (two rounds where one was enough). |
+

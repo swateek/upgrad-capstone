@@ -1,9 +1,9 @@
 # DeclareRight: US customs assistant for alcohol & tobacco
 
 Track B capstone (API-side, ≤8B hosted model), group DLlamas. Working solo with AI assistance.
-Programme brief, deadlines and grading: repo-root `README.md` (final submission 27 Nov 2026, presentation 5 Dec 2026).
+Programme brief, deadlines and grading: `../README.md` (repo root) (final submission 27 Nov 2026, presentation 5 Dec 2026).
 
-**All project code and docs live in `customs-agent/`.** Paths in this file are relative to it unless they start with the repo root.
+**This file lives in `customs-agent/`, with all the project's code and docs.** Paths in it are relative to this folder; `../` is the repo root.
 
 - Mentor proposal (source of truth for scope and plan): `docs/01_US_Customs_Assistant.docx`.
 - Day-0 endpoint test guide: `docs/Endpoint_Capability_Check.docx`; results in `docs/endpoint_check.md`.
@@ -11,13 +11,13 @@ Programme brief, deadlines and grading: repo-root `README.md` (final submission 
 
 ## Repo conventions
 
-- **Setup guide:** `customs-agent/SETUP.md` is how someone else installs and runs the project. When a step is added or changes (new dependency, new build step, new command), update it in the same change.
-- **Work log:** `customs-agent/WORKLOG.md` (committed since `198cdb1`). After each piece of work, append an entry under the current day: what, files, found / decided, open.
+- **Setup guide:** `SETUP.md` is how someone else installs and runs the project. When a step is added or changes (new dependency, new build step, new command), update it in the same change.
+- **Work log:** `WORKLOG.md` (committed since `198cdb1`). After each piece of work, append an entry under the current day: what, files, found / decided, open.
 
-- **Python env: uv, inside `customs-agent/` only.** `uv sync` to install; `uv run python …` / `uv run pytest` to run; `uv add <pkg>` (or `uv add --dev`) to add dependencies. Never `pip install` into `.venv/`. Commit `pyproject.toml`, `uv.lock` and `.python-version` together.
-- **Git flow** (repo-root `docs/GITFLOW.md`): never commit to `main`; short-lived branches `feature/…`, `bugfix/…`, `docs/…`, `refactor/…`; merge through a PR. Commit messages `#<issue> - <what>` when there is an issue.
-- **Pre-commit** (repo-root `docs/DEVELOPMENT.md`): Ruff lint + format, gitleaks secret scan, YAML/JSON checks, 500 KB file limit, notebook outputs stripped (except `results/`). Keep generated data under 500 KB per file or keep it out of git.
-- Git-ignored: every dotfile at the root (so `.env`), `certs/`, `.venv/`. Never commit keys or certificates.
+- **Python env: uv, inside this folder only.** `uv sync` to install; `uv run python …` / `uv run pytest` to run; `uv add <pkg>` (or `uv add --dev`) to add dependencies. Never `pip install` into `.venv/`. Commit `pyproject.toml`, `uv.lock` and `.python-version` together.
+- **Git flow** (`../docs/GITFLOW.md`): never commit to `main`; short-lived branches `feature/…`, `bugfix/…`, `docs/…`, `refactor/…`; merge through a PR. Commit messages `#<issue> - <what>` when there is an issue.
+- **Pre-commit** (`../docs/DEVELOPMENT.md`): Ruff lint + format, gitleaks secret scan, YAML/JSON checks, 500 KB file limit, notebook outputs stripped (except `results/`). Keep generated data under 500 KB per file or keep it out of git.
+- Git-ignored: every dotfile (repo-root `.gitignore`, so `.env`), `certs/`, `.venv/`. Never commit keys or certificates.
 
 ## What we are building
 
@@ -55,7 +55,7 @@ It asks one clarifying question only when a missing fact changes the answer, ref
 
 | Rubric item | How we meet it | Status |
 | --- | --- | --- |
-| Git repository, full agent stack | `customs-agent/` on branch `customs-agent-main`; `SETUP.md` rebuilds everything | In progress |
+| Git repository, full agent stack | this folder, on branch `customs-agent-main`; `SETUP.md` rebuilds everything | In progress |
 | Trace dashboard | Langfuse cloud, one trace per question with a link on every answer; PII masked first; fallback `logs/trace.jsonl` | Met |
 | Evaluation report + failure taxonomy | `eval/score.py`, official runs Day 10, failure taxonomy Days 11–14 | Baselines done (`docs/BASELINES.md`); labelling rules done (`docs/TAXONOMY.md`, `eval/label_failures.py`) |
 | 12-page technical report | Days 11–14 | Not started |
@@ -211,7 +211,7 @@ LangGraph · Pydantic v2 · numpy flat index + rank_bm25 (no Qdrant: docs/RETRIE
 ## Repo layout
 
 ```
-# all paths relative to customs-agent/
+# all paths relative to this folder
 pyproject.toml, uv.lock      # uv-managed dependencies
 docs/SPEC.md                 # item I, marked APPROVED
 docs/ARCHITECTURE.md         # component + request-flow diagrams (Mermaid)
@@ -284,7 +284,14 @@ Rules that still hold: prompts freeze on Day 9 and code on Day 10; nothing is tu
 2. ✅ Days 8–9: multi-turn dev conversations (written before the code, independent gold) → LangGraph StateGraph + SqliteSaver, clarify → answer → continue, corrections replan only dependent steps, defaults after two unanswered rounds (SPEC 5.2); ToolError back to the planner; rate limit; error-handling tests; editable facts in the UI; red-team list (15+); also the rule-4 gap (Cuban item with an unreadable count asks before it prohibits).
 3. Stretch, alongside: ✅ state rules beyond 5 states (15 in the app, 5 in official runs); ✅ regulation viewer; ✅ PDF checklist export.
 4. ✅ Day 9 checkpoint: dev dry run 1.00 in router and planner mode, prompts and retrieval frozen (`eval/freeze.json`).
-5. Day 10: code freeze, official runs overnight.
+5. ✅ Day 10: code freeze (tag `v1.0.0-rc`), official runs on eval-v2: planner ×3 0.75 (identical answers), router 0.75, single_rag 0.075; failures labelled (`results/runs/official-*/failures_*.csv`). v1's official result; never re-run after fixes.
+6. v2 round (owner's decision, before Day 11):
+   1. SPEC v2 decisions: sake tax class, when to ask origin (E60), ABV in the first round; scope gaps from the eval failures.
+   2. gold-v2: the eval-v2 questions re-golded under SPEC v2, plus gold errata against the regulation (failures and a random sample of passes); eval-v2 / gold-v1 stay untouched.
+   3. eval-v3: about 40 fresh questions under SPEC v2, written by someone who has not seen the failure list, frozen before any fix.
+   4. General fixes → regression on dev, paraphrase, red-team, conversations → new freeze, tag `v2.0.0-rc` → runs on eval-v3 (headline) and eval-v2 with gold-v2 (labelled: these questions informed the fixes).
+7. **To do after v2: one consolidated ablation table** (`results/ablation_eval_v2.csv` plus a section in `docs/`): Day 4 prompting baselines, single_rag, router, planner (mean and spread over runs), and v2, on the same questions. Per arm: accuracy, each check, per question type, tokens, calls, p50/p95 latency. Today the results are spread over `results/week1_strategies.csv`, `results/runs/*/summary_*.json` and `WORKLOG.md`. Add a reranker-off arm if one is run.
+8. Day 11: metrics, hand check of the failure labels (≥ 15, every unsafe one), recall@k next to end-to-end accuracy, report §5–6.
 
 ## Current status
 
@@ -312,7 +319,7 @@ Rules that still hold: prompts freeze on Day 9 and code on Day 10; nothing is tu
 - [x] Day 4 code: `eval/score.py` (deterministic scorer, SPEC 6), `src/baselines/` (closed_book, fewshot_json with 4 dev examples, cot_sc 3 samples, decompose 3 steps; closed book, model does all arithmetic), `eval/run_baselines.py` (resumable; writes `results/week1_*.csv` for the eval set). 124 offline tests.
 - [x] Baselines run: dev v1/v2 (prompt fixes logged), official `week1` on eval-v2 -> `results/week1_strategies.csv`, `results/week1_failures.csv`; write-up `docs/BASELINES.md`. Best accuracy 0.175 (fewshot_json); dollars ≤ 0.07; clarify ≤ 1/8.
 - [x] **Gate passed (end of Day 4):** SPEC approved, `eval-v2` tagged, baselines committed (commit 5615aa7, tag `gate-day4`). Agent code now allowed.
-- [x] Days 5–7 retrieval: `results/retrieval_experiment.csv` (+ `_bge`), decisions in `customs-agent/docs/RETRIEVAL.md` (hybrid RRF + `BAAI/bge-reranker-v2-m3`, 350-token chunks, hard negatives filtered, k = 5, numpy index instead of Qdrant). `search_regulations` built (by citation id + search; saved index in `data/rag-corpus/index/`).
+- [x] Days 5–7 retrieval: `results/retrieval_experiment.csv` (+ `_bge`), decisions in `docs/RETRIEVAL.md` (hybrid RRF + `BAAI/bge-reranker-v2-m3`, 350-token chunks, hard negatives filtered, k = 5, numpy index instead of Qdrant). `search_regulations` built (by citation id + search; saved index in `data/rag-corpus/index/`).
 - [x] Days 5–7: agent v0 (code router) and LLM planner + validator end to end on dev; single_rag arm; hard budget (10 steps, 12k tokens). Dev ablation in WORKLOG (Day 6). Paraphrase check 0.883 before fixes.
 - [ ] `uv add --dev pyyaml openpyxl` (needed by `eval/build_eval.py`).
 - [ ] Add the newly cited sources to the corpus: 19 USC 1681a, 26 USC 5754/5761, HTSUS General Note 3 and ch. 98 U.S. Note 4, OFAC Russia FAQs.
