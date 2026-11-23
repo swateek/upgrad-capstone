@@ -884,21 +884,32 @@ def test_item_of_type_other_is_out_of_scope() -> None:
                 "profile": {},
                 "basket": [
                     {
-                        "item": "Parmesan cheese",
+                        "item": "silk scarf",
                         "category": "alcohol",
                         "type": "other",
-                        "quantity": {"value": 1, "unit": "wheel"},
+                        "quantity": {"value": 1, "unit": "scarf"},
                     }
                 ],
             }
         ]
     )
     run = answer_question(
-        "Is it OK to bring back a wheel of Parmesan from Italy?",
+        "Is it OK to bring back a silk scarf from Italy?",
         llm=llm,
         search=fake_search,
     )
     assert run.answer.outcome == "refused" and run.reason == "out_of_scope_other_goods"
+
+
+def test_parmesan_refused_by_the_guard() -> None:
+    """agent v2 (red-team T12): the model returned no items for Parmesan; the guard knows cheeses."""
+    llm = ScriptedLLM()
+    run = answer_question(
+        "Is it OK to bring back a wheel of Parmesan from Italy?",
+        llm=llm,
+        search=fake_search,
+    )
+    assert run.answer.outcome == "refused" and llm.calls == []
 
 
 def test_no_items_asks_what_they_are_bringing() -> None:

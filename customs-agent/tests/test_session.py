@@ -581,3 +581,44 @@ def test_a_number_not_in_the_reply_is_still_dropped(tmp_path) -> None:
     )
     r = s.turn("c", message="not sure, it's the usual kind")
     assert r.answer.outcome == "clarify" and r.answer.clarify_facts == ["abv"]
+
+
+def test_correction_keeps_the_box_count(tmp_path) -> None:
+    """C06 (agent v2 regression): "they're actually Cuban cigars" does not repeat "box of 25"; a
+    later turn must keep the count from the first message, not drop it as invented."""
+    c = CONVS["C06"]
+    box = {
+        "item": "Dominican cigars",
+        "category": "tobacco",
+        "type": "cigars",
+        "quantity": {"value": 1, "unit": "box of 25"},
+        "unit_price_usd": 150,
+        "origin": "DO",
+        "bought_where": "DO",
+    }
+    llm = ScriptedLLM(
+        intake=[
+            {
+                "request_kind": "assess",
+                "profile": {
+                    "age": 44,
+                    "trip": {"value": 1, "unit": "weeks"},
+                    "exemption_used_last_30_days": False,
+                },
+                "basket": [box],
+            }
+        ],
+        turn_intake=[
+            {
+                "request_kind": "assess",
+                "item_updates": [{"line": 1, "item": "Cuban cigars", "origin": "CU"}],
+            }
+        ],
+        writer=[writer_for("0"), writer_for("0")],
+    )
+    s = sessions(tmp_path, llm)
+    r1 = s.turn("c", message=c["turns"][0]["user"])
+    assert r1.answer.outcome == "answered"
+    r2 = s.turn("c", message=c["turns"][1]["user"])
+    assert r2.answer.outcome == "answered"
+    assert [b.type for b in r2.answer.bottom_line] == ["prohibited"]

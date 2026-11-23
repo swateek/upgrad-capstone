@@ -87,3 +87,22 @@ def test_code_matches_the_recorded_freeze():
     """After Day 9: a prompt or retrieval change must come with a new, logged freeze."""
     st = freeze.status()
     assert st["matches"], st["drift"]
+
+
+def test_code_fingerprint_sees_a_code_change(tmp_path, monkeypatch):
+    """agent v2: the freeze also hashes src/ and the rules and rates."""
+    (tmp_path / "src" / "agent").mkdir(parents=True)
+    (tmp_path / "data").mkdir()
+    f = tmp_path / "src" / "agent" / "x.py"
+    f.write_text("A = 1\n")
+    (tmp_path / "data" / "rules.yaml").write_text("a: 1\n")
+    monkeypatch.setattr(freeze, "ROOT", tmp_path)
+    before = freeze.code_fingerprint()
+    f.write_text("A = 2\n")
+    assert freeze.code_fingerprint()["sha256"] != before["sha256"]
+    assert before["files"] == 2
+
+
+def test_v1_freeze_kept():
+    v1 = json.loads((freeze.ROOT / "eval" / "freeze_v1.json").read_text())
+    assert v1["frozen_at"] == "2026-11-22" and "code" not in v1

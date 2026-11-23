@@ -95,7 +95,9 @@ NOT_SHIPPED = re.compile(
 SCOPE_GOODS = {
     "vapes_and_nicotine_products": r"\b(vapes?|vaping|e-?cig\w*|e-?liquid|juul|nicotine pouch\w*|zyn|snus|heated tobacco|iqos)\b",
     "food_and_agriculture": r"\b(cheese|sausage|salami|ham|meat|fruit|vegetables?|seeds?|plants?|honey|chocolate|food)\b"
-    r"|\b(jam[oó]n|prosciutto|chorizo|charcuterie|cured meats?|foie gras|p[aâ]t[eé]|caviar|olive oil|spices|truffles?|biscuits|cookies|pastries|sweets|candy|eggs|nuts)\b",
+    r"|\b(jam[oó]n|prosciutto|chorizo|charcuterie|cured meats?|foie gras|p[aâ]t[eé]|caviar|olive oil|spices|truffles?|biscuits|cookies|pastries|sweets|candy|eggs|nuts)\b"
+    r"|\b(parmesan|parmigiano|pecorino|grana padano|gouda|edam|brie|camembert|manchego|gruy[eè]re|comt[eé]|roquefort|"
+    r"stilton|cheddar|feta|halloumi|mozzarella|burrata|raclette|emmental)\b",
     "currency": r"\b(cash|currency|\$ ?10,?000|monetary instruments?)\b",
 }
 ALCOHOL_TOBACCO = re.compile(

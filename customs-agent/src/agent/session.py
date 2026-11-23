@@ -568,7 +568,7 @@ class Sessions:
         notes += stated
         # agent v2: named products, box counts; the flat rate only when this message says so
         facts, typed = types_from_names(facts)
-        facts, packs = pack_counts_from_question(facts, message)
+        facts, packs = pack_counts_from_question(facts, message, drop_invented=False)
         facts, flat = flat_rate_from_question(facts, message, drop_unstated=False)
         notes += typed + packs + flat
         # sizes: fill missing ones from this message, never drop an earlier one

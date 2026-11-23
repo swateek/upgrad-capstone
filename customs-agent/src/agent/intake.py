@@ -650,11 +650,12 @@ PACKS_OF = re.compile(
 
 
 def pack_counts_from_question(
-    r: IntakeResult, question: str
+    r: IntakeResult, question: str, drop_invented: bool = True
 ) -> tuple[IntakeResult, list[str]]:
     """ "6 boxes of 25 cigars" read by the model as 6 "box": the count per box is in the question.
     Only for tobacco lines whose unit is a bare container word, and only when one count is stated
-    for that container word (more than one would need pairing by item)."""
+    for that container word (more than one would need pairing by item). A later turn
+    (drop_invented=False) keeps counts from earlier turns: its message need not repeat them."""
     numbers = set(re.findall(r"\d+", question or "")) | spelled_numbers(question or "")
     found: dict[str, set[int]] = {}
     for m in PACKS_OF.finditer(question or ""):
@@ -665,7 +666,12 @@ def pack_counts_from_question(
     for i, b in enumerate(basket):
         unit = (b.quantity.unit or "").strip().lower()
         m = re.fullmatch(r"(box|pack|tin|case|bundle)(?:es|s)? of (\d+)(?: \w+)?", unit)
-        if b.category == "tobacco" and m and m.group(2) not in numbers:
+        if (
+            drop_invented
+            and b.category == "tobacco"
+            and m
+            and m.group(2) not in numbers
+        ):
             # a count per box the question never gives ("about $180 a box" -> "box of 10")
             basket[i] = b.model_copy(
                 update={"quantity": b.quantity.model_copy(update={"unit": m.group(1)})}

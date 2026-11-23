@@ -1,9 +1,9 @@
 {
- "frozen_at": "2026-11-22",
- "note": "Day 9 checkpoint",
+ "frozen_at": "2026-11-23",
+ "note": "agent v2 freeze: dev-v2 0.991 router and planner; prompts intake+writer changed; code hash",
  "prompts": {
-  "intake": "6d9f7db561729d70",
-  "writer": "56473503301212aa",
+  "intake": "541a163fd15737df",
+  "writer": "0e67faca6046d6f2",
   "verify_evasion": "e78e15ef2f0bf75e",
   "planner": "3b6b9603c6677075",
   "turn_intake": "64ec591b3f01a9b0"
@@ -26,6 +26,10 @@
   "max_tool_steps": 10,
   "max_tokens_per_question": 12000,
   "max_plan_steps": 10
+ },
+ "code": {
+  "sha256": "fcc6683aa207b857",
+  "files": 43
  },
  "corpus": {
   "fingerprint": "b70b8349c3ffabf4d28c55062def9f24c167435f1dbab7b14534862c359da0ca",

@@ -3,8 +3,9 @@
     uv run python eval/freeze.py            # compare the code with eval/freeze.json (exit 1 if it drifted)
     uv run python eval/freeze.py --write    # record the freeze (once, after the Day 9 dry run)
 
-eval/freeze.json holds a short hash of every prompt the model sees, and the retrieval and
-budget values themselves. `run_agent.py --set eval` refuses to start if the code no longer
+eval/freeze.json holds a short hash of every prompt the model sees, the retrieval and
+budget values themselves, and (from agent v2) one hash over src/ and the rules and rates.
+The agent v1 freeze is kept as eval/freeze_v1.json. `run_agent.py --set eval` refuses to start if the code no longer
 matches it, and every run summary records whether it did. Changing a prompt after the freeze
 means writing a new freeze and saying so in WORKLOG.md: it is a visible decision, not drift.
 """
@@ -32,6 +33,31 @@ FROZEN_KEYS = (
 
 def _h(text: str) -> str:
     return hashlib.sha256(text.encode()).hexdigest()[:16]
+
+
+CODE_FILES = ("src/**/*.py", "data/rules.yaml", "data/rates.yaml")
+
+
+def code_fingerprint() -> dict:
+    """One hash over the agent's code and its rules and rates (agent v2): most v2 changes are code
+    and data, not prompts, so a freeze of the prompts alone would not see them."""
+    files = sorted(
+        {
+            p
+            for pat in CODE_FILES
+            for p in ROOT.glob(pat)
+            if "__pycache__" not in p.parts
+        }
+    )
+    h = hashlib.sha256()
+    for p in files:
+        h.update(
+            str(p.relative_to(ROOT)).encode()
+            + b"\0"
+            + p.read_bytes().replace(b"\r\n", b"\n")
+            + b"\0"
+        )
+    return {"sha256": h.hexdigest()[:16], "files": len(files)}
 
 
 def current() -> dict:
@@ -70,6 +96,7 @@ def current() -> dict:
             "max_plan_steps": planner.MAX_STEPS,
         },
     }
+    state["code"] = code_fingerprint()
     meta = ROOT / "data" / "rag-corpus" / "index" / "meta.json"
     if meta.exists():  # git-ignored: present on a machine that built the index
         m = json.loads(meta.read_text())
@@ -84,8 +111,12 @@ def current() -> dict:
 def diff(frozen: dict, now: dict) -> list[str]:
     out: list[str] = []
     keys = list(FROZEN_KEYS)
-    if "corpus" in frozen and "corpus" in now:
-        keys.append("corpus")
+    for opt in (
+        "corpus",
+        "code",
+    ):  # compared when both have it (the v1 freeze has no code hash)
+        if opt in frozen and opt in now:
+            keys.append(opt)
     for k in keys:
         a, b = frozen.get(k) or {}, now.get(k) or {}
         for f in sorted(set(a) | set(b)):
