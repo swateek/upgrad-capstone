@@ -16,6 +16,10 @@
 | `check_v3.py` | Independent SPEC v2 rule check for generated scenarios (imports nothing from `src/`): flags disagreements for review |
 | `build_v3.py` | prepare (corrections, check, split, allocation, citations) → workbook → export |
 | `REVIEW_V3.md` | The owner's spot check: 15 random eval-v3 scenarios and every corrected one (`build_v3.py review`) |
+| `eval_set_gold_v2.jsonl` | **gold-v2**: eval-v2's 80 questions re-scored under SPEC v2 (same questions and facts; scored changes only E07, E47: sake taxed as beer; E32, E33, E36, E37 gain the exemption, not scored). For agent v2 runs on eval-v2, labelled as such: these questions informed the v2 fixes, so eval-v3 is the headline. `eval_set.jsonl` (gold-v1) stays as tagged, for agent v1 |
+| `gold_v2_changes.yaml` | Every gold-v2 change with its rule, and how the 80 were screened (`check_v3.py`, each SPEC v2 row by hand, the Day 10 failures, a random sample of passes) |
+| `scenarios_gold_v2.yaml`, `gold_v2.xlsx`, `gold_v2.md` | Source, dollar gold (same formulas) and readable copy for gold-v2. Rebuilt by `build_gold_v2.py`; not edited by hand |
+| `REVIEW_GOLD_V2.md` | The owner's check of gold-v2: the changed scenarios, gold-v1 next to gold-v2, and 12 random Day 10 passes; owner: all right |
 
 The dollar gold is computed by spreadsheet formulas, never by `src/tools` (CLAUDE.md rule 5). Spreadsheet results were also checked against a separate decimal calculation outside the repo: all 61 priced lines and 5 what-if answers agree.
 
@@ -38,6 +42,17 @@ uv run python eval/build_v3.py prepare
 uv run python eval/build_v3.py workbook
 soffice --headless --convert-to xlsx --outdir /tmp eval/gold_v3.xlsx && cp /tmp/gold_v3.xlsx eval/gold_v3.xlsx
 uv run python eval/build_v3.py export
+```
+
+gold-v2 (eval-v2's questions under SPEC v2):
+
+```bash
+uv run python eval/build_gold_v2.py prepare
+uv run python eval/build_gold_v2.py workbook
+soffice --headless --convert-to xlsx --outdir /tmp eval/gold_v2.xlsx && cp /tmp/gold_v2.xlsx eval/gold_v2.xlsx
+uv run python eval/build_gold_v2.py export
+uv run python eval/build_gold_v2.py diff     # fails if an id not in gold_v2_changes.yaml moved
+uv run python eval/build_gold_v2.py review
 ```
 
 ## Record format (one JSON object per line)
