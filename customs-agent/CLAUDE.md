@@ -286,9 +286,9 @@ Rules that still hold: prompts freeze on Day 9 and code on Day 10; nothing is tu
 4. ✅ Day 9 checkpoint: dev dry run 1.00 in router and planner mode, prompts and retrieval frozen (`eval/freeze.json`).
 5. ✅ Day 10: code freeze (tag `v1.0.0-rc`), official runs on eval-v2: planner ×3 0.75 (identical answers), router 0.75, single_rag 0.075; failures labelled (`results/runs/official-*/failures_*.csv`). v1's official result; never re-run after fixes.
 6. v2 round (owner's decision, before Day 11):
-   1. SPEC v2 decisions: sake tax class, when to ask origin (E60), ABV in the first round; scope gaps from the eval failures.
-   2. gold-v2: the eval-v2 questions re-golded under SPEC v2, plus gold errata against the regulation (failures and a random sample of passes); eval-v2 / gold-v1 stay untouched.
-   3. eval-v3: about 40 fresh questions under SPEC v2, written by someone who has not seen the failure list, frozen before any fix.
+   1. ✅ SPEC v2 decisions: sake tax class, when to ask origin (E60), ABV in the first round; scope gaps from the eval failures.
+   2. ⏳ gold-v2: the eval-v2 questions re-golded under SPEC v2, plus gold errata against the regulation (failures and a random sample of passes); eval-v2 / gold-v1 stay untouched.
+   3. eval-v3 (100) and dev-v2 (112), built 2026-11-23 from 217 AI-written scenarios (`eval/GENERATION_PROMPT_V3.md`, five generators): rule-checked by `eval/check_v3.py`, 5 dropped and 9 corrected (`eval/generated/corrections.yaml`), split at random by type, dollar gold by the same spreadsheet formulas (cross-checked: 135 lines, 0 differences). ✅ owner's spot check 24/24 right (`eval/REVIEW_V3.md`); tagged `eval-v3` and `dev-v2` (2026-11-23). eval-v3 is held out for agent v2.
    4. General fixes → regression on dev, paraphrase, red-team, conversations → new freeze, tag `v2.0.0-rc` → runs on eval-v3 (headline) and eval-v2 with gold-v2 (labelled: these questions informed the fixes).
 7. **To do after v2: one consolidated ablation table** (`results/ablation_eval_v2.csv` plus a section in `docs/`): Day 4 prompting baselines, single_rag, router, planner (mean and spread over runs), and v2, on the same questions. Per arm: accuracy, each check, per question type, tokens, calls, p50/p95 latency. Today the results are spread over `results/week1_strategies.csv`, `results/runs/*/summary_*.json` and `WORKLOG.md`. Add a reranker-off arm if one is run.
 8. Day 11: metrics, hand check of the failure labels (≥ 15, every unsafe one), recall@k next to end-to-end accuracy, report §5–6.

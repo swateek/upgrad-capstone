@@ -8,6 +8,14 @@
 | `eval_set.jsonl` | 80 scenarios. Frozen as git tag `eval-v2` (v1 had the old 2 L country list). **Never tune against it** (CLAUDE.md rule 6) |
 | `dev_set.jsonl` | 20 separate scenarios for prompt and design work. Includes the CLAUDE.md worked examples (D01, D05, D08, D10) |
 | `build_eval.py` | Copies inputs into `gold.xlsx` and exports the JSONL after the workbook is recalculated. It does no customs arithmetic |
+| `eval_set_v3.jsonl` | **eval-v3**: 100 held-out scenarios under SPEC v2, for agent v2. AI-written (Claude, Gemini, Groq, Mistral, ChatGPT) from `GENERATION_PROMPT_V3.md`, split at random by type. Frozen as tag `eval-v3` after the owner's spot check. Never tuned against |
+| (types in v3) | As in eval-v2, plus one widening decided at the spot check: `alcohol_excess_800` covers $800 alcohol cases including one inside the allowance (E3-047, relabelled from the $200 type after the split: 4 days is over 48 hours). The scorer does not use the type; it only groups the per-type results |
+| `dev_set_v2.jsonl` | **dev-v2**: 112 scenarios from the same generation, for agent v2 tuning |
+| `scenarios_v3.yaml`, `gold_v3.xlsx`, `gold_v3.md` | Source, dollar gold (same formulas as `gold.xlsx`) and readable copy for eval-v3 and dev-v2. Rebuilt by `build_v3.py`; not edited by hand |
+| `generated/*.yaml`, `generated/corrections.yaml` | The generators' raw output (unedited) and the logged fixes (5 dropped, 9 corrected, each with its rule) |
+| `check_v3.py` | Independent SPEC v2 rule check for generated scenarios (imports nothing from `src/`): flags disagreements for review |
+| `build_v3.py` | prepare (corrections, check, split, allocation, citations) → workbook → export |
+| `REVIEW_V3.md` | The owner's spot check: 15 random eval-v3 scenarios and every corrected one (`build_v3.py review`) |
 
 The dollar gold is computed by spreadsheet formulas, never by `src/tools` (CLAUDE.md rule 5). Spreadsheet results were also checked against a separate decimal calculation outside the repo: all 61 priced lines and 5 what-if answers agree.
 
@@ -21,6 +29,16 @@ uv run python eval/build_eval.py export     # writes eval_set.jsonl, dev_set.jso
 ```
 
 After the tag, a change to `eval_set.jsonl` means a new tag (`eval-v3`, …) and a note in the report. History: `eval-v1` → `eval-v2` corrected the 2 L country list (E15, E48).
+
+eval-v3 and dev-v2 (SPEC v2):
+
+```bash
+uv run python eval/check_v3.py              # rule check of eval/generated/*.yaml
+uv run python eval/build_v3.py prepare
+uv run python eval/build_v3.py workbook
+soffice --headless --convert-to xlsx --outdir /tmp eval/gold_v3.xlsx && cp /tmp/gold_v3.xlsx eval/gold_v3.xlsx
+uv run python eval/build_v3.py export
+```
 
 ## Record format (one JSON object per line)
 
