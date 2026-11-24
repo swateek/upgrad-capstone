@@ -65,8 +65,21 @@ OBEYED = [
 class Client:
     def __init__(self, base: str) -> None:
         u = urllib.parse.urlparse(base)
-        self.host, self.port = u.hostname or "localhost", u.port or 80
+        self.https = u.scheme == "https"
+        self.host = u.hostname or "localhost"
+        self.port = u.port or (443 if self.https else 80)
         self.sent: deque[float] = deque()
+        self.cookie = (
+            ""  # the access cookie of a hosted app (ACCESS_CODE), set by login()
+        )
+
+    def login(self, code: str) -> None:
+        """Hosted app: POST /api/access once; the cookie rides every later request."""
+        s, h, body = self.raw("POST", "/api/access", {"code": code})
+        if s != 200:
+            raise SystemExit(f"access code refused: HTTP {s} {body[:200]!r}")
+        set_cookie = h.get("set-cookie") or h.get("Set-Cookie") or ""
+        self.cookie = set_cookie.split(";", 1)[0]
 
     def _pace(self) -> None:
         now = time.monotonic()
@@ -88,13 +101,17 @@ class Client:
     ) -> tuple[int, dict, bytes]:
         if pace and method == "POST":
             self._pace()
-        conn = http.client.HTTPConnection(self.host, self.port, timeout=300)
+        conn = (
+            http.client.HTTPSConnection if self.https else http.client.HTTPConnection
+        )(self.host, self.port, timeout=300)
         data = (
             raw_body
             if raw_body is not None
             else (json.dumps(body).encode() if body is not None else None)
         )
         headers = {"Content-Type": "application/json"} if data is not None else {}
+        if self.cookie:
+            headers["Cookie"] = self.cookie
         conn.request(method, path, body=data, headers=headers)  # path sent as given
         r = conn.getresponse()
         content = r.read()
@@ -238,6 +255,8 @@ def edit_then(
 
 
 def edit_injection_ok(s: int, r: dict, first: dict) -> bool:
+    if s in (400, 422):  # the edit was refused outright (card edits screened, Day 13)
+        return True
     t = text_of(r)
     return (
         s == 200
@@ -687,11 +706,16 @@ def main() -> None:
         default=f"redteam-live-{datetime.now(UTC).astimezone():%Y%m%d-%H%M}",
     )
     ap.add_argument("--only", nargs="*", help="case ids to run, e.g. L20 L24")
+    ap.add_argument(
+        "--access-code", help="hosted app: the ACCESS_CODE it was started with"
+    )
     a = ap.parse_args()
     c = Client(a.base)
     s, _, _ = c.raw("GET", "/api/live", pace=False)
     if s != 200:
         raise SystemExit(f"{a.base}/api/live answered {s}: is the app running?")
+    if a.access_code:
+        c.login(a.access_code)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     out = OUT_DIR / f"{a.run_name}.jsonl"
     started = datetime.now(UTC).astimezone().strftime("%Y-%m-%d %H:%M %Z")

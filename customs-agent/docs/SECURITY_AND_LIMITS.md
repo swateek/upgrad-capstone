@@ -16,8 +16,8 @@ Source for the report's limits paragraph and the demo's closing slide. Checked 2
 ## Web server
 
 - **Path traversal (fixed Day 13).** The static-file route served any file in the container for `../` in the URL, `/app/.env` included; the port was published on every interface. Fixed in `app/api.py` (the path must resolve inside `web/dist`) and `docker-compose.yml` (`127.0.0.1:8000`); regression test in `tests/test_api.py`; re-tested on the live container (`docs/REDTEAM_LIVE.md`). Rotate the API keys if the container ever ran on a shared network.
-- **Card edits** (`POST /api/edit`) are not screened by the guard and numbers are not range-checked at the API; the verifier contained the one injection tried. Fix for a deployment: guard and sanitise text values, validate numbers.
-- **Rate limit per client address:** behind a shared proxy every user would share one limit.
+- **Card edits** (`POST /api/edit`, fixed Day 13 for hosting): text values go through the guard and the clause sanitiser, numbers are range-checked; refused with HTTP 422 (hosted red-team L12 to L14).
+- **Hosted copy** (https://139-59-66-138.sslip.io, DigitalOcean, Caddy): access code (HttpOnly cookie with a token derived from the code), rate limit per visitor from the address Caddy appends (`TRUST_PROXY=1`), app port not published, firewall 22/80/443. Hosted red-team 24 of 24 (`docs/REDTEAM_LIVE.md`). Destroy the droplet when the course ends.
 
 ## Personal data
 
