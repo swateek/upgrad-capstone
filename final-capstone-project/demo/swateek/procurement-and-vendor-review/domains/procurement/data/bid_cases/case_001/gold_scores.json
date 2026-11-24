@@ -1,0 +1,41 @@
+{
+  "case_id": "case_001",
+  "synthetic": true,
+  "is_draft": true,
+  "rows": [
+    {"bidder": "B1", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "We enclose the signed Bid Securing Declaration in the prescribed form.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "The OEM authorisation letter for the offered model is attached as Annex B.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Our average annual turnover over the last three financial years is Rs 4.10 crore.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "S1", "kind": "scored", "weight": 40, "quoted_evidence": "We completed three supply orders of 25 or more desktops each in the last three years.", "score": 40, "gap": null},
+    {"bidder": "B1", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "We offer a five-year comprehensive onsite warranty.", "score": 25, "gap": null},
+    {"bidder": "B1", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "Our authorised service centre is located in the consignee's city.", "score": 20, "gap": null},
+    {"bidder": "B1", "requirement_id": "S4", "kind": "scored", "weight": 15, "quoted_evidence": "Delivery will be completed within 40 days of the contract.", "score": 8, "gap": null},
+
+    {"bidder": "B2", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "A signed Bid Securing Declaration is submitted with this bid.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "We attach the manufacturer's authorisation for the quoted model.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Average annual turnover for the last three financial years: Rs 36 lakh.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "S1", "kind": "scored", "weight": 40, "quoted_evidence": "Two similar orders, each for more than 20 desktops, were completed in the last three years.", "score": 25, "gap": null},
+    {"bidder": "B2", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "Warranty: three years comprehensive, onsite.", "score": 15, "gap": null},
+    {"bidder": "B2", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "Service is provided from our authorised centre in the consignee's city.", "score": 20, "gap": null},
+    {"bidder": "B2", "requirement_id": "S4", "kind": "scored", "weight": 15, "quoted_evidence": "We will deliver within 25 days from the date of the contract.", "score": 15, "gap": null},
+
+    {"bidder": "B3", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "Bid Securing Declaration (signed) is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "OEM authorisation for the offered desktops is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Our average turnover in the last three financial years is Rs 31 lakh per year.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "S1", "kind": "scored", "weight": 40, "quoted_evidence": "We have completed one order of 30 desktops in the last three years.", "score": 10, "gap": null},
+    {"bidder": "B3", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "We provide five years of comprehensive onsite warranty.", "score": 25, "gap": null},
+    {"bidder": "B3", "requirement_id": "S3", "kind": "scored", "weight": 20, "quoted_evidence": "Service will be provided from our centre in the neighbouring district.", "score": 0, "gap": null},
+    {"bidder": "B3", "requirement_id": "S4", "kind": "scored", "weight": 15, "quoted_evidence": null, "score": null, "gap": "no response"}
+  ],
+  "bidders": [
+    {"bidder": "B1", "name": "Northwind Computing Pvt Ltd", "status": "responsive", "technical_total": 93, "quoted_price_inr": 2280000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}},
+    {"bidder": "B2", "name": "Saraswati Infotech Solutions", "status": "responsive", "technical_total": 75, "quoted_price_inr": 2150000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}},
+    {"bidder": "B3", "name": "Orbit Systems & Services LLP", "status": "responsive", "technical_total": 35, "quoted_price_inr": 2090000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}}
+  ],
+  "ranking_eligible": ["B1", "B2", "B3"],
+  "withheld_bidders": [],
+  "notes": "B3 gives no delivery period ('as early as possible'), so S4 is a gap, not a number. Draft ranking for the committee; not an award."
+}

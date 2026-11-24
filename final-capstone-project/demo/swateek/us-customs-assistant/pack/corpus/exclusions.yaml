@@ -1,0 +1,20 @@
+# Sources that must never enter any index. The downloader and the chunk builder fail if a manifest
+# URL matches a pattern. Patterns are shell-style (fnmatch) and matched against the full URL.
+
+url_patterns:
+  - "*help.cbp.gov*" # CBP Info Center: rendered by JavaScript; a plain download has no article text
+  - "*cbpcomplaints.cbp.gov*" # the same Info Center under its other host name
+  - "*language=es*" # English documents only
+  - "*/es/*"
+  - "*ecfr.gov/current/*" # "current" eCFR pages change daily; use the versioner API at a fixed date
+  - "*newsroom*" # press releases and media notes: no rule text
+  - "*/document/forms/*" # blank forms (e.g. CBP Form 6059B translations): no rule text
+
+reasons:
+  "*help.cbp.gov*": Salesforce site rendered client-side; checked 17 Nov 2026 (article pages return only the app shell).
+  "*cbpcomplaints.cbp.gov*": Same Info Center, other host name used in its sitemap.
+  "*language=es*": English documents only.
+  "*/es/*": English documents only.
+  "*ecfr.gov/current/*": Not a stable snapshot; the hash would change with every eCFR update.
+  "*newsroom*": News, not regulation or guidance.
+  "*/document/forms/*": Forms carry no rule text.

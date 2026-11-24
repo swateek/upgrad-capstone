@@ -1,0 +1,12 @@
+# Hand-kept, SYNTHETIC screening lists. Labelled synthetic everywhere they surface.
+# The brief allows a buyer-specific list only as a labelled sample inside the synthetic set;
+# it is not a national list and says nothing about any real firm.
+lists:
+  - id: synthetic_buyer_debarment
+    title: Buyer-specific debarment list of the Directorate of Estates (SYNTHETIC sample)
+    file: synthetic_buyer_debarment.csv
+    source_url: null
+    snapshot_date: '2026-10-01'
+    scope: Debarment by one buyer under GFR Rule 151, applicable to that buyer's procurements only.
+    disclaimer: SYNTHETIC sample list created for the capstone eval set. The firms are fictitious.
+    synthetic: true

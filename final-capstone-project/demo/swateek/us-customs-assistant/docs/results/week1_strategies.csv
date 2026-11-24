@@ -1,0 +1,7 @@
+strategy,turns,turn_accuracy_pct,scenario_accuracy_pct,outcome_accuracy_pct,amount_accuracy_pct,citation_coverage_pct,invented_citation_pct,valid_json_first_try_pct,invalid_json_turns,calls,tokens_per_turn,seconds_per_turn,extraction_field_accuracy_pct,invented_fields
+closed_book,91,2.2,2.5,68.1,11.8,45.7,5.3,100.0,0,91,583,3.11,,
+fewshot_json,91,13.2,12.5,82.4,13.2,74.0,4.8,100.0,0,91,1012,2.9,,
+cot_sc,91,3.3,3.8,71.4,22.1,41.6,21.1,100.0,0,273,2441,19.81,,
+decompose,91,1.1,1.2,75.8,22.1,53.4,16.0,100.0,0,273,2125,9.93,,
+intake_constrained,80,,,,,,,100.0,0,80,490,3.69,86.1,33
+intake_prompted,80,,,,,,,55.0,0,116,814,5.49,85.8,36

@@ -1,0 +1,41 @@
+{
+  "case_id": "case_003",
+  "synthetic": true,
+  "is_draft": true,
+  "rows": [
+    {"bidder": "B1", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "Our EPF registration is in place; our ESIC registration is under process and the certificate will be submitted later.", "score": "fail", "gap": null},
+    {"bidder": "B1", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "We hold a valid GST registration; the certificate is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Our average annual turnover over the last three financial years is Rs 38 lakh.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "S1", "kind": "scored", "weight": 40, "quoted_evidence": null, "score": null, "gap": "not evaluated: non-responsive (M1)"},
+    {"bidder": "B1", "requirement_id": "S2", "kind": "scored", "weight": 20, "quoted_evidence": null, "score": null, "gap": "not evaluated: non-responsive (M1)"},
+    {"bidder": "B1", "requirement_id": "S3", "kind": "scored", "weight": 15, "quoted_evidence": null, "score": null, "gap": "not evaluated: non-responsive (M1)"},
+    {"bidder": "B1", "requirement_id": "S4", "kind": "scored", "weight": 25, "quoted_evidence": null, "score": null, "gap": "not evaluated: non-responsive (M1)"},
+
+    {"bidder": "B2", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "Copies of our valid EPF and ESIC registration certificates are enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "Our GST registration is valid and a copy is attached.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Average annual turnover for the last three financial years: Rs 31 lakh.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "S1", "kind": "scored", "weight": 40, "quoted_evidence": "Two similar housekeeping contracts, each for a PSU office building above 50,000 sq ft, were completed in the last three years.", "score": 25, "gap": null},
+    {"bidder": "B2", "requirement_id": "S2", "kind": "scored", "weight": 20, "quoted_evidence": "Mechanised equipment, including one scrubber-drier and two wet-and-dry vacuums, will be provided at our cost.", "score": 20, "gap": null},
+    {"bidder": "B2", "requirement_id": "S3", "kind": "scored", "weight": 15, "quoted_evidence": "We are ISO 9001 certified.", "score": 15, "gap": null},
+    {"bidder": "B2", "requirement_id": "S4", "kind": "scored", "weight": 25, "quoted_evidence": "We have been providing housekeeping services for eight years.", "score": 15, "gap": null},
+
+    {"bidder": "B3", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "We hold valid EPF and ESIC registrations; certificates are at Annex 1.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "GST registration certificate (valid) is at Annex 2.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "Our average turnover in the last three financial years is Rs 54 lakh per year.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "S1", "kind": "scored", "weight": 40, "quoted_evidence": "We have completed three housekeeping contracts for Government office buildings larger than 50,000 sq ft in the last three years.", "score": 40, "gap": null},
+    {"bidder": "B3", "requirement_id": "S2", "kind": "scored", "weight": 20, "quoted_evidence": "Scrubber-driers and wet-and-dry vacuum cleaners will be deployed at our own cost.", "score": 20, "gap": null},
+    {"bidder": "B3", "requirement_id": "S3", "kind": "scored", "weight": 15, "quoted_evidence": "Our ISO 9001 certification audit is scheduled for next quarter.", "score": 0, "gap": null},
+    {"bidder": "B3", "requirement_id": "S4", "kind": "scored", "weight": 25, "quoted_evidence": "We have twelve years of experience in housekeeping services.", "score": 25, "gap": null}
+  ],
+  "bidders": [
+    {"bidder": "B1", "name": "Brightway Facility Care Pvt Ltd", "status": "non_responsive", "technical_total": null, "quoted_price_inr": 2450000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}},
+    {"bidder": "B2", "name": "Neelgiri Housekeeping Services", "status": "responsive", "technical_total": 75, "quoted_price_inr": 2690000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}},
+    {"bidder": "B3", "name": "Sunpetal Cleanserve LLP", "status": "responsive", "technical_total": 85, "quoted_price_inr": 2610000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}}
+  ],
+  "ranking_eligible": ["B3", "B2"],
+  "withheld_bidders": [],
+  "notes": "B1 states its ESIC registration is 'under process', so mandatory M1 (valid EPF and ESIC registration) fails and B1 is non-responsive; its scored rows are not evaluated even though it answered them, and its price is recorded only. A registration promised later does not meet the condition on the bid date. Draft ranking for the committee; not an award."
+}

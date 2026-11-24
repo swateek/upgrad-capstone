@@ -1,0 +1,182 @@
+# Rules R1-R12. Research and quotes: docs/regulatory-checks.md. Signed off by the user on 2026-11-17
+# (decisions A-G in docs/regulatory-checks.md).
+as_of: 2026-11-17
+snapshot: "eCFR 2026-11-13; HTS 2026 Rev 23; US Code 2024 ed.; pages retrieved 2026-11-17"
+
+rules:
+  - id: R1
+    name: exemption_200_all_or_nothing
+    status: signed_off
+    signed_off_on: 2026-11-17
+    statement: >-
+      A returning resident not entitled to the $800 exemption gets the $200 exemption. If the
+      in-scope total exceeds $200, or any line exceeds its limit, nothing is exempt: every line
+      is dutiable and taxable. No family grouping.
+    params:
+      value_limit_usd: 200
+      limits: {cigarettes: 50, cigars: 10, alcohol_ml: 150}
+      family_grouping: false
+    cites: [cfr19_p148:148.51(a), cfr19_p148:148.51(b), cfr19_p148:148.51(c), cbp_types_exemptions:overview]
+
+  - id: R2
+    name: caribbean_basin_two_litres
+    status: signed_off
+    signed_off_on: 2026-11-17
+    statement: >-
+      Arriving directly from a beneficiary country: up to 2 L of alcohol in the exemption if at
+      least 1 L is a product of one or more beneficiary countries; otherwise 1 L. Countries: CBP's
+      Types of Exemptions list (Decision A).
+    params:
+      litres: 2
+      min_beneficiary_product_litres: 1
+      beneficiary_list: cbp_types_of_exemptions_page # Decision A (countries.yaml caribbean_basin)
+    cites: [cfr19_p148:148.33(d), hts_9804_rows:9804.00.72, hts_ch98_pdf:subchapter-iv-u-s-note-4, hts_general_notes:general-note-7-a, cbp_types_exemptions:overview]
+
+  - id: R3
+    name: under_21
+    status: signed_off
+    signed_off_on: 2026-11-17
+    statement: >-
+      Under 21: no alcohol in the exemption (all alcohol dutiable and taxable) and, following
+      CBP's guidance, no tobacco exemption (any tobacco is at risk of seizure) (Decision B).
+    params:
+      alcohol_min_age: 21
+      tobacco_min_age: 21 # Decision B: CBP guidance (the regulation is silent)
+    cites: [cfr19_p148:148.33(d), cfr19_p148:148.34(a), hts_9804_rows:9804.00.65, cbp_customs_duty_info:tobacco-products]
+
+  - id: R4
+    name: cuban_origin_alcohol_tobacco
+    status: signed_off
+    signed_off_on: 2026-11-17
+    statement: >-
+      Cuban-origin alcohol and tobacco cannot be imported as baggage, wherever bought. No
+      allowance applies; they are not counted in any limit; leave them behind or declare them.
+    params:
+      outcome: prohibited
+    cites:
+      third_country: [cfr31_p515:515.204(a), cfr31_p515:515.585(c), cfr31_p515:515.585(d), ofac_cuba_faqs:faq-720]
+      acquired_in_cuba: [cfr31_p515:515.560(c), ofac_cuba_faqs:faq-719]
+      guidance: [cbp_mexico_trip:prohibited-permissible-items]
+
+  - id: R5
+    name: tobacco_over_allowance
+    status: signed_off
+    signed_off_on: 2026-11-17
+    statement: >-
+      Tobacco over the allowance is not taxed in the answer: it may be detained, seized,
+      penalised, abandoned or destroyed. Declare it; the officer decides.
+    params:
+      tobacco_excess_outcome: seizure_risk # data-driven; "taxed" would switch the duty step on
+      allowance: {cigarettes: 200, cigars: 100}
+    cites: [cbp_customs_duty_info:tobacco-products, cfr19_p148:148.33(d), cfr27_p41:41.190]
+
+  - id: R6
+    name: us_export_labelled_tobacco
+    status: signed_off
+    signed_off_on: 2026-11-17
+    statement: >-
+      US-made export-labelled tobacco may come back only in the duty- and tax-free personal
+      quantity. Excess can be relinquished voluntarily at entry without penalty; otherwise it is
+      forfeited and a penalty of the greater of $1,000 or 5x the tax can apply.
+    params:
+      counts_against_allowance: true
+      voluntary_relinquishment: true
+      penalty_min_usd: 1000
+    cites: [usc26_5754:5754(a), usc26_5761:5761(c), usc26_5761:5761(d)]
+
+  - id: R7
+    name: flat_rate_duty
+    status: signed_off
+    signed_off_on: 2026-11-17
+    statement: >-
+      Dutiable articles accompanying the traveller, up to $1,000 in total, pay a flat duty of 3%
+      of fair retail value (4% for Column 2 origins). Above $1,000: escalate in v1. Products of a
+      trade-agreement partner (countries.yaml) are duty-free, with "if it qualifies as originating;
+      the officer decides" (Decision C). One traveller per answer; family pooling is a scope note
+      (Decision F).
+    params:
+      rate: 0.03
+      column2_rate: 0.04
+      cap_usd: 1000
+      over_cap: escalate
+      fta_free: true # Decision C: partner-country products, with the originating caveat
+      fta_caveat: "if it qualifies as originating under the agreement; the CBP officer decides"
+      family_grouping: scope_note # Decision F
+    cites: [hts_9816_rows:9816.00.20, cfr19_p148:148.101, cfr19_p148:148.102(a), hts_general_notes:general-note-3-b, hts_general_notes:general-note-3-c, hts_general_notes:general-note-11-a, cbp_customs_duty_info:determining-customs-duty]
+
+  - id: R8
+    name: excise_general_rates
+    status: signed_off
+    signed_off_on: 2026-11-17
+    statement: >-
+      A traveller is not an electing importer: the general excise rates apply (rates.yaml).
+      Each tax and duty line is rounded half-up to the cent, then summed.
+    params:
+      rate_table: rates.yaml
+      rounding: per_line_half_up_cents
+    cites: [ttb_tax_rates:alcohol-tax-rates-for-calendar-years-2018-to-pre, usc26_5001:5001(a), usc26_5041:5041(b), usc26_5051:5051(a), cfr27_p27:27.45]
+
+  - id: R9
+    name: which_exemption
+    status: signed_off
+    signed_off_on: 2026-11-17
+    statement: >-
+      $800 if (at least 48 hours abroad, or arriving directly from Mexico) and the exemption was
+      not used in the 30 days before arrival; otherwise $200 (R1). Arrivals from US insular
+      possessions are out of scope.
+    params:
+      min_hours: 48
+      no_min_hours_from: [MX]
+      lookback_days: 30
+      alcohol_litres: 1
+      out_of_scope_from: insular_possessions
+    cites: [cfr19_p148:148.35(a), cfr19_p148:148.35(c), cfr19_p148:148.36(a), cfr19_p148:148.36(b), hts_9804_rows:9804.00.65, cbp_what_to_expect:paying-duties]
+
+  - id: R10
+    name: large_quantity_flag
+    status: signed_off
+    signed_off_on: 2026-11-17
+    statement: >-
+      No federal limit beyond the exemption; CBP may decide on the spot that a quantity is
+      commercial. Above the flag threshold: add a "contact your port of entry" note and escalate.
+      Goods bought to sell are out of scope.
+    params:
+      flag_litres_per_traveller: 12 # Decision D: a UX threshold, not law
+    cites: [cbp_customs_duty_info:alcoholic-beverages, cfr19_p148:148.33(e)]
+
+  - id: R11
+    name: allocate_exemption_to_highest_cost
+    status: signed_off
+    signed_off_on: 2026-11-17
+    statement: >-
+      Fill the alcohol allowance with the alcohol that costs most per litre (3% duty on value
+      per litre plus excise per litre) first; fractions of a bottle allowed, value pro rata. If
+      the in-scope basket exceeds $800 in value, escalate (other goods share the $800).
+    params:
+      order_by: duty_plus_excise_per_litre_desc
+      fractional_bottles: true
+      escalate_if_basket_value_over_usd: 800
+    cites: [cfr19_p148:148.33(b)]
+
+  - id: R12
+    name: origin_not_from_brand
+    status: signed_off
+    signed_off_on: 2026-11-17
+    statement: >-
+      A brand name does not settle origin. For a brand in brands.yaml with no stated origin, ask
+      once ("was it made in Cuba?"); if still unknown, treat as possibly Cuban: no allowance,
+      declare it (Decision E).
+    params:
+      handling: ask_once_then_treat_as_possibly_cuban # Decision E
+    cites: [cfr31_p515:515.204(a)]
+
+# Scope notes decided with the rules (not rules themselves)
+scope_notes:
+  family_groups: >-
+    Answers are per traveller. Family members travelling together each have their own allowance,
+    and the $800 exemption and $1,000 flat-rate allowance can be pooled (19 CFR 148.34, 148.103);
+    pooling is not calculated in v1. (Decision F)
+  russian_origin_alcohol: >-
+    Russian-origin alcohol may be prohibited from import; declare it and ask CBP. Not assessed in
+    v1. (Decision G)
+  scope_cites: [cfr19_p148:148.34(a), cfr19_p148:148.103(a), hts_general_notes:general-note-3-b]

@@ -1,0 +1,15 @@
+{"id": "RL-001", "query": "What methods of obtaining bids may a Ministry use for goods?", "gold_rule_ids": ["gfr_2017:R158"]}
+{"id": "RL-002", "query": "What share of textiles must central government departments buy from items of handloom origin?", "gold_rule_ids": ["gfr_2017:R153"]}
+{"id": "RL-003", "query": "On what convictions shall a bidder be debarred?", "gold_rule_ids": ["gfr_2017:R151"]}
+{"id": "RL-004", "query": "For how long can GeM debar a bidder on its portal?", "gold_rule_ids": ["goods_manual_2024:3.7.2"]}
+{"id": "RL-005", "query": "What selection methods are available for consultancy services?", "gold_rule_ids": ["consultancy_manual_2025:4.2"]}
+{"id": "RL-006", "query": "Who sets the limits for subordinate authorities to write off losses?", "gold_rule_ids": ["dfpr_2024:R13"]}
+{"id": "RL-007", "query": "What does the GeM GTC require for compliance with GFR Rule 144(xi)?", "gold_rule_ids": ["gem_gtc_4_0:C26"]}
+{"id": "RL-008", "query": "Is there a ceiling on direct GeM purchase of automobiles?", "gold_rule_ids": ["gfr_2017:R149"]}
+{"id": "RL-009", "query": "Who decides on award and debarment according to this office's note?", "gold_rule_ids": ["office_note_001:P4"]}
+{"id": "RL-010", "query": "How does Least Cost Selection work for consultants?", "gold_rule_ids": ["consultancy_manual_2025:4.2.1"]}
+{"id": "RL-011", "query": "What must a bidding document for goods contain?", "gold_rule_ids": ["gfr_2017:R173"]}
+{"id": "RL-012", "query": "What do the current guidelines on debarment say for non-consultancy services?", "gold_rule_ids": ["ncs_manual_2025:3.8.2"]}
+{"id": "RL-013", "query": "Can a GeM buyer reject and return goods after delivery?", "gold_rule_ids": ["gem_gtc_4_0:C11"]}
+{"id": "RL-014", "query": "Does the GeM GTC require an integrity pact?", "gold_rule_ids": ["gem_gtc_4_0:C9"]}
+{"id": "RL-015", "query": "Who can raise an incident on GeM?", "gold_rule_ids": ["gem_incident_management_policy:1.4"]}

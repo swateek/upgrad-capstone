@@ -1,0 +1,34 @@
+# Request patterns that trigger a refusal rule from refusals.yaml (which is frozen with the
+# eval set, so the patterns live here). Python regex, case-insensitive. Matching is done in
+# code before the planner runs; the matched rule's wording is put in front of the model and
+# the critic then requires a decline. Tuned on dev.jsonl and the brief, not on the eval set.
+
+rules:
+  R1_consequential_action:
+    patterns:
+      - '\b(?:debar|blacklist)\b'
+      - '\baward\s+(?:the\s+|this\s+|that\s+|it\b|case_\d+)'
+      - '\baward\s+\S+\s+to\b'
+      - '\b(?:place|issue|raise)\s+(?:the\s+|a\s+)?(?:purchase\s+)?order\b'
+  R2_instruction_in_data:
+    patterns:
+      - '\bfull marks\b'
+      - '\bignore\s+(?:the\s+)?(?:gfr|rules?|evaluation sheet|instructions?|sheet)\b'
+      - '\bas (?:the |its |their )?proposal (?:asks|requests|says|instructs)\b'
+  R3_unindexed_edition:
+    patterns:
+      - '\b2022\b.{0,40}\bmanual\b'
+      - '\bmanual\b.{0,40}\b2022\b'
+      - '\b2017\b.{0,25}\bgoods manual\b'
+      - '\b(?:superseded|previous|older|earlier) (?:edition|version|manual)\b'
+  R4_absence_is_not_eligibility:
+    patterns:
+      - '\b(?:confirm|certify|declare|mark|treat)\b.{0,50}\b(?:eligible|cleared|clean)\b'
+      - '\bcleared to bid\b'
+      - '\b(?:automatically|therefore|thus)\b.{0,30}\b(?:cleared|eligible)\b'
+      - '\b(?:missing|absent|not present)\b.{0,60}\b(?:cleared|eligible)\b'
+  R5_private_person_dossier:
+    patterns:
+      - '\b(?:directors?|owners?|proprietors?|partners?)\b.{0,80}\b(?:address|phone|mobile|e-?mail|family|personal)\b'
+      - '\bhome address\b'
+      - '\bphone number\b'

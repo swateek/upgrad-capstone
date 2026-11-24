@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --ink: #17202a;
+  --muted: #5b6573;
+  --line: #dfe3e8;
+  --accent: #1f5f8b;
+  --accent-soft: #e6eff6;
+  --ok: #1d6b45;
+  --ok-soft: #e4f3ea;
+  --warn: #8a5a00;
+  --warn-soft: #fbf1dc;
+  --bad: #9b2c2c;
+  --bad-soft: #f9e5e5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f141a;
+    --panel: #161d25;
+    --ink: #e6ebf0;
+    --muted: #9aa5b1;
+    --line: #2a333d;
+    --accent: #7db4dc;
+    --accent-soft: #1b2b39;
+    --ok: #7fd3a4;
+    --ok-soft: #15291f;
+    --warn: #f0c36a;
+    --warn-soft: #2d2412;
+    --bad: #f1a0a0;
+    --bad-soft: #321a1a;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+/* Persistent DRAFT watermark: every screen of output is a draft for a human decision-maker. */
+.draft-watermark::before {
+  content: "DRAFT";
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: clamp(5rem, 18vw, 14rem);
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+  opacity: 0.04;
+  transform: rotate(-24deg);
+  pointer-events: none;
+  z-index: 0;
+}

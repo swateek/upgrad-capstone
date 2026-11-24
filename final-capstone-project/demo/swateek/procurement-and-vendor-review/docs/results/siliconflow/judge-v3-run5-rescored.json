@@ -1,0 +1,1234 @@
+{
+  "meta": {
+    "judged_at": "2026-11-13T12:42:29+00:00",
+    "run": "e2e-v3-run5-rescored.json",
+    "run_meta": {
+      "eval_version": 3,
+      "code_commit": "600ba46",
+      "model": "Qwen/Qwen3-8B"
+    },
+    "judge_model": "deepseek-ai/DeepSeek-V3.2",
+    "judge_prompt_version": 2,
+    "passes": 2,
+    "rule": "content correct = point 1 stated, no point contradicted, no material error with a verified quote; final = citation correct AND content correct (pass 1)",
+    "seconds": 114.2,
+    "judge_tokens": {
+      "prompt": 74722,
+      "completion": 7008
+    }
+  },
+  "rows": [
+    {
+      "id": "P-001",
+      "query": "Up to what value can a Ministry buy directly on GeM from any available supplier, without comparing sellers?",
+      "citation_correct": true,
+      "content_correct": false,
+      "passes_agree": true,
+      "final_correct": false,
+      "answer_points": [
+        "Up to Rs 50,000 through any available supplier on GeM meeting quality, specification and delivery period"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states the maximum value is up to Rs. 50,000, matching the reference point."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "The rules for vendor screening and bid scoring in such scenarios are covered under the enabling provisions of Rule 149 of GFR 2017, which require the procuring authorities to certify the reasonability of rates.",
+              "evidence": "The GeM portal shall be utilized by the Government buyers for direct on-line purchases as under: [Up to [(Rs.50,000/-) 4 ] 5 through any of the available suppliers on the GeM, meeting the requisite quality, specification and delivery period].",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states the maximum value is up to Rs. 50,000, matching the reference point."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "The rules for vendor screening and bid scoring in such scenarios are covered under the enabling provisions of Rule 149 of GFR 2017, which require the procuring authorities to certify the reasonability of rates.",
+              "evidence": "The GeM portal shall be utilized by the Government buyers for direct on-line purchases as under: [Up to [(Rs.50,000/-) 4 ] 5 through any of the available suppliers on the GeM, meeting the requisite quality, specification and delivery period].",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 4678,
+        "completion": 354
+      }
+    },
+    {
+      "id": "P-002",
+      "query": "We need to buy items worth Rs 6 lakh that are available on GeM. How must the seller be chosen?",
+      "citation_correct": true,
+      "content_correct": true,
+      "passes_agree": true,
+      "final_correct": true,
+      "answer_points": [
+        "Above Rs 50,000 and up to Rs 10 lakh: the GeM seller with the lowest price among sellers of at least three different manufacturers",
+        "Online bidding or reverse auction tools may also be used"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that for procurements above Rs.50,000/- and up to Rs.10,00,000/-, the seller must be selected based on the lowest price among at least three different manufacturers."
+            },
+            {
+              "point": 2,
+              "verdict": "partial",
+              "reason": "The answer does not mention that online bidding or reverse auction tools may also be used, which is part of the reference point."
+            }
+          ],
+          "material_errors": []
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that for procurements above Rs.50,000/- and up to Rs.10,00,000/-, the seller must be selected based on the lowest price among at least three different manufacturers."
+            },
+            {
+              "point": 2,
+              "verdict": "partial",
+              "reason": "The answer does not mention that online bidding or reverse auction tools may also be used, which is part of the reference point."
+            }
+          ],
+          "material_errors": []
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 5864,
+        "completion": 266
+      }
+    },
+    {
+      "id": "P-003",
+      "query": "For a GeM purchase above Rs 10 lakh, is it enough to pick the cheapest listed seller?",
+      "citation_correct": true,
+      "content_correct": true,
+      "passes_agree": true,
+      "final_correct": true,
+      "answer_points": [
+        "No: above Rs 10 lakh, bids must mandatorily be obtained using online bidding or reverse auction on GeM, then the lowest-priced compliant supplier"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that above Rs 10 lakh, it is not enough to pick the cheapest listed seller and that bids must be obtained using online bidding or reverse auction, then the lowest-priced compliant supplier is selected."
+            }
+          ],
+          "material_errors": []
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that above Rs 10 lakh, it is not enough to pick the cheapest listed seller and that bids must be obtained using online bidding or reverse auction, then the lowest-priced compliant supplier is selected."
+            }
+          ],
+          "material_errors": []
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 4672,
+        "completion": 168
+      }
+    },
+    {
+      "id": "P-004",
+      "query": "An item is not available on GeM. Up to what value can we purchase it without inviting quotations, and what is needed?",
+      "citation_correct": true,
+      "content_correct": false,
+      "passes_agree": true,
+      "final_correct": false,
+      "answer_points": [
+        "Up to Rs 50,000 on each occasion",
+        "On a certificate recorded by the competent authority that the goods are of requisite quality, from a reliable supplier at a reasonable price"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "partial",
+              "reason": "The answer states the Rs. 50,000 limit for non-scientific ministries/departments but also introduces a different, higher limit for scientific ministries/departments, which is not part of the reference point."
+            },
+            {
+              "point": 2,
+              "verdict": "stated",
+              "reason": "The answer correctly states the requirement for a certificate from the competent authority regarding quality, reliable supplier, and reasonable price."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "purchases can be made without inviting quotations up to a value of Rs. 50,000/- for non-scientific ministries and departments [gfr_2017:R154], and up to Rs. 1,00,000/- for scientific ministries and departments [goods_manual_2024:4.12]",
+              "evidence": "Purchase of goods upto the value of [{Rs. 50,000 (Rupees fifty thousand) only} 15 ] 16 on each occasion may be made without inviting quotations or bids",
+              "verified": true
+            },
+            {
+              "claim": "Additionally, for procurements above Rs. 50,000/- and up to Rs. 5,00,000/-, a Local Purchase Committee's recommendation is required [goods_manual_2024:4.13].",
+              "evidence": "Up to Rs 50,000 on each occasion",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "partial",
+              "reason": "The answer states Rs. 50,000 for non-scientific ministries/departments but also introduces a different, higher limit for scientific ministries/departments, which is not part of the reference point's core content."
+            },
+            {
+              "point": 2,
+              "verdict": "stated",
+              "reason": "The answer clearly states the requirement for a certificate from the competent authority regarding quality, reliable supplier, and reasonable price."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "up to Rs. 1,00,000/- for scientific ministries and departments",
+              "evidence": "Purchase of goods upto the value of [{Rs. 50,000 (Rupees fifty thousand) only} 15 ] 16 on each occasion may be made without inviting quotations or bids",
+              "verified": true
+            },
+            {
+              "claim": "Additionally, for procurements above Rs. 50,000/- and up to Rs. 5,00,000/-, a Local Purchase Committee's recommendation is required",
+              "evidence": "Purchase of goods upto the value of [{Rs. 50,000 (Rupees fifty thousand) only} 15 ] 16 on each occasion may be made without inviting quotations or bids",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 4390,
+        "completion": 622
+      }
+    },
+    {
+      "id": "P-005",
+      "query": "Is the limit for purchase without quotation different for scientific departments such as DRDO or ICAR?",
+      "citation_correct": true,
+      "content_correct": false,
+      "passes_agree": true,
+      "final_correct": false,
+      "answer_points": [
+        "Yes: up to Rs 2 lakh on each occasion for notified scientific Ministries/Departments/organisations",
+        "Only for scientific equipment and consumables for research, and only when not available on GeM"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "partial",
+              "reason": "The answer states the correct limit of Rs. 2 lakh for scientific departments but incorrectly restricts it to 'scientific equipment and computers' instead of the broader 'scientific equipment and consumables for research' as per the reference point."
+            },
+            {
+              "point": 2,
+              "verdict": "stated",
+              "reason": "The answer correctly states that the limit applies only when the required goods are not available on GeM."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "Rs. 2,00,000/- (Rupees Two lakh) for scientific equipment and computers",
+              "evidence": "Note: These powers can be used for procurement of Scientific Equipment and consumables for research purpose only",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "partial",
+              "reason": "The answer states the limit is Rs. 2,00,000 for scientific departments, but incorrectly restricts it to 'scientific equipment and computers' instead of the broader 'scientific equipment and consumables for research' as per the reference point."
+            },
+            {
+              "point": 2,
+              "verdict": "stated",
+              "reason": "The answer correctly states the limit applies only when the required goods are not available on GeM."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "The limit is for scientific equipment and computers",
+              "evidence": "Note: These powers can be used for procurement of Scientific Equipment and consumables for research purpose only",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 3524,
+        "completion": 366
+      }
+    },
+    {
+      "id": "P-006",
+      "query": "How are goods worth around Rs 3 lakh bought when they are not on GeM?",
+      "citation_correct": true,
+      "content_correct": false,
+      "passes_agree": true,
+      "final_correct": false,
+      "answer_points": [
+        "Above Rs 50,000 and up to Rs 5 lakh: on the recommendation of a duly constituted Local Purchase Committee of three members",
+        "The committee surveys the market and jointly records a certificate"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "partial",
+              "reason": "The answer mentions that the process depends on specific rules and the nature of goods, but does not state the requirement for a Local Purchase Committee of three members."
+            },
+            {
+              "point": 2,
+              "verdict": "missing",
+              "reason": "The answer does not mention the committee's market survey or the joint certificate recording."
+            }
+          ],
+          "material_errors": []
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "partial",
+              "reason": "The answer mentions that the process is governed by specific rules and cites a relevant source, but does not explicitly state the requirement for a Local Purchase Committee of three members."
+            },
+            {
+              "point": 2,
+              "verdict": "missing",
+              "reason": "The answer does not mention the committee's market survey or the joint certificate recording."
+            }
+          ],
+          "material_errors": []
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 3334,
+        "completion": 224
+      }
+    },
+    {
+      "id": "P-007",
+      "query": "From what estimated value must goods be procured through an advertised tender enquiry?",
+      "citation_correct": true,
+      "content_correct": false,
+      "passes_agree": true,
+      "final_correct": false,
+      "answer_points": [
+        "Rs 50 lakh and above (subject to exceptions in Rules 154, 155, 162, 166)",
+        "Advertised on GeM / GeM-CPPP"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "partial",
+              "reason": "The answer states Rs. 50 lakhs for 'other cases' but does not mention the exceptions (Rules 154, 155, 162, 166) that are part of the reference point."
+            },
+            {
+              "point": 2,
+              "verdict": "missing",
+              "reason": "The answer does not mention that advertised tender enquiries should be advertised on GeM / GeM-CPPP."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "goods must be procured through an advertised tender enquiry if the estimated value is Rs. 1,00,00,000/- (Rupees one crore) and above for Scientific Ministries/Departments/Organizations of Government of India",
+              "evidence": "invitation to tenders by advertisement should be used for procurement of goods of estimated value of [(Rs. 50 lakhs (Rupees Fifty Lakh) and above",
+              "verified": false
+            }
+          ]
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "partial",
+              "reason": "The answer states Rs. 50 lakhs as the threshold for 'other cases' but does not mention the exceptions (Rules 154, 155, 162, 166) that are part of the reference point."
+            },
+            {
+              "point": 2,
+              "verdict": "missing",
+              "reason": "The answer does not mention that advertised tender enquiries should be advertised on GeM / GeM-CPPP."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "goods must be procured through an advertised tender enquiry if the estimated value is Rs. 1,00,00,000/- (Rupees one crore) and above for Scientific Ministries/Departments/Organizations of Government of India",
+              "evidence": "invitation to tenders by advertisement should be used for procurement of goods of estimated value of [(Rs. 50 lakhs (Rupees Fifty Lakh) and above",
+              "verified": false
+            }
+          ]
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 3054,
+        "completion": 455
+      }
+    },
+    {
+      "id": "P-008",
+      "query": "When may a limited tender enquiry be used for goods?",
+      "citation_correct": true,
+      "content_correct": false,
+      "passes_agree": true,
+      "final_correct": false,
+      "answer_points": [
+        "When the estimated value is up to Rs 50 lakh",
+        "Bidding documents sent directly to registered suppliers"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that LTE may be used when the estimated value is up to Rs. 50 lakhs."
+            },
+            {
+              "point": 2,
+              "verdict": "missing",
+              "reason": "The answer does not mention that bidding documents are sent directly to registered suppliers."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "LTE is the default mode for procurements below a certain threshold, typically up to Rs. 10 lakhs",
+              "evidence": "LTE procedures should be the default mode of procurement when the estimated value of procurement is between Rs. 5 lakh to Rs. 50 lakhs (Rupees Five Lakh to Fifty Lakh)",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that LTE may be used when the estimated value is up to Rs. 50 lakhs."
+            },
+            {
+              "point": 2,
+              "verdict": "missing",
+              "reason": "The answer does not mention that bidding documents are sent directly to registered suppliers."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "LTE is the default mode for procurements below a certain threshold, typically up to Rs. 10 lakhs",
+              "evidence": "LTE procedures should be the default mode of procurement when the estimated value of procurement is between Rs. 5 lakh to Rs. 50 lakhs (Rupees Five Lakh to Fifty Lakh)",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 3350,
+        "completion": 366
+      }
+    },
+    {
+      "id": "P-009",
+      "query": "In what circumstances can goods be bought from a single source?",
+      "citation_correct": true,
+      "content_correct": false,
+      "passes_agree": true,
+      "final_correct": false,
+      "answer_points": [
+        "Only a particular firm is the manufacturer",
+        "Emergency, with reasons recorded and competent authority approval",
+        "Standardisation of machinery or spare parts to be compatible with existing equipment"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer states that single-source procurement is allowed when only a particular firm is the manufacturer."
+            },
+            {
+              "point": 2,
+              "verdict": "partial",
+              "reason": "The answer mentions emergency but omits the requirement for recording reasons and obtaining competent authority approval."
+            },
+            {
+              "point": 3,
+              "verdict": "stated",
+              "reason": "The answer states single-source procurement is allowed for standardisation of machinery or spare parts to be compatible with existing equipment."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "single-source procurement may be resorted to if the procurement entity engages in activities related to national defence or national security",
+              "evidence": "The procurement entity engages in procurement involving national defence or national security and determines that single source procurement is the most appropriate method of procurement.",
+              "verified": true
+            },
+            {
+              "claim": "single-source procurement may be resorted to if there are special circumstances where selecting a particular consultant is necessary for the overall interest of the Ministry or Department",
+              "evidence": "Under some special circumstances, it may become necessary to select a particular Agency where adequate justification is available for such single-source selection in the context of the overall interest of the Ministry or Department.",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer states that goods can be bought from a single source when only a particular firm is the manufacturer."
+            },
+            {
+              "point": 2,
+              "verdict": "partial",
+              "reason": "The answer mentions emergency but omits the requirement for recording reasons and obtaining competent authority approval."
+            },
+            {
+              "point": 3,
+              "verdict": "stated",
+              "reason": "The answer states that single-source procurement is allowed for standardisation of machinery or spare parts to be compatible with existing equipment."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "single-source procurement may be resorted to if the procurement entity engages in activities related to national defence or national security",
+              "evidence": "The procurement entity engages in procurement involving national defence or national security and determines that single source procurement is the most appropriate method of procurement.",
+              "verified": true
+            },
+            {
+              "claim": "if there are special circumstances where selecting a particular consultant is necessary for the overall interest of the Ministry or Department",
+              "evidence": "Under some special circumstances, it may become necessary to select a particular Agency where adequate justification is available for such single-source selection in the context of the overall interest of the Ministry or Department.",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 2450,
+        "completion": 582
+      }
+    },
+    {
+      "id": "P-010",
+      "query": "What amount of bid security (earnest money) should ordinarily be asked for?",
+      "citation_correct": true,
+      "content_correct": true,
+      "passes_agree": true,
+      "final_correct": true,
+      "answer_points": [
+        "Ordinarily between two and five percent of the estimated value of the goods"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states the ordinary range is two to five percent of the estimated value of the goods."
+            }
+          ],
+          "material_errors": []
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states the range of two percent to five percent of the estimated value of the goods."
+            }
+          ],
+          "material_errors": []
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 3398,
+        "completion": 120
+      }
+    },
+    {
+      "id": "P-011",
+      "query": "Which bidders are exempt from furnishing bid security?",
+      "citation_correct": true,
+      "content_correct": false,
+      "passes_agree": true,
+      "final_correct": false,
+      "answer_points": [
+        "Micro and Small Enterprises as defined in the MSE Procurement Policy",
+        "Bidders registered with the Central Purchase Organisation or the concerned Ministry/Department",
+        "Startups recognised by DPIIT"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that Micro and Small Enterprises (MSEs) as defined in the MSE Procurement Policy are exempt."
+            },
+            {
+              "point": 2,
+              "verdict": "missing",
+              "reason": "The answer does not mention bidders registered with the Central Purchase Organisation or the concerned Ministry/Department."
+            },
+            {
+              "point": 3,
+              "verdict": "stated",
+              "reason": "The answer clearly states that registered Startups recognized by DPIIT are exempt."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "Additionally, bidders in indigenisation/development tenders, limited tenders, and procurements directly from the manufacturer or authorised agents may be exempt with the Competent Authority’s approval",
+              "evidence": "To safeguard against a bidder's withdrawing or altering its bid during the bid validity period in the case of advertised or limited tender enquiry, Bid Security (also known as Earnest Money) is to be obtained from the bidders except Micro and Small Enterprises (MSEs) as defined in MSE Procurement Policy issued by Department of Micro, Small and Medium Enterprises (MSME) or are registered with the Central Purchase Organisation or the concerned Ministry or Department [or Startups as recognized by Department for Promotion of Industry and Internal Trade (DPIIT)]",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that Micro and Small Enterprises (MSEs) as defined in the MSE Procurement Policy are exempt."
+            },
+            {
+              "point": 2,
+              "verdict": "missing",
+              "reason": "The answer does not mention bidders registered with the Central Purchase Organisation or the concerned Ministry/Department."
+            },
+            {
+              "point": 3,
+              "verdict": "stated",
+              "reason": "The answer clearly states that registered Startups recognized by DPIIT are exempt."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "Additionally, bidders in indigenisation/development tenders, limited tenders, and procurements directly from the manufacturer or authorised agents may be exempt with the Competent Authority’s approval",
+              "evidence": "To safeguard against a bidder's withdrawing or altering its bid during the bid validity period in the case of advertised or limited tender enquiry, Bid Security (also known as Earnest Money) is to be obtained from the bidders except Micro and Small Enterprises (MSEs) as defined in MSE Procurement Policy issued by Department of Micro, Small and Medium Enterprises (MSME) or are registered with the Central Purchase Organisation or the concerned Ministry or Department [or Startups as recognized by Department for Promotion of Industry and Internal Trade (DPIIT)]",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 3580,
+        "completion": 630
+      }
+    },
+    {
+      "id": "P-012",
+      "query": "What performance security should be taken from the successful bidder for a goods contract?",
+      "citation_correct": true,
+      "content_correct": true,
+      "passes_agree": true,
+      "final_correct": true,
+      "answer_points": [
+        "Three to five per cent of the value of the contract for goods, consultancy and non-consultancy services"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that performance security should be three to five per cent of the contract value for goods contracts."
+            }
+          ],
+          "material_errors": []
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that performance security should be three to five per cent of the contract value for goods contracts."
+            }
+          ],
+          "material_errors": []
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 3336,
+        "completion": 124
+      }
+    },
+    {
+      "id": "P-013",
+      "query": "Can we split a Rs 12 lakh requirement into four smaller orders so that a lower authority can sanction each?",
+      "citation_correct": true,
+      "content_correct": false,
+      "passes_agree": true,
+      "final_correct": false,
+      "answer_points": [
+        "No: a demand must not be divided into small quantities to make piecemeal purchases to avoid the sanction of a higher authority"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "contradicted",
+              "reason": "The answer states splitting is permissible under certain conditions, but the reference point explicitly prohibits splitting to avoid higher authority sanction."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "splitting a requirement into smaller orders is permissible if it aligns with the procurement guidelines and does not violate any specific thresholds or conditions",
+              "evidence": "a demand for goods should not be divided into small quantities to make piecemeal purchases to avoid the necessity of obtaining the sanction of higher authority",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "contradicted",
+              "reason": "The answer states that splitting is permissible under certain conditions, but the reference point explicitly prohibits splitting to avoid higher authority sanction."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "splitting a requirement into smaller orders is permissible if it aligns with the procurement guidelines and does not violate any specific thresholds or conditions",
+              "evidence": "a demand for goods should not be divided into small quantities to make piecemeal purchases to avoid the necessity of obtaining the sanction of higher authority",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 2540,
+        "completion": 273
+      }
+    },
+    {
+      "id": "P-014",
+      "query": "Does the Make in India order apply to a purchase estimated at Rs 4 lakh?",
+      "citation_correct": true,
+      "content_correct": true,
+      "passes_agree": true,
+      "final_correct": true,
+      "answer_points": [
+        "No: procurement with estimated value less than Rs 5 lakh is exempt from the Order",
+        "The procurement must not be split to avoid the Order"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that procurements with an estimated value less than Rs. 5 lakhs are exempt, which matches the reference point."
+            },
+            {
+              "point": 2,
+              "verdict": "missing",
+              "reason": "The answer does not mention the prohibition against splitting procurement to avoid the Order."
+            }
+          ],
+          "material_errors": []
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that procurements with an estimated value less than Rs. 5 lakhs are exempt, which matches the reference point."
+            },
+            {
+              "point": 2,
+              "verdict": "missing",
+              "reason": "The answer does not mention the prohibition against splitting procurement to avoid the Order."
+            }
+          ],
+          "material_errors": []
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 3740,
+        "completion": 214
+      }
+    },
+    {
+      "id": "P-015",
+      "query": "What local content makes a supplier Class-I or Class-II under the Public Procurement (Make in India) order?",
+      "citation_correct": true,
+      "content_correct": true,
+      "passes_agree": true,
+      "final_correct": true,
+      "answer_points": [
+        "Class-I local supplier: minimum 50% local content",
+        "Class-II local supplier: minimum 20% local content",
+        "A Nodal Ministry may prescribe only a higher percentage"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that a Class-I local supplier requires a minimum of 50% local content."
+            },
+            {
+              "point": 2,
+              "verdict": "stated",
+              "reason": "The answer clearly states that a Class-II local supplier requires a minimum of 20% local content."
+            },
+            {
+              "point": 3,
+              "verdict": "stated",
+              "reason": "The answer states that the Nodal Ministry/Department may prescribe a higher percentage, which matches the reference point."
+            }
+          ],
+          "material_errors": []
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that a Class-I local supplier requires a minimum of 50% local content."
+            },
+            {
+              "point": 2,
+              "verdict": "stated",
+              "reason": "The answer clearly states that a Class-II local supplier requires a minimum of 20% local content."
+            },
+            {
+              "point": 3,
+              "verdict": "stated",
+              "reason": "The answer states that the Nodal Ministry/Department may prescribe a higher percentage, which matches the reference point."
+            }
+          ],
+          "material_errors": []
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 3842,
+        "completion": 300
+      }
+    },
+    {
+      "id": "P-016",
+      "query": "What is the margin of purchase preference for Class-I local suppliers?",
+      "citation_correct": true,
+      "content_correct": true,
+      "passes_agree": true,
+      "final_correct": true,
+      "answer_points": [
+        "20%"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states the margin is 20%."
+            }
+          ],
+          "material_errors": []
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states the margin is 20%."
+            }
+          ],
+          "material_errors": []
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 2156,
+        "completion": 102
+      }
+    },
+    {
+      "id": "P-017",
+      "query": "Under GeM's terms, how soon must the buyer pay the seller for goods delivered?",
+      "citation_correct": true,
+      "content_correct": true,
+      "passes_agree": true,
+      "final_correct": true,
+      "answer_points": [
+        "100% payment within ten days of issue of the Consignee Receipt-cum-Acceptance Certificate (CRAC) and online bill submission, unless STC/ATC say otherwise"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states the 100% payment within ten days of CRAC issue and online bill submission, unless STC/ATC specify otherwise."
+            }
+          ],
+          "material_errors": []
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that payment must be made within ten days of CRAC issuance and online bill submission, unless otherwise specified in STC/ATC, matching the reference point."
+            }
+          ],
+          "material_errors": []
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 1778,
+        "completion": 144
+      }
+    },
+    {
+      "id": "P-018",
+      "query": "What liquidated damages apply on GeM if the seller delivers late?",
+      "citation_correct": true,
+      "content_correct": false,
+      "passes_agree": true,
+      "final_correct": false,
+      "answer_points": [
+        "0.5% of the contract value of the delayed quantity per week or part of a week",
+        "Not exceeding 5% of the total contract value",
+        "Unless covered by force majeure"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states the rate of 0.5% of the contract value of the delayed quantity per week or part of a week."
+            },
+            {
+              "point": 2,
+              "verdict": "stated",
+              "reason": "The answer states the maximum of 5% of the total contract value."
+            },
+            {
+              "point": 3,
+              "verdict": "stated",
+              "reason": "The answer explicitly mentions the exception for Force Majeure."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "In case of inordinate delay, the maximum deduction can be increased to 10% of the total contract value",
+              "evidence": "However, in case of inordinate delay maximum deduction shall be 10% of the total contract value.",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states the rate of 0.5% of the contract value of the delayed quantity per week or part of a week."
+            },
+            {
+              "point": 2,
+              "verdict": "stated",
+              "reason": "The answer states the maximum of 5% of the total contract value, though it also mentions a higher maximum for inordinate delay."
+            },
+            {
+              "point": 3,
+              "verdict": "stated",
+              "reason": "The answer explicitly mentions the exception for Force Majeure."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "In case of inordinate delay, the maximum deduction can be increased to 10% of the total contract value",
+              "evidence": "However, in case of inordinate delay maximum deduction shall be 10% of the total contract value.",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 3092,
+        "completion": 418
+      }
+    },
+    {
+      "id": "P-019",
+      "query": "How does the GeM Incident Management policy classify deviations by severity?",
+      "citation_correct": true,
+      "content_correct": true,
+      "passes_agree": true,
+      "final_correct": true,
+      "answer_points": [
+        "Four levels of deviation by severity",
+        "Including mild and serious deviations"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer explicitly states there are four severity levels."
+            },
+            {
+              "point": 2,
+              "verdict": "stated",
+              "reason": "The answer lists and describes both Mild and Serious deviations."
+            }
+          ],
+          "material_errors": []
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states there are four levels of deviation by severity."
+            },
+            {
+              "point": 2,
+              "verdict": "stated",
+              "reason": "The answer explicitly lists and describes Mild and Serious deviations, which are included in the reference points."
+            }
+          ],
+          "material_errors": []
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 1958,
+        "completion": 181
+      }
+    },
+    {
+      "id": "P-020",
+      "query": "Up to what value can the Secretary of a Department sanction expenditure on open or limited tender contracts under the DFPR?",
+      "citation_correct": true,
+      "content_correct": true,
+      "passes_agree": true,
+      "final_correct": true,
+      "answer_points": [
+        "Up to Rs 100 crore for open or limited tender contracts",
+        "Departments have full powers for purchases subject to the GFR"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states the Secretary can sanction up to Rs 100 crore for open or limited tender contracts."
+            },
+            {
+              "point": 2,
+              "verdict": "stated",
+              "reason": "The answer's reference to the rule being subject to the GFR and the source passage stating departments have full powers subject to the GFR conveys the same meaning."
+            }
+          ],
+          "material_errors": []
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states the Secretary can sanction up to Rs 100 crore for open or limited tender contracts."
+            },
+            {
+              "point": 2,
+              "verdict": "stated",
+              "reason": "The answer's reference to Rule 11(1) and the context implies departments have full powers subject to GFR, which aligns with the reference point."
+            }
+          ],
+          "material_errors": []
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 2064,
+        "completion": 233
+      }
+    },
+    {
+      "id": "P-021",
+      "query": "For a highly complex consultancy assignment selected by QCBS, what quality-to-cost weighting does the manual suggest?",
+      "citation_correct": false,
+      "content_correct": false,
+      "passes_agree": true,
+      "final_correct": false,
+      "answer_points": [
+        "80/20 (higher technical weightage) for highly complex or specialised assignments",
+        "Moderate complexity: 75-65 / 25-35"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "partial",
+              "reason": "The answer states a typical 70/30 weighting but does not mention the 80/20 weighting specifically suggested for highly complex assignments."
+            },
+            {
+              "point": 2,
+              "verdict": "missing",
+              "reason": "The answer does not address the moderate complexity weighting range of 75-65/25-35."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "the technical (quality) score is given a weightage of 70% while the cost score is given 30%",
+              "evidence": "80/20 (higher technical weightage) for highly complex or specialised assignments",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "partial",
+              "reason": "The answer states a typical 70/30 weighting but does not state the 80/20 weighting suggested for highly complex assignments."
+            },
+            {
+              "point": 2,
+              "verdict": "missing",
+              "reason": "The answer does not address the moderate complexity weighting range of 75-65/25-35."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "the technical (quality) score is given a weightage of 70% while the cost score is given 30%",
+              "evidence": "80/20 (higher technical weightage) for highly complex or specialised assignments",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 3346,
+        "completion": 335
+      }
+    },
+    {
+      "id": "P-022",
+      "query": "Can a bidder from a country that shares a land border with India bid in our procurement?",
+      "citation_correct": true,
+      "content_correct": false,
+      "passes_agree": true,
+      "final_correct": false,
+      "answer_points": [
+        "Only if registered with the Competent Authority (Registration Committee constituted by DPIIT)",
+        "Per DoE OM F.7/10/2021-PPD(1) dated 23.02.2023; GFR Rule 144(xi)"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that a bidder from a country sharing a land border with India is eligible to bid only if registered with the Competent Authority."
+            },
+            {
+              "point": 2,
+              "verdict": "partial",
+              "reason": "The answer cites the correct OM date but incorrectly states the applicability date for the general registration requirement as after 01.04.2023, whereas the reference point does not specify an applicability date for this case."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "This requirement applies to all procurements issued or published after 01.04.2023.",
+              "evidence": "The requirement of registration for cases covered by para (a) above has been applicable since 23.07.2020.",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that a bidder from a country sharing a land border with India is eligible only if registered with the Competent Authority."
+            },
+            {
+              "point": 2,
+              "verdict": "partial",
+              "reason": "The answer cites the correct OM date but incorrectly states the applicability date for the registration requirement as after 01.04.2023, which is for ToT arrangements, not for the general case of bidders from bordering countries."
+            }
+          ],
+          "material_errors": [
+            {
+              "claim": "This requirement applies to all procurements issued or published after 01.04.2023.",
+              "evidence": "The requirement of registration for cases covered by para (a) above has been applicable since 23.07.2020.",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 3608,
+        "completion": 395
+      }
+    },
+    {
+      "id": "P-023",
+      "query": "Which evaluation sheet does this office use to score a bid case?",
+      "citation_correct": true,
+      "content_correct": true,
+      "passes_agree": true,
+      "final_correct": true,
+      "answer_points": [
+        "The evaluation sheet stored with that case (its mandatory conditions, scored criteria and weights); no other sheet"
+      ],
+      "judgements": [
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that the office uses the evaluation sheet stored with each bid case, including its mandatory conditions, scored criteria, and weights."
+            }
+          ],
+          "material_errors": []
+        },
+        {
+          "points": [
+            {
+              "point": 1,
+              "verdict": "stated",
+              "reason": "The answer clearly states that the office uses the evaluation sheet stored with each bid case, including its mandatory conditions, scored criteria, and weights."
+            }
+          ],
+          "material_errors": []
+        }
+      ],
+      "judge_tokens": {
+        "prompt": 968,
+        "completion": 136
+      }
+    }
+  ]
+}

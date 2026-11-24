@@ -1,0 +1,50 @@
+case_id: case_003
+synthetic: true
+mandatory:
+  - id: M1
+    text: The bidder holds valid EPF and ESIC registration, with copies of the registration certificates submitted.
+    field: epf_esic_registered
+    pass_if: true
+  - id: M2
+    text: The bidder holds valid GST registration.
+    field: gst_registered
+    pass_if: true
+  - id: M3
+    text: Average annual turnover of the bidder in the last three financial years is at least Rs 25 lakh.
+    field: avg_turnover_inr
+    pass_if: {min: 2500000}
+scored:
+  - id: S1
+    text: Number of similar housekeeping contracts (office buildings of at least 50,000 sq ft, Government or PSU clients) completed in the last three years.
+    field: similar_contracts
+    weight: 40
+    rubric:
+      - {min: 3, marks: 40}
+      - {min: 2, marks: 25}
+      - {min: 1, marks: 10}
+      - {min: 0, marks: 0}
+  - id: S2
+    text: Mechanised cleaning equipment (scrubber-drier, wet-and-dry vacuum) deployed on site at the bidder's cost.
+    field: mechanised_equipment
+    weight: 20
+    rubric:
+      - {equals: true, marks: 20}
+      - {equals: false, marks: 0}
+  - id: S3
+    text: Bidder holds a valid ISO 9001 quality management certificate.
+    field: iso_certified
+    weight: 15
+    rubric:
+      - {equals: true, marks: 15}
+      - {equals: false, marks: 0}
+  - id: S4
+    text: Years of experience of the bidder in providing housekeeping services.
+    field: years_experience
+    weight: 25
+    rubric:
+      - {min: 10, marks: 25}
+      - {min: 5, marks: 15}
+      - {min: 0, marks: 0}
+price:
+  field: quoted_price_inr
+  basis: Total price for 12 months of housekeeping services, including wages at not less than the notified minimum wages, statutory contributions, consumables and GST.

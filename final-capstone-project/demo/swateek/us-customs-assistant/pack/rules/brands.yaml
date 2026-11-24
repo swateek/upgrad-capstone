@@ -1,0 +1,8 @@
+# Brand names used both for Cuban products and for products made elsewhere (rule R12).
+# TEAM HEURISTIC, NOT LAW: this list only decides when to ask "was it made in Cuba?". It is never
+# cited as a source and never used to conclude that a product is or is not Cuban.
+status: signed_off
+signed_off_on: 2026-11-17
+ambiguous_brands:
+  cigars: [Cohiba, Montecristo, Romeo y Julieta, H. Upmann, Partagás, Hoyo de Monterrey, Punch, Trinidad, Bolívar, Ramón Allones]
+  rum: [Havana Club]

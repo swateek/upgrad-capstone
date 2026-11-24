@@ -1,0 +1,41 @@
+{
+  "case_id": "case_009",
+  "synthetic": true,
+  "is_draft": true,
+  "rows": [
+    {"bidder": "B1", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "We enclose the signed Bid Securing Declaration in the prescribed form.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "We are a Class-I local supplier; the offered instrument has 62% local content, as stated in our self-certificate.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "The OEM authorisation for the offered spectrophotometer model is attached as Annex B.", "score": "pass", "gap": null},
+    {"bidder": "B1", "requirement_id": "S1", "kind": "scored", "weight": 35, "quoted_evidence": "We completed two supply orders of UV-Visible spectrophotometers to Government laboratories in the last three years.", "score": 20, "gap": null},
+    {"bidder": "B1", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "We offer a three-year comprehensive onsite warranty.", "score": 25, "gap": null},
+    {"bidder": "B1", "requirement_id": "S3", "kind": "scored", "weight": 15, "quoted_evidence": "We will provide two days of onsite operator training after installation.", "score": 8, "gap": null},
+    {"bidder": "B1", "requirement_id": "S4", "kind": "scored", "weight": 25, "quoted_evidence": "The offered instrument has a wavelength accuracy of 0.5 nm.", "score": 15, "gap": null},
+
+    {"bidder": "B2", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "A signed Bid Securing Declaration is submitted with this bid.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "We are a Class-II local supplier: local content in the offered instrument is 34%, as per the enclosed self-certificate.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "We attach the manufacturer's authorisation for the quoted spectrophotometer model.", "score": "pass", "gap": null},
+    {"bidder": "B2", "requirement_id": "S1", "kind": "scored", "weight": 35, "quoted_evidence": "Three similar orders of UV-Visible spectrophotometers to academic institutions were completed in the last three years.", "score": 35, "gap": null},
+    {"bidder": "B2", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": "Warranty: three years comprehensive, onsite.", "score": 25, "gap": null},
+    {"bidder": "B2", "requirement_id": "S3", "kind": "scored", "weight": 15, "quoted_evidence": "Onsite training for operators: two days after installation.", "score": 8, "gap": null},
+    {"bidder": "B2", "requirement_id": "S4", "kind": "scored", "weight": 25, "quoted_evidence": "Wavelength accuracy of the quoted model is 0.3 nm.", "score": 25, "gap": null},
+
+    {"bidder": "B3", "requirement_id": "M1", "kind": "mandatory", "weight": null, "quoted_evidence": "Bid Securing Declaration (signed) is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "M2", "kind": "mandatory", "weight": null, "quoted_evidence": "The offered instrument is imported and its local content is 12%, so we are a non-local supplier.", "score": "fail", "gap": null},
+    {"bidder": "B3", "requirement_id": "M3", "kind": "mandatory", "weight": null, "quoted_evidence": "OEM authorisation for the offered spectrophotometers is enclosed.", "score": "pass", "gap": null},
+    {"bidder": "B3", "requirement_id": "S1", "kind": "scored", "weight": 35, "quoted_evidence": null, "score": null, "gap": "not evaluated: non-responsive (M2)"},
+    {"bidder": "B3", "requirement_id": "S2", "kind": "scored", "weight": 25, "quoted_evidence": null, "score": null, "gap": "not evaluated: non-responsive (M2)"},
+    {"bidder": "B3", "requirement_id": "S3", "kind": "scored", "weight": 15, "quoted_evidence": null, "score": null, "gap": "not evaluated: non-responsive (M2)"},
+    {"bidder": "B3", "requirement_id": "S4", "kind": "scored", "weight": 25, "quoted_evidence": null, "score": null, "gap": "not evaluated: non-responsive (M2)"}
+  ],
+  "bidders": [
+    {"bidder": "B1", "name": "Labdhara Scientific Instruments Pvt Ltd", "status": "responsive", "technical_total": 68, "quoted_price_inr": 4380000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}},
+    {"bidder": "B2", "name": "Nilgiri Analytical Systems LLP", "status": "responsive", "technical_total": 93, "quoted_price_inr": 4520000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}},
+    {"bidder": "B3", "name": "Westbrook Optics Trading Co", "status": "non_responsive", "technical_total": null, "quoted_price_inr": 4100000,
+     "screening": {"status": "not_present", "snapshot_date": "2024-09-03", "history_versions": [], "possible_matches": []}}
+  ],
+  "ranking_eligible": ["B2", "B1"],
+  "withheld_bidders": [],
+  "notes": "B3 declares itself a non-local supplier (local content 12%, below the 20% Class-II threshold), so mandatory M2 (Class-I or Class-II local supplier as per the PPP-MII Order) fails and B3 is non-responsive; its scored rows are not evaluated even though its answers look strong, and its price is recorded only. B1 is Class-I (62%, at least 50%) and B2 is Class-II (34%, at least 20% but below 50%). Any purchase preference to Class-I suppliers is a financial-stage matter and is not applied here. Draft ranking for the committee; not an award."
+}

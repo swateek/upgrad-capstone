@@ -55,7 +55,7 @@ Configured in [`.pre-commit-config.yaml`](../.pre-commit-config.yaml):
 | Area | What it does |
 |---|---|
 | Whitespace and line endings | Trailing whitespace, end-of-file newlines, LF line endings |
-| File sanity | Merge-conflict markers, YAML, JSON, large files (max 500 KB) |
+| File sanity | Merge-conflict markers, YAML, JSON |
 | Secrets | Private keys and [gitleaks](https://github.com/gitleaks/gitleaks) |
 | Shell | [shellcheck](https://www.shellcheck.net/) on shell scripts |
 | Python | [Ruff](https://docs.astral.sh/ruff/) lint (with autofix) and format; `dumps/` is excluded |

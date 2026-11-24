@@ -1,0 +1,79 @@
+# Frozen eval set, version 3 (v1 + P-015 also_accept in v2 + P-011/P-012 also_accept in v3; see docs/results/eval-freeze.md). Generated at freeze time; do not hand-edit.
+# backend/tests/test_eval_freeze.py fails if any listed file changes.
+# To change a gold answer: bump version, regenerate this file in the same commit, and write
+# the reason in docs/results/eval-freeze.md. No git tag or branch is used for the eval set.
+version: 3
+commit: 0e3d764 + v2 (P-015) + v3 (P-011, P-012) also_accept changes # v1 commit; v3 lands in the next commit
+frozen_on: '2026-11-13'
+queries: 60
+by_job: {policy: 25, screening: 20, bid: 15}
+refusals: 8
+files:
+  eval/queries.jsonl: 4c9c833f441dd3045ef42037ed5b18baa0c9ac403077874f5fe36b95eeaa0528
+  eval/retrieval_labels.jsonl: 93431cab52097681c81ff090bae0f5a55c2a22e63aa9752ca2cbacfd087335ec
+  eval/dev.jsonl: 8f80cbf67dbddbbf3d9f24923e6617f1f8d7aa82031accae34ea038999c31751
+  refusals.yaml: f57f3db7b6989aa87e41812f74790a8bd2e37526c116413b5f47dcc4e4b69e42
+  data/screening/gem_delisted_sellers.csv: 598a7aa228a6c3e3aa93830b705769e13df3badc252c93c743c20f6edce4fd8e
+  data/screening/synthetic_buyer_debarment.csv: bfcb775ac86313142e4aad6d9ca8985b59762b750718c48532d4c226a16b9c2f
+  data/screening/snapshot.yaml: d49548ea5eb516777bd7d3f01ef31667a47e5c457ddd9fbe0815a1e09d08861e
+  data/screening/synthetic_lists.yaml: eebb36cae7ea6ebbe1117bb05fc8ae44b02a878ee86027261f36fca8efe62afb
+  data/bid_cases/README.md: 80e48e8378eda515e8511bf178bc63668c9f7c13df0c11067dae5d146ee4bd9c
+  data/bid_cases/case_001/case.yaml: b304f6e4b89ff5c14a8a0adb85a3bd74186ae098f8a7d8a48bf00dd11c45d17d
+  data/bid_cases/case_001/gold_scores.json: d4be299162e9c919adfdd53830def2b543e6958dd73025ca19047f707cafec0e
+  data/bid_cases/case_001/proposals/B1.md: 2e6c61a0589d93fa94fec3355799e65f4790e38281ebcd4aa2b6b44bdb530a1a
+  data/bid_cases/case_001/proposals/B2.md: e1bfdbcd5e92ee0e925e78e5b72aa7c640385b1ecd11813084ef32bbed29b80b
+  data/bid_cases/case_001/proposals/B3.md: 648dbccc98b6ceeb781cd9fcef0768fbf48919839b8829b0e7197115b6414772
+  data/bid_cases/case_001/requirements.yaml: a69d2b9d5f8c8cfb6531d09e57546178a4854b69deab5d949cdd18ee479e6e94
+  data/bid_cases/case_002/case.yaml: 0bb3542c0cbceeafc17b813eb47ac78d0e10da0c850992d3f78d7dbabbc62c9f
+  data/bid_cases/case_002/gold_scores.json: bc0ff96f395cfa4bb9036d27ee71aa7eeb32a7c51bda9669e3e60c9ea3ef2aee
+  data/bid_cases/case_002/proposals/B1.md: 337ef32f896e4197a4ec8d7b8f302d8a454e428836366e0583b825c0fd22d452
+  data/bid_cases/case_002/proposals/B2.md: b4ccfc8e1e51079d3b8321f01c21c78b517db27d4bcf491b064e30a5909664cc
+  data/bid_cases/case_002/proposals/B3.md: 490205fb5968a76b0757b6bf08b057ac6c7cca82b5654e45b04dea7b69acc2c7
+  data/bid_cases/case_002/requirements.yaml: efb378b7f9be69ea9315318f0777c4b00788a89a05be26925b7e79eabc9503f9
+  data/bid_cases/case_003/case.yaml: 4e74bedecbf76d628a59fc0b3d4b7d4f20c140d26f7a0166fcb1471fe5f98fa3
+  data/bid_cases/case_003/gold_scores.json: 34823dcc890f8937342c5af15ebcdc105f94acb919c1a20eb9984b24cd311614
+  data/bid_cases/case_003/proposals/B1.md: eadcada25f73d6eee59ad1907a28b629eea4b0df39f4e3bd95d6bbba55be3ea4
+  data/bid_cases/case_003/proposals/B2.md: 7033b55ab71c1c2f4d8814822772fbab1d9941ae5ecf89beba6b636376f9602f
+  data/bid_cases/case_003/proposals/B3.md: 295f4b023776fc4d9370e23749369f712c5d259b0279235dd0be58e3f0d3c680
+  data/bid_cases/case_003/requirements.yaml: eaf8444a8534f74087cd3671c45f4257e92b1791bd8f4b94266170d946132aba
+  data/bid_cases/case_004/case.yaml: 35e764d5eb2a0c3fe9b7870700228700343ab12f486a5b3a53df23e15ef3e3fe
+  data/bid_cases/case_004/gold_scores.json: 6e553e7b8abbe995cd7318145aaedc333db91e7d208d41f9f4bed055b18f9866
+  data/bid_cases/case_004/proposals/B1.md: 21ceb6e5e06bbeb7a34bb3f6ab620c046d7f691b9396c07348f75d80f258a5ee
+  data/bid_cases/case_004/proposals/B2.md: b74de03a7686ee23744c33c5114b9bf9029f358b0617d4f24da43b527ee03526
+  data/bid_cases/case_004/proposals/B3.md: 77a30d6321bb65d3bce90e281b8a54d972a459e6e44cdb9ed06a7db5772be63c
+  data/bid_cases/case_004/requirements.yaml: 1ba271477b7338551a0a5f231c4c98bd3c006c1d3a6d5d24602d107d4d58ca4e
+  data/bid_cases/case_005/case.yaml: 45a223a8b507695331997df8ece82b602594cb32d80b20c2f0930332a2f33c5f
+  data/bid_cases/case_005/gold_scores.json: 4abb5f6fe7fe04231bde82e5e226558c2eef508dff69f08004aa68eab7ad01e7
+  data/bid_cases/case_005/proposals/B1.md: d114459fd1bba0a4e0193d9f2875bdfb1578c7f77abe4e256b9f2cbfcc96f0ec
+  data/bid_cases/case_005/proposals/B2.md: d900fead256f53c323f2d3c68477246e82a17b8d2164e04ed95aa15ef1fa3bc9
+  data/bid_cases/case_005/proposals/B3.md: 21648cbd0f18f476d97446b8fb5a3409eca414872dbb355e0a12717ffd053efc
+  data/bid_cases/case_005/requirements.yaml: a86d1e9230655241d3c98b294bcde46684faada5085a98012df0e11c8976b830
+  data/bid_cases/case_006/case.yaml: aa7b70d2fb93f43fcf610e3f35243cb35b57d93889ddeb50ab7cefaaffbf4298
+  data/bid_cases/case_006/gold_scores.json: d17beac4cbc6c57f4c16a4519016592b7d4f7f4bd2eb818aaa154dd12c2f26ae
+  data/bid_cases/case_006/proposals/B1.md: 76e66f3c52fcb267380c7effe4d0ff6aa5b6369f2d1bdb65d697e0f132aaad1d
+  data/bid_cases/case_006/proposals/B2.md: 3d14cadaa4cdb8e6bf7714ec2b8cbf877bd36081b75328f82b3f5db05530d653
+  data/bid_cases/case_006/proposals/B3.md: b953c16367a5973b68c5d0345c4c7f61deb969e2db98607381759d1dac391b0e
+  data/bid_cases/case_006/requirements.yaml: 4c33f765ecbf5065fd6d293f8f84714e11e1bac7ae671173fa595c3cf51d9c00
+  data/bid_cases/case_007/case.yaml: 795636a780f98dc63bfd1fde6cb5411b20f1658efa1ecec219af46473eeb2461
+  data/bid_cases/case_007/gold_scores.json: 3a3fb28c1f2e9d03b3e428bf0db98add2a8eb27fca06df41a2616f77ff0ab74b
+  data/bid_cases/case_007/proposals/B1.md: 7b7208d295548b70839fe7cdbddc0c4dbcff13b7e0a2ad7dc41ed4bc5a22cee3
+  data/bid_cases/case_007/proposals/B2.md: 21e73d4c3a249e7c53e54bb4cecab1e71b4e93fa4d62c92f762e95af3bc4b8b9
+  data/bid_cases/case_007/proposals/B3.md: 19ba24902807c3e2088a83a38cde29bd7784fe0547b36c73fc3bbb44a1301fdc
+  data/bid_cases/case_007/requirements.yaml: 02580e12adb3ffbd22dc0406157d75b34471f33afdd86f28897bdf208ac844fe
+  data/bid_cases/case_008/case.yaml: 86838183966d7e44810db3f6e24301ca64b893c46001e3f294108ac7cc26cd15
+  data/bid_cases/case_008/gold_scores.json: 43dcfacacbe6413428a0453e226bcd4ba86b488353736e5df519676381ea3f6c
+  data/bid_cases/case_008/proposals/B1.md: 422358d830a8d960bfd9317eaef70305e9932e2fc92acd4d671daa1ec1568847
+  data/bid_cases/case_008/proposals/B2.md: f0bbb7143694d1af9d22371b48c22d787d13e37834d02de39403a068e8caaa53
+  data/bid_cases/case_008/proposals/B3.md: 127f788f31c18f93946322c9798cb0989b139b54b248eba7aaf9f55ecf928be3
+  data/bid_cases/case_008/requirements.yaml: 3a5840827b7ad2b887791f68a9d85f51832a793852507e07b0b8cc32e5be3797
+  data/bid_cases/case_009/case.yaml: b448531d22585334e6246e2c53a1a1ead3f473cdc4c59124478a8b097b9abd80
+  data/bid_cases/case_009/gold_scores.json: 4c001c9573c16092aa19beab3dbfe5831fba1ad1a5154bb4995311f2d4743f15
+  data/bid_cases/case_009/proposals/B1.md: b707f476b76cc8a4f60b897491f4b491203f83c8e06213b020dfcf848df1f7bb
+  data/bid_cases/case_009/proposals/B2.md: 69e11489e4ab4f792ba7a613ca05cf78042ce7b3c131890c4ac90c9aac127c2a
+  data/bid_cases/case_009/proposals/B3.md: 134cb0245daba9418aa1fc99ff8f8035b0b4bfaaf16c237df648e22e91ac986a
+  data/bid_cases/case_009/requirements.yaml: 2ecb143da5d7af49c48b370379852c70ddac19dfd6e2f8b8687aea628d5a6978
+  data/bid_cases/case_010/case.yaml: 81f0612deb8b01c25af7779bfd92f41c39997f562a1d37f9c59ac1ff03bb3b21
+  data/bid_cases/case_010/gold_scores.json: 2e5a8965837061b0dc380da1f5a69f8226b228bdf2871b88364a7d3f7a59b80b
+  data/bid_cases/case_010/proposals/B1.md: 413f1c75fcca99b39897b5110d6a01fcbd0fca908fe0418df6c2efcd7477c460
+  data/bid_cases/case_010/proposals/B2.md: 3c6cbbac839b8a434217dc96856ae78ca9ae7dccd8564f59a4d2b653b4cf2e90
+  data/bid_cases/case_010/proposals/B3.md: 2a22e5c3947433a646010c4c6b6cc2d4dc636c91f0c2f0fb7ec91f2881dddbac

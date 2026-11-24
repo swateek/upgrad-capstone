@@ -1,0 +1,51 @@
+case_id: case_008
+synthetic: true
+mandatory:
+  - id: M1
+    text: The bidder holds a valid PSARA licence for the State in which the services are to be provided.
+    field: psara_licence
+    pass_if: true
+  - id: M2
+    text: The bidder holds valid EPF and ESIC registration, with copies of the registration certificates submitted.
+    field: epf_esic_registered
+    pass_if: true
+  - id: M3
+    text: Average annual turnover of the bidder in the last three financial years is at least Rs 30 lakh.
+    field: avg_turnover_inr
+    pass_if: {min: 3000000}
+scored:
+  - id: S1
+    text: Number of similar security guarding contracts (24x7, at least 10 guards, Government or PSU premises) completed in the last three years.
+    field: similar_contracts
+    weight: 35
+    rubric:
+      - {min: 3, marks: 35}
+      - {min: 2, marks: 20}
+      - {min: 1, marks: 10}
+      - {min: 0, marks: 0}
+  - id: S2
+    text: Percentage of guards proposed for deployment who are ex-servicemen.
+    field: ex_servicemen_percent
+    weight: 20
+    rubric:
+      - {min: 50, marks: 20}
+      - {min: 25, marks: 10}
+      - {min: 0, marks: 0}
+  - id: S3
+    text: The bidder operates a 24x7 control room with supervisory checks at the site.
+    field: control_room_24x7
+    weight: 20
+    rubric:
+      - {equals: true, marks: 20}
+      - {equals: false, marks: 0}
+  - id: S4
+    text: Years of experience of the bidder in providing security guarding services.
+    field: years_experience
+    weight: 25
+    rubric:
+      - {min: 10, marks: 25}
+      - {min: 5, marks: 15}
+      - {min: 0, marks: 0}
+price:
+  field: quoted_price_inr
+  basis: Total price for 12 months of 24x7 guarding, including wages at not less than the notified minimum wages, statutory contributions, uniforms and GST.

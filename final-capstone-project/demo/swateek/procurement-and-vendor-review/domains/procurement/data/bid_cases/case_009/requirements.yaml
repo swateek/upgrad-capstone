@@ -1,0 +1,52 @@
+case_id: case_009
+synthetic: true
+mandatory:
+  - id: M1
+    text: Bid Securing Declaration in the prescribed form is submitted with the bid.
+    field: bid_security_declaration
+    pass_if: true
+  - id: M2
+    text: Bidder is a Class-I or Class-II local supplier as per the PPP-MII Order (Class-I local content of 50% or more; Class-II local content of 20% or more but less than 50%), supported by a self-certificate of local content.
+    field: local_supplier_class
+    pass_if: {in: [class_i, class_ii]}
+  - id: M3
+    text: Authorisation from the Original Equipment Manufacturer (OEM) for the offered spectrophotometer model is submitted.
+    field: oem_authorisation
+    pass_if: true
+scored:
+  - id: S1
+    text: Number of similar supply orders of UV-Visible spectrophotometers to Government laboratories or academic institutions completed in the last three years.
+    field: similar_supplies
+    weight: 35
+    rubric:
+      - {min: 3, marks: 35}
+      - {min: 2, marks: 20}
+      - {min: 1, marks: 10}
+      - {min: 0, marks: 0}
+  - id: S2
+    text: Comprehensive onsite warranty offered, in years.
+    field: warranty_years
+    weight: 25
+    rubric:
+      - {min: 3, marks: 25}
+      - {min: 2, marks: 15}
+      - {min: 0, marks: 0}
+  - id: S3
+    text: Onsite operator training offered after installation, in days.
+    field: onsite_training_days
+    weight: 15
+    rubric:
+      - {min: 3, marks: 15}
+      - {min: 1, marks: 8}
+      - {min: 0, marks: 0}
+  - id: S4
+    text: Wavelength accuracy of the offered instrument, in nm (lower is better).
+    field: wavelength_accuracy_nm
+    weight: 25
+    rubric:
+      - {max: 0.3, marks: 25}
+      - {max: 0.5, marks: 15}
+      - {min: 0, marks: 0}
+price:
+  field: quoted_price_inr
+  basis: Total price for six UV-Visible spectrophotometers including GST, delivery, installation and commissioning.
