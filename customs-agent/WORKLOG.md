@@ -560,3 +560,7 @@ How to add an entry: append under the current day, newest at the bottom. One ent
   - **CI:** the first push did not include the workflow: the root `.gitignore` ignores `.*`, so `.github/` was skipped silently; fixed with `!.github/` (the file had no final newline, so the first append joined the last line). First run then failed at lint: ruff was not a project dependency; `uv add --dev ruff`.
   - **Demo:** recorded locally (native `uv run`, GPU reranker, cache warmed by a dry run); scene list given in chat.
 
+- **What:** Langfuse replay and summary (Day 14).
+  - **Official traces in Langfuse:** `eval/push_traces.py` replays official runs from `results/runs/` (no model calls) as Langfuse traces tagged `official-run`, set, agent, mode, `correct`/`wrong` and `replayed`; session = run directory. Default 7 headline runs (640 traces); `--all` sends 13 runs (1,160). Filter the dashboard on tag `official-run` for screenshots. Test in `tests/test_report_tools.py`.
+  - **`info.md`:** one-page summary (what, how, results, ablations, compensations, live red-team), same content as the mentor email.
+  - Branch merged with main (took main's `.gitignore`); 43 commits ahead of main, ready for the PR.

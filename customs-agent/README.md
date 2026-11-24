@@ -2,6 +2,11 @@
 
 **New here? Follow [SETUP.md](SETUP.md)**: install, endpoint settings, tests, building the corpus.
 
+- What it is and the results in one page: [info.md](info.md)
+- The 12-page report: [docs/report/DeclareRight_report.pdf](docs/report/DeclareRight_report.pdf)
+- Hosted copy (access code from the team): https://139-59-66-138.sslip.io
+- Working log and plan: [WORKLOG.md](WORKLOG.md), [CLAUDE.md](CLAUDE.md)
+
 Python environment for the customs assistant is managed with [uv](https://docs.astral.sh/uv/).
 uv is used only inside this folder; the rest of the repository is unaffected.
 

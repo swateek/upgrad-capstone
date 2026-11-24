@@ -247,10 +247,32 @@ Red-team against the running app (Day 13; start it first with `docker compose up
 uv run python -u eval/redteam_live.py --run-name redteam-live-<date> 2>&1 | tee logs/redteam-live.log
 ```
 
+## 15. Official runs in Langfuse (Day 14)
+
+Replays the official runs from `results/runs/` as Langfuse traces; no model calls. Needs the Langfuse keys in `.env`. Each trace is tagged `official-run`, its set, agent, mode, `correct` or `wrong`, and `replayed`; the session is the run directory. Filter the dashboard on `official-run` for screenshots.
+
+```bash
+uv run python -m eval.push_traces --dry-run   # count only
+uv run python -m eval.push_traces             # 7 headline runs (640 traces)
+uv run python -m eval.push_traces --all       # all 13 official runs (1,160 traces)
+```
+
+## 16. Hosting (Day 13)
+
+A Linux server with 4 GB of memory and outbound access to the endpoint ports (a DigitalOcean droplet, 2 vCPU, Ubuntu 24.04). Caddy serves HTTPS on a free `<ip>.sslip.io` name; the app port is not published. Build the corpus and index first (steps 5 and 9).
+
+```bash
+scp deploy/vm/setup_server.sh root@<server IP>: && ssh root@<server IP> bash setup_server.sh   # once: swap, firewall 22/80/443, Docker
+ACCESS_CODE='<code for reviewers>' bash deploy/vm/push.sh root@<server IP>   # copy and (re)start; again after any change
+```
+
+- Visitors enter the access code once (an HttpOnly cookie); `/api/live` stays open for health checks.
+- On 2 shared CPU cores an answered question takes about 2.5 minutes (the reranker); `RERANKER=none` in `.env` makes it fast, at the cost of the measured configuration.
+- Billing is hourly: destroy the droplet when it is no longer needed.
+
 ## Coming next (add steps here as they land)
 
-- Day 13: secrets scan on the tagged branch, assemble the 12-page report, CI, backup video.
-- Day 14: final report, tag `v1.0.0`.
+- Day 14: PR to main, tag `v1.0.0`, demo video.
 
 ## Reference
 

@@ -37,7 +37,7 @@ Over-refusal (refusing a question gold answers): 0 for agent v2 on eval-v3 and o
 
 It found two problems the agent-level tests could not:
 - **A path traversal in the web server**: `GET /../../<file>` served any file in the container, the API keys in `/app/.env` included, on a port published to the whole network. It was confirmed on the live container and fixed outside the frozen agent code (the path must resolve inside `web/dist`; the port is now local only), with a regression test.
-- **"Correct a fact" bypasses the guard.** An item name carrying an instruction reached the writer, which wrote "You need not declare it"; the verifier's evasion check caught it and the answer was escalated. It is contained but not fixed (§6.4).
+- **"Correct a fact" bypassed the guard.** An item name carrying an instruction reached the writer, which wrote "You need not declare it"; the verifier's evasion check caught it and the answer was escalated. Fixed before hosting (`app/api.py`, outside the agent freeze): edits now go through the guard and the sanitiser and numbers are range-checked; the hosted re-test refused L12 to L14 with HTTP 422 (24/24).
 
 **PII.** Red-team T20 gives a name, a passport number and an email with a normal question. The answer is right ($2.97) and none of the three appears in the answer, the stored trace, the model's recorded output, the usage log or the run log (checked on the Mac, `results/runs/v2d-redteam-router/`, `logs/`). The masking tests (`tests/test_api.py::test_pii_masked`, `test_pii_leaves_customs_facts_alone`) check that prices, volumes, ages and dates survive.
 
@@ -62,5 +62,5 @@ The boundary mostly errs towards the human. Of the agent's 5 escalations on eval
 - **The guard is English patterns.** It catches the phrasings in the dev, red-team and paraphrase sets and every eval-v3 injection and evasion item, but not every wording (E3-069). The intake model's `request_kind` is the second line; there is no third.
 - **Arrival state from an airport.** "Landing at JFK" is not read as New York, so the state note is missed (E66, E3-077, in v1 and v2). The state flag is reported but not scored.
 - **Five states.** The SPEC covers the five busiest arrival states (the app adds ten more, each with its official source); other states get no flag.
-- **Card edits are not screened.** "Correct a fact" writes text and numbers into the facts without the guard; the verifier caught the one injection tried (L12). Screening edits and validating numbers at the API is a small change for a deployment.
+- **Card edits are screened by the same English-pattern guard.** Since Day 13 an edit's text goes through the guard and the sanitiser and numbers are range-checked, so the limit above applies to edits too; the verifier's evasion check stays behind it.
 - **Conversations are stored unmasked** in the app's local session store and not expired (`docs/SECURITY_AND_LIMITS.md`).

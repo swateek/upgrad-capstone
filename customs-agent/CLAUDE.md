@@ -255,15 +255,15 @@ From the mentor proposal's day-by-day table (`docs/01_US_Customs_Assistant.docx`
 | 8 | Corrections across turns: LangGraph StateGraph + SqliteSaver; replan only steps that depend on the changed field | | ✅ built (Day 7); 13 dev conversations to run |
 | 8 | Rate limit (10 questions per minute); answer cache (off for official runs) | | ✅ |
 | 8 | Error-handling tests | | ✅ |
-| 9 | Dry-run scoring on dev; prompt freeze at end of day; freeze the retrieval configuration | prompts frozen | ⏳ |
+| 9 | Dry-run scoring on dev; prompt freeze at end of day; freeze the retrieval configuration | prompts frozen | ✅ `eval/freeze.json` |
 | 9 | Verifier rules final; red-team prompt list (15+) | | ✅ red-team list (20, eval/redteam.yaml) |
 | 9 | Editable "facts relied on" in the UI that triggers a replan | | ✅ ("Correct a fact" → /api/edit) |
-| 9 | **Checkpoint:** must-have vs. stretch (section 5.4) | | ⏳ |
-| 10 | Official runs overnight, cache off: 3 × LLM-planner agent, 1 × code router, 1 × single_rag (≈ 3–4 h); code freeze, tag `v1.0.0-rc`; red-team against the live app, logged; CI green, image builds, health check; report §3 (prompting, small-model failures) and §4 (retrieval) | tag `v1.0.0-rc` | ⏳ |
-| 11 | Metrics: accuracy per type, $ accuracy, citation accuracy, clarify precision/recall, completion, tool calls, tokens and cost, p50/p95 latency; failure taxonomy (label every wrong answer, hand-check ≥ 15); recall@k next to end-to-end accuracy; report §5 (agent design, planner vs. router), §6 (responsible AI, injection and PII results, HITL boundary); deploy the container | | ⏳ |
-| 12 | Report §7 from COMPENSATIONS.md; figures; blocking bugs only; security notes, model limits, as-of dates; demo script (four conversations + one refusal + one correction) | | ⏳ |
-| 13 | Assemble the 12-page report; optional 2 more router runs; final check: no keys in Git, masked logs; backup demo video; full rehearsal | | ⏳ |
-| 14 | Final report, tag `v1.0.0`; live demo dry-run; submission | tag `v1.0.0` | ⏳ |
+| 9 | **Checkpoint:** must-have vs. stretch (section 5.4) | | ✅ |
+| 10 | Official runs overnight, cache off: 3 × LLM-planner agent, 1 × code router, 1 × single_rag (≈ 3–4 h); code freeze, tag `v1.0.0-rc`; red-team against the live app, logged; CI green, image builds, health check; report §3 (prompting, small-model failures) and §4 (retrieval) | tag `v1.0.0-rc` | ✅ (v2: `v2.0.0-rc`) |
+| 11 | Metrics: accuracy per type, $ accuracy, citation accuracy, clarify precision/recall, completion, tool calls, tokens and cost, p50/p95 latency; failure taxonomy (label every wrong answer, hand-check ≥ 15); recall@k next to end-to-end accuracy; report §5 (agent design, planner vs. router), §6 (responsible AI, injection and PII results, HITL boundary); deploy the container | | ✅ |
+| 12 | Report §7 from COMPENSATIONS.md; figures; blocking bugs only; security notes, model limits, as-of dates; demo script (four conversations + one refusal + one correction) | | ✅ |
+| 13 | Assemble the 12-page report; optional 2 more router runs; final check: no keys in Git, masked logs; backup demo video; full rehearsal | | ✅ report, checks; video and rehearsal by the owner |
+| 14 | Final report, tag `v1.0.0`; live demo dry-run; submission | tag `v1.0.0` | ⏳ PR to main, tag |
 
 ### Must-have vs. stretch (mentor 5.4): we are doing all of it
 
@@ -271,10 +271,10 @@ From the mentor proposal's day-by-day table (`docs/01_US_Customs_Assistant.docx`
 | --- | --- |
 | SPEC, 80-question frozen set, 4-strategy baseline ✅ | `whatif_optimise` and its 4 items ✅ (built; D12 passes) |
 | Corpus ≥ 500, hybrid + reranker, recall@k, citations ✅ | State-rule table beyond 5 states ✅ (10 more, app only) |
-| LLM planner + validator + executor + verifier, ≥ 3 tools ✅; memory and corrections ✅; error handling ✅ | 3 code-router runs (1 is enough for the ablation) ⏳ |
-| Official runs (3 × agent, 1 × router, 1 × single_rag) ⏳, taxonomy rules ✅ (labelling Day 11), tracing ✅ | Embedded regulation viewer in the UI ✅ |
-| Web app (React + FastAPI) in a container ✅, rate limit ✅, cache ✅, injection/PII/refusal tests (partly), HITL boundary, red-team log ⏳ | PDF export of the declaration checklist ✅ |
-| 12-page report, 10-minute demo, backup video ⏳ | Extra dev-set tuning rounds (partly: stop at the prompt freeze) |
+| LLM planner + validator + executor + verifier, ≥ 3 tools ✅; memory and corrections ✅; error handling ✅ | 3 code-router runs: not run (1 per set; the 3 planner runs gave identical answers, so repeats add little) |
+| Official runs (3 × agent, 1 × router, 1 × single_rag) ✅, taxonomy rules ✅ (labelling Day 11), tracing ✅ | Embedded regulation viewer in the UI ✅ |
+| Web app (React + FastAPI) in a container ✅, rate limit ✅, cache ✅, injection/PII/refusal tests (partly), HITL boundary, red-team log ✅ | PDF export of the declaration checklist ✅ |
+| 12-page report ✅, 10-minute demo, backup video (owner) | Extra dev-set tuning rounds ✅ (the v2 round on dev-v2, before its freeze) |
 
 Rules that still hold: prompts freeze on Day 9 and code on Day 10; nothing is tuned against the eval set; if the schedule slips, stretch items go first, then UI extras. Never drop the eval set, baselines, retrieval table, planner + verifier, or official runs.
 
@@ -293,8 +293,9 @@ Rules that still hold: prompts freeze on Day 9 and code on Day 10; nothing is tu
 7. ✅ **Consolidated ablation table** (2026-11-24): `eval/ablation.py` → `results/ablation.csv` (13 arms) and `docs/ABLATION.md`: Day 4 prompting baselines, single_rag, agent v1 and v2, router and planner (mean and range over 3 runs), on eval-v2, eval-v3 and eval-v2 under gold-v2; accuracy, each check, by question type, tokens, calls, p50/p95 latency, all read from the run files. No reranker-off arm was run.
 8. Day 11 (2026-11-24): ✅ metrics (`docs/METRICS.md`), ✅ failure labels for v2 eval-v3 and v1 eval-v3, ✅ hand check by two reviewers (28 items incl. every unsafe one; rules vs reviewers κ 0.95 / 0.90, reviewers κ 0.95; E3-019 confirmed gold error; E78 relabelled `CITATION_SELECTION`), ✅ recall next to accuracy (`docs/RECALL_VS_ACCURACY.md`), ✅ drafts of report §5 and §6 (`docs/report/`). Still open from Day 10: red-team against the live app.
 9. Day 12 (2026-11-24): ✅ report drafts §1 problem and spec, §2 evaluation design, §3 prompting baselines, §4 retrieval, §7 compensations (`docs/report/`; every number traced to a results file); ✅ figures (`eval/report_figures.py` → `docs/report/figures/`: retrieval recall@k, accuracy by arm, failures by stage v1 vs v2, tokens per call); ✅ tokens per call by stage (`eval/token_calls.py` → `docs/TOKENS.md`: largest call 2,988 tokens, none over 3,000; largest question 7,558); ✅ security notes, model limits and as-of dates (`docs/SECURITY_AND_LIMITS.md`; branch clean of keys and certificates; `origin/main` tracks the course CA certificates from a teammate's folders: public, not secret, to raise with them); ✅ demo script (kept locally, not in the repo). matplotlib added to the dev group. Red-team against the live app moved to Day 13.
-10. Day 13 (2026-11-24): ✅ red-team against the live app (`eval/redteam_live.py`, 24 new attacks, `docs/REDTEAM_LIVE.md`): found a **path traversal** in the static-file route that could serve `/app/.env` (API keys) on a port open to the network; confirmed live, fixed in `app/api.py` + `docker-compose.yml` (127.0.0.1 only) with a regression test, re-tested: 24/24. Card edits bypass the guard (contained by the verifier; reported, not fixed). Report §6 and `docs/SECURITY_AND_LIMITS.md` updated. Next: assemble the 12-page report; CI; secrets scan before the tag; backup video.
+10. Day 13 (2026-11-24): ✅ red-team against the live app (`eval/redteam_live.py`, 24 new attacks, `docs/REDTEAM_LIVE.md`): found a **path traversal** in the static-file route that could serve `/app/.env` (API keys) on a port open to the network; confirmed live, fixed in `app/api.py` + `docker-compose.yml` (127.0.0.1 only) with a regression test, re-tested: 24/24. Card edits bypassed the guard (contained by the verifier; fixed for hosting in item 11). Report §6 and `docs/SECURITY_AND_LIMITS.md` updated. Next: assemble the 12-page report; CI; secrets scan before the tag; backup video.
 11. Day 13, continued (2026-11-24): ✅ CI (`.github/workflows/customs-agent.yml`: lint, offline tests, web build; the root `.gitignore` needed `!.github/`, ruff added to the dev group); ✅ structured-output reliability (`docs/RELIABILITY.md`), rubric failure kinds (`eval/rubric_taxonomy.py`), architecture figure; ✅ **12-page report** (Doc https://claude.ai/artifact/2DzKQrvmgK5gBrPYsjBLiL, PDF `docs/report/DeclareRight_report.pdf`); ✅ **hosted** at https://139-59-66-138.sslip.io (DigitalOcean 4 GB, Caddy, access code, card edits screened, per-visitor rate limit; `deploy/vm/`), hosted red-team 24/24. Open: answered questions take ~2.5 min on the droplet (reranker on 2 CPU cores; `RERANKER=none` is the fallback setting); record the demo locally (GPU); secrets scan and tag `v1.0.0` on Day 14; destroy the droplet after grading.
+12. Day 14 (2026-11-24): ✅ official runs replayed into Langfuse (`eval/push_traces.py`, tag `official-run`); ✅ `info.md` summary; ✅ docs brought in line (edits fixed for hosting, plan statuses, SETUP steps 15–16). Open: PR to main and tag `v1.0.0`; demo video; destroy the droplet after grading. Optional: 2 more router runs; SPEC 5.5 against HTSUS General Notes.
 
 ## Current status
 
@@ -324,8 +325,8 @@ Rules that still hold: prompts freeze on Day 9 and code on Day 10; nothing is tu
 - [x] **Gate passed (end of Day 4):** SPEC approved, `eval-v2` tagged, baselines committed (commit 5615aa7, tag `gate-day4`). Agent code now allowed.
 - [x] Days 5–7 retrieval: `results/retrieval_experiment.csv` (+ `_bge`), decisions in `docs/RETRIEVAL.md` (hybrid RRF + `BAAI/bge-reranker-v2-m3`, 350-token chunks, hard negatives filtered, k = 5, numpy index instead of Qdrant). `search_regulations` built (by citation id + search; saved index in `data/rag-corpus/index/`).
 - [x] Days 5–7: agent v0 (code router) and LLM planner + validator end to end on dev; single_rag arm; hard budget (10 steps, 12k tokens). Dev ablation in WORKLOG (Day 6). Paraphrase check 0.883 before fixes.
-- [ ] `uv add --dev pyyaml openpyxl` (needed by `eval/build_eval.py`).
-- [ ] Add the newly cited sources to the corpus: 19 USC 1681a, 26 USC 5754/5761, HTSUS General Note 3 and ch. 98 U.S. Note 4, OFAC Russia FAQs.
+- [x] `uv add --dev pyyaml openpyxl` (needed by `eval/build_eval.py`).
+- [x] Add the newly cited sources to the corpus: 19 USC 1681a, 26 USC 5754/5761, HTSUS General Note 3 and ch. 98 U.S. Note 4, OFAC Russia FAQs (all in MANIFEST.json).
 
 - Business case and first technical design exist (pre-mentor review): Business Case https://claude.ai/artifact/3EmBYyxpiwUn4LhgD2xKvJ · Technical Design https://claude.ai/artifact/AAoYfA26TQhgigAvZfzQoc. The mentor proposal supersedes them where they differ (planner, 9 tools, corpus size, corrected facts).
 
