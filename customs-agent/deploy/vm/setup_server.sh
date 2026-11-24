@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-time setup of a fresh Ubuntu 24.04 server for DeclareRight (SETUP.md step 15).
+# One-time setup of a fresh Ubuntu 24.04 server for DeclareRight (SETUP.md step 16).
 #   scp deploy/vm/setup_server.sh root@<ip>:   then on the server:   bash setup_server.sh
 # Safe to run twice. Prints a connectivity check of the course endpoints at the end.
 set -euo pipefail

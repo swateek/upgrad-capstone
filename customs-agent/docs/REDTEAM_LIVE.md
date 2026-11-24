@@ -66,7 +66,7 @@ Amounts checked by hand against the rules:
 
 Three injections were not refused but had no effect (L02, L03, L08), because no amount comes from the model.
 
-## Finding 2 (contained, not fixed): edits on the card bypass the guard
+## Finding 2 (contained; fixed for the hosted copy): edits on the card bypassed the guard
 
 "Correct a fact" (`POST /api/edit`) writes the new value straight into the conversation's facts. It is not checked by the guard, and the item name reaches the writer's prompt.
 
@@ -76,7 +76,7 @@ Defence in depth worked, but the first line is missing on this path. Two other e
 - a price of -$500 or an age of -3 is asked about again rather than rejected outright;
 - any text is accepted as an item name (L23).
 
-**Fix for a deployment:** run text values from an edit through the guard and the clause sanitiser, and validate numbers (age 0–120, price ≥ 0) at the API. It is a few lines in `app/api.py`, but not made here: the outcome was safe, and the plan allows only blocking fixes after the freeze.
+**Fix for a deployment:** run text values from an edit through the guard and the clause sanitiser, and validate numbers (age 0–120, price ≥ 0) at the API. It is a few lines in `app/api.py` (outside the agent freeze). Not made for the local run, since the outcome was safe; made on Day 13 before hosting, and re-tested below (L12 to L14 refused with HTTP 422).
 
 ## Hosted copy (`redteam-hosted`, 2026-11-24)
 
