@@ -4,10 +4,11 @@
 
 fig1_retrieval.png    recall@k by retrieval method, 350-token chunks, hard negatives filtered
                       (results/retrieval_experiment*.csv)
-fig2_accuracy.png     accuracy of every arm on eval-v2 and eval-v3 (results/ablation.csv)
-fig3_failures.png     agent v1 vs v2 on eval-v3, failures by first wrong stage (failures CSVs,
+fig2_architecture.png the request flow: model steps and code steps (a drawing, not data)
+fig3_accuracy.png     accuracy of every arm on eval-v2 and eval-v3 (results/ablation.csv)
+fig4_failures.png     agent v1 vs v2 on eval-v3, failures by first wrong stage (failures CSVs,
                       final labels: the hand label where both reviewers agree)
-fig4_tokens.png       tokens per model call by stage, agent v2 planner on eval-v3, against the
+fig5_tokens.png       tokens per model call by stage, agent v2 planner on eval-v3, against the
                       8,192 limit and the 3,000 target (results/token_calls.csv)
 
 Static figures for a printed report: light surface only, values labelled on the marks.
@@ -19,6 +20,7 @@ from __future__ import annotations
 
 import csv
 from collections import Counter
+from itertools import pairwise
 from pathlib import Path
 
 import matplotlib
@@ -74,7 +76,7 @@ def hbar(ax, y: float, width: float, color: str, height: float = BAR) -> None:
         ax.barh(y, width, height=height, color=color, linewidth=0)
 
 
-def fig2_accuracy() -> Path:
+def fig3_accuracy() -> Path:
     rows = list(csv.DictReader((RES / "ablation.csv").open()))
     wanted = {
         "eval-v2": [
@@ -126,7 +128,7 @@ def fig2_accuracy() -> Path:
     axes[-1].set_xlabel(
         "Accuracy: every check passes (outcome, bottom line, dollars, citations, clarify)"
     )
-    p = OUT / "fig2_accuracy.png"
+    p = OUT / "fig3_accuracy.png"
     fig.savefig(p, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
     return p
@@ -151,7 +153,7 @@ def final_labels(path: Path) -> Counter:
     return c
 
 
-def fig3_failures() -> Path:
+def fig4_failures() -> Path:
     arms = [
         (
             "agent v1 (48 wrong)",
@@ -191,7 +193,125 @@ def fig3_failures() -> Path:
         handles, [a for a, _ in arms], frameon=False, loc="lower right", fontsize=8.5
     )
     _style(ax)
-    p = OUT / "fig3_failures.png"
+    p = OUT / "fig4_failures.png"
+    fig.savefig(p, dpi=DPI, bbox_inches="tight")
+    plt.close(fig)
+    return p
+
+
+def _box(ax, x, y, w, h, title, sub, kind):
+    """kind: model (the 8B model), code, data (a file the code reads, or the question/answer)."""
+    from matplotlib.patches import FancyBboxPatch
+
+    face = {"model": "#fde3d6", "code": "#dbe8f8", "data": SURFACE}[kind]
+    edge = {"model": SERIES[1], "code": SERIES[0], "data": MUTED}[kind]
+    ax.add_patch(
+        FancyBboxPatch(
+            (x - w / 2, y - h / 2),
+            w,
+            h,
+            boxstyle="round,pad=0,rounding_size=0.06",
+            facecolor=face,
+            edgecolor=edge,
+            linewidth=1.2,
+            linestyle="--" if kind == "data" else "-",
+        )
+    )
+    if title:
+        ax.text(
+            x,
+            y + (0.17 if sub else 0),
+            title,
+            ha="center",
+            va="center",
+            fontsize=8.5 if kind != "data" or sub else 6.8,
+            color=INK,
+            fontweight="semibold" if kind != "data" or sub else "normal",
+        )
+    if sub:
+        ax.text(
+            x,
+            y - 0.12,
+            sub,
+            ha="center",
+            va="center",
+            fontsize=5.9,
+            color=INK_2,
+            linespacing=1.15,
+        )
+
+
+def _arrow(ax, a, b, color=INK_2):
+    ax.annotate(
+        "",
+        xy=b,
+        xytext=a,
+        arrowprops={
+            "arrowstyle": "-|>",
+            "color": color,
+            "lw": 1.1,
+            "shrinkA": 0,
+            "shrinkB": 0,
+            "mutation_scale": 9,
+        },
+    )
+
+
+def fig2_architecture() -> Path:
+    """The request flow (docs/ARCHITECTURE.md, report §5.1). A drawing, not data."""
+    fig, ax = plt.subplots(figsize=(7.6, 4.0))
+    ax.set_xlim(0, 10.8)
+    ax.set_ylim(0, 5.3)
+    ax.axis("off")
+    w, h = 1.55, 0.82
+    top, bot = 3.9, 1.85
+    xs = [0.85, 2.6, 4.35, 6.1, 7.85, 9.7]
+    row1 = [
+        ("Question", "free text", "data"),
+        ("Guard", "injection, evasion,\nout of scope", "code"),
+        ("Intake", "question \u2192 facts\n(JSON schema)", "model"),
+        ("Clean-up", "each fact checked\nagainst the question", "code"),
+        ("Plan", "LLM plan + validator\nor fixed router", "model"),
+        ("Tools", "restrictions first,\nthen exemption, duty", "code"),
+    ]
+    for x, (t, sub, k) in zip(xs, row1, strict=True):
+        _box(ax, x, top, w, h, t, sub, k)
+    for a, b in pairwise(xs):
+        _arrow(ax, (a + w / 2, top), (b - w / 2, top))
+    xs2 = [9.7, 7.85, 6.1, 4.35, 2.6]
+    row2 = [
+        ("Search", "rule clauses by id,\nthen hybrid + rerank", "code"),
+        ("Answer card", "bottom line\nand working", "code"),
+        ("Writer", "explains the card,\ncites clauses", "model"),
+        ("Verifier", "numbers, citations;\nevasion (LLM)", "code"),
+        ("Answered", "citations, as-of date,\ndisclaimer", "data"),
+    ]
+    for x, (t, sub, k) in zip(xs2, row2, strict=True):
+        _box(ax, x, bot, w, h, t, sub, k)
+    _arrow(ax, (xs[-1], top - h / 2), (xs2[0], bot + h / 2))
+    for a, b in pairwise(xs2):
+        _arrow(ax, (a - w / 2, bot), (b + w / 2, bot))
+    # what the code reads
+    _box(ax, 9.7, 5.0, 2.0, 0.38, "rules.yaml, rates.yaml", "", "data")
+    _arrow(ax, (9.7, 5.0 - 0.19), (9.7, top + h / 2), MUTED)
+    _box(ax, 9.7, 0.62, 2.0, 0.38, "corpus: 1,480 chunks", "", "data")
+    _arrow(ax, (9.7, 0.62 + 0.19), (9.7, bot - h / 2), MUTED)
+    # the other outcomes
+    red = "#b8402f"
+    for x0, x1, y0, y1, label in (
+        (2.6, 2.6, top - h / 2, 3.07, "refused"),
+        (6.1, 5.4, top - h / 2, 3.07, "clarify: one question"),
+        (9.25, 8.25, top - h / 2, 3.07, "escalate"),
+        (4.35, 4.35, bot - h / 2, 0.98, "escalate if the retry fails"),
+    ):
+        _arrow(ax, (x0, y0), (x1, y1), red)
+        ax.text(x1, y1 - 0.13, label, ha="center", va="center", fontsize=7, color=red)
+    for i, (k, lab) in enumerate(
+        (("model", "Qwen3-8B call"), ("code", "code"), ("data", "input, output, data"))
+    ):
+        _box(ax, 0.45 + i * 1.75, 0.22, 0.3, 0.2, "", "", k)
+        ax.text(0.68 + i * 1.75, 0.22, lab, va="center", fontsize=7, color=INK_2)
+    p = OUT / "fig2_architecture.png"
     fig.savefig(p, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
     return p
@@ -278,7 +398,7 @@ def fig1_retrieval() -> Path:
     return p
 
 
-def fig4_tokens() -> Path:
+def fig5_tokens() -> Path:
     rows = [
         r
         for r in csv.DictReader((RES / "token_calls.csv").open())
@@ -331,7 +451,7 @@ def fig4_tokens() -> Path:
     )
     ax.set_title("Every call stays under 3,000 tokens")
     _style(ax)
-    p = OUT / "fig4_tokens.png"
+    p = OUT / "fig5_tokens.png"
     fig.savefig(p, dpi=DPI, bbox_inches="tight")
     plt.close(fig)
     return p
@@ -339,5 +459,11 @@ def fig4_tokens() -> Path:
 
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
-    for f in (fig2_accuracy, fig3_failures, fig1_retrieval, fig4_tokens):
+    for f in (
+        fig2_architecture,
+        fig1_retrieval,
+        fig3_accuracy,
+        fig4_failures,
+        fig5_tokens,
+    ):
         print(f().relative_to(ROOT))

@@ -15,6 +15,10 @@ DeclareRight answers one question with a fixed pipeline. The 8B model reads and 
 | Writer | LLM | A plain explanation of the card, citing only the clauses retrieved for this question |
 | Verifier | code + 1 LLM call | Every number must come from a tool, the facts or the question; citations only from the retrieved, frozen-corpus clauses; an LLM check for evasion advice. One retry with the problems fed back, then unsupported sentences are removed, else escalate |
 
+![Figure 2. The request flow: which steps are the 8B model and which are code.](figures/fig2_architecture.png)
+
+*Figure 2. The request flow. Orange steps are calls to Qwen3-8B; blue steps are code; the model never computes an amount or picks a rule.*
+
 The outcome is one of four: **answered**, **clarify** (one round asking only for facts that change the answer), **refused** or **escalated** (§6.3). A conversation keeps its state in LangGraph with a SQLite checkpointer; a correction ("actually it was 30 hours") re-runs only the tools that depend on the changed fact (`tests/test_session.py::test_correction_replans_only_dependent_steps`). All 13 scripted conversations, 30 turns, are answered correctly by agent v2 (`v2d-conversations`).
 
 Error handling: malformed JSON gets two retries with the validation error fed back; a tool error goes back to the plan; an identical repeated call is blocked; a hard budget of 10 tool steps and 12,000 tokens per question. No official run hit the budget (at most 8 tool steps; completion 1.00 on every arm, `docs/METRICS.md`).
@@ -50,14 +54,24 @@ Agent v1 was frozen (`v1.0.0-rc`) and run on eval-v2: 0.75. Its 20 failures were
 | agent v1, router | 0.52 | 0.57 | 0.57 | 0.24 / 0.80 |
 | agent v2, router | 0.77 | 0.77 | 0.79 | 0.43 / 1.00 |
 
-![Figure 2. Accuracy of every arm on the two held-out sets.](figures/fig2_accuracy.png)
+![Figure 3. Accuracy of every arm on the two held-out sets.](figures/fig3_accuracy.png)
 
-*Figure 2. Accuracy of every arm on its held-out set (`results/ablation.csv`).*
+*Figure 3. Accuracy of every arm on its held-out set (`results/ablation.csv`).*
 
 Like for like, v2 fixes 27 of v1's 48 failures and breaks 2. Part of the gain is SPEC v2 rules that v1 never had; part is reading. The gap between dev-v2 (0.991) and eval-v3 (0.77) is the honest measure of how far the code rules generalise: they cover the phrasings they were written from, and new writers say the same facts in other words. 20 of v2's 23 eval-v3 failures start in reading the question (11 missed facts, 5 wrong, 4 invented); the clearest symptom is clarify precision 0.43: v2 asks for every fact it should (recall 1.00) but also asks for facts the question gave. Retrieval is not the bottleneck: where the agent reached search, every gold citation was in front of the writer on 93% of questions, and each of the other 4 began with a misread fact (`docs/RECALL_VS_ACCURACY.md`).
 
-![Figure 3. Agent v1 and v2 failures on eval-v3 by the first stage that went wrong.](figures/fig3_failures.png)
+![Figure 4. Agent v1 and v2 failures on eval-v3 by the first stage that went wrong.](figures/fig4_failures.png)
 
-*Figure 3. Wrong answers on eval-v3 by the first stage that went wrong, final labels after the hand check (`docs/TAXONOMY.md`).*
+*Figure 4. Wrong answers on eval-v3 by the first stage that went wrong, final labels after the hand check (`docs/TAXONOMY.md`).*
+
+In the rubric's four kinds (`eval/rubric_taxonomy.py`; the mapping is in `docs/TAXONOMY.md`):
+
+| Agent, set | Wrong | Reasoning error | Hallucination | Retrieval miss | Tool-call error | Safety / scope | Gold error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| v1, eval-v2 | 20 | 12 | 2 | 3 | 1 | 2 | 0 |
+| v1, eval-v3 | 48 | 33 | 4 | 6 | 2 | 3 | 0 |
+| v2, eval-v3 | 23 | 17 | 4 | 0 | 0 | 1 | 1 |
+
+"Reasoning error" here is almost entirely reading: a stated fact dropped or misread (16 of v2's 17; the 17th is the clarify decision). "Hallucination" is a fact filled in that the question never gave. v2 has no retrieval misses and no tool-call errors on eval-v3.
 
 One gold error was found in eval-v3 while labelling and confirmed by both reviewers of the failure labels (E3-019: a 15.5% wine taxed at the over-16% rate; the agent's $1.10 is right). Accuracy is reported as scored, 0.77, and with E3-019 corrected, 0.78. The failure labels themselves agree with two independent reviewers on 27 and 26 of 28 checked items (κ 0.95 and 0.90; the reviewers agree with each other on 27, κ 0.95), with the caveat that the reviewers saw the proposed label (`docs/TAXONOMY.md`).

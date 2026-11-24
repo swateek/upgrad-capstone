@@ -234,7 +234,9 @@ uv run python -m eval.ablation              # results/ablation.csv, docs/ABLATIO
 uv run python -m eval.metrics               # results/metrics.csv, docs/METRICS.md
 uv run python -m eval.recall_vs_accuracy    # results/recall_vs_accuracy.csv, docs/RECALL_VS_ACCURACY.md
 uv run python -m eval.token_calls           # results/token_calls.csv, docs/TOKENS.md
-uv run python -m eval.report_figures        # docs/report/figures/fig1-4 (PNG)
+uv run python -m eval.reliability           # results/reliability.csv, docs/RELIABILITY.md
+uv run python -m eval.rubric_taxonomy       # results/failures_rubric.csv (the rubric's four kinds)
+uv run python -m eval.report_figures        # docs/report/figures/fig1-5 (PNG)
 ```
 
 Report drafts are in `docs/report/` (sections 1–7).

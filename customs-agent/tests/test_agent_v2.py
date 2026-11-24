@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
@@ -22,6 +23,12 @@ from src.safety.guard import check_question, sanitise_clause
 from src.schemas import Amount, BasketLine, Profile
 from src.tools.normalise_units import Args as NArgs
 from src.tools.normalise_units import class_by_name, excise_class, normalise_units
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+needs_corpus = pytest.mark.skipif(
+    not (ROOT_DIR / "data" / "rag-corpus" / "corpus" / "chunks.jsonl").exists(),
+    reason="corpus not built (git-ignored; SETUP.md step 5)",
+)
 
 
 def line(
@@ -302,6 +309,7 @@ def test_sanitiser_drops_text_addressed_to_an_assistant(text):
     assert sanitise_clause(text)[0] is False
 
 
+@needs_corpus
 def test_corpus_chunks_survive_the_sanitiser():
     from src.retrieval.corpus import load_chunks
 
@@ -344,6 +352,7 @@ def test_main_sources_first_in_a_mixed_cuban_basket():
     )
 
 
+@needs_corpus
 def test_has_chunk_matches_only_the_frozen_text():
     from src.retrieval.corpus import load_chunks
     from src.tools.search_regulations import RegulationSearch

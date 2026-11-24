@@ -137,6 +137,36 @@ a {
   font-size: 1.0625rem;
 }
 
+.intro .intro__privacy {
+  margin-top: 0.75rem;
+  font-size: 0.9375rem;
+}
+
+/* ---------------------------------------------------------------- access code (hosted app) */
+
+.gate__label {
+  display: block;
+  font-weight: 650;
+}
+
+.gate__help {
+  margin: 0.25rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+}
+
+.gate__input {
+  flex: 1 1 14rem;
+  padding: 0.625rem 0.875rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.gate .turn__error {
+  margin-top: 0.75rem;
+}
+
 /* ---------------------------------------------------------------- ask */
 
 .ask {

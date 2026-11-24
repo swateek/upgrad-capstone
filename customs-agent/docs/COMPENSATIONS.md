@@ -42,21 +42,21 @@ Add a row when a model weakness changes the design, or when a fix is measured. F
 | 31 | agent v2, step 3 (`v2b` → `v2c-dev2-router`) | The writer, not the numbers, now causes most failures: it copied the prompt's example amount ("You owe $2.97 on the wine" for cigarettes), added two excesses itself (1.25 L), or invented a sentence ("only $300 of it is available for alcohol"); the verifier caught each and escalated a correct answer | The bottom line is built in code from the tool results; WORKING states the total excess; after the writer's retry, sentences with invented numbers are removed and the rest re-verified (escalate only if nothing is left); the prompt's example amount replaced by a placeholder. Also: cigars typed by name, an age ("25-year-old") is not a size, "no overseas trips", a place name in bought_where | Accuracy (all checks); writer retries; pruned answers | dev-v2 | 0.929 (104/112); 3 verifier escalations of correct answers | 0.991 (111/112; the miss is the D2-055 gold erratum); 0 writer retries, 0 pruned, 0 verifier escalations; 3,123 tokens/q, 2.61 calls/q | `results/runs/v2b-dev2-router/`, `v2c-dev2-router/` |
 
 
-## Planned measurements
+## Planned measurements: outcome
 
-Fill these as the runs happen; delete any that turn out not to apply.
+Planned on Day 0. Each row now says what was measured and where, or that it was not run.
 
-| Planned fix | Metric | Before comes from | After comes from |
+| Planned fix | Metric | Result | Where |
 | --- | --- | --- | --- |
-| Calculators do all arithmetic | Dollar accuracy (±$0.01) | **eval-v2 `week1`: closed_book 0.00, fewshot_json 0.05, cot_sc 0.07, decompose 0.07 (n=42)** | Agent run |
-| Retrieval adds the regulation text | Bottom-line accuracy; citation accuracy | **eval-v2 `week1` closed_book: bottom line 0.63, citations 0.07** | Agent run |
-| Few-shot JSON examples | JSON validity rate | Zero-shot prompt | `fewshot_json` baseline |
-| `json_schema` constrained output | JSON validity rate; retries per question | JSON mode only | `json_schema` |
-| Self-consistency (3 samples) | Bottom-line accuracy; tokens per question | **Measured (eval-v2 `week1`): closed_book 0.63 at 700 tok/q vs cot_sc 0.56 at 2,597 tok/q: no gain, 3.7× cost** | — |
-| Unit normaliser ("a fifth", "carton") | Basket extraction accuracy | Intake without normaliser | Intake + normaliser |
-| Missing facts decided by code: the tools return which facts change the answer, in SPEC 5.2 order; the planner only phrases one question | Clarify accuracy on the 8 clarify scenarios; spurious clarifies on answerable questions | **eval-v2 `week1`: clarify 0/8 (closed_book, fewshot, cot_sc), 1/8 decompose; decompose asked on 41 of 80 answerable questions** | Agent run |
-| Citations taken from chunk metadata (`citation_id`), never written by the model | Citation validity (cited id exists and was retrieved) | `closed_book` / `single_rag` | Agent run with verifier |
-| Plan validator + code-router fallback | Invalid plans reaching the executor | Planner alone | Planner + validator |
-| Verifier + one writer retry | Wrong dollar figures or citations in final answers | Writer alone | Writer + verifier |
-| Metadata filter before reranker | recall@3 on gold clauses | Hybrid search, no filter | Hybrid + filter + reranker |
-| Smaller retrieved context (top 3 vs 5) | Accuracy; input tokens per call | Top 5 | Top 3 |
+| Calculators do all arithmetic | Dollar accuracy (±$0.01) | Prompting without calculators 0.00–0.07 (eval-v2, n=42) → agent v1 0.76 (eval-v2), agent v2 0.77 (eval-v3, n=51); no v2 dollar miss comes from a calculation | `docs/BASELINES.md`, `docs/METRICS.md`, report §7 |
+| Retrieval adds the regulation text | Bottom-line and citation accuracy | closed_book bottom line 0.63, citations 0.07 → agent v1 0.85 and 0.86 (eval-v2) | `docs/ABLATION.md` |
+| Few-shot JSON examples | JSON validity rate | Not separable: every baseline used `json_schema`, and all four had 0 invalid outputs; few-shot changed citations (0.07 → 0.61), not validity | `results/week1_strategies.csv` |
+| `json_schema` constrained output | JSON validity; repairs per question | 4 repairs in 1,159 calls on eval-v3, 0 invalid after repair. Not run without the schema | `docs/RELIABILITY.md` |
+| Self-consistency (3 samples) | Bottom-line accuracy; tokens per question | closed_book 0.63 at 700 tok/q vs cot_sc 0.56 at 2,597 tok/q: no gain, 3.7× cost | `docs/BASELINES.md` |
+| Unit normaliser ("a fifth", "carton") | Unit-conversion failures | Rows 3, 8; official failures labelled `UNITS`: agent v1 on eval-v3 1, agent v2 0. Not run as an on/off ablation | `docs/TAXONOMY.md` |
+| Missing facts decided by code | Clarify accuracy; needless clarifies | Prompting: 0/8 (decompose 1/8, and 41 needless) → agent v1 clarify accuracy 0.75 (eval-v2); agent v2 recall 1.00, precision 0.43 (eval-v3) | `docs/METRICS.md` |
+| Citations from chunk metadata, never written by the model | Citation validity | Enforced by the verifier and the scorer (a citation outside the retrieved set fails); v2 also requires the exact frozen-corpus text: planted passage cited 3 times by v1, 0 by v2 | report §6, §7 |
+| Plan validator + code-router fallback | Invalid plans reaching the executor | 0 in every run; 58 of 261 first plans invalid on eval-v3, all fixed by one repair, 0 fallbacks | `docs/RELIABILITY.md` |
+| Verifier + one writer retry | Wrong figures or citations shipped | Agent v2 on eval-v3: 1 writer retry, 1 answer pruned, 0 verifier escalations; no wrong dollar figure comes from the writer (bottom line built in code, row 31) | `docs/RELIABILITY.md`, `docs/TAXONOMY.md` |
+| Metadata filter before reranker | Hard negatives in the top 3; recall@3 | 0.10–0.20 → 0.00 for every method, recall never lower | `docs/RETRIEVAL.md` |
+| Smaller retrieved context (top 3 vs 5) | Accuracy; input tokens | Retrieval only: R@3 0.917 vs R@5 0.950 (bge), so k = 5; largest call 2,988 tokens. Not run as an agent arm | `docs/RETRIEVAL.md`, `docs/TOKENS.md` |

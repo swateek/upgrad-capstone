@@ -141,6 +141,27 @@ Agent v1 on eval-v3 is labelled by rules that follow SPEC v2, so some of its lab
 - "cigars from the Dominican Republic" can be read as Dominican-made; the gold's cautious reading is defensible, but the wording is ambiguous (E3-032);
 - "four cartons … 400 sticks" conflicts between the container and the count (E3-090), as "one carton" vs 200 sticks did in E3-082.
 
+## The rubric's four kinds
+
+The Track B brief asks for a taxonomy "separating retrieval miss, reasoning error, tool-call error and hallucination". Our labels are finer (the first stage that went wrong); `eval/rubric_taxonomy.py` maps them, using the final labels above, and writes `results/failures_rubric.csv`.
+
+| Rubric kind | Our labels |
+| --- | --- |
+| Reasoning error | `EXTRACT_MISSED`, `EXTRACT_WRONG` (a stated fact dropped or misread), `CLARIFY_LOGIC`, `DEFAULTS`, `CARRYOVER` |
+| Hallucination | `EXTRACT_INVENTED` (a fact the traveller never gave), `WRITER`, `WRITER_CLAIM` (text not backed by the tools) |
+| Retrieval miss | `RETRIEVAL_MISS`, `CITATION_SELECTION` (retrieved but not cited, or a clause that must not be cited) |
+| Tool-call error | `UNITS`, `RULES`, `PLAN`, `INTAKE_JSON`, `BUDGET`, `VERIFIER_FALSE_ALARM`, `CRASH` |
+| Safety / scope (not in the rubric's four) | `GUARD_MISS`, `GUARD_FALSE_REFUSAL`, `INTENT` |
+| Not a system failure | `GOLD_ERROR`, `SCORER`, `INFRA` |
+
+| Set | Agent | Wrong | Reasoning error | Hallucination | Retrieval miss | Tool-call error | Safety / scope | Not a system failure |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| eval-v2 | agent v1 | 20 | 12 | 2 | 3 | 1 | 2 | 0 |
+| eval-v3 | agent v1 | 48 | 33 | 4 | 6 | 2 | 3 | 0 |
+| eval-v3 | agent v2 | 23 | 17 | 4 | 0 | 0 | 1 | 1 |
+
+Agent v2's failures on eval-v3 are reasoning errors and hallucinations in reading the question; it has no retrieval misses and no tool-call errors there.
+
 ## Checked so far
 
 `eval/taxonomy_check.csv` lists the 29 failures fixed on Days 5–7, with the cause found by hand at the time (`docs/COMPENSATIONS.md`, rows 5–17). The rules give that cause for 28 of 29. The exception is C04-t2: the rules say `WRITER` and flag it for checking, while by hand it is `VERIFIER_FALSE_ALARM`. Telling "the writer was wrong" from "the verifier's number list was incomplete" needs a person, which is why every `WRITER` row is `needs_check`. `tests/test_label_failures.py` keeps this check green.

@@ -1,5 +1,8 @@
 import type { AskResponse, ClauseText, Mode } from "./types";
 
+/** The hosted app needs an access code: any API call can answer 401 until it is entered. */
+export class AccessNeeded extends Error {}
+
 async function json<T>(res: Response): Promise<T> {
   if (res.ok) return res.json() as Promise<T>;
   let detail = `The server answered ${res.status}.`;
@@ -9,7 +12,22 @@ async function json<T>(res: Response): Promise<T> {
   } catch {
     /* not JSON */
   }
+  if (res.status === 401) throw new AccessNeeded(detail);
   throw new Error(detail);
+}
+
+export async function accessStatus(): Promise<{ required: boolean; ok: boolean }> {
+  return json(await fetch("/api/access"));
+}
+
+export async function unlock(code: string): Promise<void> {
+  await json(
+    await fetch("/api/access", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code }),
+    }),
+  );
 }
 
 export async function ask(question: string, mode: Mode, sessionId?: string): Promise<AskResponse> {

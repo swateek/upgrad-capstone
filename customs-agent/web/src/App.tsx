@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ask, edit } from "./api";
+import { AccessNeeded, accessStatus, ask, edit, unlock } from "./api";
 import { AnswerSlip } from "./AnswerSlip";
 import type { Change } from "./EditFacts";
 import { RegulationPanel } from "./RegulationPanel";
@@ -27,6 +27,29 @@ export default function App() {
   const [sessionId, setSessionId] = useState<string | undefined>(undefined);
   const endRef = useRef<HTMLDivElement>(null);
   const nextId = useRef(1);
+  // hosted app: null while checking, true until the access code is entered
+  const [locked, setLocked] = useState<boolean | null>(null);
+  const [code, setCode] = useState("");
+  const [codeError, setCodeError] = useState<string | null>(null);
+
+  useEffect(() => {
+    accessStatus()
+      .then((s) => setLocked(s.required && !s.ok))
+      .catch(() => setLocked(false));
+  }, []);
+
+  const submitCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!code.trim()) return;
+    try {
+      await unlock(code.trim());
+      setLocked(false);
+      setCodeError(null);
+      setCode("");
+    } catch (err) {
+      setCodeError((err as Error).message);
+    }
+  };
 
   // one turn of the conversation: a message, or a fact changed on the card
   const step = useCallback(async (shown: string, call: () => Promise<AskResponse>) => {
@@ -39,6 +62,7 @@ export default function App() {
       setTurns((t) => t.map((x) => (x.id === id ? { ...x, response } : x)));
       return response;
     } catch (e) {
+      if (e instanceof AccessNeeded) setLocked(true);
       setTurns((t) => t.map((x) => (x.id === id ? { ...x, error: (e as Error).message } : x)));
       return undefined;
     } finally {
@@ -96,6 +120,10 @@ export default function App() {
                 Describe the bottles or tobacco, where you bought them, how long you were away and your age. You get what you would
                 owe, how it was worked out and the rules it rests on.
               </p>
+              <p className="intro__privacy">
+                Leave out your name, passport, card and phone numbers: they are not needed, and your question is sent to the
+                language model as typed.
+              </p>
             </section>
           )}
 
@@ -123,7 +151,35 @@ export default function App() {
           <div ref={endRef} />
         </div>
 
-        <form className="ask" onSubmit={submit}>
+        {locked && (
+          <form className="ask gate" onSubmit={submitCode}>
+            <label htmlFor="code" className="gate__label">
+              Access code
+            </label>
+            <p className="gate__help">This demo is shared with reviewers. Enter the code you were given.</p>
+            <div className="ask__row">
+              <input
+                id="code"
+                className="gate__input"
+                type="password"
+                autoComplete="off"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                aria-describedby={codeError ? "code-error" : undefined}
+              />
+              <button type="submit" className="ask__go" disabled={!code.trim()}>
+                Open DeclareRight
+              </button>
+            </div>
+            {codeError && (
+              <p id="code-error" className="turn__error" role="alert">
+                {codeError}
+              </p>
+            )}
+          </form>
+        )}
+
+        {locked === false && <form className="ask" onSubmit={submit}>
           <label htmlFor="q" className="sr-only">
             Your question
           </label>
@@ -163,7 +219,7 @@ export default function App() {
               {busy ? "Working it out" : "Check my items"}
             </button>
           </div>
-        </form>
+        </form>}
       </main>
 
       {cite && <RegulationPanel citationId={cite} onClose={() => setCite(null)} />}
