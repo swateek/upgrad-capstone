@@ -10,7 +10,8 @@ services:
     build: .
     image: declareright:latest
     ports:
-      - "8000:8000"
+      # this Mac only: not reachable from other machines on the network (Day 13 red-team)
+      - "127.0.0.1:8000:8000"
     volumes:
       # secrets stay on your machine: read-only, never copied into the image
       - ./.env:/app/.env:ro

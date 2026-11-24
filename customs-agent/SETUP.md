@@ -239,9 +239,15 @@ uv run python -m eval.report_figures        # docs/report/figures/fig1-4 (PNG)
 
 Report drafts are in `docs/report/` (sections 1–7).
 
+Red-team against the running app (Day 13; start it first with `docker compose up --build -d`): about 8 minutes, around 20 questions' worth of quota.
+
+```bash
+uv run python -u eval/redteam_live.py --run-name redteam-live-<date> 2>&1 | tee logs/redteam-live.log
+```
+
 ## Coming next (add steps here as they land)
 
-- Day 13: red-team against the live app (logged), secrets scan on the tagged branch, assemble the 12-page report, CI, backup video.
+- Day 13: secrets scan on the tagged branch, assemble the 12-page report, CI, backup video.
 - Day 14: final report, tag `v1.0.0`.
 
 ## Reference

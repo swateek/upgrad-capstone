@@ -312,10 +312,16 @@ def create_app(service: Service | None = None) -> FastAPI:
     ):  # the built web app, served by the same process (one container)
         app.mount("/assets", StaticFiles(directory=WEB_DIST / "assets"), name="assets")
 
+        root = WEB_DIST.resolve()
+
         @app.get("/{path:path}", include_in_schema=False)
         def spa(path: str):
-            f = WEB_DIST / path
-            return FileResponse(f if path and f.is_file() else WEB_DIST / "index.html")
+            # resolve first, then require the file to be inside web/dist: "../" (plain or
+            # %2e%2e / %2f encoded) must never reach .env, the data or the code (Day 13 red-team)
+            f = (root / path).resolve()
+            if path and f.is_relative_to(root) and f.is_file():
+                return FileResponse(f)
+            return FileResponse(root / "index.html")
 
     return app
 

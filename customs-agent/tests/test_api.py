@@ -227,3 +227,35 @@ def test_live_loads_nothing(monkeypatch) -> None:
 
     monkeypatch.setattr(Service, "from_env", classmethod(never))
     assert TestClient(create_app()).get("/api/live").json() == {"ok": True}
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/..%2f..%2fsecret.env",
+        "/%2e%2e/%2e%2e/secret.env",
+        "/%2e%2e%2f%2e%2e%2fsecret.env",
+        "/..%2fsecret.env",
+    ],
+)
+def test_static_route_never_serves_files_outside_web_dist(
+    tmp_path, monkeypatch, path
+) -> None:
+    # Day 13 live red-team: "../" in the URL served any file in the container, .env included
+    from app import api
+
+    dist = tmp_path / "web" / "dist"
+    (dist / "assets").mkdir(parents=True)
+    (dist / "index.html").write_text("<html>app</html>")
+    (dist / "assets" / "app.js").write_text("js")
+    (tmp_path / "secret.env").write_text("CHAT_API_KEY=not-a-real-key")
+    (tmp_path / "web" / "secret.env").write_text("CHAT_API_KEY=not-a-real-key")
+    monkeypatch.setattr(api, "WEB_DIST", dist)
+    c = TestClient(api.create_app())  # the static route loads no model
+    r = c.get(path)
+    assert "not-a-real-key" not in r.text
+    assert r.text == "<html>app</html>"
+    assert c.get("/assets/app.js").text == "js"  # real files still served
+    assert (
+        c.get("/some/page").text == "<html>app</html>"
+    )  # client-side routes get the app

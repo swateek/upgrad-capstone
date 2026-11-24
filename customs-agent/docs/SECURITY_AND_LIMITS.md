@@ -13,6 +13,12 @@ Source for the report's limits paragraph and the demo's closing slide. Checked 2
 | Other branches | `origin/main` (a teammate's demo folders and the `dumps/` folder) tracks the course endpoints' **CA certificates** (`vm02-ca.crt`, `vm05-ca.crt`). These are public CA certificates, not private keys or API keys, so nothing secret is exposed; they are still outside the "certificates git-ignored" rule. Not changed from this branch; to raise with the teammate |
 | Final check | Day 13: repeat the scan on the branch to be tagged `v1.0.0` |
 
+## Web server
+
+- **Path traversal (fixed Day 13).** The static-file route served any file in the container for `../` in the URL, `/app/.env` included; the port was published on every interface. Fixed in `app/api.py` (the path must resolve inside `web/dist`) and `docker-compose.yml` (`127.0.0.1:8000`); regression test in `tests/test_api.py`; re-tested on the live container (`docs/REDTEAM_LIVE.md`). Rotate the API keys if the container ever ran on a shared network.
+- **Card edits** (`POST /api/edit`) are not screened by the guard and numbers are not range-checked at the API; the verifier contained the one injection tried. Fix for a deployment: guard and sanitise text values, validate numbers.
+- **Rate limit per client address:** behind a shared proxy every user would share one limit.
+
 ## Personal data
 
 - **Masked:** emails, card, phone and passport numbers and "my name is …" are masked before anything is written to Langfuse or `logs/trace.jsonl` (`src/safety/pii.py`, `src/tracing.py`). Red-team T20 (name, passport, email) left no trace of them in the answer, trace, recorded model output, usage log or run log (§6.2).
@@ -27,6 +33,7 @@ Source for the report's limits paragraph and the demo's closing slide. Checked 2
 - **One request in flight** to the endpoint (FIFO queue in `src/llm.py`), back-off with jitter on 429 and 5xx, honouring `Retry-After`.
 - **Budgets:** 10 tool steps and 12,000 tokens per question; every call is refused before sending if it could exceed 8,192 tokens or 1,024 output. No official run came near either (largest call 2,988 tokens, largest question 7,558: `docs/TOKENS.md`).
 - **Guard before any model call** for injection, evasion and out-of-scope requests; retrieved text is sanitised and must match the frozen corpus to be cited (§6).
+- **Live red-team** (Day 13): 24 new attacks against the running container, 24/24 after the traversal fix (`docs/REDTEAM_LIVE.md`).
 
 ## Model limits
 
