@@ -1,0 +1,58 @@
+# DeclareRight CI: lint and the offline tests on every push and pull request that touches the
+# project. No endpoint calls (live tests are deselected by default in pyproject.toml), no keys.
+# Tests that need the git-ignored corpus skip themselves; the freeze test checks that the agent
+# code still matches the recorded freeze (eval/freeze.json).
+name: customs-agent
+
+on:
+  push:
+    branches: [customs-agent-main, main]
+    paths: ["customs-agent/**", ".github/workflows/customs-agent.yml"]
+  pull_request:
+    paths: ["customs-agent/**", ".github/workflows/customs-agent.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: customs-agent
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: customs-agent/uv.lock
+
+      - name: Install (exact versions from uv.lock)
+        run: uv sync --locked
+
+      - name: Lint
+        run: uv run ruff check src app eval tests
+
+      - name: Offline tests
+        run: uv run pytest -q
+
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: customs-agent/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: customs-agent/web/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Type-check and build
+        run: npm run build

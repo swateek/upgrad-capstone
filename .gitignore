@@ -2,4 +2,5 @@
 !.gitignore
 !.pre-commit-config.yaml
 chroma
-*.sqlite3!.github/
+*.sqlite3
+!.github/
