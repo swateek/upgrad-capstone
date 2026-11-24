@@ -21,6 +21,7 @@
 | `scenarios_gold_v2.yaml`, `gold_v2.xlsx`, `gold_v2.md` | Source, dollar gold (same formulas) and readable copy for gold-v2. Rebuilt by `build_gold_v2.py`; not edited by hand |
 | `REVIEW_GOLD_V2.md` | The owner's check of gold-v2: the changed scenarios, gold-v1 next to gold-v2, and 12 random Day 10 passes; owner: all right |
 | `replay.py` | Puts a run's recorded intake JSON through today's guard, clean-up and router (no model call) and scores outcome, bottom line, dollars, what-if and clarify. A cheap check between runs on dev sets; refuses held-out sets; never replaces a run |
+| (eval-v3 errata) | E3-019: gold taxes a 15.5% wine at the over-16% rate (generator's excise class); the right total is $1.10, not $1.17. Not changed (eval-v3 is tagged); accuracy reported as scored and with it corrected. Found on Day 11 |
 | (dev-v2 errata) | D2-055: gold answered ($1.21), but the question gives no flat-rate history after using the exemption, so SPEC 3 escalates; its facts also record "$180 for the box" as per cigar. Not changed (dev-v2 is tagged); counted as an expected miss |
 
 The dollar gold is computed by spreadsheet formulas, never by `src/tools` (CLAUDE.md rule 5). Spreadsheet results were also checked against a separate decimal calculation outside the repo: all 61 priced lines and 5 what-if answers agree.

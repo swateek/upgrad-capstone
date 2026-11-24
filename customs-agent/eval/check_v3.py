@@ -391,6 +391,22 @@ def check(s: dict, source: str) -> Report:
     for b in s.get("basket") or []:
         if b.get("category") == "alcohol" and b.get("excise_class") not in EXCISE:
             r.issues.append(f"{b.get('item')}: excise_class {b.get('excise_class')!r}")
+        abv, xc = b.get("abv"), b.get("excise_class")
+        if (
+            b.get("type") == "wine"
+            and abv is not None
+            and str(xc).startswith("wine_still")
+        ):
+            # the band follows the ABV (TTB): found on Day 11, E3-019 15.5% labelled over 16%
+            band = (
+                "wine_still_le16"
+                if abv <= 16
+                else "wine_still_16_21"
+                if abv <= 21
+                else "wine_still_21_24"
+            )
+            if xc != band:
+                r.issues.append(f"{b.get('item')}: {abv}% is {band}, not {xc}")
         if b.get("category") == "tobacco" and not b.get("count") and t != "clarify":
             r.issues.append(f"{b.get('item')}: no count")
         if (

@@ -1,0 +1,10 @@
+set,arm,agent,mode,runs,accuracy,dollar_acc,dollar_n,citation_acc,clarify_precision,clarify_recall,clarify_right_facts,clarify_asked,clarify_gold,completion,pred_answered,pred_clarify,pred_refused,pred_escalated,over_escalation,over_refusal,tool_steps_per_q,calls_per_q,tokens_per_q,tokens_total,n,latency_p50_s,latency_p95_s,cost_usd_per_100q,run_dirs
+eval-v2,single_rag,v1,single_rag,1,0.075,0.0,42,0.051,,0.0,0.0,0,8,1.0,73,0,7,0,0,1,0,1.0,2312,184979,80,6.5,8.0,,official-single-rag
+eval-v2,"agent v1, code router",v1,router,1,0.75,0.762,42,0.864,0.538,0.875,0.75,13,8,1.0,52,13,9,6,3,0,5.29,2.49,2882,213276,80,9.2,14.4,,official-router
+eval-v2,"agent v1, LLM planner",v1,planner,3,0.75,0.762,42,0.864,0.538,0.875,0.75,13,8,1.0,52,13,9,6,3,0,4.97,3.66,3528.333,261101,80,11.6,17.1,,official-planner-1 official-planner-2 official-planner-3
+eval-v3,single_rag,v2,single_rag,1,0.07,0.02,51,0.111,,0.0,0.0,0,10,1.0,94,0,6,0,0,1,0,1.0,2348,234764,100,6.9,8.3,,official-v2-eval3-single_rag
+eval-v3,"agent v1, code router",v1,router,1,0.52,0.569,51,0.569,0.242,0.8,0.2,33,10,1.0,49,33,13,5,3,1,4.61,2.09,2374,215990,100,8.2,13.4,,official-v1-eval3-router
+eval-v3,"agent v2, code router",v2,router,1,0.77,0.765,51,0.792,0.435,1.0,0.5,23,10,1.0,59,23,13,5,2,0,4.99,2.33,2769,249234,100,9.1,14.4,,official-v2-eval3-router
+eval-v3,"agent v2, LLM planner",v2,planner,3,0.77,0.765,51,0.792,0.435,1.0,0.5,23,10,1.0,59,23,13,5,2,0,4.777,3.513,3430.333,308728.7,100,11.9,17.8,,official-v2-eval3-planner-1 official-v2-eval3-planner-2 official-v2-eval3-planner-3
+eval-v2/gold-v2,"agent v2, code router",v2,router,1,1.0,1.0,42,1.0,1.0,1.0,1.0,8,8,1.0,58,8,11,3,0,0,5.47,2.68,3179,228884,80,9.6,14.8,,official-v2-gold2-router
+eval-v2/gold-v2,"agent v2, LLM planner",v2,planner,1,1.0,1.0,42,1.0,1.0,1.0,1.0,8,8,1.0,58,8,11,3,0,0,5.15,3.85,3810,274338,80,12.1,17.4,,official-v2-gold2-planner

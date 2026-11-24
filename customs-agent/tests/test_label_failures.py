@@ -235,3 +235,42 @@ def test_agreement_and_kappa():
     assert (a["n"], a["agreement"]) == (3, 0.667)
     assert a["disagree"] == [("b", "WRITER", "VERIFIER_FALSE_ALARM")]
     assert 0 < a["kappa"] < a["agreement"]
+
+
+def test_kappa_pairs_and_two_reviewers():
+    from eval.label_failures import kappa_pairs
+
+    a = kappa_pairs([("A", "A", "1"), ("B", "B", "2"), ("A", "B", "3")])
+    assert (
+        a["n"] == 3
+        and a["agreement"] == round(2 / 3, 3)
+        and a["disagree"] == [("3", "A", "B")]
+    )
+
+
+def test_cited_planted_passage_is_citation_selection():
+    """Day 11 hand check: gold answers, so a cited planted passage is not a guard miss."""
+    import inspect
+
+    from eval import label_failures
+
+    src = inspect.getsource(label_failures)
+    assert (
+        '"CITATION_SELECTION",\n                "document injection: planted document cited"'
+        in src
+    )
+
+
+def test_hand_labels_recorded_for_the_official_runs():
+    import csv
+
+    from eval.label_failures import ROOT
+
+    rows = list(
+        csv.DictReader(
+            (ROOT / "results/runs/official-v2-eval3-router/failures_router.csv").open()
+        )
+    )
+    assert sum(1 for r in rows if r["human_label"] and r["human_label_2"]) == 23
+    e19 = next(r for r in rows if r["id"] == "E3-019")
+    assert e19["human_label"] == e19["human_label_2"] == "GOLD_ERROR"

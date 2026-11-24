@@ -174,7 +174,9 @@ def test_built_sets_are_complete_and_clean():
     sc = yaml.safe_load((ROOT / "eval" / "scenarios_v3.yaml").read_text())["scenarios"]
     sets = Counter(s["set"] for s in sc)
     assert sets["eval3"] == 100 and sets["dev2"] >= 50
-    assert all(not check_v3.check(s, s["generator"]).issues for s in sc)
+    # E3-019: the one known gold error, found on Day 11 (eval-v3 is tagged; logged as an erratum)
+    flagged = {s["id"] for s in sc if check_v3.check(s, s["generator"]).issues}
+    assert flagged == {"E3-019"}
     ev = [json.loads(line) for line in (ROOT / "eval" / "eval_set_v3.jsonl").open()]
     dv = [json.loads(line) for line in (ROOT / "eval" / "dev_set_v2.jsonl").open()]
     assert len(ev) == 100 and len(dv) == sets["dev2"]
@@ -189,3 +191,12 @@ def test_built_sets_are_complete_and_clean():
     assert {t for t in Counter(r["type"] for r in ev)} == {
         t for t in Counter(r["type"] for r in dv)
     }
+
+
+def test_checker_catches_a_wine_band_that_disagrees_with_the_abv():
+    """Day 11: E3-019's 15.5% wine was labelled over 16% by its generator."""
+    items = yaml.safe_load((ROOT / "eval" / "scenarios_v3.yaml").read_text())[
+        "scenarios"
+    ]
+    s = next(x for x in items if x["id"] == "E3-019")
+    assert any("not wine_still_16_21" in i for i in check_v3.check(s, "v3").issues)
