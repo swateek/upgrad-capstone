@@ -30,3 +30,4 @@ data/rag-corpus/index/
 
 # Linux packages for the Docker build, downloaded by docker/fetch_wheels.py (SETUP.md step 13)
 docker/wheels/
+docs/DEMO.md

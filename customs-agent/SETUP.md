@@ -62,7 +62,7 @@ The corpus is not committed: it is rebuilt from the official sources. `corpus/MA
 ```bash
 uv run python data/rag-corpus/fetch_corpus.py           # ~10 minutes: downloads, writes corpus/docs/ (742 docs)
 uv run python data/rag-corpus/fetch_corpus.py --check   # compare with corpus-v1
-uv run python data/rag-corpus/chunk_corpus.py           # corpus/chunks.jsonl (1,289 chunks, <= 350 tokens)
+uv run python data/rag-corpus/chunk_corpus.py           # corpus/chunks.jsonl (1,480 chunks, <= 350 tokens)
 ```
 
 - Run the fetch from your own machine: some government sites refuse cloud servers.
@@ -225,10 +225,24 @@ docker compose down              # stop; sessions, cache and the reranker downlo
 - Health: `curl localhost:8000/api/live` (no models loaded) and `curl localhost:8000/api/health` (loads them, lists models, search and state flags).
 - After re-chunking the corpus or rebuilding the index, rebuild the image.
 
+## 14. Report tables and figures (Days 11–12)
+
+Read from the official run files in `results/runs/`; nothing is re-run or re-scored. Needs the dev group (`uv sync` installs matplotlib).
+
+```bash
+uv run python -m eval.ablation              # results/ablation.csv, docs/ABLATION.md
+uv run python -m eval.metrics               # results/metrics.csv, docs/METRICS.md
+uv run python -m eval.recall_vs_accuracy    # results/recall_vs_accuracy.csv, docs/RECALL_VS_ACCURACY.md
+uv run python -m eval.token_calls           # results/token_calls.csv, docs/TOKENS.md
+uv run python -m eval.report_figures        # docs/report/figures/fig1-4 (PNG)
+```
+
+Report drafts are in `docs/report/` (sections 1–7).
+
 ## Coming next (add steps here as they land)
 
-- Day 10: official runs (see step 10, `--set eval`; the script checks the freeze, the cache and the state flags first).
-- Days 11-14: failure labelling (`docs/TAXONOMY.md`), CI, report, demo.
+- Day 13: red-team against the live app (logged), secrets scan on the tagged branch, assemble the 12-page report, CI, backup video.
+- Day 14: final report, tag `v1.0.0`.
 
 ## Reference
 
