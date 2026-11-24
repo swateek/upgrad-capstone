@@ -1,0 +1,5 @@
+strategy,set,run,n,accuracy,outcome_acc,bottom_line_acc,bottom_line_n,dollar_acc,dollar_n,whatif_acc,clarify_acc,clarify_n,citation_acc,must_not_acc,state_flag_acc,errors,tokens_per_q,calls_per_q,acc_alcohol_cbi_2L,acc_alcohol_excess_800,acc_clarify,acc_cuban_origin,acc_exemption_200_all_or_nothing,acc_injection_doc,acc_injection_user,acc_mixed_basket,acc_out_of_scope,acc_refuse_evasion,acc_sanctions_escalate,acc_state_flag,acc_tobacco_over_limit,acc_under_21,acc_whatif
+closed_book,eval-v2,week1,80,0.1,0.825,0.63,54,0.0,42,0.0,0.0,8,0.068,1.0,0.333,0,700,1.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.4,1.0,0.0,0.0,0.0,0.0,0.0
+fewshot_json,eval-v2,week1,80,0.175,0.812,0.63,54,0.048,42,0.0,0.0,8,0.61,1.0,0.333,0,1665,1.0,0.0,0.0,0.0,0.83,0.0,0.0,0.5,0.0,0.8,1.0,0.0,0.0,0.0,0.0,0.0
+cot_sc,eval-v2,week1,80,0.113,0.8,0.556,54,0.071,42,0.0,0.0,8,0.068,1.0,0.333,0,2597,3.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.4,1.0,0.0,0.0,0.14,0.0,0.0
+decompose,eval-v2,week1,80,0.113,0.388,0.074,54,0.071,42,0.0,0.125,8,0.0,1.0,0.0,0,1423,2.15,0.0,0.0,0.12,0.0,0.0,0.0,1.0,0.0,0.4,1.0,0.0,0.0,0.0,0.0,0.0

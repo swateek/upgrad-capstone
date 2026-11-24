@@ -1,0 +1,8 @@
+set,arm,runs,questions,writer_retried,verifier_escalated,intake_calls,intake_json_repairs,writer_calls,writer_json_repairs,verifier_calls,verifier_json_repairs,json_calls,json_repairs,top_plan_errors,planned,first_plan_invalid,plan_fixed_by_repair,planner_calls,planner_json_repairs,pruned
+eval-v2,"agent v1, code router",1,80,5,1,74,0,58,0,52,0,184,0,,,,,,,
+eval-v2,"agent v1, LLM planner",3,240,15,3,222,0,174,0,156,0,813,0,48 × search_regulations must be the last step; 12 × a what-if question starts with whatif_optimise; 12 × missing steps,213,48,48,261,0,
+eval-v3,"agent v1, code router",1,100,1,,91,0,50,0,49,0,190,0,,,,,,,
+eval-v3,"agent v2, code router",1,100,1,,90,0,61,1,59,0,210,1,,,,,,,1
+eval-v3,"agent v2, LLM planner",3,300,3,,270,0,183,3,177,0,949,3,58 × search_regulations must be the last step; 15 × a what-if question starts with whatif_optimise; 15 × missing steps,261,58,58,319,0,3
+eval-v2/gold-v2,"agent v2, code router",1,80,5,,72,0,63,0,58,0,193,0,,,,,,,3
+eval-v2/gold-v2,"agent v2, LLM planner",1,80,4,,72,0,62,0,58,0,277,0,16 × search_regulations must be the last step; 4 × a what-if question starts with whatif_optimise; 4 × missing steps,69,16,16,85,0,3

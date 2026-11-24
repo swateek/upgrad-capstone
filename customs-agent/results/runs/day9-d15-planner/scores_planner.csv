@@ -1,0 +1,2 @@
+id,type,gold_outcome,pred_outcome,error,outcome,bottom_line,dollars,whatif,clarify,citations,must_not,correct,state_flag_ok,calls,tokens
+D15,state_flag,answered,answered,,True,True,True,,,True,,True,True,4,4029

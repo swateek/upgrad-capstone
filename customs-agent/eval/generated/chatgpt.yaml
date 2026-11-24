@@ -1,0 +1,128 @@
+- id: chatgpt-01
+  type: alcohol_excess_800
+  question: "Just got back from 12 days in Portugal. I'm 58, haven't travelled in eight months, and brought home three 750 ml bottles of tawny port at 19% ABV, $26 each. All made and bought in Portugal. What do I owe?"
+  profile: {age: 58, trip: {value: 12, unit: days}, exemption_used_last_30_days: false}
+  basket:
+    - {item: tawny port, category: alcohol, type: wine, quantity: {value: 3, unit: bottle}, unit_ml: 750, abv: 19, unit_price_usd: 26, origin: PT, bought_where: PT, excise_class: wine_still_16_21}
+  gold: {outcome: answered, exemption: standard_800, bottom_line: [owe]}
+
+- id: chatgpt-02
+  type: clarify
+  question: "How much duty on three bottles of rum I picked up in Barbados? They're 1 litre each, 40%, $30 a bottle. I'm back after 9 days away, first trip in ages."
+  profile: {trip: {value: 9, unit: days}, exemption_used_last_30_days: false}
+  basket:
+    - {item: rum, category: alcohol, type: spirits, quantity: {value: 3, unit: bottle}, unit_ml: 1000, abv: 40, unit_price_usd: 30, bought_where: BB, excise_class: spirits}
+  gold: {outcome: clarify, clarify_facts: [age, origin]}
+
+- id: chatgpt-03
+  type: tobacco_over_limit
+  question: "Spent a week in Seoul. I'm 44 and haven't been abroad in over a year. Bringing back three cartons of Korean cigarettes, 200 in each carton, $28 a carton. What happens with the extra?"
+  profile: {age: 44, trip: {value: 1, unit: weeks}, exemption_used_last_30_days: false}
+  basket:
+    - {item: Korean cigarettes, category: tobacco, type: cigarettes, quantity: {value: 3, unit: carton}, count: 600, unit_price_usd: 28, origin: KR, bought_where: KR}
+  gold: {outcome: answered, exemption: standard_800, bottom_line: [declare_detention_risk]}
+
+- id: chatgpt-04
+  type: whatif
+  question: "I'm 39, just spent two weeks in Mendoza and haven't travelled in months. Malbec there costs around $18 a bottle, 750 ml and 14%. How many bottles could I bring back and owe less than $4?"
+  profile: {age: 39, trip: {value: 2, unit: weeks}, exemption_used_last_30_days: false}
+  whatif: {item: Malbec, category: alcohol, type: wine, unit_ml: 750, abv: 14, unit_price_usd: 18, origin: AR, bought_where: AR, excise_class: wine_still_le16, owe_less_than_usd: 4}
+  gold: {outcome: answered, exemption: standard_800}
+
+- id: chatgpt-05
+  type: out_of_scope
+  question: "I'm a US resident coming home from France. Can I bring a wheel of Comté cheese back in my suitcase?"
+  gold: {outcome: refused, reason: out_of_scope_food}
+
+- id: chatgpt-06
+  type: alcohol_excess_800
+  question: "Back from nine days in Japan. I'm 36, my last trip was six months ago, and I bought two 750 ml bottles of Japanese whisky, 43% ABV, for $60 each. Made in Japan too. Do I need to pay anything?"
+  profile: {age: 36, trip: {value: 9, unit: days}, exemption_used_last_30_days: false}
+  basket:
+    - {item: Japanese whisky, category: alcohol, type: spirits, quantity: {value: 2, unit: bottle}, unit_ml: 750, abv: 43, unit_price_usd: 60, origin: JP, bought_where: JP, excise_class: spirits}
+  gold: {outcome: answered, exemption: standard_800, bottom_line: [owe]}
+
+- id: chatgpt-07
+  type: alcohol_cbi_2L
+  question: "I flew straight home from Jamaica after eight days there. I'm 33, haven't used my exemption in the last 30 days, and have three 750 ml bottles of Jamaican rum, 40%, $38 each. All bought and made there. Is the allowance two litres?"
+  profile: {age: 33, trip: {value: 8, unit: days}, direct_arrival_from: JM, exemption_used_last_30_days: false}
+  basket:
+    - {item: Jamaican rum, category: alcohol, type: spirits, quantity: {value: 3, unit: bottle}, unit_ml: 750, abv: 40, unit_price_usd: 38, origin: JM, bought_where: JM, excise_class: spirits}
+  gold: {outcome: answered, exemption: standard_800_beneficiary_2l, bottom_line: [owe]}
+
+- id: chatgpt-08
+  type: exemption_200_all_or_nothing
+  question: "Quick 18-hour stop in Germany, I'm 27 and haven't used my exemption in the past month. I have just one 100 ml miniature of Scotch, 40%, made in Scotland, bought at a shop in Germany for $19. Can that come in duty-free?"
+  profile: {age: 27, trip: {value: 18, unit: hours}, exemption_used_last_30_days: false}
+  basket:
+    - {item: Scotch whisky miniature, category: alcohol, type: spirits, quantity: {value: 1, unit: miniature}, unit_ml: 100, abv: 40, unit_price_usd: 19, origin: GB, bought_where: DE, excise_class: spirits}
+  gold: {outcome: answered, exemption: short_trip_200, bottom_line: [nothing_to_pay]}
+
+- id: chatgpt-09
+  type: tobacco_over_limit
+  question: "I'm 48 and was in Europe for nine days, first trip in more than a year. Bought three cartons of American cigarettes at the airport duty-free shop on the way out. They're US-made and say 'for export' on the packaging, 200 cigarettes per carton, $48 each. What should I do?"
+  profile: {age: 48, trip: {value: 9, unit: days}, exemption_used_last_30_days: false}
+  basket:
+    - {item: American export-labelled cigarettes, category: tobacco, type: cigarettes, quantity: {value: 3, unit: carton}, count: 600, unit_price_usd: 48, origin: US, bought_where: duty-free, export_labelled_us: true}
+  gold: {outcome: answered, exemption: standard_800, bottom_line: [relinquish_excess]}
+
+- id: chatgpt-10
+  type: cuban_origin
+  question: "I'm 48, returning after nine days in Canada. Haven't used my exemption in the last 30 days. I bought a box of 25 Cuban-made cigars in Toronto for $180. Can I bring them home?"
+  profile: {age: 48, trip: {value: 9, unit: days}, exemption_used_last_30_days: false}
+  basket:
+    - {item: Cuban cigars, category: tobacco, type: cigars, quantity: {value: 1, unit: "box of 25 cigars"}, count: 25, unit_price_usd: 180, origin: CU, bought_where: CA}
+  gold: {outcome: answered, exemption: standard_800, bottom_line: [prohibited]}
+
+- id: chatgpt-11
+  type: sanctions_escalate
+  question: "I'm 50 and just came back from six days in Russia. It's my first trip in over a year. I have one 1.5 litre bottle of Russian-made vodka, 40% ABV, which cost $39 and was bought there. Can I declare it?"
+  profile: {age: 50, trip: {value: 6, unit: days}, exemption_used_last_30_days: false}
+  basket:
+    - {item: Russian vodka, category: alcohol, type: spirits, quantity: {value: 1, unit: bottle}, unit_ml: 1500, abv: 40, unit_price_usd: 39, origin: RU, bought_where: RU, excise_class: spirits}
+  gold: {outcome: escalated, reason: russian_origin_alcohol}
+
+- id: chatgpt-12
+  type: under_21
+  question: "I'm 20 and just got back from a week in Chile. First trip in months. I have one 750 ml bottle of Chilean white wine, 12.5%, cost $16, bought and made in Chile. Does the normal litre allowance apply to me?"
+  profile: {age: 20, trip: {value: 7, unit: days}, exemption_used_last_30_days: false}
+  basket:
+    - {item: Chilean white wine, category: alcohol, type: wine, quantity: {value: 1, unit: bottle}, unit_ml: 750, abv: 12.5, unit_price_usd: 16, origin: CL, bought_where: CL, excise_class: wine_still_le16}
+  gold: {outcome: answered, exemption: standard_800_no_alcohol_under_21, bottom_line: [owe]}
+
+- id: chatgpt-13
+  type: mixed_basket
+  question: "I'm 40, spent 10 days in Ireland and haven't used the exemption in over a year. Coming back with two 750 ml bottles of Irish whiskey, 40%, $80 each, and one carton of cigarettes, 200 sticks, made in Poland, $55. Whiskey was made and bought in Ireland; cigarettes bought there too. How does each get treated?"
+  profile: {age: 40, trip: {value: 10, unit: days}, exemption_used_last_30_days: false}
+  basket:
+    - {item: Irish whiskey, category: alcohol, type: spirits, quantity: {value: 2, unit: bottle}, unit_ml: 750, abv: 40, unit_price_usd: 80, origin: IE, bought_where: IE, excise_class: spirits}
+    - {item: Polish cigarettes, category: tobacco, type: cigarettes, quantity: {value: 1, unit: carton}, count: 200, unit_price_usd: 55, origin: PL, bought_where: IE}
+  gold: {outcome: answered, exemption: standard_800, bottom_line: [owe, nothing_to_pay]}
+
+- id: chatgpt-14
+  type: alcohol_excess_800
+  question: "I'm 31 and returning from two weeks in Italy. Haven't travelled abroad for months. I packed four bottles of prosecco, 75cl each, 11.5% ABV, $18 per bottle, all made and purchased in Italy. Is all of that covered?"
+  profile: {age: 31, trip: {value: 2, unit: weeks}, exemption_used_last_30_days: false}
+  basket:
+    - {item: prosecco, category: alcohol, type: sparkling_wine, quantity: {value: 4, unit: bottle}, unit_ml: 750, abv: 11.5, unit_price_usd: 18, origin: IT, bought_where: IT, excise_class: sparkling}
+  gold: {outcome: answered, exemption: standard_800, bottom_line: [owe]}
+
+- id: chatgpt-15
+  type: clarify
+  question: "I'm 42, spent eight days in Scotland and haven't used my exemption in the last month. I brought back two bottles of vodka, 40%, $32 each, made in Poland and bought in Scotland. What do I need to pay?"
+  profile: {age: 42, trip: {value: 8, unit: days}, exemption_used_last_30_days: false}
+  basket:
+    - {item: vodka, category: alcohol, type: spirits, quantity: {value: 2, unit: bottle}, abv: 40, unit_price_usd: 32, origin: PL, bought_where: GB, excise_class: spirits}
+  gold: {outcome: clarify, clarify_facts: [size]}
+
+- id: chatgpt-16
+  type: exemption_200_all_or_nothing
+  question: "I was only in Brazil for 30 hours, I'm 34, and haven't used my exemption recently. Got two packs of 25 cigarettes for $16 each, made and bought in Brazil. That's all I'm bringing back in this category. Am I within the short-trip allowance?"
+  profile: {age: 34, trip: {value: 30, unit: hours}, exemption_used_last_30_days: false}
+  basket:
+    - {item: Brazilian cigarettes, category: tobacco, type: cigarettes, quantity: {value: 2, unit: "pack of 25"}, count: 50, unit_price_usd: 16, origin: BR, bought_where: BR}
+  gold: {outcome: answered, exemption: short_trip_200, bottom_line: [nothing_to_pay]}
+
+- id: chatgpt-17
+  type: tobacco_over_limit
+  question: "Back from 11 days in the Dominican Republic. I'm 45, first trip in over a year. I have five boxes of 25 Dominican cigars, $70 per box, all made and bought there. Is there a limit on the number?"

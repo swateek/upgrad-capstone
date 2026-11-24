@@ -1,0 +1,4 @@
+set,agent,wrong,reasoning error,hallucination,retrieval miss,tool-call error,safety / scope,not a system failure
+eval-v2,agent v1,20,12,2,3,1,2,0
+eval-v3,agent v1,48,33,4,6,2,3,0
+eval-v3,agent v2,23,17,4,0,0,1,1

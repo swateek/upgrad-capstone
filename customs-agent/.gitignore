@@ -1,0 +1,33 @@
+# The repo-root .gitignore ignores every dotfile (`.*`).
+# uv's Python pin must be committed so everyone gets the same interpreter.
+!.python-version
+# the Docker build context filter (step 13 of SETUP.md)
+!.dockerignore
+
+# uv virtual environment (also covered by the root `.*` rule)
+.venv/
+__pycache__/
+certs
+# Usage log, response cache and queue lock files written by src/llm.py
+logs/
+
+# RAG corpus: rebuilt with fetch_corpus.py (see SETUP.md), not committed. MANIFEST.json holds the
+# SHA-256 of every doc and download, so `fetch_corpus.py --check` shows whether a rebuild matches corpus-v1.
+data/rag-corpus/corpus/docs/
+data/rag-corpus/corpus/raw/*
+!data/rag-corpus/corpus/raw/.gitkeep
+!data/rag-corpus/corpus/raw/INDEX.json
+# pages saved by hand from a browser (the sites block scripts): commit these
+!data/rag-corpus/corpus/raw/cbp_info_cuban_cigars.html
+!data/rag-corpus/corpus/raw/eo14068.html
+data/rag-corpus/corpus/fetch_report.json
+
+# Derived from corpus/docs by chunk_corpus.py (rebuild instead of committing; several MB)
+data/rag-corpus/corpus/chunks.jsonl
+
+# Saved search index (vectors of chunks.jsonl): rebuild with `python -m src.retrieval.index`
+data/rag-corpus/index/
+
+# Linux packages for the Docker build, downloaded by docker/fetch_wheels.py (SETUP.md step 13)
+docker/wheels/
+docs/DEMO.md

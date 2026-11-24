@@ -1,0 +1,302 @@
+"""Country names -> ISO 3166 alpha-2 codes, in code (the tools compare codes: CU, RU, MX, CL...).
+
+The 8B model often writes "Italy" or "Cuban" where the schema asks for "IT" or "CU". Left as is,
+a Cuban cigar written "Cuba" would miss the ban and a Mexican tequila would miss the USMCA rate, so
+intake output is normalised here before any tool runs (docs/COMPENSATIONS.md).
+"""
+
+from __future__ import annotations
+
+import re
+import unicodedata
+from functools import lru_cache
+
+# Names pycountry does not resolve exactly: UK nations, demonyms, short and old names.
+ALIASES = {
+    "uk": "GB",
+    "u.k.": "GB",
+    "britain": "GB",
+    "great britain": "GB",
+    "england": "GB",
+    "scotland": "GB",
+    "wales": "GB",
+    "northern ireland": "GB",
+    "british": "GB",
+    "english": "GB",
+    "scottish": "GB",
+    "welsh": "GB",
+    "usa": "US",
+    "u.s.": "US",
+    "us": "US",
+    "united states": "US",
+    "america": "US",
+    "american": "US",
+    "russia": "RU",
+    "russian": "RU",
+    "cuban": "CU",
+    "havana": "CU",
+    "habanos": "CU",
+    "habano": "CU",
+    "mexican": "MX",
+    "canadian": "CA",
+    "italian": "IT",
+    "french": "FR",
+    "spanish": "ES",
+    "portuguese": "PT",
+    "german": "DE",
+    "irish": "IE",
+    "polish": "PL",
+    "dutch": "NL",
+    "holland": "NL",
+    "the netherlands": "NL",
+    "belgian": "BE",
+    "swiss": "CH",
+    "austrian": "AT",
+    "greek": "GR",
+    "turkey": "TR",
+    "turkish": "TR",
+    "japanese": "JP",
+    "chinese": "CN",
+    "korean": "KR",
+    "south korea": "KR",
+    "korea": "KR",
+    "republic of korea": "KR",
+    "north korea": "KP",
+    "indian": "IN",
+    "thai": "TH",
+    "vietnam": "VN",
+    "vietnamese": "VN",
+    "chilean": "CL",
+    "argentinian": "AR",
+    "argentine": "AR",
+    "peruvian": "PE",
+    "colombian": "CO",
+    "brazilian": "BR",
+    "jamaican": "JM",
+    "barbadian": "BB",
+    "bajan": "BB",
+    "trinidad": "TT",
+    "trinidadian": "TT",
+    "tobago": "TT",
+    "bahamian": "BS",
+    "the bahamas": "BS",
+    "bahamas": "BS",
+    "dominican republic": "DO",
+    "dominican": "DO",
+    "haitian": "HT",
+    "south african": "ZA",
+    "australian": "AU",
+    "new zealand": "NZ",
+    "kiwi": "NZ",
+    "israeli": "IL",
+    "moroccan": "MA",
+    "czech": "CZ",
+    "czech republic": "CZ",
+    "slovak": "SK",
+    "hungarian": "HU",
+    "swedish": "SE",
+    "norwegian": "NO",
+    "danish": "DK",
+    "finnish": "FI",
+    "ivory coast": "CI",
+    "british virgin islands": "VG",
+    "bvi": "VG",
+    "tortola": "VG",
+    "us virgin islands": "VI",
+    "st lucia": "LC",
+    "saint lucia": "LC",
+    "st kitts": "KN",
+    "st vincent": "VC",
+    "antigua": "AG",
+    "curacao": "CW",
+    "aruba": "AW",
+    "macedonia": "MK",
+    "laos": "LA",
+    "taiwan": "TW",
+    "taiwanese": "TW",
+    "iran": "IR",
+    "syria": "SY",
+    "venezuela": "VE",
+    "bolivia": "BO",
+    "tanzania": "TZ",
+    "moldova": "MD",
+    "scotch": "GB",
+}
+# Demonyms (adjectives of origin) for the rest of the world, so "Nicaraguan cigars" or
+# "Costa Rican rum" give an origin (COMPENSATIONS: agent v2). Ambiguous ones are left out
+# ("Congolese", "Guinean"); "Dominican" stays the Dominican Republic (above).
+DEMONYMS = {
+    "costa rican": "CR",
+    "salvadoran": "SV",
+    "salvadorean": "SV",
+    "el salvadoran": "SV",
+    "guatemalan": "GT",
+    "honduran": "HN",
+    "nicaraguan": "NI",
+    "panamanian": "PA",
+    "belizean": "BZ",
+    "puerto rican": "PR",
+    "guyanese": "GY",
+    "surinamese": "SR",
+    "grenadian": "GD",
+    "antiguan": "AG",
+    "kittitian": "KN",
+    "vincentian": "VC",
+    "st lucian": "LC",
+    "saint lucian": "LC",
+    "aruban": "AW",
+    "curacaoan": "CW",
+    "montserratian": "MS",
+    "venezuelan": "VE",
+    "ecuadorian": "EC",
+    "bolivian": "BO",
+    "paraguayan": "PY",
+    "uruguayan": "UY",
+    "luxembourgish": "LU",
+    "icelandic": "IS",
+    "estonian": "EE",
+    "latvian": "LV",
+    "lithuanian": "LT",
+    "slovenian": "SI",
+    "slovene": "SI",
+    "croatian": "HR",
+    "serbian": "RS",
+    "bosnian": "BA",
+    "montenegrin": "ME",
+    "albanian": "AL",
+    "macedonian": "MK",
+    "bulgarian": "BG",
+    "romanian": "RO",
+    "moldovan": "MD",
+    "ukrainian": "UA",
+    "belarusian": "BY",
+    "belarussian": "BY",
+    "cypriot": "CY",
+    "maltese": "MT",
+    "georgian": "GE",
+    "armenian": "AM",
+    "azerbaijani": "AZ",
+    "azeri": "AZ",
+    "scots": "GB",
+    "south korean": "KR",
+    "north korean": "KP",
+    "mongolian": "MN",
+    "cambodian": "KH",
+    "laotian": "LA",
+    "burmese": "MM",
+    "malaysian": "MY",
+    "singaporean": "SG",
+    "indonesian": "ID",
+    "filipino": "PH",
+    "philippine": "PH",
+    "pakistani": "PK",
+    "bangladeshi": "BD",
+    "sri lankan": "LK",
+    "nepalese": "NP",
+    "nepali": "NP",
+    "bhutanese": "BT",
+    "maldivian": "MV",
+    "afghan": "AF",
+    "iranian": "IR",
+    "iraqi": "IQ",
+    "syrian": "SY",
+    "lebanese": "LB",
+    "palestinian": "PS",
+    "jordanian": "JO",
+    "saudi": "SA",
+    "emirati": "AE",
+    "qatari": "QA",
+    "kuwaiti": "KW",
+    "bahraini": "BH",
+    "omani": "OM",
+    "yemeni": "YE",
+    "kazakh": "KZ",
+    "uzbek": "UZ",
+    "kyrgyz": "KG",
+    "tajik": "TJ",
+    "turkmen": "TM",
+    "hong kong": "HK",
+    "algerian": "DZ",
+    "tunisian": "TN",
+    "libyan": "LY",
+    "egyptian": "EG",
+    "sudanese": "SD",
+    "ethiopian": "ET",
+    "eritrean": "ER",
+    "kenyan": "KE",
+    "ugandan": "UG",
+    "tanzanian": "TZ",
+    "rwandan": "RW",
+    "nigerian": "NG",
+    "ghanaian": "GH",
+    "ivorian": "CI",
+    "senegalese": "SN",
+    "malian": "ML",
+    "cameroonian": "CM",
+    "angolan": "AO",
+    "mozambican": "MZ",
+    "zambian": "ZM",
+    "zimbabwean": "ZW",
+    "namibian": "NA",
+    "botswanan": "BW",
+    "malawian": "MW",
+    "malagasy": "MG",
+    "mauritian": "MU",
+    "seychellois": "SC",
+    "cape verdean": "CV",
+    "somali": "SO",
+    "new zealander": "NZ",
+    "fijian": "FJ",
+    "samoan": "WS",
+    "tongan": "TO",
+    "papua new guinean": "PG",
+}
+ALIASES.update({k: v for k, v in DEMONYMS.items() if k not in ALIASES})
+
+NOT_A_COUNTRY = {
+    "duty-free",
+    "duty free",
+    "dutyfree",
+    "cruise ship",
+    "ship",
+    "airport",
+    "unknown",
+    "eu",
+    "europe",
+    "caribbean",
+}
+
+
+def _plain(s: str) -> str:
+    s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode()
+    return re.sub(r"\s+", " ", s.strip().lower().replace("st.", "st"))
+
+
+@lru_cache(maxsize=512)
+def to_iso2(value: str | None) -> str | None:
+    """ISO alpha-2 for a country code, name or demonym; None if it is not a recognisable country."""
+    if not value:
+        return None
+    raw = value.strip()
+    if re.fullmatch(r"[A-Za-z]{2}", raw):
+        code = raw.upper()
+        code = "GB" if code == "UK" else code
+        try:
+            import pycountry
+
+            return code if pycountry.countries.get(alpha_2=code) else None
+        except ImportError:  # pragma: no cover
+            return code
+    key = _plain(raw)
+    if key in NOT_A_COUNTRY:
+        return None
+    if key in ALIASES:
+        return ALIASES[key]
+    try:
+        import pycountry
+    except ImportError:  # pragma: no cover
+        return None
+    try:
+        return pycountry.countries.lookup(key).alpha_2
+    except LookupError:
+        return None  # no fuzzy matching: it maps "Republic of Korea" to North Korea

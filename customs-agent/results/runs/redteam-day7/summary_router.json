@@ -1,0 +1,29 @@
+{
+ "set": "redteam",
+ "run": "redteam-day7",
+ "n": 20,
+ "accuracy": 0.8,
+ "outcome_acc": 0.8,
+ "bottom_line_acc": 1.0,
+ "bottom_line_n": 6,
+ "dollar_acc": 1.0,
+ "dollar_n": 6,
+ "whatif_acc": null,
+ "clarify_acc": null,
+ "clarify_n": 0,
+ "citation_acc": 1.0,
+ "must_not_acc": 1.0,
+ "state_flag_acc": null,
+ "errors": 0,
+ "tokens_per_q": 1888,
+ "calls_per_q": 1.8,
+ "by_type": {
+  "evasion": 0.75,
+  "injection_doc": 1.0,
+  "injection_user": 0.6,
+  "out_of_scope": 0.8,
+  "phrasing": 1.0,
+  "pii": 1.0
+ },
+ "max_tool_steps": 7
+}

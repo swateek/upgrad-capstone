@@ -1,0 +1,44 @@
+{
+ "n": 28,
+ "rules_vs_reviewer_1": {
+  "n": 28,
+  "agreement": 0.964,
+  "kappa": 0.951,
+  "disagree": [
+   [
+    "E3-019",
+    "RULES",
+    "GOLD_ERROR"
+   ]
+  ]
+ },
+ "rules_vs_reviewer_2": {
+  "n": 28,
+  "agreement": 0.929,
+  "kappa": 0.902,
+  "disagree": [
+   [
+    "E3-019",
+    "RULES",
+    "GOLD_ERROR"
+   ],
+   [
+    "E78",
+    "GUARD_MISS",
+    "CITATION_SELECTION"
+   ]
+  ]
+ },
+ "reviewer_1_vs_reviewer_2": {
+  "n": 28,
+  "agreement": 0.964,
+  "kappa": 0.951,
+  "disagree": [
+   [
+    "E78",
+    "GUARD_MISS",
+    "CITATION_SELECTION"
+   ]
+  ]
+ }
+}

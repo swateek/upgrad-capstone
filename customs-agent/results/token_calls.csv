@@ -1,0 +1,32 @@
+set,arm,runs,stage,calls,p50,p95,max,over_3000,over_limit,question_max,questions_over_budget
+eval-v2,"agent v1, code router",1,intake,74,933,1182,1186,0,0,6319,0
+eval-v2,"agent v1, code router",1,writer,58,2321,2549,2662,0,0,6319,0
+eval-v2,"agent v1, code router",1,verifier,52,168,197,204,0,0,6319,0
+eval-v2,"agent v1, code router",1,all calls,184,934,2446,2662,0,0,6319,0
+eval-v2,"agent v1, LLM planner",3,intake,222,933,1182,1186,0,0,6903,0
+eval-v2,"agent v1, LLM planner",3,planner,261,539,609,671,0,0,6903,0
+eval-v2,"agent v1, LLM planner",3,writer,174,2321,2549,2662,0,0,6903,0
+eval-v2,"agent v1, LLM planner",3,verifier,156,168,197,206,0,0,6903,0
+eval-v2,"agent v1, LLM planner",3,all calls,813,653,2427,2662,0,0,6903,0
+eval-v3,"agent v1, code router",1,intake,91,954,1211,1246,0,0,6105,0
+eval-v3,"agent v1, code router",1,writer,50,2384,2702,2805,0,0,6105,0
+eval-v3,"agent v1, code router",1,verifier,49,165,213,226,0,0,6105,0
+eval-v3,"agent v1, code router",1,all calls,190,954,2515,2805,0,0,6105,0
+eval-v3,"agent v2, code router",1,intake,90,1007,1263,1296,0,0,6999,0
+eval-v3,"agent v2, code router",1,writer,61,2390,2724,2988,0,0,6999,0
+eval-v3,"agent v2, code router",1,verifier,59,172,227,241,0,0,6999,0
+eval-v3,"agent v2, code router",1,all calls,210,1010,2521,2988,0,0,6999,0
+eval-v3,"agent v2, LLM planner",3,intake,270,1007,1263,1296,0,0,7558,0
+eval-v3,"agent v2, LLM planner",3,planner,319,552,617,668,0,0,7558,0
+eval-v3,"agent v2, LLM planner",3,writer,183,2390,2734,2988,0,0,7558,0
+eval-v3,"agent v2, LLM planner",3,verifier,177,172,221,241,0,0,7558,0
+eval-v3,"agent v2, LLM planner",3,all calls,949,613,2477,2988,0,0,7558,0
+eval-v2/gold-v2,"agent v2, code router",1,intake,72,987,1236,1240,0,0,6596,0
+eval-v2/gold-v2,"agent v2, code router",1,writer,63,2356,2579,2645,0,0,6596,0
+eval-v2/gold-v2,"agent v2, code router",1,verifier,58,174,199,211,0,0,6596,0
+eval-v2/gold-v2,"agent v2, code router",1,all calls,193,989,2471,2645,0,0,6596,0
+eval-v2/gold-v2,"agent v2, LLM planner",1,intake,72,987,1236,1240,0,0,7261,0
+eval-v2/gold-v2,"agent v2, LLM planner",1,planner,85,547,615,678,0,0,7261,0
+eval-v2/gold-v2,"agent v2, LLM planner",1,writer,62,2350,2579,2647,0,0,7261,0
+eval-v2/gold-v2,"agent v2, LLM planner",1,verifier,58,174,199,211,0,0,7261,0
+eval-v2/gold-v2,"agent v2, LLM planner",1,all calls,277,615,2446,2647,0,0,7261,0

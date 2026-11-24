@@ -1,0 +1,5 @@
+set,arm,run,questions_searched,citation_recall,full_recall_rate,accuracy_if_full_recall,accuracy_if_not,n_not_full,wrong_with_full_recall,citation_check_pass
+eval-v3,"agent v2, code router",official-v2-eval3-router,61,0.967,0.934,0.982,0.0,4,1,0.934
+eval-v3,"agent v1, code router",official-v1-eval3-router,50,0.913,0.82,0.878,0.0,9,5,0.82
+eval-v2,"agent v1, code router",official-router,55,0.965,0.927,0.843,0.0,4,8,0.927
+eval-v2/gold-v2,"agent v2, code router",official-v2-gold2-router,59,1.0,1.0,1.0,,0,0,1.0

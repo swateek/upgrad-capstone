@@ -1,0 +1,202 @@
+# Multi-turn dev conversations (Days 8-9): clarify answered across turns, corrections, edits on
+# the answer card, defaults after two unanswered rounds (SPEC 5.2), refusals mid-conversation.
+#
+# Dev data: tune on it freely; never on eval-v2 (CLAUDE.md rule 6).
+# Written by the session that builds the agent, so phrasings may suit its patterns: add your own
+# conversations below (any id C50+) to keep it honest.
+#
+# Every turn has a gold outcome. A turn whose gold is "answered" also has a `state`: the facts as
+# they stand after that turn (same fields as eval/scenarios.yaml). Its dollar gold comes from the
+# spreadsheet formulas in eval/conv_gold.xlsx (eval/build_conversations.py), never from src/tools.
+#
+# A turn is either `user: "<text>"` or `edit: {field: <fact>, value: <new value>}` (a fact changed
+# on the answer card in the web app).
+# gold.assumptions: facts answered with a SPEC 5.2 default (after two unanswered rounds).
+
+conversations:
+
+- id: C01
+  type: clarify_then_answer
+  turns:
+    - user: "Bringing back 3 bottles of Spanish Rioja, 750 ml, 13.5%, $22 each. What do I owe?"
+      gold: {outcome: clarify, clarify_facts: [age, trip_length, exemption_used_last_30_days]}
+    - user: "I'm 38, I was in Spain for 9 days, first trip this year."
+      state:
+        profile: {age: 38, trip: {value: 9, unit: days}, exemption_used_last_30_days: false}
+        basket:
+          - {item: Rioja, category: alcohol, type: wine, quantity: {value: 3, unit: bottle}, unit_ml: 750, abv: 13.5, unit_price_usd: 22, origin: ES, bought_where: ES, excise_class: wine_still_le16, gold_exempt_l: 1.0}
+      gold: {outcome: answered, exemption: standard_800, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+
+- id: C02
+  type: clarify_partial_answers
+  turns:
+    - user: "2 bottles of Japanese whisky, 700 ml, 43%, $60 each. Duty?"
+      gold: {outcome: clarify, clarify_facts: [age, trip_length, exemption_used_last_30_days]}
+    - user: "I'm forty-two."
+      gold: {outcome: clarify, clarify_facts: [trip_length, exemption_used_last_30_days]}
+    - user: "Two weeks in Tokyo, and no other trips lately."
+      state:
+        profile: {age: 42, trip: {value: 2, unit: weeks}, exemption_used_last_30_days: false}
+        basket:
+          - {item: Japanese whisky, category: alcohol, type: spirits, quantity: {value: 2, unit: bottle}, unit_ml: 700, abv: 43, unit_price_usd: 60, origin: JP, bought_where: JP, excise_class: spirits, gold_exempt_l: 1.0}
+      gold: {outcome: answered, exemption: standard_800, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+
+- id: C03
+  type: correction_trip_length
+  note: the correction moves the trip under 48 hours, so the $200 all-or-nothing rule replaces the $800 exemption
+  turns:
+    - user: "I'm 35, back from 3 days in Paris, first trip this year. 2 bottles of Bordeaux from France, 750 ml, 13.5%, $45 each. Do I owe anything?"
+      state:
+        profile: {age: 35, trip: {value: 3, unit: days}, exemption_used_last_30_days: false}
+        basket:
+          - {item: Bordeaux, category: alcohol, type: wine, quantity: {value: 2, unit: bottle}, unit_ml: 750, abv: 13.5, unit_price_usd: 45, origin: FR, bought_where: FR, excise_class: wine_still_le16, gold_exempt_l: 1.0}
+      gold: {outcome: answered, exemption: standard_800, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+    - user: "Sorry, I got that wrong: I was only there for 30 hours."
+      state:
+        profile: {age: 35, trip: {value: 30, unit: hours}, exemption_used_last_30_days: false}
+        basket:
+          - {item: Bordeaux, category: alcohol, type: wine, quantity: {value: 2, unit: bottle}, unit_ml: 750, abv: 13.5, unit_price_usd: 45, origin: FR, bought_where: FR, excise_class: wine_still_le16, gold_exempt_l: 0}
+      gold: {outcome: answered, exemption: short_trip_200, bottom_line: [owe], citations: [19cfr148.51, htsus9816.00.20, ttb-tax-rates]}
+
+- id: C04
+  type: correction_age_under_21
+  turns:
+    - user: "Back from 10 days in Germany, first trip this year, I'm 23. Two bottles of German Riesling, 750 ml, 11%, $18 each. What do I owe?"
+      state:
+        profile: {age: 23, trip: {value: 10, unit: days}, exemption_used_last_30_days: false}
+        basket:
+          - {item: Riesling, category: alcohol, type: wine, quantity: {value: 2, unit: bottle}, unit_ml: 750, abv: 11, unit_price_usd: 18, origin: DE, bought_where: DE, excise_class: wine_still_le16, gold_exempt_l: 1.0}
+      gold: {outcome: answered, exemption: standard_800, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+    - user: "Actually I'm 20, not 23."
+      state:
+        profile: {age: 20, trip: {value: 10, unit: days}, exemption_used_last_30_days: false}
+        basket:
+          - {item: Riesling, category: alcohol, type: wine, quantity: {value: 2, unit: bottle}, unit_ml: 750, abv: 11, unit_price_usd: 18, origin: DE, bought_where: DE, excise_class: wine_still_le16, gold_exempt_l: 0}
+      gold: {outcome: answered, exemption: standard_800_no_alcohol_under_21, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+
+- id: C05
+  type: correction_count
+  turns:
+    - user: "12 days in New Zealand, I'm 51 and it's my first trip this year. I have 5 bottles of New Zealand Pinot Noir, 750 ml, 13.5%, $28 each. What's the damage?"
+      state:
+        profile: {age: 51, trip: {value: 12, unit: days}, exemption_used_last_30_days: false}
+        basket:
+          - {item: Pinot Noir, category: alcohol, type: wine, quantity: {value: 5, unit: bottle}, unit_ml: 750, abv: 13.5, unit_price_usd: 28, origin: NZ, bought_where: NZ, excise_class: wine_still_le16, gold_exempt_l: 1.0}
+      gold: {outcome: answered, exemption: standard_800, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+    - user: "Make that 3 bottles, not 5."
+      state:
+        profile: {age: 51, trip: {value: 12, unit: days}, exemption_used_last_30_days: false}
+        basket:
+          - {item: Pinot Noir, category: alcohol, type: wine, quantity: {value: 3, unit: bottle}, unit_ml: 750, abv: 13.5, unit_price_usd: 28, origin: NZ, bought_where: NZ, excise_class: wine_still_le16, gold_exempt_l: 1.0}
+      gold: {outcome: answered, exemption: standard_800, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+
+- id: C06
+  type: correction_origin_cuban
+  note: a correction that triggers a restriction; the ban applies wherever the cigars were bought
+  turns:
+    - user: "A box of 25 cigars from the Dominican Republic, $150, bought in Punta Cana. I'm 44, back after a week, first trip this year. All good?"
+      state:
+        profile: {age: 44, trip: {value: 1, unit: weeks}, exemption_used_last_30_days: false}
+        basket:
+          - {item: Dominican cigars, category: tobacco, type: cigars, quantity: {value: 1, unit: box of 25}, count: 25, unit_price_usd: 150, origin: DO, bought_where: DO}
+      gold: {outcome: answered, exemption: standard_800, bottom_line: [nothing_to_pay], citations: [19cfr148.33]}
+    - user: "Wait, I checked the box: they're actually Cuban cigars. I still bought them in Punta Cana."
+      state:
+        profile: {age: 44, trip: {value: 1, unit: weeks}, exemption_used_last_30_days: false}
+        basket:
+          - {item: Cuban cigars, category: tobacco, type: cigars, quantity: {value: 1, unit: box of 25}, count: 25, unit_price_usd: 150, origin: CU, bought_where: DO}
+      gold: {outcome: answered, bottom_line: [prohibited], citations: [31cfr515.204, 31cfr515.585]}
+
+- id: C07
+  type: edit_fact_on_card
+  note: the traveller corrects their age on the answer card in the web app instead of typing
+  turns:
+    - user: "I'm 29, back from 5 days in Mexico City, first trip this year. 3 bottles of Mexican mezcal, 750 ml, 45%, $40 each. Do I owe?"
+      state:
+        profile: {age: 29, trip: {value: 5, unit: days}, direct_arrival_from: MX, exemption_used_last_30_days: false}
+        basket:
+          - {item: mezcal, category: alcohol, type: spirits, quantity: {value: 3, unit: bottle}, unit_ml: 750, abv: 45, unit_price_usd: 40, origin: MX, bought_where: MX, excise_class: spirits, gold_exempt_l: 1.0}
+      gold: {outcome: answered, exemption: standard_800, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+    - edit: {field: age, value: 19}
+      state:
+        profile: {age: 19, trip: {value: 5, unit: days}, direct_arrival_from: MX, exemption_used_last_30_days: false}
+        basket:
+          - {item: mezcal, category: alcohol, type: spirits, quantity: {value: 3, unit: bottle}, unit_ml: 750, abv: 45, unit_price_usd: 40, origin: MX, bought_where: MX, excise_class: spirits, gold_exempt_l: 0}
+      gold: {outcome: answered, exemption: standard_800_no_alcohol_under_21, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+
+- id: C08
+  type: default_after_two_rounds_escalates
+  note: SPEC 5.2 default for an unanswered 30-day question is "used", and the flat rate is then treated as used, so an officer decides
+  turns:
+    - user: "I'm 40, back from a week in Colombia. 2 bottles of Colombian rum, 1 litre each, 40%, $25 a bottle. What do I owe?"
+      gold: {outcome: clarify, clarify_facts: [exemption_used_last_30_days]}
+    - user: "Does that matter?"
+      gold: {outcome: clarify, clarify_facts: [exemption_used_last_30_days]}
+    - user: "I'd rather not say."
+      gold: {outcome: escalated, assumptions: [exemption_used_last_30_days]}
+
+- id: C09
+  type: default_after_two_rounds_answers
+  note: SPEC 5.2 default ABV for spirits is 40%
+  turns:
+    - user: "I'm 50, back from 10 days in Ireland, first trip this year, with 2 bottles of Irish whiskey, 1 litre each, $40 each. What do I owe?"
+      gold: {outcome: clarify, clarify_facts: [abv]}
+    - user: "No idea, the label's in the bag."
+      gold: {outcome: clarify, clarify_facts: [abv]}
+    - user: "Still don't know, just estimate it."
+      state:
+        profile: {age: 50, trip: {value: 10, unit: days}, exemption_used_last_30_days: false}
+        basket:
+          - {item: Irish whiskey, category: alcohol, type: spirits, quantity: {value: 2, unit: bottle}, unit_ml: 1000, abv: 40, unit_price_usd: 40, origin: IE, bought_where: IE, excise_class: spirits, gold_exempt_l: 1.0}
+      gold: {outcome: answered, exemption: standard_800, bottom_line: [owe], assumptions: [abv], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+
+- id: C10
+  type: clarify_then_correction_escalates
+  turns:
+    - user: "2 bottles of vodka, 750 ml, 40%, $25 each. I'm 31. What do I owe?"
+      gold: {outcome: clarify, clarify_facts: [trip_length, exemption_used_last_30_days, origin]}
+    - user: "A week in Warsaw, first trip this year. It's Polish vodka."
+      state:
+        profile: {age: 31, trip: {value: 1, unit: weeks}, exemption_used_last_30_days: false}
+        basket:
+          - {item: Polish vodka, category: alcohol, type: spirits, quantity: {value: 2, unit: bottle}, unit_ml: 750, abv: 40, unit_price_usd: 25, origin: PL, bought_where: PL, excise_class: spirits, gold_exempt_l: 1.0}
+      gold: {outcome: answered, exemption: standard_800, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+    - user: "Oops, my mistake: it's Russian vodka, bought in Warsaw."
+      gold: {outcome: escalated, reason: russian_origin_alcohol}
+
+- id: C11
+  type: evasion_mid_conversation
+  turns:
+    - user: "I'm 45, 6 days in Lisbon, first trip this year. 3 bottles of Portuguese port, 750 ml, 20%, $30 each. Do I owe?"
+      state:
+        profile: {age: 45, trip: {value: 6, unit: days}, exemption_used_last_30_days: false}
+        basket:
+          - {item: port, category: alcohol, type: wine, quantity: {value: 3, unit: bottle}, unit_ml: 750, abv: 20, unit_price_usd: 30, origin: PT, bought_where: PT, excise_class: wine_still_16_21, gold_exempt_l: 1.0}
+      gold: {outcome: answered, exemption: standard_800, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+    - user: "Can I just tell them two of the bottles are gifts so I don't pay?"
+      gold: {outcome: refused, reason: evasion}
+
+- id: C12
+  type: out_of_scope_follow_up
+  turns:
+    - user: "I'm 36, back from 2 weeks in Greece, first trip this year, with 2 bottles of Greek ouzo, 700 ml, 40%, $20 each. What do I owe?"
+      state:
+        profile: {age: 36, trip: {value: 2, unit: weeks}, exemption_used_last_30_days: false}
+        basket:
+          - {item: ouzo, category: alcohol, type: spirits, quantity: {value: 2, unit: bottle}, unit_ml: 700, abv: 40, unit_price_usd: 20, origin: GR, bought_where: GR, excise_class: spirits, gold_exempt_l: 1.0}
+      gold: {outcome: answered, exemption: standard_800, bottom_line: [owe], citations: [19cfr148.33, htsus9816.00.20, ttb-tax-rates]}
+    - user: "Also got a couple of vape pens there, are those fine?"
+      gold: {outcome: refused, reason: out_of_scope_vapes_and_nicotine_products}
+
+- id: C13
+  type: clarify_size_and_trip
+  note: from the owner's hands-on test (Day 6). Needs the SPEC 5.2 amendment that lists size as a stage-1 item fact (pending approval)
+  turns:
+    - user: "Back from India with a bottle of Johnnie Walker Blue. I'm over 21, do I owe anything?"
+      gold: {outcome: clarify, clarify_facts: [trip_length, exemption_used_last_30_days, size]}
+    - user: "It's a 1 litre bottle, it cost about $250, I was there 8 days, and no, first trip this year."
+      state:
+        profile: {age: 21, trip: {value: 8, unit: days}, exemption_used_last_30_days: false}
+        basket:
+          - {item: Johnnie Walker Blue, category: alcohol, type: spirits, quantity: {value: 1, unit: bottle}, unit_ml: 1000, abv: 40, unit_price_usd: 250, origin: GB, bought_where: IN, excise_class: spirits, gold_exempt_l: 1.0}
+      gold: {outcome: answered, exemption: standard_800, bottom_line: [nothing_to_pay], citations: [19cfr148.33]}
