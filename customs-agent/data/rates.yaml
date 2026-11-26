@@ -1,0 +1,174 @@
+# Duty and excise rates for DeclareRight v1. Read by compute_duty_excise.
+#
+# Every number comes from an official page; local copies are in
+# data/rag-corpus/corpus/docs/ with their fetch date. Status legend as in rules.yaml.
+
+meta:
+  version: 1
+  as_of: "2026-11-21"
+
+# ------------------------------------------------------------ flat-rate duty
+# HTSUS 9816.00.20: the next $1,000 (fair retail value) over the exemption.
+flat_rate:
+  band_usd: 1000
+  rate_by_origin:
+    general: 0.03                               # 3% of fair retail value
+    free_program: 0.00                          # goods originating in a country with a listed programme
+    column2: 0.04                               # countries without normal trade relations
+  rate_depends_on: origin                       # where made, not where bought
+  not_used_within_days: 30                      # flat rate itself is once per 30 days
+  value_rounding: nearest_dollar                # CBP: purchase totals rounded to the nearest dollar
+  surcharges: none                              # 2026 Section 122 surcharge not applied to Chapter 98 entries
+  citations: [htsus9816.00.20, 19cfr148.101, cbp-duty-info, cbp-csms-section122]
+  status: confirmed
+  # SPEC v2 row 11: an item bought in a country whose own goods pay 0% has its origin asked when
+  # not stated. A name that by law can only be made in some countries states it (agent v2).
+  origin_by_name:
+    as_of: 2026-11-23
+    entries:
+    - names: [tequila, mezcal]
+      countries: [MX]
+      source: "27 CFR 5.148(b)(1)-(2): Tequila and Mezcal are distinctive products of Mexico, made in Mexico"
+    - names: [pisco]
+      countries: [PE, CL]
+      source: "27 CFR 5.145(b)(6): Pisco is distilled in Peru or Chile"
+
+# Programme codes listed as "Free" for 9816.00.20, and the countries they cover.
+free_programs:
+  S:  {name: USMCA, countries: [MX, CA], status: confirmed}
+  P:  {name: CAFTA-DR, countries: [CR, DO, SV, GT, HN, NI], status: confirmed}   # programme symbols confirmed in HTSUS GN 3(c)(i) and the 9816.00.20 Special column
+  BH: {name: US-Bahrain FTA, countries: [BH], status: confirmed}
+  CL: {name: US-Chile FTA, countries: [CL], status: confirmed}
+  CO: {name: US-Colombia TPA, countries: [CO], status: confirmed}
+  IL: {name: US-Israel FTA, countries: [IL], status: confirmed}
+  JO: {name: US-Jordan FTA, countries: [JO], status: confirmed}
+  KR: {name: US-Korea FTA, countries: [KR], status: confirmed}
+  MA: {name: US-Morocco FTA, countries: [MA], status: confirmed}
+  OM: {name: US-Oman FTA, countries: [OM], status: confirmed}
+  PA: {name: US-Panama TPA, countries: [PA], status: confirmed}
+  PE: {name: US-Peru TPA, countries: [PE], status: confirmed}
+  SG: {name: US-Singapore FTA, countries: [SG], status: confirmed}
+
+column2_countries: [BY, CU, KP, RU]            # Belarus, Cuba, North Korea, Russia
+
+# Beneficiary countries for the 2-liter alcohol allowance (HTSUS 9804.00.72).
+# Chapter 98, Subchapter IV, U.S. Note 4: "beneficiary country" means a country listed in
+# General Note 7(a) (CBERA) or 11(a) (ATPA). General Note 11 is no longer in the 2026 HTSUS
+# (Revision 23), so the list is General Note 7(a). Corpus: htsus-ch98-iv-usnote-4, htsus-gn-7.
+beneficiary_countries_2l:
+  countries:
+    AG: Antigua and Barbuda
+    AW: Aruba
+    BS: Bahamas
+    BB: Barbados
+    BZ: Belize
+    CW: Curacao
+    DM: Dominica
+    GD: Grenada
+    GY: Guyana
+    HT: Haiti
+    JM: Jamaica
+    MS: Montserrat
+    KN: Saint Kitts and Nevis
+    LC: Saint Lucia
+    VC: Saint Vincent and the Grenadines
+    TT: Trinidad and Tobago
+    VG: British Virgin Islands
+  not_eligible:                                 # listed by CBP's older guidance, not in GN 7(a)
+    former_cbera_trade_agreement: [CR, DO, SV, GT, HN, NI, PA]   # "former beneficiary countries" (CAFTA-DR, Panama TPA)
+    andean_atpa_expired: [BO, CO, EC, PE]
+    netherlands_antilles_successors: [SX, BQ]   # GN 7(a): Netherlands Antilles listed, eligibility ended; Curacao listed separately
+    cbp_footnote: [AI, KY, GP, MQ, TC]          # Anguilla, Cayman Islands, Guadeloupe, Martinique, Turks and Caicos
+  requires: direct_arrival                      # 148.33(d)(3)(ii); 9804.00.72: "arrives directly from a beneficiary country"
+  min_liters_produced_in_beneficiary_countries: 1.0
+  cruise_duty_free: "1 liter, or 2 liters if at least one bottle is the product of an eligible country (CBP)"
+  citations: [19cfr148.33, htsus9804.00.72, htsus-ch98-iv-usnote-4, htsus-gn-7]
+  status: confirmed                             # read in the HTSUS text (2026 Revision 23); replaces the accepted CBP list (SPEC 5.5)
+
+# ---------------------------------------------------------------- excise
+# Federal excise (CBP collects it as "internal revenue tax"). General rates only:
+# reduced rates and credits are for producers and assigned importers, not travellers.
+excise:
+  source: https://www.ttb.gov/what-we-do/taxes-and-filing/tax-rates   # fetched 2026-11-21
+  wine_per_wine_gallon:
+    still_up_to_16_abv: 1.07
+    still_over_16_to_21_abv: 1.57
+    still_over_21_to_24_abv: 3.15
+    artificially_carbonated: 3.30
+    sparkling: 3.40
+    hard_cider: 0.226
+    mead_and_low_abv_wine: 1.07
+  spirits_per_proof_gallon: 13.50
+  beer_per_barrel: 18.00                        # 31 US gallons per barrel
+  tobacco:                                      # not used in v1 calculations: excess tobacco is not taxed (rules.yaml)
+    small_cigarettes_per_1000: 50.33
+    large_cigarettes_per_1000: 105.69
+    small_cigars_per_1000: 50.33
+    large_cigars: {rate_of_sale_price: 0.5275, max_per_1000: 402.60}
+  citations: [ttb-tax-rates, 26usc5001, 26usc5041, 26usc5051, 26usc5701]
+  status: confirmed
+  # Tax class by product name (agent v2, SPEC v2 row 10 and COMPENSATIONS): the 8B model types
+  # Champagne as still wine, liqueurs as "other" and sake as spirits. Matched in code on the item's
+  # name (whole words, case and accents ignored), first entry first (spirits before sparkling: "Fine Champagne Cognac"); the model's type is
+  # replaced. A null class keeps the type's own rule (wine: by ABV).
+  classes_by_name:
+    as_of: 2026-11-23
+    entries:
+    - class: beer                               # excise class only; the line stays "wine" (rice wine)
+      type: wine
+      names: [sake, saké, nihonshu, junmai, ginjo, daiginjo, honjozo]
+      source: https://www.ttb.gov/regulated-commodities/beverage-alcohol/sake
+      note: "Sake is taxed as beer; sake with added brewer's alcohol or distilled spirits is taxed at the spirits rate."
+    - class: spirits
+      type: spirits
+      names: [liqueur, liqueurs, liquore, licor, likör, likor, limoncello, amaretto, amaro, amari,
+              baileys, irish cream, cream liqueur, schnapps, jägermeister, jagermeister, cointreau,
+              grand marnier, kahlua, kahlúa, chartreuse, bénédictine, benedictine, sambuca, triple sec,
+              crème de, creme de, curaçao, curacao, frangelico, drambuie, aperol, campari, chambord,
+              disaronno, midori, st-germain, st germain, advocaat, pastis, ouzo, absinthe, arak, raki,
+              rakı, rakia, fernet, becherovka, unicum, mirto, nocino, palinka, pálinka, slivovitz,
+              kirsch, eau de vie, eau-de-vie, aquavit, akvavit, shochu, baijiu, soju, cachaça, cachaca,
+              grappa, pisco, mezcal, tequila,
+              whisky, whiskey, whiskies, scotch, bourbon, vodka, gin, rum, rhum, brandy, cognac, armagnac,
+              calvados, sloe gin, single malt, eau-de-vie]
+      source: "27 CFR 5.150 (liqueurs and cordials, a class of distilled spirits); 26 USC 5001"
+    - class: sparkling
+      type: sparkling_wine
+      names: [champagne, champagnes, prosecco, cava, crémant, cremant, sekt, spumante, franciacorta,
+              cap classique, pét-nat, pet-nat, pet nat, bubbly, sparkling wine, sparkling rosé,
+              sparkling rose, sparkling white, sparkling red]
+      source: "26 USC 5041(b)(4); 27 CFR 4.21(b) (sparkling wine)"
+    - class: beer
+      type: beer
+      names: [beer, beers, lager, lagers, ale, ales, stout, porter, pilsner, pils, ipa, hefeweizen,
+              hefeweissbier, weissbier, weizen, bock, saison, kölsch, kolsch, draft beer]
+      source: "26 USC 5051 (beer); TTB tax rates"
+    - class: null                               # wine: the ABV decides the class (still wine bands)
+      type: wine
+      names: [sherry, oloroso, fino, manzanilla, amontillado, palo cortado, pedro ximénez, pedro ximenez,
+              port, porto, tawny, madeira, marsala, vermouth, sangria]
+      source: "26 USC 5041(b) (still wines by alcohol content, fortified wines included)"
+
+# ----------------------------------------------------------- conversions
+conversions:
+  liters_per_us_gallon: 3.785411784
+  proof_per_abv_percent: 2                      # 40% ABV = 80 proof
+  us_gallons_per_beer_barrel: 31
+  ml_per_liter: 1000
+  volume_units_ml:                              # stated size unit -> ml per unit
+    ml: 1
+    cl: 10
+    l: 1000
+    liter: 1000
+    litre: 1000
+    fl oz: 29.5735295625                        # US fluid ounce
+  containers_ml:                                # container words that imply a size when none is stated
+    fifth: 750                                  # 1/5 US gallon, by trade usage
+    magnum: 1500
+    half bottle: 375
+    split: 187.5
+    miniature: 50
+    nip: 50
+  tobacco_units:                                # stated unit -> pieces
+    cigarettes: {cigarette: 1, pack: 20, carton: 200}
+    cigars: {cigar: 1}                          # "box of N" -> N

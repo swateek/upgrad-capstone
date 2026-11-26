@@ -1,0 +1,11 @@
+# HTTPS for DeclareRight: Caddy gets and renews the certificate for {$SITE} itself.
+{$SITE} {
+	encode zstd gzip
+	reverse_proxy app:8000
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+}

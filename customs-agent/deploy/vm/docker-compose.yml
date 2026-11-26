@@ -1,0 +1,42 @@
+# DeclareRight on a server (SETUP.md step 15): the app behind Caddy, which gets a real HTTPS
+# certificate for $SITE (e.g. 203-0-113-5.sslip.io) and is the only thing open to the internet.
+# Run by deploy/vm/push.sh; SITE and ACCESS_CODE come from deploy/vm/.env on the server.
+
+services:
+  app:
+    build:
+      context: ../..
+    image: declareright:latest
+    expose:
+      - "8000"                       # reachable by Caddy only, never published
+    volumes:
+      - ../../.env:/app/.env:ro      # API keys: read-only, never in the image
+      - ../../certs:/app/certs:ro
+      - ../../logs:/app/logs
+      - hf-cache:/home/app/.cache/huggingface
+    environment:
+      STATE_RULES: all
+      RATE_LIMIT_PER_MINUTE: "10"
+      TRUST_PROXY: "1"
+      ACCESS_CODE: ${ACCESS_CODE:?set ACCESS_CODE in deploy/vm/.env}
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE: ${SITE:?set SITE in deploy/vm/.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+    restart: unless-stopped
+
+volumes:
+  hf-cache:
+  caddy-data:
+  caddy-config:

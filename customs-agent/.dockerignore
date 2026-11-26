@@ -1,0 +1,21 @@
+# Keep the build context small and keep secrets out of the image.
+.env
+.env.*
+certs/
+logs/
+.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+web/node_modules/
+web/dist/
+results/
+eval/
+tests/
+docs/
+prechecks/
+# the corpus downloads are large; only chunks.jsonl and index/ go into the image
+data/rag-corpus/corpus/raw/
+data/rag-corpus/corpus/docs/
+*.md
+!README.md

@@ -1,0 +1,88 @@
+# Retrieval query set for the Days 5-7 experiment (recall@k).
+#
+# Separate from eval_set.jsonl so retrieval choices are not tuned on the eval (CLAUDE.md rule 6):
+# short, varied phrasings of what the agent will search for, written from the regulation text.
+# gold: citation_ids that answer the query; a hit is any retrieved chunk whose citation_id is in gold.
+# trap: a near-duplicate the retriever might prefer (e.g. the crew rules, 19cfr148.64).
+# All gold ids are checked against data/rag-corpus/corpus/MANIFEST.json by the experiment script.
+
+queries:
+  # ------------------------------------------------ $800 exemption, time abroad, frequency
+  - {id: R01, query: "How much alcohol can a returning US resident bring back duty-free?", gold: [19cfr148.33, htsus9804.00.72, cbp-duty-info]}
+  - {id: R02, query: "duty-free personal exemption amount for residents returning from abroad", gold: [19cfr148.33, htsus9804.00.65, cbp-types-of-exemptions]}
+  - {id: R03, query: "minimum time out of the country to qualify for the $800 exemption", gold: [19cfr148.35, 19cfr148.33, cbp-types-of-exemptions]}
+  - {id: R04, query: "can I use my duty-free exemption twice in the same month", gold: [19cfr148.36, cbp-types-of-exemptions]}
+  - {id: R05, query: "day trip to Mexico, do I still get the full exemption", gold: [19cfr148.35]}
+  - {id: R06, query: "gifts I bring back count toward my exemption", gold: [cbp-kbyg, 19cfr148.33]}
+  - {id: R07, query: "family members travelling together combine their exemptions", gold: [19cfr148.34]}
+
+  # ------------------------------------------------ 2 L beneficiary countries
+  - {id: R08, query: "two liters of alcohol when arriving directly from a Caribbean country", gold: [19cfr148.33, htsus-ch98-iv-usnote-4, htsus9804.00.72, cbp-types-of-exemptions]}
+  - {id: R09, query: "which countries are beneficiary countries for the extra liter of alcohol", gold: [htsus-gn-7, htsus-ch98-iv-usnote-4]}
+  - {id: R10, query: "Is Jamaica a CBERA beneficiary country?", gold: [htsus-gn-7]}
+  - {id: R11, query: "rum from Barbados on a direct flight, extra liter allowed", gold: [19cfr148.33, htsus-ch98-iv-usnote-4, htsus9804.00.72]}
+
+  # ------------------------------------------------ $200 exemption (crew rules are the trap)
+  - {id: R12, query: "$200 exemption limits for alcohol, cigarettes and cigars", gold: [19cfr148.51, cbp-types-of-exemptions], trap: crew}
+  - {id: R13, query: "away less than 48 hours, how much can I bring without paying duty", gold: [19cfr148.51, cbp-types-of-exemptions], trap: crew}
+  - {id: R14, query: "if one item is over the $200 limit is everything dutiable", gold: [19cfr148.51, cbp-types-of-exemptions]}
+  - {id: R15, query: "50 cigarettes 10 cigars 150 milliliters of alcohol exemption", gold: [19cfr148.51, cbp-types-of-exemptions], trap: crew}
+  - {id: R16, query: "can family members pool their $200 short-trip exemptions", gold: [19cfr148.51]}
+
+  # ------------------------------------------------ tobacco
+  - {id: R17, query: "how many cigarettes can I bring back duty free", gold: [19cfr148.33, cbp-duty-info]}
+  - {id: R18, query: "how many cigars are allowed in the personal exemption", gold: [19cfr148.33, cbp-duty-info]}
+  - {id: R19, query: "what happens if I bring more cigarettes than the allowance", gold: [cbp-duty-info, 19usc1681a]}
+  - {id: R20, query: "US-made cigarettes labeled for export brought back into the country", gold: [26usc5754, cbp-duty-info]}
+  - {id: R21, query: "penalty for importing tobacco products labeled for export", gold: [26usc5761]}
+  - {id: R22, query: "previously exported tobacco products reimported partial duty exemption", gold: [26usc5754, 26usc5704]}
+  - {id: R23, query: "under 21 bringing cigarettes through customs", gold: [cbp-duty-info]}
+
+  # ------------------------------------------------ age, personal use, states
+  - {id: R24, query: "minimum age to include alcohol in the duty-free exemption", gold: [19cfr148.33, cbp-duty-info]}
+  - {id: R25, query: "how much alcohol counts as personal use rather than commercial", gold: [ttb-personal-importation, cbp-duty-info]}
+  - {id: R26, query: "do I need an importer permit to bring wine for myself", gold: [ttb-personal-importation]}
+  - {id: R27, query: "state laws stricter than the federal alcohol allowance", gold: [cbp-duty-info, ttb-personal-importation, cbp-prohibited-restricted]}
+  - {id: R28, query: "Texas limits on alcohol at ports of entry", gold: [state-tx]}
+  - {id: R29, query: "California limit on alcohol brought in from Mexico", gold: [state-ca]}
+  - {id: R30, query: "New York license for importing more than 90 liters of liquor", gold: [state-ny]}
+  - {id: R31, query: "Florida one gallon of beverages bought out of state untaxed", gold: [state-fl]}
+  - {id: R32, query: "New Jersey alcoholic beverage tax on alcohol brought into the state", gold: [state-nj]}
+  - {id: R33, query: "is absinthe allowed into the United States", gold: [cbp-prohibited-restricted]}
+
+  # ------------------------------------------------ flat rate
+  - {id: R34, query: "flat rate of duty on purchases over the exemption", gold: [htsus9816.00.20, 19cfr148.102, cbp-duty-info]}
+  - {id: R35, query: "3 percent duty on the next $1,000", gold: [htsus9816.00.20, 19cfr148.102, cbp-duty-info]}
+  - {id: R36, query: "Mexican tequila free of the flat rate under USMCA", gold: [htsus9816.00.20, htsus-gn-3]}
+  - {id: R37, query: "how often can the flat rate of duty be used", gold: [19cfr148.104, htsus9816.00.20]}
+  - {id: R38, query: "articles excluded from the flat rate of duty", gold: [19cfr148.106]}
+  - {id: R39, query: "column 2 rate countries without normal trade relations", gold: [htsus-gn-3]}
+  - {id: R40, query: "Section 122 surcharge and personal exemptions under chapter 98", gold: [cbp-csms-section122]}
+  - {id: R41, query: "do I owe tax on extra alcohol even if my total is under $800", gold: [cbp-duty-info]}
+
+  # ------------------------------------------------ excise
+  - {id: R42, query: "federal excise tax rate on still wine per gallon", gold: [ttb-tax-rates, 26usc5041]}
+  - {id: R43, query: "tax on distilled spirits per proof gallon", gold: [ttb-tax-rates, 26usc5001]}
+  - {id: R44, query: "beer excise tax per barrel", gold: [ttb-tax-rates, 26usc5051]}
+  - {id: R45, query: "champagne and sparkling wine tax rate", gold: [ttb-tax-rates, 26usc5041]}
+  - {id: R46, query: "cigarette tax rate per thousand", gold: [ttb-tax-rates, 26usc5701]}
+  - {id: R47, query: "what is a proof gallon", gold: [cbp-icp-spirits, 26usc5001]}
+
+  # ------------------------------------------------ Cuba and Russia
+  - {id: R48, query: "can I bring Cuban cigars into the United States", gold: [31cfr515.204, cbp-info-1389, ofac-faq-719, ofac-faq-720, cbp-duty-info]}
+  - {id: R49, query: "Cuban rum bought in a third country like Mexico or Canada", gold: [ofac-faq-720, 31cfr515.585]}
+  - {id: R50, query: "authorized travel to Cuba, bringing back alcohol and tobacco", gold: [ofac-faq-719, 31cfr515.560, 31cfr515.585]}
+  - {id: R51, query: "what changed for travellers in the September 2020 Cuba amendment", gold: [ofac-faq-837, ofac-faq-719]}
+  - {id: R52, query: "prohibition on importing merchandise of Cuban origin", gold: [31cfr515.204]}
+  - {id: R53, query: "Russian vodka import ban", gold: [eo-14068, ofac-faq-1024]}
+  - {id: R54, query: "executive order prohibiting imports of Russian alcoholic beverages", gold: [eo-14068]}
+
+  # ------------------------------------------------ declaring, penalties, forms
+  - {id: R55, query: "penalty for not declaring items in my baggage", gold: [19usc1497, 19cfr148.18]}
+  - {id: R56, query: "false statement on a customs declaration", gold: [19cfr148.19]}
+  - {id: R57, query: "do I have to declare things bought at a duty-free shop", gold: [cbp-kbyg, cbp-shopping-abroad]}
+  - {id: R58, query: "what is customs declaration form 6059B", gold: [cbp-form-6059b, cbp-kbyg]}
+
+  # ------------------------------------------------ scope notes
+  - {id: R59, query: "returning from the US Virgin Islands $1,600 exemption", gold: [19cfr148.33, cbp-types-of-exemptions]}
+  - {id: R60, query: "how much alcohol can a non-resident visitor bring", gold: [19cfr148.43]}

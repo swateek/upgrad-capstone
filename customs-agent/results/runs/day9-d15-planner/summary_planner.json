@@ -1,0 +1,32 @@
+{
+ "set": "dev",
+ "run": "day9-d15-planner",
+ "n": 1,
+ "accuracy": 1.0,
+ "outcome_acc": 1.0,
+ "bottom_line_acc": 1.0,
+ "bottom_line_n": 1,
+ "dollar_acc": 1.0,
+ "dollar_n": 1,
+ "whatif_acc": null,
+ "clarify_acc": null,
+ "clarify_n": 0,
+ "citation_acc": 1.0,
+ "must_not_acc": null,
+ "state_flag_acc": 1.0,
+ "errors": 0,
+ "tokens_per_q": 4029,
+ "calls_per_q": 4.0,
+ "by_type": {
+  "state_flag": 1.0
+ },
+ "max_tool_steps": 7,
+ "plan_fallbacks": 0,
+ "planned_n": 1,
+ "freeze": {
+  "frozen": true,
+  "at": "2026-11-22",
+  "matches": true,
+  "drift": []
+ }
+}

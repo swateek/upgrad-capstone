@@ -1,0 +1,61 @@
+# gold-v2: eval-v2's 80 questions re-scored under SPEC v2 (docs/SPEC.md 9b), plus errata.
+#
+# eval/scenarios.yaml and eval/eval_set.jsonl (tag eval-v2, gold-v1) are never edited: agent v1's
+# official result stays scored against them. eval/build_gold_v2.py copies the eval scenarios,
+# applies the changes below, and rebuilds the dollars with the same spreadsheet formulas.
+# Every change names its rule. Only ids listed here may differ from gold-v1 (the build checks).
+#
+# How the 80 were screened (2026-11-23):
+#   - every scenario run through eval/check_v3.py (the independent SPEC v2 rule check);
+#   - each SPEC v2 row checked by hand against the questions it could touch:
+#       row 10 (sake as beer): E07, E47 change;
+#       row 11 (ask the origin when bought in a 0%-duty country and not stated): 13 alcohol items
+#         bought in such a country; every one states the origin ("Mexican tequila", "Canadian
+#         whisky", "Peruvian pisco"...) or names a product that can only be made there (tequila,
+#         mezcal: E05, E44), the reading eval-v3 also uses (E3-038, E3-058, E3-100). E60 already
+#         asks the origin (whisky at Cancún duty-free). No change;
+#       row 12 (ABV in stage 1 when over the allowance): no clarify question has both a missing
+#         ABV and another missing stage-1 fact, so the first question does not change. No change;
+#   - the 20 Day 10 failures were read on Day 10 (taxonomy); only E07/E47 were gold questions
+#     (E60 cleared, see WORKLOG);
+#   - a fixed random sample of the passes goes to the owner (eval/REVIEW_GOLD_V2.md).
+# check_v3.py's other notes on eval-v2 are format differences, not errors: eval-v2 gave no
+# exemption on all-prohibited items (filled in below, metadata only), keeps no basket on clarify items, and fills prices and ABVs the
+# question leaves out where they change no dollar (prohibited, relinquished or fully exempt lines).
+
+changes:
+  - id: E07
+    rule: "SPEC v2 row 10: sake is taxed as beer ($18 per barrel), TTB https://www.ttb.gov/regulated-commodities/beverage-alcohol/sake"
+    gold_v1: "sake taxed as still wine (wine_still_le16)"
+    basket:
+      1: {excise_class: beer}
+  - id: E47
+    rule: "SPEC v2 row 10: sake is taxed as beer ($18 per barrel), TTB https://www.ttb.gov/regulated-commodities/beverage-alcohol/sake"
+    gold_v1: "sake taxed as still wine (wine_still_le16); allocation unchanged (whisky first: higher duty + excise per litre)"
+    basket:
+      2: {excise_class: beer}
+
+  # Metadata only (scored: false): eval-v2 left the exemption blank when every line is prohibited;
+  # eval-v3 and dev-v2 fill it in. Filled here so the three sets follow one convention. score.py
+  # does not read the exemption, so no score moves. E34 stays blank: its question gives no trip
+  # length or exemption history, and none is needed (the restriction check answers first).
+  - id: E32
+    rule: "Consistency with eval-v3: the exemption that applies is stated even when every line is prohibited (1 week, exemption unused: 19 CFR 148.33)"
+    gold_v1: "exemption blank"
+    scored: false
+    gold: {exemption: standard_800}
+  - id: E33
+    rule: "Consistency with eval-v3: the exemption that applies is stated even when every line is prohibited (6 days, exemption unused: 19 CFR 148.33)"
+    gold_v1: "exemption blank"
+    scored: false
+    gold: {exemption: standard_800}
+  - id: E36
+    rule: "Consistency with eval-v3: the exemption that applies is stated even when every line is prohibited (10 days, exemption unused: 19 CFR 148.33)"
+    gold_v1: "exemption blank"
+    scored: false
+    gold: {exemption: standard_800}
+  - id: E37
+    rule: "Consistency with eval-v3: the exemption that applies is stated even when every line is prohibited (1 week, exemption unused: 19 CFR 148.33)"
+    gold_v1: "exemption blank"
+    scored: false
+    gold: {exemption: standard_800}

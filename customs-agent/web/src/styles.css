@@ -1,0 +1,818 @@
+/* DeclareRight. Customs-hall palette: signage navy on cool form paper; the bottom line takes the
+   colour of the customs channels (red: something to declare and pay; green: within the allowance),
+   amber when an officer or one more fact is needed. The answer is a tear-off declaration slip: the
+   one bold object on the page. */
+
+:root {
+  --ink: #14213d;
+  --ink-soft: #4a5672;
+  --paper: #eef1f5;
+  --surface: #ffffff;
+  --rule: #d3d9e3;
+  --red: #b42318;
+  --green: #0b6e4f;
+  --amber: #8a5300;
+  --stamp: #2457a6;
+  --sans: "Public Sans Variable", "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --serif: "Source Serif 4 Variable", "Source Serif 4", Georgia, serif;
+  --measure: 46rem;
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1rem/1.5 var(--sans);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--stamp);
+  text-underline-offset: 0.15em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--stamp);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- frame */
+
+.page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.top {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  padding: 1rem clamp(1rem, 4vw, 2.5rem);
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface);
+}
+
+.brand {
+  margin: 0;
+  font-weight: 750;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+}
+
+.top__note {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+}
+
+.main {
+  width: 100%;
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 4vw, 1.5rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.page--reading .main {
+  margin-left: clamp(1rem, 5vw, 4rem);
+  margin-right: calc(28rem + 2rem);
+}
+
+.thread {
+  flex: 1;
+  padding: 2.5rem 0 1.5rem;
+}
+
+/* before the first question the box sits under the introduction, not at the foot of the page */
+.main--empty .thread {
+  flex: 0 0 auto;
+  padding-bottom: 0.5rem;
+}
+
+.main--empty .ask {
+  position: static;
+  background: none;
+}
+
+.intro h1 {
+  margin: 1.5rem 0 0.75rem;
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  line-height: 1.1;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.intro p {
+  margin: 0;
+  max-width: 36rem;
+  color: var(--ink-soft);
+  font-size: 1.0625rem;
+}
+
+.intro .intro__privacy {
+  margin-top: 0.75rem;
+  font-size: 0.9375rem;
+}
+
+/* ---------------------------------------------------------------- access code (hosted app) */
+
+.gate__label {
+  display: block;
+  font-weight: 650;
+}
+
+.gate__help {
+  margin: 0.25rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+}
+
+.gate__input {
+  flex: 1 1 14rem;
+  padding: 0.625rem 0.875rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.gate .turn__error {
+  margin-top: 0.75rem;
+}
+
+/* ---------------------------------------------------------------- ask */
+
+.ask {
+  position: sticky;
+  bottom: 0;
+  padding: 1rem 0 1.25rem;
+  background: linear-gradient(to bottom, transparent, var(--paper) 1rem);
+}
+
+.ask textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 5.5rem;
+  padding: 0.875rem 1rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  background: var(--surface);
+  line-height: 1.45;
+}
+
+.ask textarea::placeholder {
+  color: #8590a6;
+}
+
+.ask__row {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  flex-wrap: wrap;
+}
+
+.examples {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.example {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.example:hover {
+  border-color: var(--ink-soft);
+  color: var(--ink);
+}
+
+.mode {
+  margin: 0 auto 0 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.mode label {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  cursor: pointer;
+}
+
+.mode input {
+  accent-color: var(--ink);
+}
+
+.ask__go,
+.clarify button {
+  padding: 0.625rem 1.25rem;
+  border: 0;
+  border-radius: 6px;
+  background: var(--ink);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ask__go:disabled,
+.clarify button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* ---------------------------------------------------------------- turns */
+
+.turn + .turn {
+  margin-top: 2.5rem;
+}
+
+.turn__q {
+  margin: 0 0 0.875rem auto;
+  max-width: 34rem;
+  width: fit-content;
+  padding: 0.625rem 0.875rem;
+  border-radius: 6px;
+  background: #dfe5ee;
+  font-size: 0.9375rem;
+}
+
+.turn__error {
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--red);
+  background: var(--surface);
+}
+
+.working-on {
+  position: relative;
+  overflow: hidden;
+  padding: 1rem 1.125rem 1.125rem;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+}
+
+.working-on__bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 30%;
+  background: var(--ink);
+  animation: travel 1.6s ease-in-out infinite;
+}
+
+@keyframes travel {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+
+/* ---------------------------------------------------------------- the slip */
+
+.slip {
+  --tone: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.slip--owe {
+  --tone: var(--red);
+}
+.slip--clear {
+  --tone: var(--green);
+}
+.slip--hold {
+  --tone: var(--amber);
+}
+.slip--stop {
+  --tone: var(--ink);
+}
+
+.slip__band {
+  position: relative;
+  padding: 1.25rem 1.5rem 1.625rem;
+  background: var(--tone);
+  color: #fff;
+  animation: band-in 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* perforation: the slip tears off along the band's lower edge */
+.slip__band::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 10px;
+  background: radial-gradient(circle at 5px 5px, var(--surface) 3.5px, transparent 4px) 0 0 / 14px 10px repeat-x;
+}
+
+@keyframes band-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.slip__title {
+  margin: 0;
+  font-size: clamp(1.75rem, 4.5vw, 2.25rem);
+  line-height: 1.12;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.slip__sub {
+  margin: 0.375rem 0 0;
+  font-size: 1rem;
+  opacity: 0.92;
+}
+
+.slip__body {
+  padding: 1.375rem 1.5rem 0.5rem;
+}
+
+.slip__lede {
+  margin: 0 0 1.25rem;
+  font-size: 1.0625rem;
+  max-width: 40rem;
+}
+
+.slip__items {
+  width: 100%;
+  margin: 0 0 1.25rem;
+  border-collapse: collapse;
+}
+
+.slip__items th,
+.slip__items td {
+  padding: 0.625rem 0;
+  border-bottom: 1px dashed var(--rule);
+  text-align: left;
+  vertical-align: baseline;
+}
+
+.slip__items td + td,
+.slip__items th + td {
+  padding-left: 1rem;
+}
+
+.slip__items th {
+  font-weight: 600;
+}
+
+.slip__items .num {
+  text-align: right;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.slip__items tfoot th,
+.slip__items tfoot td {
+  border-bottom: 0;
+  border-top: 2px solid var(--ink);
+  font-weight: 700;
+}
+
+.slip__items tfoot .muted {
+  font-weight: 400;
+}
+
+.row--prohibited th,
+.row--prohibited td {
+  color: var(--red);
+}
+
+.muted,
+.hint {
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+}
+
+.slip__section {
+  margin: 0 0 1.25rem;
+}
+
+.slip__section > h3,
+.slip__section > summary {
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 650;
+}
+
+details.slip__section > summary {
+  cursor: pointer;
+  list-style-position: outside;
+}
+
+.working {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+}
+
+.working li + li {
+  margin-top: 0.375rem;
+}
+
+.facts {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.fact {
+  display: flex;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.fact dt {
+  color: var(--ink-soft);
+}
+
+.fact dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.hint {
+  margin: 0.5rem 0 0;
+}
+
+.cites {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* citations read as ink stamps */
+.cite {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.3rem 0.625rem;
+  border: 1.5px solid var(--stamp);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--stamp);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cite:hover {
+  background: #e8eefa;
+}
+
+.cite__date {
+  font-weight: 400;
+  font-size: 0.8125rem;
+}
+
+.clarify {
+  margin: 0 0 1.25rem;
+}
+
+.clarify__qs {
+  margin: 0 0 0.875rem;
+  padding-left: 1.125rem;
+  font-weight: 600;
+}
+
+.clarify label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.clarify__row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.clarify input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+}
+
+.slip__foot {
+  padding: 0.875rem 1.5rem 1rem;
+  border-top: 1px solid var(--rule);
+  background: #f7f8fb;
+}
+
+.slip__disclaimer {
+  margin: 0 0 0.375rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.slip__meta {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  color: var(--ink-soft);
+  font-size: 0.8125rem;
+}
+
+/* ---------------------------------------------------------------- regulation viewer */
+
+.reg {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 28rem;
+  max-width: 100vw;
+  overflow-y: auto;
+  padding: 1.25rem 1.5rem 2rem;
+  background: var(--surface);
+  border-left: 1px solid var(--rule);
+  box-shadow: -12px 0 32px rgba(20, 33, 61, 0.08);
+  animation: reg-in 220ms ease-out both;
+}
+
+@keyframes reg-in {
+  from {
+    transform: translateX(1.5rem);
+    opacity: 0;
+  }
+}
+
+.reg__bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.reg__label {
+  margin: 0;
+  color: var(--stamp);
+  font-weight: 700;
+}
+
+.reg__close {
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.reg__title {
+  margin: 0 0 0.375rem;
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+
+.reg__meta {
+  margin: 0 0 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.reg__body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+.reg__body h3 {
+  margin: 1.25rem 0 0.375rem;
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+}
+
+.reg__body p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.reg__muted,
+.reg__error {
+  color: var(--ink-soft);
+}
+
+/* ---------------------------------------------------------------- small screens, motion */
+
+@media (max-width: 64rem) {
+  .page--reading .main {
+    margin: 0 auto;
+  }
+
+  .reg {
+    top: auto;
+    width: 100vw;
+    height: 70vh;
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+    border-radius: 12px 12px 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------- conversation controls */
+
+.top__new {
+  margin-left: auto;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--surface);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.link {
+  margin-top: 0.625rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--stamp);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  cursor: pointer;
+}
+
+.edit {
+  margin-top: 0.75rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: 0.75rem 1rem;
+  font-size: 0.875rem;
+}
+
+.edit label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: var(--ink-soft);
+}
+
+.edit input,
+.edit select {
+  padding: 0.375rem 0.5rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.edit__pair {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.edit__pair input {
+  width: 5rem;
+}
+
+.edit__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.edit__actions button {
+  padding: 0.5rem 1rem;
+  border: 0;
+  border-radius: 6px;
+  background: var(--ink);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.edit__actions .edit__cancel {
+  background: none;
+  color: var(--ink-soft);
+  border: 1px solid var(--rule);
+}
+
+.assumed {
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--amber);
+  background: #fbf6ee;
+}
+
+.assumed ul {
+  margin: 0;
+  padding-left: 1.125rem;
+  font-size: 0.9375rem;
+}
+
+/* arrival-state rule: a note from the state, not part of the federal estimate */
+.state-rule {
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--stamp);
+  background: #f1f5fb;
+}
+
+.state-rule p {
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.state-rule a {
+  font-size: 0.875rem;
+  color: var(--stamp);
+}
+
+/* the checklist download: the one action a traveller takes away from the answer */
+.download {
+  display: inline-block;
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--stamp);
+  border-radius: 4px;
+  color: var(--stamp);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+
+.download:hover,
+.download:focus-visible {
+  background: var(--stamp);
+  color: #fff;
+}

@@ -1,0 +1,17 @@
+# SPEC 9d (owner's decision, 2026-11-26): a traveller under 21 cannot bring alcohol in
+# (rules.yaml under_21_alcohol: prohibited; until then it was dutiable with no exemption).
+# Hand-written gold for the dev items whose answer changes (CLAUDE.md rule 5: not produced by the
+# code). The eval sets keep the gold they were scored with: eval-v2 and eval-v3 are spent, and the
+# official numbers are for the old rule.
+dev:
+  D09:
+    outcome: answered
+    exemption: null
+    bottom_line: [{line: 1, type: prohibited}]
+    citations: [19cfr148.33]
+conversations:
+  C07:
+    turn: 2            # age edited to 19 on the card
+    outcome: answered
+    bottom_line: [prohibited]
+    total_usd: null

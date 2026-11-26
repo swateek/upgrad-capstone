@@ -1,0 +1,48 @@
+# Fixes to AI-generated scenarios, applied by eval/build_v3.py prepare. Every entry names the rule
+# that decides it (SPEC v2). Found by eval/check_v3.py, settled by reading the rule, never by
+# running the agent. Nothing else in eval/generated/*.yaml is changed.
+
+drop:
+  chatgpt-17: "reply cut off: no gold"
+  mistral-48: "same facts as CA41 (two 1 L bottles of Jameson, Ireland, $35): keep one"
+  mistral-10: "same facts as CA10 (two 1 L bottles of Mount Gay rum, Barbados): keep one"
+  groq-05: "same facts as gemini-03 (Mexico day trip, two fifths of tequila): keep one"
+  gemini-43: "close copy of eval-v2 E71 (rum from the US Virgin Islands): keep the new set independent"
+
+fix:
+  mistral-01:
+    why: "Allowance goes to the highest duty + excise per litre first (19 CFR 148.33(b), SPEC 5.4): the pisco (spirits) before the Chilean wine, so the pisco is inside the litre and the wine owes."
+    gold: {bottom_line: [owe, nothing_to_pay]}
+  mistral-14:
+    why: "4 days abroad is over 48 hours and the exemption is unused, so the $800 applies (19 CFR 148.33); one 750 ml bottle is inside the 1 litre. The question says Fort Lauderdale: arrival state FL, state flag FL. Relabelled alcohol_excess_800 after the split (owner): it no longer tests the $200 rule, but 'not a full week' is not 'under 48 hours'."
+    gold: {exemption: standard_800, bottom_line: [nothing_to_pay], state_flag: FL}
+    profile: {arrival_state: FL}
+    type_after_split: alcohol_excess_800
+  mistral-24:
+    why: "One bottom-line entry per basket line, not per box (one line here). The question says 'landed Miami': arrival state FL, state flag FL."
+    gold: {bottom_line: [prohibited], state_flag: FL}
+    profile: {arrival_state: FL}
+  mistral-28:
+    why: "One bottom-line entry per basket line, not per bottle (one line here)."
+    gold: {bottom_line: [owe]}
+  mistral-41:
+    why: "The question says JFK: the arrival state is a stated fact (the gold already flags NY)."
+    profile: {arrival_state: NY}
+  mistral-42:
+    why: "The question says Miami: the arrival state is a stated fact (the gold already flags FL)."
+    profile: {arrival_state: FL}
+  # Found in the owner's spot check (2026-11-23): the question names the arrival airport or city in
+  # one of the five SPEC states, but the facts and the gold leave the state out. The prompt's rule:
+  # "says so (state, city or airport…) → set gold.state_flag".
+  mistral-11:
+    why: "The question says 'landed at JFK': arrival state NY, state flag NY."
+    gold: {state_flag: NY}
+    profile: {arrival_state: NY}
+  mistral-32:
+    why: "The question says 'landed yesterday at Newark': arrival state NJ, state flag NJ."
+    gold: {state_flag: NJ}
+    profile: {arrival_state: NJ}
+  mistral-33:
+    why: "The question says 'direct flight into Houston': arrival state TX, state flag TX. 'Back from San Jose, Costa Rica, direct flight': arrived directly from CR (not a 2 L country, so the answer does not change)."
+    gold: {state_flag: TX}
+    profile: {arrival_state: TX, direct_arrival_from: CR}

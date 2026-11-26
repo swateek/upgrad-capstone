@@ -1,0 +1,29 @@
+# DeclareRight in one container (SETUP.md step 13). Langfuse is the cloud service set in .env, so
+# it is not a service here; no vector database either (numpy index: docs/RETRIEVAL.md).
+#
+#   docker compose up --build        # build and start: http://localhost:8000
+#   docker compose logs -f app       # follow the server log
+#   docker compose down              # stop (sessions, cache and the reranker download are kept)
+
+services:
+  app:
+    build: .
+    image: declareright:latest
+    ports:
+      # this Mac only: not reachable from other machines on the network (Day 13 red-team)
+      - "127.0.0.1:8000:8000"
+    volumes:
+      # secrets stay on your machine: read-only, never copied into the image
+      - ./.env:/app/.env:ro
+      - ./certs:/app/certs:ro
+      # sessions, response cache, usage log and local traces, shared with runs outside Docker
+      - ./logs:/app/logs
+      # the reranker model (~2 GB), downloaded once on the first question
+      - hf-cache:/home/app/.cache/huggingface
+    environment:
+      STATE_RULES: all             # the app flags all 15 researched arrival states
+      RATE_LIMIT_PER_MINUTE: "10"
+    restart: unless-stopped
+
+volumes:
+  hf-cache:

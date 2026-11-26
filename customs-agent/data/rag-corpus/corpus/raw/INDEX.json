@@ -1,0 +1,1156 @@
+{
+ "19cfr148__title-19-part-148-2026-11-19.xml.gz": {
+  "file": "19cfr148__title-19-part-148-2026-11-19.xml.gz",
+  "url": "https://www.ecfr.gov/api/versioner/v1/full/2026-11-19/title-19.xml?part=148",
+  "sha256": "0c570a7a51700ad82432e77027a4880f7726ed258ab64b71b508a893bed71612",
+  "fetched_at": "2026-11-21T10:11:45Z"
+ },
+ "19usc_customs__19usc1497.html.gz": {
+  "file": "19usc_customs__19usc1497.html.gz",
+  "url": "https://uscode.house.gov/us/usc/t19/s1497/",
+  "sha256": "987bbc455e7550cccb37f6162ec6155a1b9697895eb3845bee86fcf7b71fa7af",
+  "fetched_at": "2026-11-21T11:50:32Z"
+ },
+ "19usc_customs__19usc1681.html.gz": {
+  "file": "19usc_customs__19usc1681.html.gz",
+  "url": "https://uscode.house.gov/us/usc/t19/s1681/",
+  "sha256": "977fc327e5d709ee0e2c16999ee6d168868d47c110279da1a02f8fe5a837816e",
+  "fetched_at": "2026-11-21T11:50:33Z"
+ },
+ "19usc_customs__19usc1681a.html.gz": {
+  "file": "19usc_customs__19usc1681a.html.gz",
+  "url": "https://uscode.house.gov/us/usc/t19/s1681a/",
+  "sha256": "f15419c5f467b585c7db91044154db63bd410fc536a4a3373fb3caa439b77e74",
+  "fetched_at": "2026-11-21T11:50:35Z"
+ },
+ "19usc_customs__19usc1681b.html.gz": {
+  "file": "19usc_customs__19usc1681b.html.gz",
+  "url": "https://uscode.house.gov/us/usc/t19/s1681b/",
+  "sha256": "023ae15734d6316b4a11398ec963fe175ad46a736001e017069b6663e82fa1dc",
+  "fetched_at": "2026-11-21T11:50:36Z"
+ },
+ "26usc_excise__26usc5001.html.gz": {
+  "file": "26usc_excise__26usc5001.html.gz",
+  "url": "https://uscode.house.gov/us/usc/t26/s5001/",
+  "sha256": "c9727aaeae6c34951a9e1fb5efa7fde27b40d94bc39f17915885581bc5803cbf",
+  "fetched_at": "2026-11-21T11:50:21Z"
+ },
+ "26usc_excise__26usc5041.html.gz": {
+  "file": "26usc_excise__26usc5041.html.gz",
+  "url": "https://uscode.house.gov/us/usc/t26/s5041/",
+  "sha256": "b2cfa484a9bf33685c5969690a2e4f97d0bd2d95300bff8f7595e2c991c43868",
+  "fetched_at": "2026-11-21T11:50:22Z"
+ },
+ "26usc_excise__26usc5051.html.gz": {
+  "file": "26usc_excise__26usc5051.html.gz",
+  "url": "https://uscode.house.gov/us/usc/t26/s5051/",
+  "sha256": "2fb7f54321688961597116c7c2b420bb3eff28df27a06b087b9f5a3520c033be",
+  "fetched_at": "2026-11-21T11:50:24Z"
+ },
+ "26usc_excise__26usc5701.html.gz": {
+  "file": "26usc_excise__26usc5701.html.gz",
+  "url": "https://uscode.house.gov/us/usc/t26/s5701/",
+  "sha256": "4fd4bb3210dab61147f172aca6974613cb3cd293b475116b97bdaae5af06cc77",
+  "fetched_at": "2026-11-21T11:50:25Z"
+ },
+ "26usc_excise__26usc5704.html.gz": {
+  "file": "26usc_excise__26usc5704.html.gz",
+  "url": "https://uscode.house.gov/us/usc/t26/s5704/",
+  "sha256": "4d4eff62a0adb25aff5f6076104acb074a5b877ee451fcda4f2a0c2f199a08cd",
+  "fetched_at": "2026-11-21T11:50:26Z"
+ },
+ "26usc_excise__26usc5754.html.gz": {
+  "file": "26usc_excise__26usc5754.html.gz",
+  "url": "https://uscode.house.gov/us/usc/t26/s5754/",
+  "sha256": "9cd1566354d7205b4493eadfcbadb4bfafd75a9b6ff1a8e19f35bf8e1102aa05",
+  "fetched_at": "2026-11-21T11:50:28Z"
+ },
+ "26usc_excise__26usc5761.html.gz": {
+  "file": "26usc_excise__26usc5761.html.gz",
+  "url": "https://uscode.house.gov/us/usc/t26/s5761/",
+  "sha256": "185e2aaeb364148a4fae1009f52e57b6321d339a346a85713dffdb41adb50ff1",
+  "fetched_at": "2026-11-21T11:50:30Z"
+ },
+ "27cfr27__title-27-part-27-2026-11-19.xml.gz": {
+  "file": "27cfr27__title-27-part-27-2026-11-19.xml.gz",
+  "url": "https://www.ecfr.gov/api/versioner/v1/full/2026-11-19/title-27.xml?part=27",
+  "sha256": "2e5f5ac246e247ea228f7daef7601e0115263ed3674150118c2eaf8cc9f2506f",
+  "fetched_at": "2026-11-21T10:11:52Z"
+ },
+ "27cfr41__title-27-part-41-2026-11-19.xml.gz": {
+  "file": "27cfr41__title-27-part-41-2026-11-19.xml.gz",
+  "url": "https://www.ecfr.gov/api/versioner/v1/full/2026-11-19/title-27.xml?part=41",
+  "sha256": "6b7e4e66d4f412bc8369dacd6b9b093ed08ee3c2b7b3cad3a068298f601c15c0",
+  "fetched_at": "2026-11-21T10:11:54Z"
+ },
+ "31cfr1010_currency__title-31-part-1010-2026-11-19.xml.gz": {
+  "file": "31cfr1010_currency__title-31-part-1010-2026-11-19.xml.gz",
+  "url": "https://www.ecfr.gov/api/versioner/v1/full/2026-11-19/title-31.xml?part=1010",
+  "sha256": "4586f5963633a7698c42e66aeb0e0b8eb09f9c1bcb50cefcb9edd041ea6d67c8",
+  "fetched_at": "2026-11-21T10:11:56Z"
+ },
+ "31cfr515__title-31-part-515-2026-11-19.xml.gz": {
+  "file": "31cfr515__title-31-part-515-2026-11-19.xml.gz",
+  "url": "https://www.ecfr.gov/api/versioner/v1/full/2026-11-19/title-31.xml?part=515",
+  "sha256": "2590f77f0a7c57fe2b9686ef6b58d25272925248063196a37f2cfc8d5300c721",
+  "fetched_at": "2026-11-21T10:11:48Z"
+ },
+ "cbp_admission_visitors__main.html.gz": {
+  "file": "cbp_admission_visitors__main.html.gz",
+  "url": "https://www.cbp.gov/travel/international-visitors/applying-admission-united-states",
+  "sha256": "8cc2d22484d83422c95896cef8e750eb9ab10ab9354c6ea9a20686f526c13a5a",
+  "fetched_at": "2026-11-21T10:40:31Z"
+ },
+ "cbp_agriculture__main.html.gz": {
+  "file": "cbp_agriculture__main.html.gz",
+  "url": "https://www.cbp.gov/travel/clearing-cbp/bringing-agricultural-products-united-states",
+  "sha256": "24821a581fe0a7ccc44586266c1d730248b51a1f015354f9dadae2c8edc4c689",
+  "fetched_at": "2026-11-21T10:40:26Z"
+ },
+ "cbp_canada_mexico_travel__main.html.gz": {
+  "file": "cbp_canada_mexico_travel__main.html.gz",
+  "url": "https://www.cbp.gov/travel/us-citizens/canada-mexico-travel",
+  "sha256": "f05921e72768cde4b65fd3e517d7b84a66850ffb551ead0574911cfd2ffd3165",
+  "fetched_at": "2026-11-21T10:39:59Z"
+ },
+ "cbp_csms_section122__main.html.gz": {
+  "file": "cbp_csms_section122__main.html.gz",
+  "url": "https://content.govdelivery.com/accounts/usdhscbp/bulletins/40b3b7b",
+  "sha256": "e3e4ad164a24004bea9448f9e529aabf2aea9a8213fccde54bdc4d0b5f93f4c0",
+  "fetched_at": "2026-11-21T10:40:02Z"
+ },
+ "cbp_customs_duty_information__main.html.gz": {
+  "file": "cbp_customs_duty_information__main.html.gz",
+  "url": "https://cbp.gov/travel/international-visitors/know-before-you-visit/customs-duty-information",
+  "sha256": "763fb72d65148e62c7a2320f54ea8eb61b3bcf33a74aac34304d059e069a2603",
+  "fetched_at": "2026-11-21T10:39:49Z"
+ },
+ "cbp_form_6059b__main.pdf.gz": {
+  "file": "cbp_form_6059b__main.pdf.gz",
+  "url": "https://www.cbp.gov/sites/default/files/2024-07/cbp_form_6059b_english.pdf",
+  "sha256": "0034fff71be344b45f51c3b19ed6d7296ef748d550f202e2cce00bcdddf39cf4",
+  "fetched_at": "2026-11-21T10:40:04Z"
+ },
+ "cbp_icp_spirits__main.pdf.gz": {
+  "file": "cbp_icp_spirits__main.pdf.gz",
+  "url": "https://www.cbp.gov/sites/default/files/documents/icp_spirits_3.pdf",
+  "sha256": "a2ef515321c5a53662e6a1e53b49d1a77e438dca3d27707ddde144c84f861f2d",
+  "fetched_at": "2026-11-21T10:40:05Z"
+ },
+ "cbp_info_cuban_cigars.html": {
+  "file": "cbp_info_cuban_cigars.html",
+  "url": "https://www.help.cbp.gov/s/article/Article-1389?language=en_US",
+  "sha256": "229e06db95d00f5646c22e14ca19006d93a358df89155d4c9347c41d84a3b4a1",
+  "fetched_at": "2026-11-21T07:06:56Z",
+  "saved_by_hand": true
+ },
+ "cbp_kbyg_traveling_abroad__main.html.gz": {
+  "file": "cbp_kbyg_traveling_abroad__main.html.gz",
+  "url": "https://www.cbp.gov/travel/us-citizens/know-before-you-go/know-you-go-traveling-abroad",
+  "sha256": "df6966406273e55588277c8a6416b3ea76ccc023a556818ccf3e59d8ab100151",
+  "fetched_at": "2026-11-21T10:39:55Z"
+ },
+ "cbp_money__main.html.gz": {
+  "file": "cbp_money__main.html.gz",
+  "url": "https://www.cbp.gov/travel/international-visitors/money-monetary-instruments",
+  "sha256": "ade1189345fac8e153ab0214bfbcac304738a390e0f10b23b50d1942ac75befe",
+  "fetched_at": "2026-11-21T10:40:28Z"
+ },
+ "cbp_prohibited_restricted__main.html.gz": {
+  "file": "cbp_prohibited_restricted__main.html.gz",
+  "url": "https://www.cbp.gov/travel/us-citizens/know-before-you-go/prohibited-and-restricted-items",
+  "sha256": "a7ef33385270675fc52e08234ae8fd396f040415ce20224cd4ced6e401409a7b",
+  "fetched_at": "2026-11-21T10:39:53Z"
+ },
+ "cbp_shopping_abroad__main.html.gz": {
+  "file": "cbp_shopping_abroad__main.html.gz",
+  "url": "https://www.cbp.gov/travel/us-citizens/know-before-you-go/shopping-abroad-duty-free-gifts-household-items",
+  "sha256": "e360ba21eec2b8fad3831e6100c7035c4fa96ae4e249e7828c9c725069b506e1",
+  "fetched_at": "2026-11-21T10:39:57Z"
+ },
+ "cbp_types_of_exemptions__main.html.gz": {
+  "file": "cbp_types_of_exemptions__main.html.gz",
+  "url": "https://www.cbp.gov/travel/international-visitors/kbyg/types-exemptions",
+  "sha256": "08ce6cb4fd2c3ad01d43108ca132b7d479c6949d729c03c7e685a88ff0f50913",
+  "fetched_at": "2026-11-21T10:39:51Z"
+ },
+ "cbp_welcome_visitors__main.pdf.gz": {
+  "file": "cbp_welcome_visitors__main.pdf.gz",
+  "url": "https://www.cbp.gov/sites/default/files/documents/WelcomeToTheUS.pdf",
+  "sha256": "3f6f3c7d43279e2b37dfeaa79ca6371ebe726db6165b06c6f3910e3dcee0381c",
+  "fetched_at": "2026-11-21T10:40:32Z"
+ },
+ "ecfr__titles.json.gz": {
+  "file": "ecfr__titles.json.gz",
+  "url": "https://www.ecfr.gov/api/versioner/v1/titles.json",
+  "sha256": "cda0e002a5dbbf32693e18c79aa25b4a0e338b1264b2a76efbaaf1c9484d70da",
+  "fetched_at": "2026-11-21T10:11:43Z"
+ },
+ "eo14068.html": {
+  "file": "eo14068.html",
+  "url": "https://www.govinfo.gov/content/pkg/FR-2022-03-15/html/2022-05554.htm",
+  "sha256": "835c2474e63015ec3f63eb19dbd6b79e4378b34efbaff865504d186a0bfb27d5",
+  "fetched_at": "2026-11-21T12:05:34Z",
+  "saved_by_hand": true
+ },
+ "htsus_ch98_notes__candidate-0.pdf.gz": {
+  "file": "htsus_ch98_notes__candidate-0.pdf.gz",
+  "url": "https://hts.usitc.gov/reststop/file?release=currentRelease&filename=Chapter%2098",
+  "sha256": "2e73f70bc5c0bf6b2ce8730058553081152a96e9f4eb0af6c47ed05ff9f89ba0",
+  "fetched_at": "2026-11-21T10:12:07Z"
+ },
+ "htsus_general_notes__candidate-0.pdf.gz": {
+  "file": "htsus_general_notes__candidate-0.pdf.gz",
+  "url": "https://hts.usitc.gov/reststop/file?release=currentRelease&filename=General%20Notes",
+  "sha256": "044efaf934ab97bad75c1d42a1fc08671dee74f2cdf145b57b65615970f82028",
+  "fetched_at": "2026-11-21T10:12:15Z"
+ },
+ "htsus_lines_9804__9804-00-05-9804-00-80.json.gz": {
+  "file": "htsus_lines_9804__9804-00-05-9804-00-80.json.gz",
+  "url": "https://hts.usitc.gov/reststop/exportList?from=9804.00.05&to=9804.00.80&format=JSON&styles=false",
+  "sha256": "9d11e53aa92c80dbef83dc525f5436596465feec258567c41889cbafffb13ecb",
+  "fetched_at": "2026-11-21T10:12:00Z"
+ },
+ "htsus_lines_9816__9816-00-20-9816-00-40.json.gz": {
+  "file": "htsus_lines_9816__9816-00-20-9816-00-40.json.gz",
+  "url": "https://hts.usitc.gov/reststop/exportList?from=9816.00.20&to=9816.00.40&format=JSON&styles=false",
+  "sha256": "24bd019ab28fad3865b9611e352a1365c2d500b890a02934e7a05aeef80057bd",
+  "fetched_at": "2026-11-21T10:12:01Z"
+ },
+ "ofac_cuba_faqs__faq-1056.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1056.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1056",
+  "sha256": "debce6fcacbc9039fac1f9f655e0a17050d513f05fe96b79c34204139f545b48",
+  "fetched_at": "2026-11-21T10:26:28Z"
+ },
+ "ofac_cuba_faqs__faq-1057.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1057.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1057",
+  "sha256": "c3fe850631557fede523732d32bf8c867383bbbe83c09b7120dcff251984739c",
+  "fetched_at": "2026-11-21T10:26:37Z"
+ },
+ "ofac_cuba_faqs__faq-1090.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1090.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1090",
+  "sha256": "bc8cb96082c23ec7479ad19474acefc7aceac46dcc34fde436d106595c232a79",
+  "fetched_at": "2026-11-21T10:26:47Z"
+ },
+ "ofac_cuba_faqs__faq-1174.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1174.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1174",
+  "sha256": "449aa4b682c68f36c721cd9ef6a65bb088ab177ce95e2b00247452fcee1a353f",
+  "fetched_at": "2026-11-21T10:26:57Z"
+ },
+ "ofac_cuba_faqs__faq-1175.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1175.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1175",
+  "sha256": "c424ab024082b78d2835b17582a74be890401540fee2357f7a2f9a8342fe05e9",
+  "fetched_at": "2026-11-21T10:27:07Z"
+ },
+ "ofac_cuba_faqs__faq-1176.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1176.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1176",
+  "sha256": "177bcf0e1eb8d4614c99601048cc926bf0f0c187bca7e708690bd0cb375f3654",
+  "fetched_at": "2026-11-21T10:27:18Z"
+ },
+ "ofac_cuba_faqs__faq-1177.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1177.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1177",
+  "sha256": "b9e8d1cc3a9ec37cacd90be60dd92ca7c53b22bfe859921b32f96c8d407caeb8",
+  "fetched_at": "2026-11-21T10:27:30Z"
+ },
+ "ofac_cuba_faqs__faq-1178.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1178.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1178",
+  "sha256": "14a2a2aefcbe76f0c3d4d7a2add9dbb939650c854aad3c9da81cd28cf63ed42c",
+  "fetched_at": "2026-11-21T10:27:42Z"
+ },
+ "ofac_cuba_faqs__faq-1179.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1179.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1179",
+  "sha256": "f4a82f75a8ab0fa61afd2bd1eb7ee11e6df92378a43b7a5b07b334f7aa4e5b8b",
+  "fetched_at": "2026-11-21T10:27:53Z"
+ },
+ "ofac_cuba_faqs__faq-1251.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1251.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1251",
+  "sha256": "aa690b13e326e60398bc46bfd7b27fbe23a90151a77d590dc83c2a431740f139",
+  "fetched_at": "2026-11-21T10:28:04Z"
+ },
+ "ofac_cuba_faqs__faq-1252.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1252.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1252",
+  "sha256": "bebf4f7be44b1988fdce823466eccee14bdbebff9531f7e34325ddf3261a7e20",
+  "fetched_at": "2026-11-21T10:28:58Z"
+ },
+ "ofac_cuba_faqs__faq-1253.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1253.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1253",
+  "sha256": "6fa0c9c61b9dc8c9ee500db062f0103457ecdc1b3bdbca65625e53b22071687f",
+  "fetched_at": "2026-11-21T10:28:24Z"
+ },
+ "ofac_cuba_faqs__faq-1254.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1254.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1254",
+  "sha256": "c5fe944711ac3930f396e939b86cd886c1321817b932a97bb4a3292c249616ef",
+  "fetched_at": "2026-11-21T10:28:14Z"
+ },
+ "ofac_cuba_faqs__faq-1255.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1255.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1255",
+  "sha256": "cb4677fa9ac2f255712c6f6334830ac6960c7d30b237506694c50bb9d5daa234",
+  "fetched_at": "2026-11-21T10:28:48Z"
+ },
+ "ofac_cuba_faqs__faq-1256.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1256.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1256",
+  "sha256": "adbcd728343e819a880f275d8126b3c61065923035b28dfc0a54d3dc4b0c1495",
+  "fetched_at": "2026-11-21T10:28:36Z"
+ },
+ "ofac_cuba_faqs__faq-1258.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1258.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1258",
+  "sha256": "8f193382b85bce1dcb0b1ed0e2e343465ce1e4944c3f41c25646720fbd9b4679",
+  "fetched_at": "2026-11-21T10:29:09Z"
+ },
+ "ofac_cuba_faqs__faq-1262.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1262.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1262",
+  "sha256": "205697412ec2b73f258ce95214d4145f0e12c7e26a7421eb8e3628854530c69c",
+  "fetched_at": "2026-11-21T10:29:19Z"
+ },
+ "ofac_cuba_faqs__faq-1264.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1264.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1264",
+  "sha256": "b62a876d2d6e1c1f6c963766e49a39c5ba095fdd7d65fc917e8b36b3f71e8466",
+  "fetched_at": "2026-11-21T10:29:29Z"
+ },
+ "ofac_cuba_faqs__faq-1265.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1265.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1265",
+  "sha256": "7d34b36a542683a70f394a392b48a578e45557c1eb6890d52a6a2edb845bf2a5",
+  "fetched_at": "2026-11-21T10:29:41Z"
+ },
+ "ofac_cuba_faqs__faq-1271.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1271.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1271",
+  "sha256": "2cd74fc7f365a1e18011588a8570cecc0ecc0e57b1d2961667575fe58b461798",
+  "fetched_at": "2026-11-21T10:32:21Z"
+ },
+ "ofac_cuba_faqs__faq-1272.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1272.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1272",
+  "sha256": "2ce983336da9d2458febf8afc7245ad793c1f6b5dd32ee23ea71e8cb42c47afb",
+  "fetched_at": "2026-11-21T10:33:04Z"
+ },
+ "ofac_cuba_faqs__faq-1273.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1273.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1273",
+  "sha256": "70f56548891f51fa4af6c16ebee4b81b4e5433655ca45fb40a85bd36fcbe6eed",
+  "fetched_at": "2026-11-21T10:33:24Z"
+ },
+ "ofac_cuba_faqs__faq-1274.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1274.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1274",
+  "sha256": "83f1dbe93292bff99558f2c82179d112d8c0964aedecc6fdf8048c226ed9781f",
+  "fetched_at": "2026-11-21T10:32:43Z"
+ },
+ "ofac_cuba_faqs__faq-1275.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1275.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1275",
+  "sha256": "1f8fd115e2ecee4d38fea776cd51d42d4ce64b24ff57a4279ca06353e742b880",
+  "fetched_at": "2026-11-21T10:33:36Z"
+ },
+ "ofac_cuba_faqs__faq-1276.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1276.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1276",
+  "sha256": "21e4dcfed34f90846e80308291ef3a86fb9be1b7641cd7304bf06f12fd976d74",
+  "fetched_at": "2026-11-21T10:33:56Z"
+ },
+ "ofac_cuba_faqs__faq-1277.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1277.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1277",
+  "sha256": "5e605b11d9da48d7939eebc1cd421939b916525fe956e162d5a1d9305823640b",
+  "fetched_at": "2026-11-21T10:39:05Z"
+ },
+ "ofac_cuba_faqs__faq-1278.html.gz": {
+  "file": "ofac_cuba_faqs__faq-1278.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1278",
+  "sha256": "9df59ae6fc61d617013452a0ad11311def28d056e17de7da929019500aca3e2e",
+  "fetched_at": "2026-11-21T10:39:14Z"
+ },
+ "ofac_cuba_faqs__faq-695.html.gz": {
+  "file": "ofac_cuba_faqs__faq-695.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/695",
+  "sha256": "3523f586b914b6846a25aea3ed0e3f5a2e32ead67f22eb716d5b2b39b42c6ed9",
+  "fetched_at": "2026-11-21T10:29:52Z"
+ },
+ "ofac_cuba_faqs__faq-696.html.gz": {
+  "file": "ofac_cuba_faqs__faq-696.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/696",
+  "sha256": "2b9b20738b347c25562559f69a5bb77bd0f65e5ed51723be652a178bee8c9ec2",
+  "fetched_at": "2026-11-21T10:37:14Z"
+ },
+ "ofac_cuba_faqs__faq-697.html.gz": {
+  "file": "ofac_cuba_faqs__faq-697.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/697",
+  "sha256": "e486b7de87392e5b2375ecbdb0512dbe69d9705a330da5a4ae1dd67c7783bd49",
+  "fetched_at": "2026-11-21T10:16:39Z"
+ },
+ "ofac_cuba_faqs__faq-698.html.gz": {
+  "file": "ofac_cuba_faqs__faq-698.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/698",
+  "sha256": "efeddf7366320a8f3c6dd2b5ee43062dd795738840b01e1d8d03544851f7e912",
+  "fetched_at": "2026-11-21T10:16:51Z"
+ },
+ "ofac_cuba_faqs__faq-699.html.gz": {
+  "file": "ofac_cuba_faqs__faq-699.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/699",
+  "sha256": "cfeecc33b779603ab13b4fd9e2e62ded7e456fa48f6e48c6d2e5e6b362b27c3f",
+  "fetched_at": "2026-11-21T10:37:03Z"
+ },
+ "ofac_cuba_faqs__faq-700.html.gz": {
+  "file": "ofac_cuba_faqs__faq-700.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/700",
+  "sha256": "7cf9fece0112aa2dbcb6a056ebc649bf2ff9357f6981df5bda14d161047393fd",
+  "fetched_at": "2026-11-21T10:17:01Z"
+ },
+ "ofac_cuba_faqs__faq-701.html.gz": {
+  "file": "ofac_cuba_faqs__faq-701.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/701",
+  "sha256": "746fe887b52dc855b35ce78eecd70ed144ab6ca959a007b82cfa68fe0d83bd22",
+  "fetched_at": "2026-11-21T10:30:14Z"
+ },
+ "ofac_cuba_faqs__faq-702.html.gz": {
+  "file": "ofac_cuba_faqs__faq-702.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/702",
+  "sha256": "f1a855a3656e9c27900422661b5469dbeb8542f6ba758313ecdd0e9bd7419dce",
+  "fetched_at": "2026-11-21T10:30:03Z"
+ },
+ "ofac_cuba_faqs__faq-703.html.gz": {
+  "file": "ofac_cuba_faqs__faq-703.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/703",
+  "sha256": "fc6b3b7df24c9ea355782c876bbbaf9f7c813728bc4b16ad7932b830a75f4c17",
+  "fetched_at": "2026-11-21T10:17:13Z"
+ },
+ "ofac_cuba_faqs__faq-704.html.gz": {
+  "file": "ofac_cuba_faqs__faq-704.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/704",
+  "sha256": "680e93fc327cd2ddcee25c54fb5953594c822a61cf77d05acb6e5ff7a1059e47",
+  "fetched_at": "2026-11-21T10:30:24Z"
+ },
+ "ofac_cuba_faqs__faq-705.html.gz": {
+  "file": "ofac_cuba_faqs__faq-705.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/705",
+  "sha256": "f9b51cc1a0d21da43ba4f50607b15f7374bae253e5c67b8627dad9de09bddbde",
+  "fetched_at": "2026-11-21T10:37:45Z"
+ },
+ "ofac_cuba_faqs__faq-706.html.gz": {
+  "file": "ofac_cuba_faqs__faq-706.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/706",
+  "sha256": "01ba242ab0fc4eaf4dbf74cdb931f691b5de2f70f7b29a9435550fcdc88ece56",
+  "fetched_at": "2026-11-21T10:37:35Z"
+ },
+ "ofac_cuba_faqs__faq-707.html.gz": {
+  "file": "ofac_cuba_faqs__faq-707.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/707",
+  "sha256": "2d05bb7c699b8dd362164a80f34de23acf49a8f3bd5c21dea5ff156a7f42bcea",
+  "fetched_at": "2026-11-21T10:38:53Z"
+ },
+ "ofac_cuba_faqs__faq-708.html.gz": {
+  "file": "ofac_cuba_faqs__faq-708.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/708",
+  "sha256": "a282f8f82293e52ca7ddc7f1a5b60c2039510a0dc16e4819fd693586634098ed",
+  "fetched_at": "2026-11-21T10:23:03Z"
+ },
+ "ofac_cuba_faqs__faq-709.html.gz": {
+  "file": "ofac_cuba_faqs__faq-709.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/709",
+  "sha256": "b45178ed84213406248df9c9fadcd578776480f4adf0669705168cb4d02d0297",
+  "fetched_at": "2026-11-21T10:37:24Z"
+ },
+ "ofac_cuba_faqs__faq-71.html.gz": {
+  "file": "ofac_cuba_faqs__faq-71.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/71",
+  "sha256": "6d763ef34de777d6e52bf7bfccc33b84073ba99a77163e161c869756232de721",
+  "fetched_at": "2026-11-21T10:18:30Z"
+ },
+ "ofac_cuba_faqs__faq-710.html.gz": {
+  "file": "ofac_cuba_faqs__faq-710.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/710",
+  "sha256": "3c056e92dc354e565d96082d4061e305904c15d7e648bbfa083d8d8dfe9e906a",
+  "fetched_at": "2026-11-21T10:38:43Z"
+ },
+ "ofac_cuba_faqs__faq-711.html.gz": {
+  "file": "ofac_cuba_faqs__faq-711.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/711",
+  "sha256": "960c5fdd897cdf7ba237d17962c8fcca8f38c47847f71653d746bf050a31e926",
+  "fetched_at": "2026-11-21T10:23:14Z"
+ },
+ "ofac_cuba_faqs__faq-712.html.gz": {
+  "file": "ofac_cuba_faqs__faq-712.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/712",
+  "sha256": "e58d0d598c690d5af02b04f97df34c3e591bd1de47f8aa53781537c14e218352",
+  "fetched_at": "2026-11-21T10:23:25Z"
+ },
+ "ofac_cuba_faqs__faq-713.html.gz": {
+  "file": "ofac_cuba_faqs__faq-713.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/713",
+  "sha256": "73fbc4853f336c92c7c30e9adaed87622f7920e10e5a75df7998f43060dc0fd8",
+  "fetched_at": "2026-11-21T10:23:37Z"
+ },
+ "ofac_cuba_faqs__faq-714.html.gz": {
+  "file": "ofac_cuba_faqs__faq-714.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/714",
+  "sha256": "f8ac141ec6954332627dd99b2b988b38b5a95ce675e84a5ddd400533cbb105f4",
+  "fetched_at": "2026-11-21T10:23:49Z"
+ },
+ "ofac_cuba_faqs__faq-715.html.gz": {
+  "file": "ofac_cuba_faqs__faq-715.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/715",
+  "sha256": "08bddb228cfdf598b3db5bc433c80e2cd392ffbd090ca2456bc7be3293dee2b1",
+  "fetched_at": "2026-11-21T10:23:59Z"
+ },
+ "ofac_cuba_faqs__faq-716.html.gz": {
+  "file": "ofac_cuba_faqs__faq-716.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/716",
+  "sha256": "2a6085dcf4d42571a416eb387a19efaa81ef6573fe7838475a002c46f3eee9f4",
+  "fetched_at": "2026-11-21T10:24:09Z"
+ },
+ "ofac_cuba_faqs__faq-717.html.gz": {
+  "file": "ofac_cuba_faqs__faq-717.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/717",
+  "sha256": "34411084d85bc6f2153a7261d465dbf905f6566da315a57ab4540e5f646e8949",
+  "fetched_at": "2026-11-21T10:31:17Z"
+ },
+ "ofac_cuba_faqs__faq-718.html.gz": {
+  "file": "ofac_cuba_faqs__faq-718.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/718",
+  "sha256": "c6c51669ea0924b621c17927abd2f129f2f7abec7cccf129cfca3a69b5b481c3",
+  "fetched_at": "2026-11-21T10:15:44Z"
+ },
+ "ofac_cuba_faqs__faq-719.html.gz": {
+  "file": "ofac_cuba_faqs__faq-719.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/719",
+  "sha256": "637a044ce7a5c167fb33b70695c3bac469d3b3b910fcd1b91b694d1e2e2af72c",
+  "fetched_at": "2026-11-21T10:15:54Z"
+ },
+ "ofac_cuba_faqs__faq-720.html.gz": {
+  "file": "ofac_cuba_faqs__faq-720.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/720",
+  "sha256": "43b273f11b7057eb8a5056d007db234aeb083bc82a675fd3fc16f8d37f15777d",
+  "fetched_at": "2026-11-21T10:16:05Z"
+ },
+ "ofac_cuba_faqs__faq-721.html.gz": {
+  "file": "ofac_cuba_faqs__faq-721.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/721",
+  "sha256": "0a36eeba4923ba566c7d0b55c9ae3e1e2466b2d06b2b5f662e340c9745c5f439",
+  "fetched_at": "2026-11-21T10:24:20Z"
+ },
+ "ofac_cuba_faqs__faq-722.html.gz": {
+  "file": "ofac_cuba_faqs__faq-722.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/722",
+  "sha256": "69a0ad067ec9898a428a213a90d8629e2223fb31f44cbd7152145bc4b5755fbd",
+  "fetched_at": "2026-11-21T10:24:30Z"
+ },
+ "ofac_cuba_faqs__faq-723.html.gz": {
+  "file": "ofac_cuba_faqs__faq-723.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/723",
+  "sha256": "11fb536af35ea44a05f4a8b35a586328ae9d19c373c1b75920feaaabba0e843a",
+  "fetched_at": "2026-11-21T10:24:40Z"
+ },
+ "ofac_cuba_faqs__faq-724.html.gz": {
+  "file": "ofac_cuba_faqs__faq-724.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/724",
+  "sha256": "35d35b3f8ce60b759f6a0180f7bbbb4937847c84ec1cfc87d0dbd539eaf9db60",
+  "fetched_at": "2026-11-21T10:32:54Z"
+ },
+ "ofac_cuba_faqs__faq-725.html.gz": {
+  "file": "ofac_cuba_faqs__faq-725.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/725",
+  "sha256": "ddc623cf36b1d268c741f39365e6467624688cfcce5fa36aab9b02188c66d627",
+  "fetched_at": "2026-11-21T10:24:52Z"
+ },
+ "ofac_cuba_faqs__faq-726.html.gz": {
+  "file": "ofac_cuba_faqs__faq-726.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/726",
+  "sha256": "70e8fee5f572307ddb671c8a7c3655155b95d9f5a184501a6b1d68779fb00e2e",
+  "fetched_at": "2026-11-21T10:25:03Z"
+ },
+ "ofac_cuba_faqs__faq-727.html.gz": {
+  "file": "ofac_cuba_faqs__faq-727.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/727",
+  "sha256": "597ca8bcafee7bfbcd60815158b728adfa9a9d8158c9612e0508899c48e38ebe",
+  "fetched_at": "2026-11-21T10:25:13Z"
+ },
+ "ofac_cuba_faqs__faq-728.html.gz": {
+  "file": "ofac_cuba_faqs__faq-728.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/728",
+  "sha256": "16ef1130b88b94cdbc931d235f760b77431aaa4f4ad1c836de40e4791a563cfb",
+  "fetched_at": "2026-11-21T10:25:23Z"
+ },
+ "ofac_cuba_faqs__faq-729.html.gz": {
+  "file": "ofac_cuba_faqs__faq-729.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/729",
+  "sha256": "47b56649a603165b6dd67adbef832eb12c35ad856362702693bf42b615614008",
+  "fetched_at": "2026-11-21T10:25:35Z"
+ },
+ "ofac_cuba_faqs__faq-730.html.gz": {
+  "file": "ofac_cuba_faqs__faq-730.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/730",
+  "sha256": "320827f78a4d0d8dc32f4cac3b3c9ea5c8a99f46922ebf9f84d6d72b1b5ae47b",
+  "fetched_at": "2026-11-21T10:25:45Z"
+ },
+ "ofac_cuba_faqs__faq-731.html.gz": {
+  "file": "ofac_cuba_faqs__faq-731.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/731",
+  "sha256": "49a43541b8830f2bde6c860d8936793f4bbd72e4259c1544f6939ca60a58d441",
+  "fetched_at": "2026-11-21T10:25:55Z"
+ },
+ "ofac_cuba_faqs__faq-732.html.gz": {
+  "file": "ofac_cuba_faqs__faq-732.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/732",
+  "sha256": "5c44b7189514cdc0a4b2bde969a40f29d581ab1ea75254328003a0b2d216a064",
+  "fetched_at": "2026-11-21T10:26:05Z"
+ },
+ "ofac_cuba_faqs__faq-733.html.gz": {
+  "file": "ofac_cuba_faqs__faq-733.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/733",
+  "sha256": "58bc3dbf940fb876d522cd1fb11088f702bfcffb0ba6722a4ef75b4e661f323b",
+  "fetched_at": "2026-11-21T10:26:17Z"
+ },
+ "ofac_cuba_faqs__faq-734.html.gz": {
+  "file": "ofac_cuba_faqs__faq-734.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/734",
+  "sha256": "4dafc9878d56eb30c3b770fed47797624ee7e0d39ca6a20803f54c90377a6ac6",
+  "fetched_at": "2026-11-21T10:34:08Z"
+ },
+ "ofac_cuba_faqs__faq-735.html.gz": {
+  "file": "ofac_cuba_faqs__faq-735.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/735",
+  "sha256": "0379be70d3b281ce862a36d10b79d65513659775f97f5d7ad69c4b4b66a64800",
+  "fetched_at": "2026-11-21T10:33:45Z"
+ },
+ "ofac_cuba_faqs__faq-736.html.gz": {
+  "file": "ofac_cuba_faqs__faq-736.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/736",
+  "sha256": "79a1070cefc47e0c9b87e27b89ac25b38a73460a2104d58f8556bf9cc2f13890",
+  "fetched_at": "2026-11-21T10:30:34Z"
+ },
+ "ofac_cuba_faqs__faq-737.html.gz": {
+  "file": "ofac_cuba_faqs__faq-737.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/737",
+  "sha256": "80ef68e63cd1d591236ffaa55fca9789bbaf7e37c902783bf4956f5967b4603d",
+  "fetched_at": "2026-11-21T10:33:13Z"
+ },
+ "ofac_cuba_faqs__faq-738.html.gz": {
+  "file": "ofac_cuba_faqs__faq-738.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/738",
+  "sha256": "c101b7940c2647724ac283f4f1071ebc491b1c93d7f74abedb79a831408737e1",
+  "fetched_at": "2026-11-21T10:17:25Z"
+ },
+ "ofac_cuba_faqs__faq-739.html.gz": {
+  "file": "ofac_cuba_faqs__faq-739.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/739",
+  "sha256": "9441ad3519244c142723971063be56fb728c6879fe19a55d980356f975c50f0a",
+  "fetched_at": "2026-11-21T10:17:36Z"
+ },
+ "ofac_cuba_faqs__faq-740.html.gz": {
+  "file": "ofac_cuba_faqs__faq-740.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/740",
+  "sha256": "052ebc532529de0dac6d0e2904676c79c53555f19fd4e9a9647a6c45665ac4f7",
+  "fetched_at": "2026-11-21T10:17:47Z"
+ },
+ "ofac_cuba_faqs__faq-741.html.gz": {
+  "file": "ofac_cuba_faqs__faq-741.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/741",
+  "sha256": "82bb90c32fb2f21115ba91b4130a34f2702ea49b169651fbc49410aa92d4696e",
+  "fetched_at": "2026-11-21T10:17:57Z"
+ },
+ "ofac_cuba_faqs__faq-742.html.gz": {
+  "file": "ofac_cuba_faqs__faq-742.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/742",
+  "sha256": "dbfdbb0f378ca7f34f02706a3bd2f939a95484fb3217f37738972123d8ea5d82",
+  "fetched_at": "2026-11-21T10:20:06Z"
+ },
+ "ofac_cuba_faqs__faq-743.html.gz": {
+  "file": "ofac_cuba_faqs__faq-743.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/743",
+  "sha256": "717f8f2f338ef16bbd2cbc901f61fdc5ba80e63ead28af580b385dbdc4a0ef10",
+  "fetched_at": "2026-11-21T10:20:17Z"
+ },
+ "ofac_cuba_faqs__faq-745.html.gz": {
+  "file": "ofac_cuba_faqs__faq-745.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/745",
+  "sha256": "22b07e4fa6ae23fbc1aa53041d9e47b6f45f7849b563a9f823c9fb20ca27a006",
+  "fetched_at": "2026-11-21T10:38:19Z"
+ },
+ "ofac_cuba_faqs__faq-748.html.gz": {
+  "file": "ofac_cuba_faqs__faq-748.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/748",
+  "sha256": "ff61001f4a8ef506071b39e6d1eebe263e88eece7b3cd51bff9c62cd43ff9ec6",
+  "fetched_at": "2026-11-21T10:30:55Z"
+ },
+ "ofac_cuba_faqs__faq-754.html.gz": {
+  "file": "ofac_cuba_faqs__faq-754.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/754",
+  "sha256": "6d59062870453fdc3c8e124fe2b2ceef05011d919e9dc5ad569d7448d527d027",
+  "fetched_at": "2026-11-21T10:34:32Z"
+ },
+ "ofac_cuba_faqs__faq-755.html.gz": {
+  "file": "ofac_cuba_faqs__faq-755.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/755",
+  "sha256": "e89b6384af9b6bd53af102dd3f231907e6705959a862d7f79c412b92ae32afd7",
+  "fetched_at": "2026-11-21T10:20:29Z"
+ },
+ "ofac_cuba_faqs__faq-756.html.gz": {
+  "file": "ofac_cuba_faqs__faq-756.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/756",
+  "sha256": "1545a9213e69eb9d69de9a62ef9aa9563be50af17accf502deeb0e0b36f25ed0",
+  "fetched_at": "2026-11-21T10:30:44Z"
+ },
+ "ofac_cuba_faqs__faq-757.html.gz": {
+  "file": "ofac_cuba_faqs__faq-757.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/757",
+  "sha256": "bd737a64119c1ec2eaf86328b273d63045adf3fa9914cc83739851deb55db7e0",
+  "fetched_at": "2026-11-21T10:31:06Z"
+ },
+ "ofac_cuba_faqs__faq-758.html.gz": {
+  "file": "ofac_cuba_faqs__faq-758.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/758",
+  "sha256": "cfc68db6b86c998fa65bcd11e49451c0e0a5784e34a7e520b8a7d44526c7ad93",
+  "fetched_at": "2026-11-21T10:31:49Z"
+ },
+ "ofac_cuba_faqs__faq-760.html.gz": {
+  "file": "ofac_cuba_faqs__faq-760.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/760",
+  "sha256": "930448689b89dfddecc4774bcc52675c6254d91886a541ce9d534a5a3e92bb65",
+  "fetched_at": "2026-11-21T10:32:09Z"
+ },
+ "ofac_cuba_faqs__faq-761.html.gz": {
+  "file": "ofac_cuba_faqs__faq-761.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/761",
+  "sha256": "7fa8c8034244f41b3ae57cbd454f47a6b9eb2813fbbd3daf74571d9f2db1d443",
+  "fetched_at": "2026-11-21T10:31:37Z"
+ },
+ "ofac_cuba_faqs__faq-762.html.gz": {
+  "file": "ofac_cuba_faqs__faq-762.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/762",
+  "sha256": "0d2bfd21632d03c4a68b4a3a7ace17f1f1e71471fd11fbdf84d86dbede9a6212",
+  "fetched_at": "2026-11-21T10:20:40Z"
+ },
+ "ofac_cuba_faqs__faq-763.html.gz": {
+  "file": "ofac_cuba_faqs__faq-763.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/763",
+  "sha256": "dd78bd306eee109ba687631e1fb7db362f1cd9ef49fbe58d0f7aea1c92994efd",
+  "fetched_at": "2026-11-21T10:20:52Z"
+ },
+ "ofac_cuba_faqs__faq-764.html.gz": {
+  "file": "ofac_cuba_faqs__faq-764.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/764",
+  "sha256": "77e20168e0d4b8a9366d58241e79e04a3f8cc259483cda55f8aeed3e987c244b",
+  "fetched_at": "2026-11-21T10:21:04Z"
+ },
+ "ofac_cuba_faqs__faq-765.html.gz": {
+  "file": "ofac_cuba_faqs__faq-765.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/765",
+  "sha256": "28dea88dc36bacd8b069759736ad081ca829fd397a5d9e8639f7111af85dc7d4",
+  "fetched_at": "2026-11-21T10:32:32Z"
+ },
+ "ofac_cuba_faqs__faq-766.html.gz": {
+  "file": "ofac_cuba_faqs__faq-766.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/766",
+  "sha256": "81ebba67f91989d2ca0f1470031de0a9a638217a4e484cb56e38d2a623bdf16c",
+  "fetched_at": "2026-11-21T10:31:27Z"
+ },
+ "ofac_cuba_faqs__faq-767.html.gz": {
+  "file": "ofac_cuba_faqs__faq-767.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/767",
+  "sha256": "18c0509215e85cecee8d8119c1c2e8426e4682b501f547320f6d96ab92480612",
+  "fetched_at": "2026-11-21T10:21:15Z"
+ },
+ "ofac_cuba_faqs__faq-768.html.gz": {
+  "file": "ofac_cuba_faqs__faq-768.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/768",
+  "sha256": "4298000207c52fc5a90f0621821a90b95787c4bcb4c3356652f01d747c916a22",
+  "fetched_at": "2026-11-21T10:34:55Z"
+ },
+ "ofac_cuba_faqs__faq-769.html.gz": {
+  "file": "ofac_cuba_faqs__faq-769.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/769",
+  "sha256": "b591309711b6144336a2eb995e7141f30b0c3654828993e3f84b2ce1a08be15c",
+  "fetched_at": "2026-11-21T10:16:15Z"
+ },
+ "ofac_cuba_faqs__faq-770.html.gz": {
+  "file": "ofac_cuba_faqs__faq-770.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/770",
+  "sha256": "8690251a7a8a4842569a382bc1bc05ad89c30a41659ddd7c8ca6553d38a9fbd6",
+  "fetched_at": "2026-11-21T10:21:25Z"
+ },
+ "ofac_cuba_faqs__faq-771.html.gz": {
+  "file": "ofac_cuba_faqs__faq-771.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/771",
+  "sha256": "53461b49903a5b99a27ec89436d036b056ff2b3c273b93dce7734dabcf2406cf",
+  "fetched_at": "2026-11-21T10:36:09Z"
+ },
+ "ofac_cuba_faqs__faq-772.html.gz": {
+  "file": "ofac_cuba_faqs__faq-772.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/772",
+  "sha256": "9a75579dcc6e19b415f77eb8b62b39fff71f5fbaa48890961277d47cfe365b0e",
+  "fetched_at": "2026-11-21T10:35:15Z"
+ },
+ "ofac_cuba_faqs__faq-773.html.gz": {
+  "file": "ofac_cuba_faqs__faq-773.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/773",
+  "sha256": "91e36cc34857d645c97787d1a175e9829a096020f33c055eed3b0ddd3aa8bf23",
+  "fetched_at": "2026-11-21T10:35:26Z"
+ },
+ "ofac_cuba_faqs__faq-774.html.gz": {
+  "file": "ofac_cuba_faqs__faq-774.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/774",
+  "sha256": "8cf18628287743208b71f67e986908e4731892401054990c352691103ca4206b",
+  "fetched_at": "2026-11-21T10:35:35Z"
+ },
+ "ofac_cuba_faqs__faq-775.html.gz": {
+  "file": "ofac_cuba_faqs__faq-775.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/775",
+  "sha256": "376c2fd1b8e67883d20076e1147c964889406fc903aa330d916c3d88a0874eb6",
+  "fetched_at": "2026-11-21T10:36:44Z"
+ },
+ "ofac_cuba_faqs__faq-776.html.gz": {
+  "file": "ofac_cuba_faqs__faq-776.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/776",
+  "sha256": "2e1cef5bad6f0186636bd45d301b27c6c9a3097f14e5cb53d1296034b8ad9b5b",
+  "fetched_at": "2026-11-21T10:36:32Z"
+ },
+ "ofac_cuba_faqs__faq-777.html.gz": {
+  "file": "ofac_cuba_faqs__faq-777.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/777",
+  "sha256": "36c1eb36137041f55b2277565ee1d0e46e642488996c468cd481aa2021933e9b",
+  "fetched_at": "2026-11-21T10:35:47Z"
+ },
+ "ofac_cuba_faqs__faq-778.html.gz": {
+  "file": "ofac_cuba_faqs__faq-778.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/778",
+  "sha256": "3d06bdaf0e0e21e3d597d500d6413b7ed331c58b2d50d1cb35b03e8049281d48",
+  "fetched_at": "2026-11-21T10:21:35Z"
+ },
+ "ofac_cuba_faqs__faq-779.html.gz": {
+  "file": "ofac_cuba_faqs__faq-779.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/779",
+  "sha256": "cf910db046945750592699c8c75350b38c01ebdea154acf5b9a8c2be6059df30",
+  "fetched_at": "2026-11-21T10:21:46Z"
+ },
+ "ofac_cuba_faqs__faq-780.html.gz": {
+  "file": "ofac_cuba_faqs__faq-780.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/780",
+  "sha256": "0d4740a7e1e323c445397f92e1cd83391752d0962d09d78bfed44089b3de9c2b",
+  "fetched_at": "2026-11-21T10:21:58Z"
+ },
+ "ofac_cuba_faqs__faq-781.html.gz": {
+  "file": "ofac_cuba_faqs__faq-781.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/781",
+  "sha256": "ae8726a21dcaba7df8c59fad65c26239b3cdc7f99675a83c46eec3cecf4d2b2d",
+  "fetched_at": "2026-11-21T10:36:54Z"
+ },
+ "ofac_cuba_faqs__faq-782.html.gz": {
+  "file": "ofac_cuba_faqs__faq-782.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/782",
+  "sha256": "434746c429771ab35f7b1c0e5873de288a9b3405beea1f753b4d0dbab3e756e1",
+  "fetched_at": "2026-11-21T10:35:58Z"
+ },
+ "ofac_cuba_faqs__faq-783.html.gz": {
+  "file": "ofac_cuba_faqs__faq-783.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/783",
+  "sha256": "0fcdec42bf55e4e03191f60bb1bb0453cc6fbc9314724794f8f3d736e4d6ef69",
+  "fetched_at": "2026-11-21T10:22:08Z"
+ },
+ "ofac_cuba_faqs__faq-784.html.gz": {
+  "file": "ofac_cuba_faqs__faq-784.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/784",
+  "sha256": "144f2c2b1061c64de815e85970cccf8b3f7888a462fe8b416924bb9b25adabb1",
+  "fetched_at": "2026-11-21T10:34:20Z"
+ },
+ "ofac_cuba_faqs__faq-785.html.gz": {
+  "file": "ofac_cuba_faqs__faq-785.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/785",
+  "sha256": "7e90b093e38730935f0c45b92cfc7948a49016a52c813fbb577dab63b044787d",
+  "fetched_at": "2026-11-21T10:22:18Z"
+ },
+ "ofac_cuba_faqs__faq-786.html.gz": {
+  "file": "ofac_cuba_faqs__faq-786.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/786",
+  "sha256": "1e325caa429e9db9bdfa6cd5dac2f86ac4f97b361e7a49aede6d1c2384287b90",
+  "fetched_at": "2026-11-21T10:35:05Z"
+ },
+ "ofac_cuba_faqs__faq-787.html.gz": {
+  "file": "ofac_cuba_faqs__faq-787.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/787",
+  "sha256": "b57ecb979db1b50d5010f0d8b3d477f5c883dfa1dc844b8a28ffafd9fc7f26ee",
+  "fetched_at": "2026-11-21T10:37:57Z"
+ },
+ "ofac_cuba_faqs__faq-788.html.gz": {
+  "file": "ofac_cuba_faqs__faq-788.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/788",
+  "sha256": "ab479c990b035dc07c339aa95131dea61448d68daa345fd2dde101e2bcd4f1b1",
+  "fetched_at": "2026-11-21T10:36:21Z"
+ },
+ "ofac_cuba_faqs__faq-789.html.gz": {
+  "file": "ofac_cuba_faqs__faq-789.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/789",
+  "sha256": "b5a25cecc7d741375ba7d5efe1408a4b323a5dbfa0a0444055c7088e043e2cff",
+  "fetched_at": "2026-11-21T10:38:31Z"
+ },
+ "ofac_cuba_faqs__faq-790.html.gz": {
+  "file": "ofac_cuba_faqs__faq-790.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/790",
+  "sha256": "51de35c4460e8a9dd97ec49c72a235408c441f47064d720f850c748013c6b20e",
+  "fetched_at": "2026-11-21T10:34:44Z"
+ },
+ "ofac_cuba_faqs__faq-791.html.gz": {
+  "file": "ofac_cuba_faqs__faq-791.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/791",
+  "sha256": "1d5a65f88b5a6e2e4fc219b1f96e2503316a0f3b06a6e4fa57ba84f6d277ff6e",
+  "fetched_at": "2026-11-21T10:38:07Z"
+ },
+ "ofac_cuba_faqs__faq-792.html.gz": {
+  "file": "ofac_cuba_faqs__faq-792.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/792",
+  "sha256": "b55de74307cd67a4a3a42652d8ebc9e00bf08156c5737b1b9e84771e48ed72bc",
+  "fetched_at": "2026-11-21T10:18:07Z"
+ },
+ "ofac_cuba_faqs__faq-793.html.gz": {
+  "file": "ofac_cuba_faqs__faq-793.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/793",
+  "sha256": "755aa224a0d01036d0bb7ef45565a5ecf908c942eeec6cfd4f1293e4f42c9259",
+  "fetched_at": "2026-11-21T10:18:19Z"
+ },
+ "ofac_cuba_faqs__faq-794.html.gz": {
+  "file": "ofac_cuba_faqs__faq-794.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/794",
+  "sha256": "dd8fab9c7f8dd7ff3d48090dd7e2b66b1360b5c5252deebbe326ddd846293c61",
+  "fetched_at": "2026-11-21T10:31:58Z"
+ },
+ "ofac_cuba_faqs__faq-795.html.gz": {
+  "file": "ofac_cuba_faqs__faq-795.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/795",
+  "sha256": "893fcd333ae72ed91e0ea57b1beccdc454697039bfc4f7987591725b8d045fef",
+  "fetched_at": "2026-11-21T10:18:41Z"
+ },
+ "ofac_cuba_faqs__faq-796.html.gz": {
+  "file": "ofac_cuba_faqs__faq-796.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/796",
+  "sha256": "c90b4af217652f599b036e04fc55eb3b2a073dc336c515fce18719fb982c6b66",
+  "fetched_at": "2026-11-21T10:18:51Z"
+ },
+ "ofac_cuba_faqs__faq-797.html.gz": {
+  "file": "ofac_cuba_faqs__faq-797.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/797",
+  "sha256": "5877c10db4a9820631f2ae361a362e14323a487574a266630a06fa30b4f90413",
+  "fetched_at": "2026-11-21T10:19:03Z"
+ },
+ "ofac_cuba_faqs__faq-798.html.gz": {
+  "file": "ofac_cuba_faqs__faq-798.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/798",
+  "sha256": "ffcce106015ad7cbbf771838afa8a0f856441e2812942a0de0740045d60a8173",
+  "fetched_at": "2026-11-21T10:19:13Z"
+ },
+ "ofac_cuba_faqs__faq-799.html.gz": {
+  "file": "ofac_cuba_faqs__faq-799.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/799",
+  "sha256": "da631daccdcdcf5ca1207ef6770c1f6238ff8ab0dd563164654f53726fe40f44",
+  "fetched_at": "2026-11-21T10:19:23Z"
+ },
+ "ofac_cuba_faqs__faq-800.html.gz": {
+  "file": "ofac_cuba_faqs__faq-800.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/800",
+  "sha256": "3966c68ded6211049260bde5066102ef4f86381f2ac20d7d965269256ab334b9",
+  "fetched_at": "2026-11-21T10:19:35Z"
+ },
+ "ofac_cuba_faqs__faq-801.html.gz": {
+  "file": "ofac_cuba_faqs__faq-801.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/801",
+  "sha256": "d1e81b9436f7cfdfe8d76c6d2e0e900545405aed5064f1b6e67028fa8e64d725",
+  "fetched_at": "2026-11-21T10:19:46Z"
+ },
+ "ofac_cuba_faqs__faq-802.html.gz": {
+  "file": "ofac_cuba_faqs__faq-802.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/802",
+  "sha256": "b424d736f513e1059064937a6cc457c6c9fbf79d1e6480e8a622e7782763f8c7",
+  "fetched_at": "2026-11-21T10:19:56Z"
+ },
+ "ofac_cuba_faqs__faq-837.html.gz": {
+  "file": "ofac_cuba_faqs__faq-837.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/837",
+  "sha256": "e25a4e59d7cb23bf1d8b9ba58af11f362574b320712f3d2b13575ea9665e6bdd",
+  "fetched_at": "2026-11-21T10:16:27Z"
+ },
+ "ofac_cuba_faqs__faq-838.html.gz": {
+  "file": "ofac_cuba_faqs__faq-838.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/838",
+  "sha256": "cea46b482d280dc8376bf51f6e2b04a8b922dc63c596855429acad30378ea4d5",
+  "fetched_at": "2026-11-21T10:22:29Z"
+ },
+ "ofac_cuba_faqs__faq-839.html.gz": {
+  "file": "ofac_cuba_faqs__faq-839.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/839",
+  "sha256": "eed85878da0ca491657e3dfbefa1008eb23f96c8f5d65629c3bb9df40a14d17d",
+  "fetched_at": "2026-11-21T10:22:40Z"
+ },
+ "ofac_cuba_faqs__faq-852.html.gz": {
+  "file": "ofac_cuba_faqs__faq-852.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/852",
+  "sha256": "bf86169b04ba8cdeb6ecae7017562ebe067913b5c52b148d654f93062a1221ad",
+  "fetched_at": "2026-11-21T10:22:52Z"
+ },
+ "ofac_cuba_faqs__listing-0.html.gz": {
+  "file": "ofac_cuba_faqs__listing-0.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=0",
+  "sha256": "e9e583d6013faca743e1aa1a7f72f37632085aa48e9018025c1418539a2ed1ad",
+  "fetched_at": "2026-11-21T10:13:00Z"
+ },
+ "ofac_cuba_faqs__listing-1.html.gz": {
+  "file": "ofac_cuba_faqs__listing-1.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=1",
+  "sha256": "bdfe46d18aeefcab716c1531fe2c1770f0241e30886864794fb1157c8ca4b90b",
+  "fetched_at": "2026-11-21T10:13:10Z"
+ },
+ "ofac_cuba_faqs__listing-10.html.gz": {
+  "file": "ofac_cuba_faqs__listing-10.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=10",
+  "sha256": "f67f09e34a2be21912612a270d2b0b5779413320644de94a268c6a5be8a9460a",
+  "fetched_at": "2026-11-21T10:14:48Z"
+ },
+ "ofac_cuba_faqs__listing-11.html.gz": {
+  "file": "ofac_cuba_faqs__listing-11.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=11",
+  "sha256": "e257dcac81875a2804c5f4c5085ff024999ed7b059aed16c838d4bb52321da41",
+  "fetched_at": "2026-11-21T10:14:59Z"
+ },
+ "ofac_cuba_faqs__listing-12.html.gz": {
+  "file": "ofac_cuba_faqs__listing-12.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=12",
+  "sha256": "1c8061df6abd66e206635ad4786459f5d8184cf33509a20071e8eff577844e28",
+  "fetched_at": "2026-11-21T10:15:11Z"
+ },
+ "ofac_cuba_faqs__listing-13.html.gz": {
+  "file": "ofac_cuba_faqs__listing-13.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=13",
+  "sha256": "163bd9322d50780e0841811b0302ec4a7e867e488a54119bffcf2abfb391158d",
+  "fetched_at": "2026-11-21T10:15:23Z"
+ },
+ "ofac_cuba_faqs__listing-14.html.gz": {
+  "file": "ofac_cuba_faqs__listing-14.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=14",
+  "sha256": "e6e31c88ee2e7a5c7a3d2df6195ecb1c75c21a73a21db01db1c6a7a4be172729",
+  "fetched_at": "2026-11-21T10:15:33Z"
+ },
+ "ofac_cuba_faqs__listing-2.html.gz": {
+  "file": "ofac_cuba_faqs__listing-2.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=2",
+  "sha256": "18e0789e07865921ad369ff868822e2767c0c2d76feaed986a48b3ec116fd209",
+  "fetched_at": "2026-11-21T10:13:20Z"
+ },
+ "ofac_cuba_faqs__listing-3.html.gz": {
+  "file": "ofac_cuba_faqs__listing-3.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=3",
+  "sha256": "63b4c406a8ed5701b01e848cbfb3a069aad409957a476845d83b7a9c6017fcd5",
+  "fetched_at": "2026-11-21T10:13:32Z"
+ },
+ "ofac_cuba_faqs__listing-4.html.gz": {
+  "file": "ofac_cuba_faqs__listing-4.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=4",
+  "sha256": "9762f64564a6f13464b60418558917c38e4eee126839ce7a6d1bbe802737d85a",
+  "fetched_at": "2026-11-21T10:13:42Z"
+ },
+ "ofac_cuba_faqs__listing-5.html.gz": {
+  "file": "ofac_cuba_faqs__listing-5.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=5",
+  "sha256": "b51206a869f56e45cdb5c4d86c01710dcd23ed8f06afb3938ed1d11fd6028bca",
+  "fetched_at": "2026-11-21T10:13:52Z"
+ },
+ "ofac_cuba_faqs__listing-6.html.gz": {
+  "file": "ofac_cuba_faqs__listing-6.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=6",
+  "sha256": "ed269b06babb198966a1807b2468247f88a38947c0df8e841a9bd0e91bd83f07",
+  "fetched_at": "2026-11-21T10:14:04Z"
+ },
+ "ofac_cuba_faqs__listing-7.html.gz": {
+  "file": "ofac_cuba_faqs__listing-7.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=7",
+  "sha256": "c4e03e9076ddcb6914a008b7f96182718969e1de294630576c353729077674ad",
+  "fetched_at": "2026-11-21T10:14:16Z"
+ },
+ "ofac_cuba_faqs__listing-8.html.gz": {
+  "file": "ofac_cuba_faqs__listing-8.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=8",
+  "sha256": "1815d7e12d1d489784810334a38287f6674834b0c38a3bd71dc4cf8b7a39c177",
+  "fetched_at": "2026-11-21T10:14:26Z"
+ },
+ "ofac_cuba_faqs__listing-9.html.gz": {
+  "file": "ofac_cuba_faqs__listing-9.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/search?f%5B0%5D=faq_topic%3ACuba+Sanctions&page=9",
+  "sha256": "b54048e61dac65f8e24f4dc76ba76671909a64989758ce0059b9ff44dc6caea1",
+  "fetched_at": "2026-11-21T10:14:37Z"
+ },
+ "ofac_russia_faqs__faq-1024.html.gz": {
+  "file": "ofac_russia_faqs__faq-1024.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1024",
+  "sha256": "d7b258632227ab7e816828d8c7089ee423f4afe2bf14d430520df2ba8d22e416",
+  "fetched_at": "2026-11-21T10:39:25Z"
+ },
+ "ofac_russia_faqs__faq-1027.html.gz": {
+  "file": "ofac_russia_faqs__faq-1027.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1027",
+  "sha256": "947356b34baf49c6e1b2258eb83d2f887a564740b3ec099c95933a701ac5623a",
+  "fetched_at": "2026-11-21T10:39:36Z"
+ },
+ "ofac_russia_faqs__faq-1182.html.gz": {
+  "file": "ofac_russia_faqs__faq-1182.html.gz",
+  "url": "https://ofac.treasury.gov/faqs/1182",
+  "sha256": "5d361430c0a7fe55e6be1949663148182d301d31a6c45efcc5844d7c4e142209",
+  "fetched_at": "2026-11-21T10:39:46Z"
+ },
+ "state_ca__main.html.gz": {
+  "file": "state_ca__main.html.gz",
+  "url": "https://www.abc.ca.gov/importing-alcoholic-beverages-for-personal-or-household-use",
+  "sha256": "38d0eb4b3da0643840c6afee87c775cd68a78d15af777aa7027a3e8d04984080",
+  "fetched_at": "2026-11-21T10:40:19Z"
+ },
+ "state_fl__main.html.gz": {
+  "file": "state_fl__main.html.gz",
+  "url": "https://www.flsenate.gov/Laws/Statutes/2026/Chapter562/All",
+  "sha256": "c043f9c391c4afd6944e9887e43ae53868b0d3ab241e293968c335cb09319d05",
+  "fetched_at": "2026-11-21T10:40:16Z"
+ },
+ "state_nj__main.html.gz": {
+  "file": "state_nj__main.html.gz",
+  "url": "https://nj.gov/treasury/taxation/importalcolbev.shtml",
+  "sha256": "a022530ddc2f25d06a8d2310b7ec8abd500469443d3a3d5dee8bbc0537f3030b",
+  "fetched_at": "2026-11-21T10:40:24Z"
+ },
+ "state_ny__main.html.gz": {
+  "file": "state_ny__main.html.gz",
+  "url": "https://www.tax.ny.gov/bus/bev/abt-importperscons.htm",
+  "sha256": "a186253e1b556ef5d508c93402bc084bfc28b2e9b2527525f5e608d8cb8e95a5",
+  "fetched_at": "2026-11-21T10:40:12Z"
+ },
+ "state_tx__main.html.gz": {
+  "file": "state_tx__main.html.gz",
+  "url": "https://www.tabc.texas.gov/faqs/personal-importation-ports-of-entry-faqs",
+  "sha256": "57f552285900dc55f5b6dcd6ce2461bb9964fb9e132c0c1f0cef1c92b8aac93d",
+  "fetched_at": "2026-11-21T10:40:22Z"
+ },
+ "ttb_personal_importation__main.html.gz": {
+  "file": "ttb_personal_importation__main.html.gz",
+  "url": "https://www.ttb.gov/regulated-commodities/beverage-alcohol/importers/personal-importation-of-alcohol-beverage-products",
+  "sha256": "b0483d8e2463a9b37e6280741434993ae95d91336576642b27ab1b722c738361",
+  "fetched_at": "2026-11-21T10:40:09Z"
+ },
+ "ttb_tax_rates__main.html.gz": {
+  "file": "ttb_tax_rates__main.html.gz",
+  "url": "https://www.ttb.gov/what-we-do/taxes-and-filing/tax-rates",
+  "sha256": "02bfad045459385239805cbb37719be6fd24c4f80ea7be163f1a3f07b118d039",
+  "fetched_at": "2026-11-21T10:40:08Z"
+ }
+}
