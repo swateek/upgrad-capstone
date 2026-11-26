@@ -55,15 +55,15 @@ It asks one clarifying question only when a missing fact changes the answer, ref
 
 | Rubric item | How we meet it | Status |
 | --- | --- | --- |
-| Git repository, full agent stack | this folder, on branch `customs-agent-main`; `SETUP.md` rebuilds everything | In progress |
-| Trace dashboard | Langfuse cloud, one trace per question with a link on every answer; PII masked first; fallback `logs/trace.jsonl` | Met |
-| Evaluation report + failure taxonomy | `eval/score.py`, official runs Day 10, failure taxonomy Days 11–14 | Baselines done (`docs/BASELINES.md`); labelling rules done (`docs/TAXONOMY.md`, `eval/label_failures.py`) |
-| 12-page technical report | Days 11–14 | Not started |
-| 10-minute live demo | React + FastAPI app in Docker (`docker compose up`) + backup video, Days 11–14 | App and container ready; demo not started |
+| Git repository, full agent stack | this folder, on branch `customs-agent-main` (PR to main on Day 14); `SETUP.md` rebuilds everything | Met |
+| Trace dashboard | Langfuse cloud, one trace per question with a link on every answer, laid out on a timeline; PII masked first; official runs replayed with tag `official-run` (`eval/push_traces.py`); fallback `logs/trace.jsonl` | Met |
+| Evaluation report + failure taxonomy | `eval/score.py`, official runs, `docs/METRICS.md`, `docs/ABLATION.md`, `docs/TAXONOMY.md` (rubric's four kinds) | Met |
+| 12-page technical report | `docs/report/DeclareRight_report.pdf` (Doc https://claude.ai/artifact/2DzKQrvmgK5gBrPYsjBLiL) | Met |
+| 10-minute live demo | React + FastAPI app (local, Docker, and hosted at https://139-59-66-138.sslip.io) + backup video | App hosted; demo script ready; video by the owner |
 | Corpus ≤ 2,000 documents | 742 documents (`corpus-v1`) | Met |
 | ≤ 10 steps per query | Enforced in `src/agent/pipeline.py`: at most 10 tool steps and 12,000 tokens per question, else escalate; the plan validator also caps plans at 10. Router plan: 7 steps (8 for what-if) | Met |
 | Eval frozen and baselines recorded before agent code | `eval-v2` tagged, `results/week1_*.csv` committed, gate `gate-day4` before any `src/agent/` code | Met |
-| Small-model compensations (graded) | `docs/COMPENSATIONS.md`: symptom, fix, before/after metric per row | Ongoing |
+| Small-model compensations (graded) | `docs/COMPENSATIONS.md`: symptom, fix, before/after metric per row; report §7 | Met |
 
 ## Non-negotiable rules for any code in this repo
 
