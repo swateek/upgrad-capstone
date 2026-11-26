@@ -7,8 +7,9 @@
 The official runs were made with tracing off (cache off, one request at a time); every model call,
 plan, tool output and verifier check was saved in results/runs/<run>/<mode>.jsonl. This script
 rebuilds one trace per question from those records with the same layout the app uses
-(src/tracing.py `spans`, PII-masked), and makes NO model calls. So the traces are timed at upload,
-not at the run: each one carries the run's freeze date and `replayed` in its metadata and tags.
+(src/tracing.py `spans`, PII-masked), and makes NO model calls. Each trace lasts as long as the
+question did in the run and each step its recorded duration, but the traces are placed at upload
+time, not at the run: each one carries the run's freeze date and `replayed` in its metadata and tags.
 
 Tags on every trace, for the Langfuse filter (Traces > Tags):
   official-run · <set> (eval-v2, eval-v3, gold-v2) · <agent> (agent-v1, agent-v2, single-rag)
@@ -141,7 +142,7 @@ def send(tracer, d, mode, set_, agent, rec, question, score, frozen) -> str:
         "run": d,
         "set": SET_TAG[set_],
         "freeze_at": frozen,
-        "replayed": f"rebuilt from results/runs/{d}/{mode}.jsonl; timed at upload, not at the run",
+        "replayed": f"rebuilt from results/runs/{d}/{mode}.jsonl; durations from the run (seconds, step ms), placed at upload time",
     }
     with (
         propagate_attributes(
@@ -156,8 +157,7 @@ def send(tracer, d, mode, set_, agent, rec, question, score, frozen) -> str:
             metadata=meta,
         ) as root,
     ):
-        for c in data["children"]:
-            tracer._emit(root, c)
+        tracer.lay_out(root, data["children"], rec.get("seconds"))
         root.update(output=data["output"])
         return root.trace_id
 

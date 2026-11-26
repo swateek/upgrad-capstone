@@ -50,7 +50,14 @@ def spans(question: str, run: Any, mode: str) -> dict:
     for t in run.trace:
         step = t.get("step", "step")
         if step in ("intake", "planner"):
-            gen = next((s for s in llm_steps if s["stage"].startswith(step)), None)
+            gen = next(  # a follow-up turn's reading is logged as "turn_intake"
+                (
+                    s
+                    for s in llm_steps
+                    if s["stage"].startswith(step) or s["stage"] == f"turn_{step}"
+                ),
+                None,
+            )
             if gen:
                 llm_steps.remove(gen)
             children.append(
@@ -69,7 +76,14 @@ def spans(question: str, run: Any, mode: str) -> dict:
                     "as_type": "chain",
                     "output": {"plan": t.get("plan"), "outcome": t.get("outcome")},
                     "children": [
-                        {"name": x["tool"], "as_type": "tool", "output": x["output"]}
+                        {
+                            "name": x["tool"],
+                            "as_type": "tool",
+                            # a step reused from the previous turn has no output of its own
+                            "output": x.get(
+                                "output", {"reused": "output kept from the previous turn"}
+                            ),
+                        }
                         for x in t.get("tools", [])
                     ],
                 }
@@ -78,15 +92,25 @@ def spans(question: str, run: Any, mode: str) -> dict:
             children.append(
                 {"name": step, "as_type": AS_TYPE.get(step, "span"), "output": t}
             )
-    for s in llm_steps:  # writer and verifier calls
-        children.append(
-            {
-                "name": s["stage"],
-                "as_type": "generation",
-                "output": s.get("content"),
-                "raw": s,
-            }
-        )
+    # a correction's replan decides which tools re-run: show it before them
+    rp = next((c for c in children if c["name"] == "replan"), None)
+    tools = next((i for i, c in enumerate(children) if c["name"] == "tools"), None)
+    if rp is not None and tools is not None and children.index(rp) > tools:
+        children.remove(rp)
+        children.insert(tools, rp)
+    # writer and verifier calls: before the verifier's code check, which runs after them
+    at = next(
+        (i for i, c in enumerate(children) if c["name"] == "verifier"), len(children)
+    )
+    children[at:at] = [
+        {
+            "name": s["stage"],
+            "as_type": "generation",
+            "output": s.get("content"),
+            "raw": s,
+        }
+        for s in llm_steps
+    ]
     return mask(
         {
             "name": "declare-right",
@@ -105,6 +129,30 @@ def spans(question: str, run: Any, mode: str) -> dict:
             "children": children,
         }
     )
+
+
+def _ms(node: dict) -> float:
+    """A step's recorded duration in ms: model calls carry it in `raw`, search in its output."""
+    for src in (node.get("raw"), node.get("metadata"), node.get("output")):
+        if isinstance(src, dict) and isinstance(src.get("ms"), (int, float)):
+            return float(src["ms"])
+    return 0.0
+
+
+STEP_MS = 1.0  # the least a step takes on the timeline (keeps the order visible)
+
+
+def _count(nodes: list[dict]) -> int:
+    return sum(1 + _count(n.get("children", [])) for n in nodes)
+
+
+def _set_start(obs: Any, ns: int) -> None:
+    """Back-date an observation's start (the SDK has no start-time argument)."""
+    # a test double, or an SDK that changed: keep the default start
+    try:
+        obs._otel_span._start_time = ns
+    except AttributeError:
+        pass
 
 
 class FileTracer:
@@ -155,7 +203,21 @@ class LangfuseTracer:
         except Exception:  # noqa: BLE001 - server unreachable: the trace still exports later
             return None
 
-    def _emit(self, parent: Any, node: dict) -> None:
+    def lay_out(self, root: Any, children: list[dict], seconds: float | None) -> None:
+        """Emit the steps on a timeline. Traces are built after the answer, so without this every
+        observation would start and end at the moment of sending (latency 0 in Langfuse). The
+        root spans the question's wall time (`seconds`); each step lasts its recorded `ms` (model
+        calls, search), one after another; untimed code steps take 1 ms, so that Langfuse, which
+        orders steps by start time, shows them in the order they ran."""
+        timed = sum(_ms(c) for c in children) + _count(children) * STEP_MS
+        total_ms = max(timed, (seconds or 0) * 1000)
+        end = time.time_ns()
+        cur = end - int(total_ms * 1e6)
+        _set_start(root, cur)
+        for c in children:
+            cur = self._emit(root, c, cur)
+
+    def _emit(self, parent: Any, node: dict, at: int | None = None) -> int:
         raw = node.get("raw") or {}
         kw: dict[str, Any] = {
             "name": node["name"],
@@ -173,9 +235,14 @@ class LangfuseTracer:
         if meta:
             kw["metadata"] = meta
         child = parent.start_observation(**kw)
+        start = at if at is not None else time.time_ns()
+        _set_start(child, start)
+        cur = start
         for c in node.get("children", []):
-            self._emit(child, c)
-        child.end()
+            cur = self._emit(child, c, cur)
+        end = max(cur, start + int(max(_ms(node), STEP_MS) * 1e6))
+        child.end(end_time=end)
+        return end
 
     def record(
         self,
@@ -197,8 +264,7 @@ class LangfuseTracer:
             input=data["input"],
             metadata={**data["metadata"], "seconds": seconds},
         ) as root:
-            for c in data["children"]:
-                self._emit(root, c)
+            self.lay_out(root, data["children"], seconds)
             root.update(output=data["output"])
             tid = root.trace_id
         return TraceRef(tid, self._url(tid))
