@@ -1,9 +1,9 @@
 # DeclareRight: US customs assistant for alcohol & tobacco
 
 Track B capstone (API-side, ≤8B hosted model), group DLlamas. Working solo with AI assistance.
-Programme brief, deadlines and grading: `../README.md` (repo root) (final submission 27 Nov 2026, presentation 5 Dec 2026).
+Programme brief, deadlines and grading: `../../README.md` (repo root) (final submission 27 Nov 2026, presentation 5 Dec 2026).
 
-**This file lives in `customs-agent/`, with all the project's code and docs.** Paths in it are relative to this folder; `../` is the repo root.
+**This file lives in `final-capstone-project/customs-agent/`, with all the project's code and docs.** Paths in it are relative to this folder; `../../` is the repo root (CI: `../../.github/workflows/customs-agent.yml`).
 
 - Mentor proposal (source of truth for scope and plan): `docs/01_US_Customs_Assistant.docx`.
 - Day-0 endpoint test guide: `docs/Endpoint_Capability_Check.docx`; results in `docs/endpoint_check.md`.
@@ -15,8 +15,8 @@ Programme brief, deadlines and grading: `../README.md` (repo root) (final submis
 - **Work log:** `WORKLOG.md` (committed since `198cdb1`). After each piece of work, append an entry under the current day: what, files, found / decided, open.
 
 - **Python env: uv, inside this folder only.** `uv sync` to install; `uv run python …` / `uv run pytest` to run; `uv add <pkg>` (or `uv add --dev`) to add dependencies. Never `pip install` into `.venv/`. Commit `pyproject.toml`, `uv.lock` and `.python-version` together.
-- **Git flow** (`../docs/GITFLOW.md`): never commit to `main`; short-lived branches `feature/…`, `bugfix/…`, `docs/…`, `refactor/…`; merge through a PR. Commit messages `#<issue> - <what>` when there is an issue.
-- **Pre-commit** (`../docs/DEVELOPMENT.md`): Ruff lint + format, gitleaks secret scan, YAML/JSON checks, 500 KB file limit, notebook outputs stripped (except `results/`). Keep generated data under 500 KB per file or keep it out of git.
+- **Git flow** (`../../docs/GITFLOW.md`): never commit to `main`; short-lived branches `feature/…`, `bugfix/…`, `docs/…`, `refactor/…`; merge through a PR. Commit messages `#<issue> - <what>` when there is an issue.
+- **Pre-commit** (`../../docs/DEVELOPMENT.md`): Ruff lint + format, gitleaks secret scan, YAML/JSON checks, 500 KB file limit, notebook outputs stripped (except `results/`). Keep generated data under 500 KB per file or keep it out of git.
 - Git-ignored: every dotfile (repo-root `.gitignore`, so `.env`), `certs/`, `.venv/`. Never commit keys or certificates.
 
 ## What we are building
@@ -55,15 +55,15 @@ It asks one clarifying question only when a missing fact changes the answer, ref
 
 | Rubric item | How we meet it | Status |
 | --- | --- | --- |
-| Git repository, full agent stack | this folder, on branch `customs-agent-main`; `SETUP.md` rebuilds everything | In progress |
-| Trace dashboard | Langfuse cloud, one trace per question with a link on every answer; PII masked first; fallback `logs/trace.jsonl` | Met |
-| Evaluation report + failure taxonomy | `eval/score.py`, official runs Day 10, failure taxonomy Days 11–14 | Baselines done (`docs/BASELINES.md`); labelling rules done (`docs/TAXONOMY.md`, `eval/label_failures.py`) |
-| 12-page technical report | Days 11–14 | Not started |
-| 10-minute live demo | React + FastAPI app in Docker (`docker compose up`) + backup video, Days 11–14 | App and container ready; demo not started |
+| Git repository, full agent stack | this folder, on branch `customs-agent-main` (PR to main on Day 14); `SETUP.md` rebuilds everything | Met |
+| Trace dashboard | Langfuse cloud, one trace per question with a link on every answer, laid out on a timeline; PII masked first; official runs replayed with tag `official-run` (`eval/push_traces.py`); fallback `logs/trace.jsonl` | Met |
+| Evaluation report + failure taxonomy | `eval/score.py`, official runs, `docs/METRICS.md`, `docs/ABLATION.md`, `docs/TAXONOMY.md` (rubric's four kinds) | Met |
+| 12-page technical report | `docs/report/DeclareRight_report.pdf` (Doc https://claude.ai/artifact/2DzKQrvmgK5gBrPYsjBLiL) | Met |
+| 10-minute live demo | React + FastAPI app (local, Docker, and hosted at https://139-59-66-138.sslip.io) + backup video | App hosted; demo script ready; video by the owner |
 | Corpus ≤ 2,000 documents | 742 documents (`corpus-v1`) | Met |
 | ≤ 10 steps per query | Enforced in `src/agent/pipeline.py`: at most 10 tool steps and 12,000 tokens per question, else escalate; the plan validator also caps plans at 10. Router plan: 7 steps (8 for what-if) | Met |
 | Eval frozen and baselines recorded before agent code | `eval-v2` tagged, `results/week1_*.csv` committed, gate `gate-day4` before any `src/agent/` code | Met |
-| Small-model compensations (graded) | `docs/COMPENSATIONS.md`: symptom, fix, before/after metric per row | Ongoing |
+| Small-model compensations (graded) | `docs/COMPENSATIONS.md`: symptom, fix, before/after metric per row; report §7 | Met |
 
 ## Non-negotiable rules for any code in this repo
 

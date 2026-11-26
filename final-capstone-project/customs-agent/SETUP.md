@@ -14,7 +14,7 @@ Run every command from `customs-agent/` unless a step says otherwise.
 
 ```bash
 git clone <repo-url> upgrad-capstone
-cd upgrad-capstone/customs-agent
+cd upgrad-capstone/final-capstone-project/customs-agent
 uv sync                     # creates .venv/ with the exact versions in uv.lock
 ```
 

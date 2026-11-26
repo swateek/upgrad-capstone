@@ -18,10 +18,10 @@ Install uv once:
 brew install uv
 ```
 
-Then, from this folder:
+Then, from the repo root:
 
 ```bash
-cd customs-agent
+cd final-capstone-project/customs-agent
 uv sync
 ```
 
