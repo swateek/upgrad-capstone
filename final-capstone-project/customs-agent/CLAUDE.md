@@ -1,9 +1,9 @@
 # DeclareRight: US customs assistant for alcohol & tobacco
 
 Track B capstone (API-side, ≤8B hosted model), group DLlamas. Working solo with AI assistance.
-Programme brief, deadlines and grading: `../README.md` (repo root) (final submission 27 Nov 2026, presentation 5 Dec 2026).
+Programme brief, deadlines and grading: `../../README.md` (repo root) (final submission 27 Nov 2026, presentation 5 Dec 2026).
 
-**This file lives in `customs-agent/`, with all the project's code and docs.** Paths in it are relative to this folder; `../` is the repo root.
+**This file lives in `final-capstone-project/customs-agent/`, with all the project's code and docs.** Paths in it are relative to this folder; `../../` is the repo root (CI: `../../.github/workflows/customs-agent.yml`).
 
 - Mentor proposal (source of truth for scope and plan): `docs/01_US_Customs_Assistant.docx`.
 - Day-0 endpoint test guide: `docs/Endpoint_Capability_Check.docx`; results in `docs/endpoint_check.md`.
@@ -15,8 +15,8 @@ Programme brief, deadlines and grading: `../README.md` (repo root) (final submis
 - **Work log:** `WORKLOG.md` (committed since `198cdb1`). After each piece of work, append an entry under the current day: what, files, found / decided, open.
 
 - **Python env: uv, inside this folder only.** `uv sync` to install; `uv run python …` / `uv run pytest` to run; `uv add <pkg>` (or `uv add --dev`) to add dependencies. Never `pip install` into `.venv/`. Commit `pyproject.toml`, `uv.lock` and `.python-version` together.
-- **Git flow** (`../docs/GITFLOW.md`): never commit to `main`; short-lived branches `feature/…`, `bugfix/…`, `docs/…`, `refactor/…`; merge through a PR. Commit messages `#<issue> - <what>` when there is an issue.
-- **Pre-commit** (`../docs/DEVELOPMENT.md`): Ruff lint + format, gitleaks secret scan, YAML/JSON checks, 500 KB file limit, notebook outputs stripped (except `results/`). Keep generated data under 500 KB per file or keep it out of git.
+- **Git flow** (`../../docs/GITFLOW.md`): never commit to `main`; short-lived branches `feature/…`, `bugfix/…`, `docs/…`, `refactor/…`; merge through a PR. Commit messages `#<issue> - <what>` when there is an issue.
+- **Pre-commit** (`../../docs/DEVELOPMENT.md`): Ruff lint + format, gitleaks secret scan, YAML/JSON checks, 500 KB file limit, notebook outputs stripped (except `results/`). Keep generated data under 500 KB per file or keep it out of git.
 - Git-ignored: every dotfile (repo-root `.gitignore`, so `.env`), `certs/`, `.venv/`. Never commit keys or certificates.
 
 ## What we are building

@@ -7,9 +7,9 @@ name: customs-agent
 on:
   push:
     branches: [customs-agent-main, main]
-    paths: ["customs-agent/**", ".github/workflows/customs-agent.yml"]
+    paths: ["final-capstone-project/customs-agent/**", ".github/workflows/customs-agent.yml"]
   pull_request:
-    paths: ["customs-agent/**", ".github/workflows/customs-agent.yml"]
+    paths: ["final-capstone-project/customs-agent/**", ".github/workflows/customs-agent.yml"]
   workflow_dispatch:
 
 permissions:
@@ -17,7 +17,7 @@ permissions:
 
 defaults:
   run:
-    working-directory: customs-agent
+    working-directory: final-capstone-project/customs-agent
 
 jobs:
   test:
@@ -29,7 +29,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-          cache-dependency-glob: customs-agent/uv.lock
+          cache-dependency-glob: final-capstone-project/customs-agent/uv.lock
 
       - name: Install (exact versions from uv.lock)
         run: uv sync --locked
@@ -45,14 +45,14 @@ jobs:
     timeout-minutes: 10
     defaults:
       run:
-        working-directory: customs-agent/web
+        working-directory: final-capstone-project/customs-agent/web
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: customs-agent/web/package-lock.json
+          cache-dependency-path: final-capstone-project/customs-agent/web/package-lock.json
       - run: npm ci --no-audit --no-fund
       - name: Type-check and build
         run: npm run build
