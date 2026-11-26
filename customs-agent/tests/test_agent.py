@@ -16,16 +16,18 @@ from src.agent.verifier import numbers, verify
 from src.agent.writer import WriterOut
 from src.safety.guard import check_question, sanitise_clause
 from src.schemas import Clause, Clauses
-from tests._chain import line_from_fact, profile_from_fact
+from tests._chain import line_from_fact, profile_from_fact, spec9d
 
 ROOT = Path(__file__).parents[1]
-DEV = {
-    d["id"]: d
-    for d in (
-        json.loads(x)
-        for x in (ROOT / "eval" / "dev_set.jsonl").read_text().splitlines()
-    )
-}
+DEV = spec9d(  # under 21: alcohol prohibited (SPEC 9d, eval/gold_spec9d.yaml)
+    {
+        d["id"]: d
+        for d in (
+            json.loads(x)
+            for x in (ROOT / "eval" / "dev_set.jsonl").read_text().splitlines()
+        )
+    }
+)
 
 
 # ------------------------------------------------------------------ fakes

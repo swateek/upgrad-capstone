@@ -159,7 +159,8 @@ def test_correction_replans_only_dependent_steps(tmp_path) -> None:
 
 
 def test_edit_on_the_card_needs_no_reading(tmp_path) -> None:
-    """C07: age edited to 19 on the card: no intake call, alcohol no longer duty-free."""
+    """C07: age edited to 19 on the card: no intake call; under 21 the mezcal is prohibited
+    (SPEC 9d; the conversation's gold, $7.22, is for the old rule)."""
     c = CONVS["C07"]
     mezcal = {
         "item": "Mexican mezcal",
@@ -184,12 +185,20 @@ def test_edit_on_the_card_needs_no_reading(tmp_path) -> None:
                 "basket": [mezcal],
             }
         ],
-        writer=[writer_for("4.01"), writer_for("7.22")],
+        writer=[
+            writer_for("4.01"),
+            {
+                "bottom_line": "You cannot bring the mezcal in.",
+                "explanation": "Under 21 you cannot bring alcohol into the US. Declare it and ask the CBP officer.",
+                "sources": [1],
+            },
+        ],
     )
     s = sessions(tmp_path, llm)
     s.turn("c", message=c["turns"][0]["user"])
     r2 = s.turn("c", edit={"field": "age", "value": 19})
-    assert r2.answer.total_usd == c["turns"][1]["gold"]["total_usd"]
+    assert r2.answer.outcome == "answered" and r2.answer.total_usd is None
+    assert [b.type for b in r2.answer.bottom_line] == ["prohibited"]
     assert "intake" not in [x["stage"] for x in r2.usage.steps]
 
 
@@ -462,7 +471,7 @@ def test_guessed_origin_of_a_risky_item_is_dropped(tmp_path) -> None:
     )
 
 
-def test_under_21_working_states_a_zero_allowance() -> None:
+def test_under_21_alcohol_is_prohibited_with_advice() -> None:
     from src.agent import card
     from src.agent.router import route
     from tests._chain import line_from_fact, profile_from_fact
@@ -473,7 +482,9 @@ def test_under_21_working_states_a_zero_allowance() -> None:
         profile_from_fact(d["facts"]["profile"]),
         [line_from_fact(f) for f in d["facts"]["basket"]],
     )
-    assert any("alcohol allowance 0 L: under 21" in w for w in card.working(r))
+    assert r.line_types == ["prohibited"]
+    assert any("Under 21 you cannot bring alcohol" in w for w in card.working(r))
+    assert any("ask the CBP officer" in w for w in card.working(r))
 
 
 def test_turn_intake_prompt_does_not_treat_declining_as_evasion() -> None:
@@ -622,3 +633,44 @@ def test_correction_keeps_the_box_count(tmp_path) -> None:
     r2 = s.turn("c", message=c["turns"][1]["user"])
     assert r2.answer.outcome == "answered"
     assert [b.type for b in r2.answer.bottom_line] == ["prohibited"]
+
+
+def test_reply_trip_and_no_invented_arrival_state(tmp_path) -> None:
+    """Demo rehearsal (Day 14): to "Was in warsaw for a week... first trip for the year... it's
+    Polish Vodka" the model gave no trip and arrival state WI. The trip comes from the reply
+    ("a week") because we asked for it; WI is dropped because nothing says where they landed."""
+    vodka = {
+        "item": "vodka",
+        "category": "alcohol",
+        "type": "spirits",
+        "quantity": {"value": 2, "unit": "bottle"},
+        "size": {"value": 750, "unit": "ml"},
+        "abv": 40,
+        "unit_price_usd": 25,
+    }
+    llm = ScriptedLLM(
+        intake=[{"request_kind": "assess", "profile": {"age": 31}, "basket": [vodka]}],
+        turn_intake=[
+            {
+                "request_kind": "assess",
+                "profile": {"direct_arrival_from": "PL", "arrival_state": "WI"},
+                "item_updates": [
+                    {"line": 1, "item": "vodka", "origin": "PL", "bought_where": "PL"}
+                ],
+            }
+        ],
+        writer=[writer_for("1.94")],
+    )
+    s = sessions(tmp_path, llm)
+    r1 = s.turn(
+        "v", message="2 bottles of vodka, 750 ml, 40%, $25 each. I'm 31. What do I owe?"
+    )
+    assert r1.answer.outcome == "clarify" and "trip_length" in r1.answer.clarify_facts
+    r2 = s.turn(
+        "v",
+        message="Was in warsaw for a week... this is my first trip for the year... it's Polish Vodka",
+    )
+    profile = s.state("v")["profile"]
+    assert profile["trip"] == {"value": 1, "unit": "weeks"}
+    assert "arrival_state" not in profile
+    assert r2.answer.outcome == "answered" and r2.answer.total_usd == 1.94

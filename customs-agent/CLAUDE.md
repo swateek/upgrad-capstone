@@ -154,7 +154,7 @@ Confirmed = checked against the regulation text. VERIFY = must be confirmed from
 | $200 is **all-or-nothing**: if any article exceeds a limit or the $200 value, nothing is exempt | Confirmed | 19 CFR 148.51(b) |
 | 1 L alcohol in the $800 exemption, age 21+, personal use, legal in arrival state | Confirmed | 19 CFR 148.33 |
 | 2 L if arriving directly from a Caribbean Basin (CBI) country, ≥ 1 L produced there | Confirmed | 19 CFR 148.33(d) |
-| Under 21: no alcohol in the exemption | Confirmed | 19 CFR 148.33 |
+| Under 21: no alcohol in the exemption; from SPEC 9d (Day 14) the agent says alcohol is prohibited (state minimum-age law, enforced by CBP) | Confirmed | 19 CFR 148.33; CBP; state-ca, state-tx |
 | Excess alcohol: flat 3% on next $1,000 + federal excise, even if total < $800 | Confirmed | HTSUS 9816.00.20; 19 CFR 148.101+ |
 | Flat rate by **origin**: 3% general; **Free** for listed FTA partners incl. Mexico/Canada (USMCA `S`); **4%** Column 2 (Belarus, Cuba, North Korea, Russia). Excise still due. Flat rate has its own 30-day rule. No 2026 surcharge on Chapter 98 entries | Checked | HTSUS 9816.00.20; USITC Pub. 5060 |
 | TTB excise: still wine ≤ 16% $1.07/gal; spirits $13.50/proof gal; small cigarettes $50.33/1,000; large cigars 52.75% capped $402.60/1,000; beer $18/bbl | Confirmed (store as-of date) | TTB rate tables |

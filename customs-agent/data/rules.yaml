@@ -84,11 +84,11 @@ restrictions:
 
   - id: under_21_alcohol
     when: {category: [alcohol], max_age: 20}
-    outcome: exclude_from_exemption             # all alcohol is dutiable; flag state minimum-age law
-    flags: [state_minimum_drinking_age]
-    citations: [19cfr148.33]
+    outcome: prohibited                         # owner's decision, Day 14 (SPEC 9d): was exclude_from_exemption
+    message: "Under 21 you cannot bring alcohol into the US: it is not covered by the exemption, and CBP enforces the state minimum-age laws, which bar anyone under 21 from bringing alcohol in. Declare it and ask the CBP officer; expect to hand it over."
+    citations: [19cfr148.33, cbp-duty-info]     # 148.33: 21+ for alcohol; CBP: state law enforced at the border
     status: confirmed
-    note: "Whether CBP admits it at all under state law is not settled; the answer tells the traveller to declare it."
+    note: "Federal law only removes the exemption (19 CFR 148.33), so duty would be due; but every state bars under-21s from bringing in or possessing alcohol (California and Texas say so outright, state-ca, state-tx) and CBP enforces state law, so in practice the bottle is not released. Until Day 14 this rule charged duty (the official runs and the eval gold follow that)."
 
   - id: under_21_tobacco
     when: {category: [tobacco], max_age: 20}

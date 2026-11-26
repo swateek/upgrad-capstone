@@ -1,6 +1,6 @@
 {
- "frozen_at": "2026-11-23",
- "note": "agent v2 freeze: dev-v2 0.991 router and planner; prompts intake+writer changed; code hash",
+ "frozen_at": "2026-11-26",
+ "note": "agent v2 + two reading checks after the official runs (Day 14 demo rehearsal): a trip length stated in a reply fills the asked-for trip when the model leaves it out; an arrival state needs something about arriving in the message. Prompts, retrieval and budget unchanged. The official runs used eval/freeze_v2_official.json. Then SPEC 9d (2026-11-26): under 21, alcohol is prohibited (rules.yaml under_21_alcohol).",
  "prompts": {
   "intake": "541a163fd15737df",
   "writer": "0e67faca6046d6f2",
@@ -28,7 +28,7 @@
   "max_plan_steps": 10
  },
  "code": {
-  "sha256": "fcc6683aa207b857",
+  "sha256": "30897d873a5b8e30",
   "files": 43
  },
  "corpus": {
