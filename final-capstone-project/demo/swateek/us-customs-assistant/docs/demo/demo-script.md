@@ -1,6 +1,6 @@
 # Demo script (10 minutes, plan step 16)
 
-Laptop Docker stack (`docker compose up -d`, http://localhost:3500), the Langfuse project open in a second tab. Every question below is from the frozen eval set, and the expected answer is what the frozen agent (v4) gave in the official runs (`docs/results/runs/planner-3/raw.jsonl`). The four business-case examples are shown in their corrected form, then one refusal and one correction.
+Laptop Docker stack (`docker compose up -d`, http://localhost:3500), the Langfuse project open in a second tab. Every question below is from the frozen eval set, and the expected answer is what the frozen agent (v6, the shipped version) gave in the official runs (`docs/results/runs/planner-3/raw.jsonl`). The four business-case examples are shown in their corrected form, then one refusal and one correction.
 
 **Before going live**
 - Check the shared key is free (one active request per key across group 031–045) and say so in the group.
@@ -64,7 +64,7 @@ A returning traveller wants: what can I bring free, what will I owe, is anything
 ## 7. Under the hood (2 min)
 
 - Langfuse: open the trace for question 1 (node tree, each model call with its time and tokens, the scores).
-- Dashboard "modes compared": planner and router 80.2% of turns, tool_calling 24.2%, plain RAG 5.5% on the frozen 80 scenarios.
+- Dashboard "modes compared": planner 78.0% of turns, router 79.1%, tool_calling 24.2%, plain RAG 5.5% on the frozen 80 scenarios (official runs under v6, `docs/eval-report.md`).
 - One honest limit: the remaining errors are mostly the 8B model misreading facts (cities for countries, "a pack of 20", bottle units), and the code router does as well as the model planner on this set.
 
 ## Backup and fallbacks
