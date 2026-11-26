@@ -299,9 +299,10 @@ def test_spirits_take_the_free_litre_before_cheap_wine() -> (
     ]
 
 
-def test_under_21_gets_no_alcohol_allowance() -> None:  # 148.33(d)(2)
+def test_under_21_cannot_bring_alcohol() -> None:  # 148.33(d)(2) + state law (SPEC 9d)
     r = run(Profile(**{**ADULT, "age": 20}), [bottle(ml=500, price=10)])
-    assert r["allowance"].lines[0].status == "dutiable"
+    assert r["allowance"].lines[0].status == "prohibited"
+    assert r["bottom_line"] == ["prohibited"]
 
 
 def test_beneficiary_direct_arrival_gives_2_litres() -> None:  # 148.33(d)(3)(ii)

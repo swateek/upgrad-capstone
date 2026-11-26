@@ -148,7 +148,7 @@ A scenario is correct when all of these hold (mentor's criteria):
 | tobacco_over_limit | 7 | Two cartons from duty-free | declare: may be detained/seized; or hand in the excess (export-labelled) |
 | cuban_origin | 6 | Cuban cigars bought in Cancún | prohibited, 515.204 + 515.585(d) |
 | sanctions_escalate | 1 | Russian vodka | escalated |
-| under_21 | 4 | 19-year-old with a bottle of wine | no alcohol allowance |
+| under_21 | 4 | 19-year-old with a bottle of wine | no alcohol allowance (from SPEC 9d: prohibited) |
 | mixed_basket | 10 | Wine + spirits + cigars + cigarettes | every line and total |
 | whatif | 4 | "Most bottles for under $10 owed?" | calculator answer (stretch tool) |
 | clarify | 8 | Age or trip length missing | exactly one answer-changing question |
@@ -210,4 +210,10 @@ No new rule: how the existing rules are read where the text left room. Each is i
 | 15 | A restriction that escalates | Russian-origin alcohol and commercial quantities escalate whatever the exemption facts are, so they escalate before any exemption question is asked. |
 | 16 | Export-labelled US cigarettes | Only when the question says so ("for export only", "labelled for export") or the cigarettes are US-made and bought at a duty-free shop. "Made in the US" alone is not an export label; a traveller who says "American goods returned" makes that claim (AGR rule). |
 | 17 | Fortified wine | Sherry, port, madeira, marsala and vermouth are wine (26 USC 5041(b)); the ABV decides the band. |
+
+### 9d. Under 21 with alcohol (owner's decision, 2026-11-26, after the official runs)
+
+| # | Point | Decision |
+| --- | --- | --- |
+| 18 | Traveller under 21 with alcohol | **Prohibited**, not dutiable: "Under 21 you cannot bring alcohol into the US … Declare it and ask the CBP officer; expect to hand it over." Federal law only removes the exemption (19 CFR 148.33), but CBP enforces state law, and every state bars under-21s from bringing in or possessing alcohol (California and Texas say so outright: `state-ca`, `state-tx` in the corpus). Telling a 19-year-old "you owe $2.50" implied they keep the bottle. `rules.yaml → under_21_alcohol`: `outcome: prohibited`; tobacco under 21 is unchanged (declare, detention risk). The eval gold (eval-v2, eval-v3) and the official runs follow the old rule (dutiable); the dev items that change have hand-written gold in `eval/gold_spec9d.yaml` (D09, conversation C07 turn 2). |
 

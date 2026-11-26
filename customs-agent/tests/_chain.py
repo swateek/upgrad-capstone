@@ -7,6 +7,7 @@ tools so tests can compare their outputs with the gold in eval/dev_set.jsonl.
 from __future__ import annotations
 
 from decimal import Decimal
+from pathlib import Path
 
 from src.schemas import Amount, BasketLine, Profile
 from src.tools import (
@@ -100,3 +101,17 @@ def run(profile: Profile, basket: list[BasketLine]) -> dict:
         "exemption": ex,
         "restrictions": rs,
     }
+
+
+def spec9d(items):
+    """Apply eval/gold_spec9d.yaml (under 21: alcohol prohibited) to dev items, in place."""
+    import yaml
+
+    path = Path(__file__).parents[1] / "eval" / "gold_spec9d.yaml"
+    new = yaml.safe_load(path.read_text())["dev"]
+    for d in items.values() if isinstance(items, dict) else items:
+        if d["id"] in new:
+            d["gold"] = {**d["gold"], **new[d["id"]]}
+            for k in ("lines", "duty_usd", "excise_usd", "total_usd"):
+                d["gold"].pop(k, None)
+    return items

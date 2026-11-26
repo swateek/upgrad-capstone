@@ -210,6 +210,69 @@ OVER_21 = re.compile(
 )
 
 
+# An arrival state needs something about arriving in the message: an arrival word ("landing at
+# Newark", "flying into Houston", "cleared customs in Miami", "walked back into Arizona") or a
+# US state named outright. Ports are not mapped to states here (the known JFK gap, SPEC 5.4).
+US_STATE_NAMES = (
+    "Alabama",
+    "Alaska",
+    "Arizona",
+    "Arkansas",
+    "California",
+    "Colorado",
+    "Connecticut",
+    "Delaware",
+    "Florida",
+    "Georgia",
+    "Hawaii",
+    "Idaho",
+    "Illinois",
+    "Indiana",
+    "Iowa",
+    "Kansas",
+    "Kentucky",
+    "Louisiana",
+    "Maine",
+    "Maryland",
+    "Massachusetts",
+    "Michigan",
+    "Minnesota",
+    "Mississippi",
+    "Missouri",
+    "Montana",
+    "Nebraska",
+    "Nevada",
+    "New Hampshire",
+    "New Jersey",
+    "New Mexico",
+    "New York",
+    "North Carolina",
+    "North Dakota",
+    "Ohio",
+    "Oklahoma",
+    "Oregon",
+    "Pennsylvania",
+    "Rhode Island",
+    "South Carolina",
+    "South Dakota",
+    "Tennessee",
+    "Texas",
+    "Utah",
+    "Vermont",
+    "Virginia",
+    "Washington",
+    "West Virginia",
+    "Wisconsin",
+    "Wyoming",
+)
+ARRIVAL = re.compile(
+    r"\b(?:land(?:s|ed|ing)?|arriv\w*|fl(?:y|ying|ew|ies|ights?)|into|cleared customs|"
+    r"clearing customs|through customs|airport|port of entry|cross(?:ed|ing)?|back (?:in|to|home to))\b"
+    rf"|\b(?:{'|'.join(US_STATE_NAMES)})\b",
+    re.IGNORECASE,
+)
+
+
 def ground_in_question(
     r: IntakeResult, question: str
 ) -> tuple[IntakeResult, list[str]]:
@@ -240,6 +303,12 @@ def ground_in_question(
         upd["trip"] = None
         dropped.append(
             f"trip {p.trip.value:g} {p.trip.unit} (no duration in the question)"
+        )
+    if p.arrival_state and not ARRIVAL.search(question or ""):
+        # "Was in Warsaw for a week" was read as arrival state WI (demo rehearsal, Day 14)
+        upd["arrival_state"] = None
+        dropped.append(
+            f"arrival_state {p.arrival_state} (nothing about arriving in the question)"
         )
     for name in ("exemption_used_last_30_days", "flat_rate_used_last_30_days"):
         if getattr(p, name, None) is not None and not (
@@ -995,6 +1064,28 @@ TRIP_SPAN = re.compile(
     re.IGNORECASE,
 )
 _WORD_N = {w: i for i, w in enumerate(_UNITS)} | {"a": 1, "an": 1, "a couple of": 2}
+
+
+def trip_span_from_reply(message: str) -> dict | None:
+    """The one trip length a reply states ("for a week", "9 days", "36 hours"), as
+    {"value", "unit"}, or None when it states none or several. "In 30 days" and "in the last
+    month" are about the exemption, not the trip, and are skipped."""
+
+    spans = set()
+    for m in TRIP_SPAN.finditer(message or ""):
+        before = (message[: m.start()]).lower()
+        if re.search(r"\b(?:in|over|for the last|for the past)\s*$", before):
+            continue
+        n = m.group("n").lower()
+        val = float(n) if n[0].isdigit() else _WORD_N.get(n)
+        unit = m.group("u").lower().rstrip("s")
+        unit = {"hr": "hour", "wk": "week"}.get(unit, unit)
+        if val:
+            spans.add((val, unit))
+    if len({v * _HOURS[u] for v, u in spans}) != 1:
+        return None
+    val, unit = min(spans)
+    return {"value": val, "unit": unit + "s"}
 
 
 def trip_from_question(

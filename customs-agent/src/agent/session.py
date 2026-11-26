@@ -45,6 +45,7 @@ from src.agent.intake import (
     origin_from_question,
     pack_counts_from_question,
     sizes_from_question,
+    trip_span_from_reply,
     types_from_names,
 )
 from src.agent.llm_json import StepError, json_call
@@ -532,6 +533,8 @@ class Sessions:
             for c in changed
             if not (c in FACT_FIELD.values() and new_profile.get(c) == profile.get(c))
         ]
+        if "trip" not in changed and new_profile.get("trip") != profile.get("trip"):
+            changed.append("trip")  # filled from the reply by _clean
         run.trace.append(
             {
                 "step": "intake",
@@ -645,8 +648,21 @@ class Sessions:
             out[k] = v if (gv is not None or answered) else old_profile.get(k)
             if k == "age" and gv is not None and gv != v:
                 out[k] = gv  # "over 21" -> 21
-        notes += [d for d in dropped if not any(FACT_FIELD.get(f) in d for f in asked)]
+        notes += [
+            d
+            for d in dropped
+            if not any((FACT_FIELD.get(f) or "\0") in d for f in asked)
+        ]
         out = {k: v for k, v in out.items() if v is not None}
+        if "trip" not in out and "trip_length" in asked:
+            # we asked how long, the reply says ("for a week") and the model left it out
+            # (demo rehearsal, Day 14)
+            span = trip_span_from_reply(message)
+            if span:
+                out["trip"] = span
+                notes.append(
+                    f"trip {span['value']:g} {span['unit']} (stated in the reply)"
+                )
         if out.get("exemption_used_last_30_days") is None:
             hist = IntakeResult.model_validate(
                 {"request_kind": "assess", "profile": out}

@@ -7,7 +7,13 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
-from app.api import RateLimiter, Service, create_app, pretty_citation
+from app.api import (
+    RateLimiter,
+    Service,
+    citation_entries,
+    create_app,
+    pretty_citation,
+)
 from src.safety.pii import mask_text
 from src.tracing import FileTracer
 from tests.test_agent import DEV, GOOD_D01, ScriptedLLM, fake_search, intake_for
@@ -344,3 +350,22 @@ def test_plain_card_edits_still_pass() -> None:
     assert edit_problem("age", 20) is None
     assert edit_problem("item1.quantity", {"value": 3, "unit": "bottle"}) is None
     assert edit_problem("exemption_used_last_30_days", False) is None
+
+
+def test_escalation_citations_are_bare_ids() -> None:
+    """An escalated card (e.g. Russian vodka after a "Correct a fact") lists citation ids as
+    strings; the API turns them into the same {id, as_of, url, label} as an answered card."""
+
+    meta = {c["citation_id"]: c["metadata"] for c in CHUNKS}
+    out = citation_entries(
+        ["19cfr148.33", {"id": "19cfr148.33", "as_of": "x", "url": "y"}],
+        lambda i: meta.get(i, {}),
+    )
+    assert out[0] == {
+        "id": "19cfr148.33",
+        "as_of": "2026-11-19",
+        "url": "https://www.ecfr.gov/x",
+        "label": "19 CFR 148.33",
+    }
+    assert out[1]["as_of"] == "x" and out[1]["label"] == "19 CFR 148.33"
+    assert citation_entries(None, lambda i: {}) == []

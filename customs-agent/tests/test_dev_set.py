@@ -15,14 +15,16 @@ import pytest
 from src.tools.common import dec
 from src.tools.whatif_optimise import Args as WArgs
 from src.tools.whatif_optimise import whatif_optimise
-from tests._chain import line_from_fact, profile_from_fact, run
+from tests._chain import line_from_fact, profile_from_fact, run, spec9d
 
-DEV = [
-    json.loads(x)
-    for x in (Path(__file__).parents[1] / "eval" / "dev_set.jsonl")
-    .read_text()
-    .splitlines()
-]
+DEV = spec9d(  # under 21: alcohol prohibited (SPEC 9d, eval/gold_spec9d.yaml)
+    [
+        json.loads(x)
+        for x in (Path(__file__).parents[1] / "eval" / "dev_set.jsonl")
+        .read_text()
+        .splitlines()
+    ]
+)
 CALC = [
     s
     for s in DEV
