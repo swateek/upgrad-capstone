@@ -199,6 +199,21 @@ class RateLimiter:
             return 0
 
 
+def citation_entries(cites, meta_of) -> list[dict]:
+    """The card's citations as {id, as_of, url, label}. Answered cards carry dicts; escalation
+    cards carry bare citation ids (a Russian-origin bottle, say), which crashed the label step."""
+
+    out = []
+    for c in cites or []:
+        c = {"id": c} if isinstance(c, str) else dict(c)
+        meta = meta_of(c["id"])
+        c.setdefault("as_of", meta.get("as_of"))
+        c.setdefault("url", meta.get("source_url"))
+        c["label"] = pretty_citation(c["id"], meta.get("title"))
+        out.append(c)
+    return out
+
+
 def pretty_citation(cid: str, title: str | None = None) -> str:
     """ "19cfr148.33" -> "19 CFR 148.33"; guidance pages get their own title ("CBP - Customs Duty
     Information" -> "CBP: Customs Duty Information")."""
@@ -233,14 +248,12 @@ def create_app(service: Service | None = None) -> FastAPI:
             state["service"] = Service.from_env()
         return state["service"]
 
-    def title_of(cid: str) -> str | None:
-        if "titles" not in state:
-            state["titles"] = {}
+    def meta_of(cid: str) -> dict:
+        if "meta" not in state:
+            state["meta"] = {}
             for c in svc().chunks:
-                state["titles"].setdefault(
-                    c["citation_id"], (c.get("metadata") or {}).get("title")
-                )
-        return state["titles"].get(cid)
+                state["meta"].setdefault(c["citation_id"], c.get("metadata") or {})
+        return state["meta"].get(cid) or {}
 
     @app.get("/api/live")
     def live() -> dict:
@@ -329,8 +342,7 @@ def create_app(service: Service | None = None) -> FastAPI:
         except Exception as e:  # noqa: BLE001 - a tracing failure must not lose the answer
             trace = {"id": None, "url": None, "error": type(e).__name__}
         card = dict(run.card)
-        for c in card.get("citations") or []:
-            c["label"] = pretty_citation(c["id"], title_of(c["id"]))
+        card["citations"] = citation_entries(card.get("citations"), meta_of)
         st = s.conversations().state(session)
         out = {
             "session_id": session,
