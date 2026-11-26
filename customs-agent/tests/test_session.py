@@ -674,3 +674,73 @@ def test_reply_trip_and_no_invented_arrival_state(tmp_path) -> None:
     assert profile["trip"] == {"value": 1, "unit": "weeks"}
     assert "arrival_state" not in profile
     assert r2.answer.outcome == "answered" and r2.answer.total_usd == 1.94
+
+
+def test_a_corrected_turn_can_be_traced(tmp_path) -> None:
+    """Demo rehearsal (Day 14): after "Correct a fact" the answer had no trace link, because the
+    reused tools carry no output and building the trace raised KeyError."""
+    from src.tracing import spans
+
+    llm = ScriptedLLM(
+        intake=[
+            {
+                "request_kind": "assess",
+                "profile": {
+                    "age": 35,
+                    "trip": {"value": 3, "unit": "days"},
+                    "exemption_used_last_30_days": False,
+                },
+                "basket": [wine(2, {"value": 750, "unit": "ml"}, 45, "FR")],
+            }
+        ],
+        writer=[writer_for("1.04"), writer_for("3.12")],
+    )
+    s = sessions(tmp_path, llm)
+    s.turn("c", message=CONVS["C03"]["turns"][0]["user"])
+    r2 = s.turn("c", edit={"field": "trip", "value": {"value": 30, "unit": "hours"}})
+    data = spans("(changed trip)", r2, "router")
+    names = [c["name"] for c in data["children"]]
+    assert names.index("replan") < names.index("tools")
+    tools = next(c for c in data["children"] if c["name"] == "tools")["children"]
+    assert any(
+        t["output"] == {"reused": "output kept from the previous turn"} for t in tools
+    )
+
+
+def test_a_follow_up_turns_reading_is_the_intake_step(tmp_path) -> None:
+    """In a follow-up turn the model call is logged as "turn_intake": the trace shows it as the
+    intake step (first), not as a separate call after the tools (Day 14 screenshots)."""
+    from src.tracing import spans
+
+    c = CONVS["C01"]
+    llm = ScriptedLLM(
+        intake=[
+            {
+                "request_kind": "assess",
+                "profile": {},
+                "basket": [
+                    wine(3, {"value": 750, "unit": "ml"}, 22, "ES", item="Rioja")
+                ],
+            }
+        ],
+        turn_intake=[
+            {
+                "request_kind": "assess",
+                "profile": {
+                    "age": 38,
+                    "trip": {"value": 9, "unit": "days"},
+                    "exemption_used_last_30_days": False,
+                },
+            }
+        ],
+        writer=[writer_for("1.46")],
+    )
+    s = sessions(tmp_path, llm)
+    s.turn("c", message=c["turns"][0]["user"])
+    r2 = s.turn("c", message=c["turns"][1]["user"])
+    names = [n["name"] for n in spans("q", r2, "router")["children"]]
+    assert "turn_intake" not in names
+    intake = next(
+        n for n in spans("q", r2, "router")["children"] if n["name"] == "intake"
+    )
+    assert intake["raw"]["stage"] == "turn_intake"

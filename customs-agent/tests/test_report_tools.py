@@ -66,7 +66,7 @@ def test_official_traces_are_rebuilt_and_tagged():
         def update(self, **kw):
             self.log.append({"update": kw})
 
-        def end(self):
+        def end(self, **kw):
             pass
 
     log: list = []
@@ -89,3 +89,51 @@ def test_official_traces_are_rebuilt_and_tagged():
     assert {"correct", "wrong"} & set(tags)
     assert log[0]["metadata"]["question_id"] == rec["id"]
     assert log[0]["metadata"]["run"] == d
+
+
+def test_trace_steps_are_laid_out_on_a_timeline() -> None:
+    """Traces are built after the answer; each step gets its recorded duration, in order, and
+    the root spans the question's wall time (not 0 s, as before Day 14)."""
+    from types import SimpleNamespace
+
+    from src.tracing import LangfuseTracer
+
+    class Obs:
+        def __init__(self, name, log):
+            self.name, self.log = name, log
+            self._otel_span = SimpleNamespace(_start_time=None)
+
+        def start_observation(self, **kw):
+            return Obs(kw["name"], self.log)
+
+        def end(self, end_time=None):
+            self.log.append((self.name, self._otel_span._start_time, end_time))
+
+    log: list = []
+    root = Obs("root", log)
+    children = [
+        {"name": "guard", "as_type": "guardrail", "output": {}},
+        {"name": "intake", "as_type": "generation", "raw": {"ms": 5000}},
+        {
+            "name": "tools",
+            "as_type": "chain",
+            "children": [{"name": "compute_duty_excise", "as_type": "tool"}],
+        },
+        {"name": "search_regulations", "as_type": "retriever", "output": {"ms": 2000}},
+        {"name": "writer", "as_type": "generation", "raw": {"ms": 3000}},
+    ]
+    LangfuseTracer.__new__(LangfuseTracer).lay_out(root, children, seconds=12.0)
+    t0 = root._otel_span._start_time
+    span = {n: ((s - t0) / 1e9, (e - s) / 1e9) for n, s, e in log}
+    starts = [
+        span[n][0] for n in ("guard", "intake", "tools", "search_regulations", "writer")
+    ]
+    assert starts == sorted(starts) and len(set(starts)) == 5  # the order they ran in
+    assert span["intake"] == (0.001, 5.0)
+    assert span["writer"][1] == 3.0 and span["search_regulations"][1] == 2.0
+    assert span["guard"][1] == 0.001  # an untimed step takes 1 ms
+    assert (
+        span["tools"][0]
+        <= span["compute_duty_excise"][0]
+        < span["search_regulations"][0]
+    )
